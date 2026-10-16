@@ -112,7 +112,8 @@ def test_system_prompt_caches_the_stable_prefix_and_renders_the_brand() -> None:
     assert "squad da Miolo" in blocks[0].text and "{{marca.nome}}" not in blocks[0].text
     assert blocks[1].text == prompt.skill.body
     assert "<idioma>es</idioma>" in blocks[2].text
-    assert '<fato estado="Decisão sua" assunto="Tom de voz">Tom: acolhedor</fato>' in blocks[2].text
+    tone_fact = '<fato estado="Decisión tuya" assunto="Tom de voz">Tom: acolhedor</fato>'
+    assert tone_fact in blocks[2].text
     assert "Instagram" not in blocks[2].text
     [message] = triage_messages(ctx, prompt.skill)
     assert (

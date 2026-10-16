@@ -1,7 +1,7 @@
 """Catálogo de mensagens do backend por idioma (ADR-0010).
 
-pt-BR completo; en e es têm as falas já traduzidas (boas-vindas do Nexo) e o resto cai no pt-BR
-até a tradução.
+pt-BR, en e es têm as mesmas chaves e os mesmos placeholders (`tests/test_i18n_catalog.py`);
+o recurso ao pt-BR em `t()` fica só como rede de segurança.
 """
 
 import json
