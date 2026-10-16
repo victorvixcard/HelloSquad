@@ -1,0 +1,39 @@
+# Plano de ação — Trilha SA (Super Admin)
+
+Escrito por Thor (main) em 16/10/2026 19:00, com a H2 (QA da Fase 2) em execução. Abre quando a H2 fechar sem 🔴 (ordem do Vic 16/10 09:30: "terminar o que já está planejado e só então executar as telas do Super Admin"). Fonte: `docs/SUPER_ADMIN.md` (§2 mapa de telas, §3 modelo de dados, §4 segurança, §5 fases SA1–SA6), protótipo aprovado para estudo `design/super-admin-proto/` (SA0, 17 páginas; relatório `docs/parciais/SA0-relatorio.md` com 9 decisões e as perguntas ao Vic). PASSO 0 de todo briefing: `docs/DIRETRIZES_DO_DONO.md`.
+
+## Regras que moldam a trilha
+
+- **Mesmo ecossistema**: mesma aplicação (`/admin`), mesma API (`/admin/*` com papel privilegiado só nessas rotas), mesmo banco; nunca pela Data API. Leitura e escrita só por `platform_admins`; toda escrita em `audit_events`.
+- **Preço e créditos por último**: catálogo, planos e recargas nascem com valores **provisórios marcados**, "à venda" desmarcado, trava "preço aprovado comercialmente" desmarcada. Nenhuma tela de preço para o cliente.
+- **Segredos nunca no painel**: só "configurada" ou "ausente". Chaves por `.env`.
+- **Branding e DS do HelloSquad**; o protótipo SA0 é a referência visual (decisões §4 do relatório valem até o Vic mudar).
+- **2FA (TOTP)** para Super Admin é Fase 5; até lá, a faixa de aviso em todas as páginas (como o SA0).
+- **Motor de imagem e Referências (SA5)** só quando o motor do Vic chegar.
+- Um par por vez (áreas disjuntas), commit ≤ 5 min, relatório em arquivo, e2e/build só em worktree `/tmp` (web do dono na 3100 fica no ar), check silencioso a cada 10 min, resumo ao Vic a cada 2 h.
+
+## Fila
+
+| # | Fatia | Agente | Estado | Depende de | Critério de pronto |
+|---|---|---|---|---|---|
+| SA1 | **Schema e API de leitura do SA**: `platform_admins` (seed: Vic fictício como Super Admin local, e-mail `.example`), `support_access_log`, `topups`/`topup_versions`, `delivery_catalog` (46 itens do CSV; `delivery_prices` já existe), `business_rule_docs`/`_versions`, `reference_items`, `model_pricing`, `task_model_rules`, `provider_health`, views `v_consumo_por_cliente`, `v_qualidade_entregas`, `v_fila`; papel privilegiado só em `/admin/*`; rotas de leitura: contas, catálogo, planos e recargas, pagamentos (S2e), auditoria, fila (runs/pgmq), modelos e custos, consumo, saúde; RLS forçada + pgTAP provando que membro comum não lê nada do SA | Stark | ⚪ pendente | H2 ✅ | pgTAP + pytest (admin lê; owner comum 403; Data API 401/403); `make test` verde; relatório `SA1-relatorio.md` |
+| SA2 | **UI do SA (leitura)** em `apps/web/app/admin`: casca com os dois grupos (Operação, Squad IA), Contas, Catálogo, Planos e recargas, Pagamentos, Auditoria, Fila de trabalhos, Modelos e custos; só para `platform_admins` (middleware + 403 honesto); `noindex`; faixa de 2FA; fidelidade ao SA0 | Aranha | ⚪ pendente | SA1 ✅ | Vic fictício entra em `/admin` e vê as 7 telas com dados do seed; Marina recebe 403; Vitest + e2e; lado a lado com o SA0; relatório `SA2-relatorio.md` |
+| SA3a | **Squad versionado no banco**: `agent_prompt_sections` (SOUL por seção), skills e `agent.yaml` como versões ativas no banco com `squad/` como seed e exportação (`make squad-export`); runtime lê a versão ativa; diff e rollback; "o que ele lê" (system prompt montado com contagem de tokens); regras de negócio com marcação por parágrafo e flag "entra no prompt" (→ regras compartilhadas); rotas `/admin/squad/*` de leitura e escrita com `audit_events` | Stark | ⚪ pendente | SA1 ✅ | editar uma seção gera versão nova, o próximo run usa; rollback volta; pytest + pgTAP; relatório `SA3a-relatorio.md` |
+| SA3b | **UI Squad IA**: lista dos 7, Agente › Alma / Skills / Ferramentas e limites / O que ele lê, Regras de negócio, com edição versionada, comparar e voltar versão (como o SA0) | Aranha | ⚪ pendente | SA2 ✅, SA3a ✅ | edição pela tela → versão nova visível e auditada; e2e; lado a lado; relatório `SA3b-relatorio.md` |
+| SA4 | **Consumo por cliente, Qualidade das entregas, Saúde das APIs** (API: alertas econômicos com faixas de referência marcadas como proposta; saldo informado por provedor; views) + telas correspondentes | Stark → Aranha (duas sub-fatias: SA4a API, SA4b UI) | ⚪ pendente | SA3a ✅ (API); SA3b ✅ (UI) | números batem com `run_steps`/ledger em teste; relatório `SA4a/b-relatorio.md` |
+| SA6 | **Pagamentos no SA** (reprocessar webhook, conciliação com motivo, histórico por conta) e **sessão de suporte** ("entrar no ambiente do cliente" com motivo, tempo limitado, `support_access_log`, aviso ao dono da conta = pergunta 1 do SA0 ao Vic) — 2FA fica para a Fase 5 | Stark → Aranha | ⚪ pendente | SA4 ✅ | pytest (webhook reprocessado idempotente; sessão de suporte expira e é auditada); e2e; relatório |
+| H-SA | **QA da trilha SA**: escalonamento (membro comum tentando `/admin`), auditoria completa, versões do squad vs runtime, nada de segredo no painel, valores provisórios marcados | Hulk | ⚪ pendente | SA6 ✅ | `H-SA-relatorio.md` no formato da H0/H1/H2 |
+| SA5 | Motor de imagem (texto de comportamento editável) e Referências | Stark + Aranha | ⏸ aguarda o motor do Vic | — | — |
+
+## Ordem de disparo
+
+1. SA1 (sozinha) → 2. SA2 ‖ SA3a → 3. SA3b ‖ SA4a → 4. SA4b → 5. SA6 → 6. H-SA. SA5 quando o motor chegar.
+
+## Perguntas ao Vic que afetam a trilha (do SA0 §5; não bloqueiam, a leitura conservadora vale)
+
+1. Sessão de suporte: só leitura ou pode agir pela conta; duração padrão; aviso ao dono. (Conservador: só leitura, 30 min, dono avisado por e-mail.)
+2. Quem mais é Super Admin e se há papéis (leitura × edição). (Conservador: só o Vic, com edição.)
+3. Ajuste manual de crédito: limite ou segundo aprovador. (Conservador: sem limite, sempre com motivo e auditoria.)
+4. Suspender conta: efeito na assinatura e nas rotinas. (Conservador: pausa cobrança e rotinas, não cancela.)
+5. "À venda" exige homologação concluída além do preço aprovado. (Conservador: sim.)
+6. Profundidade por delivery inferida: confirma? 7. Deliveries de coordenação do Nexo sem custo ("incluído")? 8. Campos do plano (anual: créditos por mês, bônus por mês)?
