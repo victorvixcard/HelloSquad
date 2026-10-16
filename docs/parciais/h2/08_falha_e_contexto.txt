@@ -1,0 +1,17 @@
+== A. falha do run libera a reserva
+  runs: failed | failed
+  recusa (bia): trabalho=failed runs=[['failed', '1', '0.00']] reserva=[['released', '-']] capturas=0
+    fala ao dono: []
+  indisponível (kiwi): trabalho=failed runs=[['failed', '3', '0.00']] reserva=[['released', '-']] capturas=0
+    fala ao dono: []
+== B. o que entra no prompt (Miolo, Otto 04.01)
+  reflexão: succeeded
+  aprendizados: {'Tratamento': 'promoted', 'Abertura': 'candidate', 'Vocabulário': 'promoted'}
+  B1 promovidos entram; candidata fora: ['<aprendizado assunto="Vocabulário">Nunca usar a expressão “promoção imperdível” nas legendas.</aprendizado>', '<aprendizado assunto="Tratamento">Chamar o cliente de “você”, no singular, nunca de “vocês”.</aprendizado>'] | 'Abertura' no prompt: False
+  envelhecer recusado: ERROR:  Aprendizado não se edita: evidência nova cria uma versão nova.
+CONTEXT:  PL/pgSQL function app.agent_learnings_guard() line 17 at RAISE
+  B2 sem reafirmação há 100 dias: ['<aprendizado assunto="Vocabulário">Nunca usar a expressão “promoção imperdível” nas legendas.</aprendizado>', '<aprendizado assunto="Tratamento">Chamar o cliente de “você”, no singular, nunca de “vocês”.</aprendizado>']
+  descarta Vocabulário: 200
+  B3 depois do descarte: ['<aprendizado assunto="Tratamento">Chamar o cliente de “você”, no singular, nunca de “vocês”.</aprendizado>'] | 'imperdível' em <aprendizados>: False
+  B4 Vitta: [] | 'Miolo' no prompt da Vitta: False | idioma: ['<idioma>pt-BR</idioma>']
+  arquivos de prompt: ['04.01.nexo.triage.txt', '04.01.otto.check.txt', '04.01.otto.produce.txt', '04.01.otto.reflect.txt']

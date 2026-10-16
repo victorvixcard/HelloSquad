@@ -1,0 +1,2 @@
+envelhecer Tratamento: [['Tratamento', '2026-07-08']]
+prompt depois de envelhecer: ['<aprendizado agente="otto" delivery="04.01" assunto="Tratamento" revisar="sim">Chamar o cliente de “você”, no singular, nunca de “vocês”.</aprendizado>']
