@@ -148,6 +148,19 @@ def triage_messages(ctx: RunContext, target: Skill) -> list[ChatMessage]:
     )
 
 
+def plan_messages(ctx: RunContext, target: Skill, extra: Sequence[str] = ()) -> list[ChatMessage]:
+    """Planejamento do Nexo (01.02): o pedido, o briefing, o essencial e o que o squad entrega."""
+    return user_message(
+        [
+            *context_block(ctx),
+            f"<briefing>{as_json(ctx.briefing)}</briefing>",
+            f"<essenciais>{text(', '.join(target.essentials))}</essenciais>",
+            *extra,
+            "<etapa>planejar</etapa>",
+        ]
+    )
+
+
 def production_messages(
     ctx: RunContext, briefing: dict[str, Any], handoff: str, extra: Sequence[str] = ()
 ) -> list[ChatMessage]:

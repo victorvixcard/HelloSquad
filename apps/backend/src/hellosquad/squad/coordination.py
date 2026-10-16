@@ -97,7 +97,11 @@ def available_deliveries(loader: SquadLoader) -> list[dict[str, str]]:
             if loader.has_skill(agent.id, delivery):
                 skill = loader.skill(agent.id, delivery)
                 found.append(
-                    {"agente": agent.id, "delivery": delivery, "titulo": skill.meta.get("titulo", "")}
+                    {
+                        "agente": agent.id,
+                        "delivery": delivery,
+                        "titulo": skill.meta.get("titulo", ""),
+                    }
                 )
     return found
 
@@ -111,8 +115,12 @@ def plan_problems(plan: CoordinationPlan, loader: SquadLoader) -> list[dict[str,
     for seq, step in enumerate(plan.etapas, start=1):
         if (step.agente, step.delivery) not in allowed:
             problems.append(
-                {"code": "step_not_available", "seq": seq, "agent_id": step.agente,
-                 "delivery_type": step.delivery}
+                {
+                    "code": "step_not_available",
+                    "seq": seq,
+                    "agent_id": step.agente,
+                    "delivery_type": step.delivery,
+                }
             )
         if any(dep < 1 or dep >= seq for dep in step.depende_de):
             problems.append({"code": "step_depends_forward", "seq": seq})

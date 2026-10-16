@@ -1,0 +1,66 @@
+{
+  "delivery_type": "01.02",
+  "step": "nexo.plan",
+  "cases": [
+    {
+      "name": "campanha_sem_tema",
+      "when": {"tag": "pedido", "not_matches": "(natal|páscoa|pascoa|dia das mães|dia das maes|dia dos pais|lançamento|lancamento|black friday|aniversário|aniversario)"},
+      "usage": {"input_tokens": 1400, "output_tokens": 220, "cache_write_tokens": 2600},
+      "output": {
+        "briefing": {"canal": null, "objetivo": null, "tema": null, "tom": null, "restricoes": [], "cta": null, "data": null},
+        "faltam": ["tema", "objetivo"],
+        "pergunta": "Boa ideia. Antes de montar o time: a campanha é para qual data ou produto, e o que ela precisa alcançar?",
+        "projeto": null,
+        "etapas": [],
+        "mensagem": "Antes de montar o time, preciso de duas respostas suas.",
+        "resumo": "Campanha sem tema e sem objetivo: perguntar antes de montar a equipe."
+      }
+    },
+    {
+      "name": "campanha_de_natal",
+      "usage": {"input_tokens": 1800, "output_tokens": 640, "cache_write_tokens": 2600},
+      "output": {
+        "briefing": {
+          "canal": "instagram, site e loja",
+          "objetivo": "vender mais panetones no Natal",
+          "tema": "Natal",
+          "tom": null,
+          "restricoes": ["nenhuma verba de anúncio sem a sua autorização"],
+          "cta": "encomendar o panetone",
+          "data": "novembro e dezembro"
+        },
+        "faltam": [],
+        "pergunta": null,
+        "projeto": {"nome": "Campanha de Natal", "objetivo": "Vender mais panetones no Natal."},
+        "etapas": [
+          {
+            "agente": "bia",
+            "delivery": "02.04",
+            "titulo": "Estratégia",
+            "responsabilidade": "estratégia e conceito",
+            "instrucao": "Defina o conceito, o público e as frentes da campanha de Natal para vender mais panetones; a Kaia e o Otto partem dela.",
+            "depende_de": []
+          },
+          {
+            "agente": "kaia",
+            "delivery": "03.01",
+            "titulo": "Peças",
+            "responsabilidade": "peças da campanha",
+            "instrucao": "Crie a peça de abertura das encomendas no padrão da Miolo, a partir do conceito aprovado.",
+            "depende_de": [1]
+          },
+          {
+            "agente": "otto",
+            "delivery": "04.03",
+            "titulo": "Textos",
+            "responsabilidade": "legendas e roteiros",
+            "instrucao": "Escreva as legendas e os roteiros da campanha a partir da estratégia aprovada, com o pedido de visual para a Kaia.",
+            "depende_de": [1]
+          }
+        ],
+        "mensagem": "Combinado. Montei o squad da campanha e eu acompanho: a Bia começa pela estratégia. Te chamo quando houver decisão.",
+        "resumo": "Campanha de Natal: Bia na estratégia, depois Kaia nas peças e Otto nos textos, um por vez."
+      }
+    }
+  ]
+}

@@ -161,7 +161,7 @@ class RunStore:
         self.run_id = run_id
         # Tentativa reivindicada por este worker: serve de ficha (fencing) nas escritas finais.
         self.attempt: int | None = None
-        # Etapa do trabalho coordenado que o run executa (load): a entrega e a pendência levam a etapa.
+        # Etapa do trabalho coordenado que o run executa (load): entrega e pendência levam a etapa.
         self.step_id: UUID | None = None
 
     # ------------------------------------------------------------------------------------------
@@ -586,7 +586,8 @@ class RunStore:
                     where v.workspace_id = %s and v.status = 'approved'
                       and coalesce(s.delivery_type, w.delivery_type) = any(%s)
                       and (%s::uuid is null or w.project_id = %s::uuid)
-                    order by coalesce(s.delivery_type, w.delivery_type), v.created_at desc, v.id desc
+                    order by coalesce(s.delivery_type, w.delivery_type), v.created_at desc,
+                             v.id desc
                     """,
                     (self.workspace_id, delivery_types, project_id, project_id),
                 )
@@ -853,7 +854,7 @@ class RunStore:
     async def work_step(self, work_item_id: UUID, title: str, agent_id: str, status: str) -> None:
         """Etapa do trabalho com o agente responsável. Repetir (nova tentativa) atualiza a mesma.
 
-        Run de uma etapa planejada (01.02): as fases do run não viram etapas; só a etapa dele começa.
+        Run de uma etapa planejada (01.02): as fases do run não viram etapas; só a etapa começa.
         """
         async with self.pool.connection() as conn:
             if self.step_id is not None:
@@ -1249,7 +1250,10 @@ class RunStore:
         for step in plan.etapas:
             responsibilities.setdefault(step.agente, []).append(step.responsabilidade)
         team = [
-            {"agent_id": agent, "responsibility": " · ".join(dict.fromkeys(responsibilities[agent]))}
+            {
+                "agent_id": agent,
+                "responsibility": " · ".join(dict.fromkeys(responsibilities[agent])),
+            }
             for agent in agents
         ]
         async with self.pool.connection() as conn, conn.transaction():
@@ -1292,7 +1296,12 @@ class RunStore:
                         do update set responsibility = excluded.responsibility
                         """,
                         [
-                            (self.workspace_id, project_id, m["agent_id"], m["responsibility"][:120])
+                            (
+                                self.workspace_id,
+                                project_id,
+                                m["agent_id"],
+                                m["responsibility"][:120],
+                            )
                             for m in team
                         ],
                     )
@@ -1374,7 +1383,9 @@ class RunStore:
                 (
                     self.workspace_id,
                     work_item.id,
-                    Jsonb({"agents": agents, "project_id": str(project_id) if project_id else None}),
+                    Jsonb(
+                        {"agents": agents, "project_id": str(project_id) if project_id else None}
+                    ),
                 ),
             )
             message_id = await self._agent_message(
@@ -1449,7 +1460,12 @@ class RunStore:
             await self._event(
                 conn, "finished", {"status": "succeeded", "work_item_status": work_status}
             )
-        return {"message_id": message_id, "advanced": advanced, "work_status": work_status, **totals}
+        return {
+            "message_id": message_id,
+            "advanced": advanced,
+            "work_status": work_status,
+            **totals,
+        }
 
     async def reply(
         self, *, conversation_id: UUID, agent_id: str, body: str, model: str, prompt_version: str

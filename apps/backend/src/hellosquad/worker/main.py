@@ -27,6 +27,7 @@ from hellosquad.llm.factory import build_llm_client
 from hellosquad.memory.embeddings import build_embeddings
 from hellosquad.research.websearch import WebSearch, build_web_search
 from hellosquad.runtime import configure_logging
+from hellosquad.creative.image_engine import build_image_engine
 from hellosquad.squad.flow import FlowError, Squad, run_flow, run_reply
 from hellosquad.squad.loader import SquadLoader
 from hellosquad.squad.reflect import PromotionRules, ReflectionStore, run_reflection
@@ -105,6 +106,7 @@ class Worker:
             learning_top_k=settings.learning_top_k,
             learning_review_days=settings.learning_review_days,
             embeddings=build_embeddings(settings.embeddings_provider),
+            image_engine=build_image_engine(settings.image_engine_provider),
             web_search=web_search
             or build_web_search(
                 settings.web_search_provider,

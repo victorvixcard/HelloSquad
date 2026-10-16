@@ -97,6 +97,8 @@ class Settings(BaseSettings):
     learning_promotion_repeats: int = Field(default=2, ge=2)
     # Embeddings da memória (ADR-0009): desligados até o dono escolher o fornecedor.
     embeddings_provider: Literal["disabled"] = "disabled"
+    # Motor de imagem da Kaia: é do dono e ainda não chegou; só o stub "aguardando o motor".
+    image_engine_provider: Literal["pending"] = "pending"
 
     @field_validator("auth_jwt_algorithms", "api_cors_origins", mode="before")
     @classmethod

@@ -11,6 +11,12 @@ from typing import Any, TypeVar
 
 from pydantic import ValidationError
 
+from hellosquad.creative.image_engine import (
+    BrandIdentity,
+    ImageEngine,
+    ImageRequest,
+    PendingImageEngine,
+)
 from hellosquad.i18n import t
 from hellosquad.llm.base import (
     CallTag,
@@ -28,6 +34,15 @@ from hellosquad.research.websearch import (
     SearchResponse,
     WebSearch,
     WebSearchUnavailable,
+)
+from hellosquad.squad.coordination import (
+    COORDINATION,
+    IMAGE_DELIVERIES,
+    PLAN_SCHEMA,
+    CoordinationPlan,
+    available_deliveries,
+    plan_problems,
+    strategy_front,
 )
 from hellosquad.squad.data import (
     base_summary,
@@ -54,12 +69,13 @@ from hellosquad.squad.deliveries import (
     SegmentationDelivery,
     delivery_spec,
 )
-from hellosquad.squad.loader import AgentDefinition, SquadLoader
+from hellosquad.squad.loader import AgentDefinition, SquadLoader, SquadPrompt
 from hellosquad.squad.memory import LearningQuery, search_text
 from hellosquad.squad.prompt import (
     RunContext,
     as_json,
     check_messages,
+    plan_messages,
     production_messages,
     reply_messages,
     revision_messages,
@@ -76,7 +92,7 @@ from hellosquad.squad.schemas import (
     StepOutput,
     TriageResult,
 )
-from hellosquad.squad.store import RunStore, WorkLive
+from hellosquad.squad.store import RunData, RunStore, WorkLive, WorkStep
 from hellosquad.work.live import DISPLAY_TZ
 
 COORDINATOR = "nexo"
@@ -160,6 +176,8 @@ class Squad:
     learning_review_days: int = 90
     # Busca por significado (ADR-0009): desligada; a recuperação fica na busca textual por idioma.
     embeddings: Embeddings = field(default_factory=DisabledEmbeddings)
+    # Motor de imagem do dono (03.01–03.03): até chegar, o stub honesto "aguardando o motor".
+    image_engine: ImageEngine = field(default_factory=PendingImageEngine)
 
 
 def status_fields(locale: str, agent: AgentDefinition, mode: str, phrase: str) -> dict[str, str]:
@@ -192,7 +210,7 @@ def require_tool(agent: AgentDefinition, tool: str) -> None:
         raise FlowError("tool_not_allowed", {"agent_id": agent.id, "tool": tool})
 
 
-def missing_fields(triage: TriageResult, essentials: list[str]) -> list[str]:
+def missing_fields(triage: TriageResult | CoordinationPlan, essentials: list[str]) -> list[str]:
     """O essencial vazio no briefing extraído conta mesmo que o modelo diga que nada falta."""
     briefing = triage.briefing.model_dump()
     empty = {f for f in essentials if not str(briefing.get(f) or "").strip()}
@@ -348,8 +366,12 @@ class StepCaller:
 
 async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     data = await store.load(history_limit=squad.history_limit)
-    item, locale = data.work_item, data.locale
-    delivery_type = item.delivery_type
+    item, locale, step = data.work_item, data.locale, data.step
+    if step is None and item.delivery_type == COORDINATION:
+        return await run_coordination(squad, store, data)
+    delivery_type = step.delivery_type if step is not None else item.delivery_type
+    if step is not None and delivery_type in IMAGE_DELIVERIES:
+        return await run_image_step(squad, store, data)
     spec = delivery_spec(delivery_type)
     if (
         not delivery_type
@@ -400,6 +422,9 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         work_item_id=item.id,
         next_step=t(locale, "work.next.delivers", agent=expert.name, version=data.next_version),
     )
+
+    if step is not None:
+        return await run_step(squad, store, data, calls, ctx, expert_prompt, expert_version)
 
     triage_title = t(locale, "work_item_step.nexo.triage")
     await store.work_step(item.id, triage_title, nexo.id, "in_progress")
@@ -462,10 +487,77 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         }
     )
 
+    return await produce(
+        squad, store, data, calls, ctx, expert_prompt, expert_version, briefing, triage.resumo
+    )
+
+
+async def run_step(
+    squad: Squad,
+    store: RunStore,
+    data: RunData,
+    calls: StepCaller,
+    ctx: RunContext,
+    expert_prompt: SquadPrompt,
+    expert_version: str,
+) -> dict[str, Any]:
+    """Etapa planejada pelo Nexo (01.02): sem nova triagem; o especialista recebe o recorte do
+    pedido para ele e a saída das etapas de que depende (handoff), e entrega para o dono."""
+    item, locale, step = data.work_item, data.locale, data.step
+    assert step is not None
+    expert = expert_prompt.agent
+    lacking = await missing_data(store, step.delivery_type)
+    if lacking:
+        require_tool(expert, "conversas.perguntar")
+        result = await store.ask(
+            work_item=item,
+            agent_id=expert.id,
+            question=t(locale, f"data.missing.{lacking}", brand=data.workspace_name),
+            tool_data={"tool": "conversas.perguntar", "agent_id": expert.id, "faltam": [lacking]},
+            model=expert.model["padrao"],
+            status=status_fields(locale, expert, "wait", "wait_answer"),
+        )
+        return {"outcome": "asked", "missing": [lacking], **result}
+    nexo = squad.loader.agent(COORDINATOR)
+    require_tool(nexo, "squad.delegar")
+    briefing = dict(step.input.get("briefing") or {})
+    instruction = str(step.input.get("instrucao") or step.title)
+    await store.tool_step(
+        {
+            "tool": "squad.delegar",
+            "agent_id": nexo.id,
+            "to": expert.id,
+            "delivery_type": step.delivery_type,
+            "step": step.seq,
+            "briefing": briefing,
+            "resumo": instruction,
+        }
+    )
+    return await produce(
+        squad, store, data, calls, ctx, expert_prompt, expert_version, briefing, instruction
+    )
+
+
+async def produce(
+    squad: Squad,
+    store: RunStore,
+    data: RunData,
+    calls: StepCaller,
+    ctx: RunContext,
+    expert_prompt: SquadPrompt,
+    expert_version: str,
+    briefing: dict[str, Any],
+    handoff: str,
+) -> dict[str, Any]:
+    item, locale = data.work_item, data.locale
+    delivery_type = ctx.delivery_type
+    spec = delivery_spec(delivery_type)
+    assert spec is not None
+    expert = expert_prompt.agent
     produce_title = t(locale, f"work_item_step.produce.{delivery_type}")
     await store.work_step(item.id, produce_title, expert.id, "in_progress")
     gathered = await gather_context(
-        squad, store, calls, expert, item, delivery_type, briefing, data.request
+        squad, store, calls, expert, item, delivery_type, briefing, data.request, data.step
     )
     system = system_blocks(expert_prompt, ctx)
     common = {
@@ -480,7 +572,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         spec.production,
         step=f"{expert.id}.produce",
         kind="llm_call",
-        messages=production_messages(ctx, briefing, triage.resumo, gathered.blocks),
+        messages=production_messages(ctx, briefing, handoff, gathered.blocks),
         schema=spec.production_schema,
         **common,
     )
@@ -553,6 +645,190 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     )
 
 
+async def run_coordination(squad: Squad, store: RunStore, data: RunData) -> dict[str, Any]:
+    """Nexo coordena (01.02): qualifica o pedido, monta a equipe com uma etapa por especialista,
+    cria o projeto com os marcos e põe a primeira etapa na fila. Ninguém produz aqui."""
+    item, locale = data.work_item, data.locale
+    prompt = squad.loader.prompt(COORDINATOR, COORDINATION)
+    nexo = prompt.agent
+    version = await store.ensure_prompt_version(prompt)
+    memory, _ = await store.recall_memory(
+        locale=locale,
+        text=search_text(data.request, item.title, item.briefing, prompt.skill.meta.get("titulo")),
+        budget=squad.memory_budget,
+    )
+    ctx = RunContext(
+        locale=locale,
+        brand_name=data.workspace_name,
+        request=data.request,
+        work_title=item.title,
+        delivery_type=COORDINATION,
+        briefing=item.briefing,
+        history=data.history,
+        memory=memory,
+        learnings=[],
+        feedback=data.feedback,
+    )
+    calls = StepCaller(
+        squad,
+        store,
+        COORDINATION,
+        data.attempts,
+        locale=locale,
+        conversation_id=item.conversation_id,
+        work_item_id=item.id,
+        next_step=t(locale, "work.next.team", agent=nexo.name),
+    )
+    require_tool(nexo, "projetos.planejar_etapas")
+    documents = (
+        await store.approved_documents(["02.04"], item.project_id) if item.project_id else []
+    )
+    blocks = [
+        f"<deliveries_disponiveis>{as_json(available_deliveries(squad.loader))}"
+        "</deliveries_disponiveis>",
+        *(
+            f'<documento_aprovado delivery="{d["delivery_type"]}" versao="{d["version_no"]}">'
+            f"{as_json(d['content'])}</documento_aprovado>"
+            for d in documents
+        ),
+    ]
+    plan = await calls.llm(
+        CoordinationPlan,
+        agent=nexo,
+        version=version,
+        step=f"{nexo.id}.plan",
+        kind="llm_call",
+        model=nexo.model["padrao"],
+        system=system_blocks(prompt, ctx),
+        messages=plan_messages(ctx, prompt.skill, blocks),
+        schema=PLAN_SCHEMA,
+        phrase="organizing",
+        effort=nexo.model.get("effort"),
+    )
+    missing = missing_fields(plan, prompt.skill.essentials)
+    if missing:
+        require_tool(nexo, "conversas.perguntar")
+        fields = "; ".join(triage_field(locale, COORDINATION, f) for f in missing)
+        question = (plan.pergunta or "").strip() or t(
+            locale, "triage.fallback_question", fields=fields
+        )
+        result = await store.ask(
+            work_item=item,
+            agent_id=nexo.id,
+            question=question,
+            tool_data={"tool": "conversas.perguntar", "agent_id": nexo.id, "faltam": missing},
+            model=calls.last_model or nexo.model["padrao"],
+            status=status_fields(locale, nexo, "wait", "wait_answer"),
+        )
+        return {"outcome": "asked", "missing": missing, **result}
+    problems = plan_problems(plan, squad.loader)
+    if problems:
+        raise FlowError("plan_invalid", {"problems": problems})
+    require_tool(nexo, "projetos.criar")
+    require_tool(nexo, "squad.delegar")
+    first = plan.etapas[0]
+    first_agent = squad.loader.agent(first.agente)
+    live = WorkLive(
+        item.id,
+        t(
+            locale,
+            "work.status.step",
+            seq=1,
+            total=len(plan.etapas),
+            agent=first_agent.name,
+            title=first.titulo,
+        ),
+        t(locale, "work.next.step", agent=first_agent.name, title=first.titulo),
+    )
+    result = await store.coordinate(
+        work_item=item,
+        plan=plan,
+        tool_data={
+            "tool": "projetos.planejar_etapas",
+            "agent_id": nexo.id,
+            "etapas": [
+                {
+                    "seq": seq,
+                    "agent_id": s.agente,
+                    "delivery_type": s.delivery,
+                    "depends_on": s.depende_de,
+                }
+                for seq, s in enumerate(plan.etapas, start=1)
+            ],
+        },
+        model=calls.last_model or nexo.model["padrao"],
+        prompt_version=version,
+        live=live,
+    )
+    return {"outcome": "planned", "steps": len(plan.etapas), **result}
+
+
+async def run_image_step(squad: Squad, store: RunStore, data: RunData) -> dict[str, Any]:
+    """Etapa da Kaia (03.01–03.03): o briefing da peça e a identidade da marca vão ao motor de
+    imagem do dono. Sem motor, a etapa aguarda (waiting_engine) sem falhar e sem cobrar."""
+    item, locale, step = data.work_item, data.locale, data.step
+    assert step is not None
+    kaia = squad.loader.agent(data.agent_id)
+    nexo = squad.loader.agent(COORDINATOR)
+    require_tool(kaia, "imagem.gerar")
+    require_tool(nexo, "squad.delegar")
+    await store.work_step(item.id, step.title, kaia.id, "in_progress")
+    await store.tool_step(
+        {
+            "tool": "squad.delegar",
+            "agent_id": nexo.id,
+            "to": kaia.id,
+            "delivery_type": step.delivery_type,
+            "step": step.seq,
+            "briefing": step.input.get("briefing") or {},
+            "resumo": step.input.get("instrucao") or step.title,
+        }
+    )
+    documents = await store.step_outputs(step, item.id)
+    await store.record_handoff(documents)
+    memory, _ = await store.recall_memory(
+        locale=locale,
+        text=search_text(data.request, item.title, item.briefing, step.title),
+        budget=squad.memory_budget,
+    )
+    outcome = await squad.image_engine.generate(
+        ImageRequest(
+            workspace_id=str(store.workspace_id),
+            delivery_type=step.delivery_type,
+            locale=locale,
+            briefing=step.input,
+            brand=BrandIdentity(name=data.workspace_name, facts=[f.content for f in memory]),
+            documents=[
+                {
+                    "delivery_type": d["delivery_type"],
+                    "delivery_version_id": str(d["delivery_version_id"]),
+                }
+                for d in documents
+            ],
+        )
+    )
+    if outcome.status != "waiting_engine":
+        # O motor do dono ainda não está integrado: nenhuma peça é gravada até a Visão homologar.
+        raise FlowError("image_engine_not_integrated", {"engine": outcome.engine})
+    reason = outcome.reason or "image_engine_pending"
+    result = await store.wait_engine(
+        work_item=item,
+        agent_id=kaia.id,
+        message=t(locale, "image.waiting_engine", title=step.title),
+        tool_data={
+            "tool": "imagem.gerar",
+            "agent_id": kaia.id,
+            "engine": outcome.engine,
+            "status": outcome.status,
+            "reason": reason,
+            "documentos": [str(d["delivery_version_id"]) for d in documents],
+        },
+        reason=reason,
+        status=status_fields(locale, kaia, "idle", "wait_engine"),
+    )
+    return {"outcome": "waiting_engine", **result}
+
+
 @dataclass
 class DeliveryContext:
     """O que o fluxo juntou para a delivery antes de produzir e como fecha o conteúdo da versão."""
@@ -604,6 +880,7 @@ async def gather_context(
     delivery_type: str,
     briefing: dict[str, Any],
     request: str,
+    step: WorkStep | None = None,
 ) -> DeliveryContext:
     gathered = DeliveryContext(delivery_type)
     today = datetime.now(DISPLAY_TZ).date()
@@ -614,11 +891,30 @@ async def gather_context(
         gathered.documents = await store.approved_documents(
             PRIOR_DOCUMENTS[delivery_type], item.project_id
         )
-        gathered.blocks += [
-            f'<documento_aprovado delivery="{d["delivery_type"]}" versao="{d["version_no"]}">'
-            f"{as_json(d['content'])}</documento_aprovado>"
-            for d in gathered.documents
+    if step is not None and step.depends_on:
+        # Handoff: a saída das etapas de que esta depende, sem repetir o briefing inteiro.
+        require_tool(expert, "memoria.ler")
+        known = {d["delivery_version_id"] for d in gathered.documents}
+        gathered.documents += [
+            d
+            for d in await store.step_outputs(step, item.id)
+            if d["delivery_version_id"] not in known
         ]
+    gathered.blocks += [
+        f'<documento_aprovado delivery="{d["delivery_type"]}" versao="{d["version_no"]}">'
+        f"{as_json(d['content'])}</documento_aprovado>"
+        for d in gathered.documents
+    ]
+    if step is not None:
+        front = [
+            p
+            for d in gathered.documents
+            if d["delivery_type"] == "02.04"
+            for p in strategy_front(d["content"], expert.id)
+        ]
+        if front:
+            gathered.blocks.append(f"<sua_frente>{as_json(front)}</sua_frente>")
+        await store.record_handoff(gathered.documents)
     if delivery_type == CALENDAR:
         require_tool(expert, "calendario.ler")
         posts = await store.calendar_window(today, today + timedelta(days=CALENDAR_LOOKAHEAD_DAYS))
