@@ -26,6 +26,7 @@ Realtime, eventos do run).
 | P-06 | CRM · frase "Nada é enviado sem consentimento…" | Colada na borda esquerda e no pé do cartão dos números, fora do respiro dos outros blocos | ℹ️ |
 | P-07 | Growth · objeto da conversa do ambiente | Nome "Growth Marketing" no nome acessível do botão e no cartão; na V4.6 o objeto se chama "Growth" (`ENVS.media.l`) | ℹ️ |
 | P-08 | Conversas de objeto novas (Indicador na tela; Publicação e Oportunidade pelo código) | Abrem mudas: sem "Hoje", sem a primeira fala do agente, sem o cartão do objeto no histórico e sem "Pergunte à <Nome>"; a V4.6 abre cada uma com fala, cartão e três sugestões do tipo | 🟡 |
+| P-11 | Conversa do indicador · coluna "Contexto da conversa" | Sem o número, a variação e a curva do indicador e sem a linha "setembro · comparado com agosto" abaixo do título; "Voltar para Resultados" vai para o pé da coluna | 🟡 |
 | P-09 | Documento (Bia, Íris, Kiwi, Max) · cartão da decisão | Falta a regra da V4.4 "Aprovar o diagnóstico não cria trabalhos…" / "Aprovar o plano define a direção…"; no lugar, textos da legenda do Otto: "…com a legenda à vista." e, aprovado, "Aprovar não publica: a publicação pede autorização própria." | 🟡 |
 | P-10 | Documento · migalha, botão de conversa e cartão extra | Migalha com o título do trabalho ("Quero analisar meu negócio") e o h1 com o do documento (na V4.6 os dois são `bd.title`); "Conversar com a Bia" no lugar de "Conversar sobre o diagnóstico"/"…as prioridades"; cartão com o rosto "Bia" que a V4.6 não tem | ℹ️ |
 
@@ -167,6 +168,24 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 6. **Severidade:** 🟡. **Conferido:** A2b §4 item 2 (sem fala roteirizada) é só a conversa do **pedido**; item 5 é só a
    hora da primeira fala do **ambiente**; item 6 é a faixa de período. A1b §4 item 9 cobre a conversa do conhecimento
    da Memória. Nenhum registra que as conversas de indicador, publicação e oportunidade abrem vazias.
+
+### P-11 · Coluna "Contexto da conversa" do indicador sem o número · 🟡
+
+1. **Tela e rota:** Resultados → conversa do indicador "Pedidos" → "Expandir a conversa" (coluna aberta como vem).
+2. **Protótipo:** a coluna do objeto Indicador abre com o cartão do número (`hasBig: !cx.p && !!cx.big`, `big`,
+   `bigD`, L10910; para o indicador, `big: v[0], bigD: v[1]` e `meta: P.l + ' · comparado com ' + P.cmpL`, L9806): "128",
+   "+18%" e a curva; depois "Encomendas pelo site" e "setembro · comparado com agosto"; os fatos "Ambiente", "Tipo",
+   "Período", "Negócio", "Origem"; "Íris · responde · Resultados"; "Voltar para Resultados" logo abaixo (FLUXOS §4.3
+   item 3).
+3. **Nosso:** `apps/web/components/product/ConversationPanel.tsx:788-791` monta a coluna com o rótulo, o título
+   ("Pedidos") e `ctx.meta ?? apiCtx?.summary` (vazio para indicador): sem número, sem variação, sem curva e sem a linha
+   de comparação; os fatos e "Íris · responde · Resultados" batem; "Voltar para Resultados" desce para o pé da coluna
+   (y≈730 contra y≈631 no protótipo), com um vão vazio no meio.
+4. **Como reproduzir:** Marina → Resultados → "Analisar Pedidos com Íris" → "Expandir a conversa".
+5. **Prova:** `proto-indicador-contexto.png` × `nosso-indicador-contexto.png` (coluna da direita).
+6. **Severidade:** 🟡. **Conferido:** A2b §1 item 5 diz que a coluna mostra "período, origem e o resumo que a API
+   devolve"; a §4 só registra os rótulos novos "Segmento" e "Documento" (item 8) e o rótulo do período (item 27). O
+   número do indicador fora da coluna não está registrado.
 
 ### P-09 · Cartão da decisão do documento sem a regra "aprovar não cria trabalhos" e com texto da legenda · 🟡
 

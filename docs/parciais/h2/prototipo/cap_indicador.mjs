@@ -31,9 +31,12 @@ await p.locator("main button.rs-k-ask").first().click(); await wait(side === "pr
 await p.screenshot({ path: `${shots}/${side}-ind-painel.png` });
 out.painel = await txt("section[aria-label=Conversa], .ps-cv, aside.ps-conv, [class*=ps-cvp]");
 await p.locator('button[aria-label="Expandir a conversa"]').first().click(); await wait(1500);
+// com --trilho, não mexe no botão "Mostrar o contexto" (a coluna "Contexto da conversa" fica como abre)
+const keepRail = process.argv.includes("--trilho");
 const rail = p.locator('button[aria-label="Mostrar o contexto"]');
-if (await rail.count() && await rail.first().isVisible()) { await rail.first().click(); await wait(800); }
-await p.screenshot({ path: `${shots}/${side}-ind-tela-cheia.png` });
+if (!keepRail && await rail.count() && await rail.first().isVisible()) { await rail.first().click(); await wait(800); }
+await p.mouse.move(700, 450);
+await p.screenshot({ path: `${shots}/${side}-ind-tela-cheia${keepRail ? "-trilho" : ""}.png` });
 out.cheia = await p.evaluate(() => document.body.innerText.slice(0, 6000));
 fs.writeFileSync(`/tmp/h2_proto_ind_${side}.json`, JSON.stringify(out, null, 1));
 console.log("ok", side);
