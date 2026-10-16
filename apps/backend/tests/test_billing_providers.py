@@ -27,6 +27,7 @@ from hellosquad.billing.mock import MockProvider, mock_signature
 from hellosquad.billing.provider import (
     CardToken,
     CustomerData,
+    InvalidWebhookPayload,
     InvalidWebhookSignature,
     PaymentProviderError,
     scrub,
@@ -364,6 +365,13 @@ async def test_mercadopago_webhook_signature_and_resource_lookup(fakes, http) ->
     ):
         with pytest.raises(InvalidWebhookSignature):
             await provider.parse_webhook(headers=bad_headers, query=bad_query, body=bad_body)
+
+    swapped = json.loads(body)
+    swapped["data"]["id"] = "999"
+    with pytest.raises(InvalidWebhookPayload):
+        await provider.parse_webhook(
+            headers=headers, query=query, body=json.dumps(swapped).encode()
+        )
 
     upper_query, upper_headers, upper_body = fake_mp.webhook("payment", "ABC123")
     upper_query["data.id"] = "ABC123"

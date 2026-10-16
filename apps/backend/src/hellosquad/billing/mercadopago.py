@@ -314,7 +314,11 @@ class MercadoPagoProvider:
         if not isinstance(data, dict):
             raise InvalidWebhookPayload("corpo não é objeto")
         topic = data.get("type") or query.get("type")
-        resource_id = (data.get("data") or {}).get("id") or data_id
+        body_id = (data.get("data") or {}).get("id")
+        # A assinatura cobre o data.id da query, não o corpo: vale o id assinado.
+        if data_id and body_id is not None and str(body_id).lower() != data_id.lower():
+            raise InvalidWebhookPayload("data.id do corpo diferente do data.id assinado")
+        resource_id = data_id or body_id
         if not isinstance(topic, str) or not topic or resource_id is None:
             raise InvalidWebhookPayload("notificação sem tipo ou sem data.id")
         resource_id = str(resource_id)
