@@ -1,0 +1,26 @@
+# Roteiro do SETUP_LOCAL §E-mail transacional (S2f), executado em 16/10/2026 18:40
+$ psql -c "insert into public.invitations ... nova.pessoa@miolo.example ..."
+INSERT 0 1
+$ (cd apps/backend && uv run hellosquad-worker --drain)
+2026-10-16 18:40:33,942 INFO hellosquad.worker: e-mails: 50 mensagem(ns) tratada(s) ['sent', 'sent', … (lista cortada pelo roteiro; conferência no banco abaixo)
+$ curl -s 'http://127.0.0.1:56324/api/v1/search?query=to:nova.pessoa@miolo.example'
+3z4cG8JG4V7bTFiunRoBa5 | nova.pessoa@miolo.example | Marina Costa convidou você para Miolo no HelloSquad
+$ psql -c "select template, locale, status, attempts, provider_message_id from public.email_messages where recipient_email = 'nova.pessoa@miolo.example'"
+  template  | locale | status | attempts | provider |  provider_message_id   
+------------+--------+--------+----------+----------+------------------------
+ invitation | pt-BR  | sent   |        1 | mailpit  | 3z4cG8JG4V7bTFiunRoBa5
+(1 row)
+
+$ psql -c "select status, count(*) from public.email_messages group by 1"
+ status | count 
+--------+-------
+ queued |    22
+ sent   |    66
+(2 rows)
+
+$ psql -c "select status, count(*) from public.email_messages where updated_at entre 18:40:30 e 18:40:40 group by 1"
+ status | count 
+--------+-------
+ sent   |    50
+(1 row)
+
