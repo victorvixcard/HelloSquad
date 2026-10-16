@@ -6,13 +6,40 @@ import { useLive } from "@/components/product/live";
 import { useShell } from "@/components/product/shell-context";
 import { CapCatalog } from "./CapCatalog";
 
+/**
+ * A conversa do ambiente (V4.6 `_openCtx('env', id)`, L9776): uma por ambiente e separada da direta, com a primeira
+ * fala do agente e as sugestões do ambiente (API da S2a, `context_type: environment`). O objeto leva o nome curto do
+ * ambiente, o mesmo da barra lateral (V4.6 `ENVS[id].l`; "Growth" na Kiwi, H2-31); o título da tela segue a área
+ * ("Growth Marketing", decisão do dono).
+ */
+export function useEnvConversation(agent: AgentId, business: string) {
+  const t = useTranslations("pages.env");
+  const ts = useTranslations("shell");
+  const shell = useShell();
+  const member = getAgent(agent);
+  const name = ts(`areas.${agent}`);
+  const open = () =>
+    shell.openConversation({
+      conversationId: null,
+      agent,
+      context: {
+        kind: "env",
+        label: name,
+        href: `/app/${shell.workspace.slug}/squad/${agent}`,
+        meta: `${member.name} ${t(`describe.${agent}`, { business })}`,
+        ref: { type: "environment", key: agent, title: name },
+      },
+    });
+  return { name, open };
+}
+
 /** Camada de identidade dos ambientes V4: o especialista, o título, uma frase, o catálogo do que pedir e a conversa do ambiente. */
 export function EnvIdentity({ agent, business }: { agent: AgentId; business: string }) {
   const t = useTranslations("pages.env");
   const tc = useTranslations("common");
-  const shell = useShell();
   const member = getAgent(agent);
   const area = tc(`areas.${agent}`);
+  const env = useEnvConversation(agent, business);
   // V4.6 `_vId` (L10569): o rosto segue o modo ao vivo do especialista: "big" quando aguarda você, olhos
   // trabalhando quando está numa etapa (runs e pendências pelo Realtime).
   const mode = useLive().modes[agent];
@@ -28,26 +55,8 @@ export function EnvIdentity({ agent, business }: { agent: AgentId; business: str
         </p>
       </div>
       <CapCatalog agent={agent} />
-      <button
-        type="button"
-        className="hm-btn is-dark is-s v4-talk"
-        aria-label={t("talkAria", { name: member.name, area })}
-        onClick={() =>
-          // H1-04 (V4.6 L10572, `_openCtx('env')`): a conversa do ambiente, uma por ambiente e separada da direta, com a
-          // primeira fala do agente e as sugestões do ambiente (API da S2a, `context_type: environment`).
-          shell.openConversation({
-            conversationId: null,
-            agent,
-            context: {
-              kind: "env",
-              label: area,
-              href: `/app/${shell.workspace.slug}/squad/${agent}`,
-              meta: `${member.name} ${t(`describe.${agent}`, { business })}`,
-              ref: { type: "environment", key: agent, title: area },
-            },
-          })
-        }
-      >
+      {/* H1-04 (V4.6 L10572): "Conversar com <Nome> sobre <ambiente>, ao lado", com o nome curto do ambiente. */}
+      <button type="button" className="hm-btn is-dark is-s v4-talk" aria-label={t("talkAria", { name: member.name, area: env.name })} onClick={env.open}>
         <svg className="sb-ic" viewBox="0 0 18 18" aria-hidden="true">
           <path d={PRODUCT_ICONS.ask} />
         </svg>
