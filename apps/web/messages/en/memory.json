@@ -3,6 +3,15 @@
   "sub": "What your squad knows about you and your business.",
   "search": "Search memory",
   "add": "Add knowledge",
+  "addForm": {
+    "ask": "What does the squad need to know?",
+    "placeholder": "E.g., the store closes at 1 p.m. on Sundays",
+    "area": "Topic",
+    "cancel": "Cancel",
+    "save": "Save",
+    "note": "It goes in as stated by you, already confirmed. The whole squad starts using it.",
+    "saved": "Saved to Brand Memory. The whole squad starts using it."
+  },
   "unavailableApi": "Brand Memory didn’t respond just now. Nothing was changed; try again in a moment.",
   "dossier": {
     "know": "What the squad knows",
@@ -58,7 +67,7 @@
     "talk": "Talk about this"
   },
   "toast": {
-    "confirmed": "Confirmed. The whole squad uses it now.",
+    "confirmed": "Confirmed. The whole squad starts using it.",
     "corrected": "Corrected. The squad uses the new version.",
     "discarded": "Discarded. It won’t become a rule and no one on the squad uses it.",
     "resolved": "Conflict resolved. The other version leaves memory."
@@ -150,7 +159,7 @@
     "unavailable": "Unavailable"
   },
   "sourceKinds": {
-    "onboarding": "Onboarding",
+    "onboarding": "Sign-up",
     "conversation": "Conversations",
     "correction": "Stated by you",
     "approval": "Conversations",
