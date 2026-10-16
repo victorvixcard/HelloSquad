@@ -116,7 +116,7 @@ async def _ensure_owner(conn, workspace_id: UUID) -> None:
 @router.get(
     "/workspaces/{workspace_id}/billing/subscription",
     summary="Estado da assinatura e próximo ciclo (só o owner; sem valores em dinheiro)",
-    responses=error_responses(401, 403, 404, 503),
+    responses=error_responses(401, 403, 404, 422, 503),
 )
 async def get_subscription(
     workspace_id: UUID, principal: CurrentPrincipal, db: DatabaseDep

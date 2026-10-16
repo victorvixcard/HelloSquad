@@ -5103,6 +5103,293 @@
         }
       }
     },
+    "/billing/webhooks/{provider}": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Webhook de pagamento (Asaas, Mercado Pago, simulado): idempotente por event_id",
+        "description": "Sem token de usuário: a origem é verificada pela assinatura do provedor (Asaas: `asaas-access-token`; Mercado Pago: `x-signature` e `x-request-id`; simulado: `x-mock-signature`). Evento repetido responde 200 com `duplicate: true` e não repete efeito.",
+        "operationId": "receive_webhook_billing_webhooks__provider__post",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "asaas",
+                "mercadopago",
+                "mock"
+              ],
+              "type": "string",
+              "title": "Provider"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookReceipt"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/billing/subscription": {
+      "get": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Estado da assinatura e próximo ciclo (só o owner; sem valores em dinheiro)",
+        "operationId": "get_subscription_workspaces__workspace_id__billing_subscription_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionState"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/billing/payments": {
+      "get": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Histórico de pagamentos (só o owner; créditos e estado, sem valores em dinheiro)",
+        "operationId": "list_payments_workspaces__workspace_id__billing_payments_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Valor de `next_cursor` da página anterior. Vazio = primeira página.",
+              "title": "Cursor"
+            },
+            "description": "Valor de `next_cursor` da página anterior. Vazio = primeira página."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Itens por página (1 a 100).",
+              "default": 20,
+              "title": "Limit"
+            },
+            "description": "Itens por página (1 a 100)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -10053,6 +10340,149 @@
         ],
         "title": "Participant"
       },
+      "PaymentItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "subscription_cycle",
+              "topup"
+            ],
+            "title": "Kind"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "card",
+              "pix"
+            ],
+            "title": "Method"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "confirmed",
+              "overdue",
+              "failed",
+              "refunded",
+              "charged_back",
+              "cancelled"
+            ],
+            "title": "Status"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "asaas",
+              "mercadopago",
+              "mock"
+            ],
+            "title": "Provider"
+          },
+          "credits": {
+            "type": "number",
+            "title": "Credits",
+            "description": "Créditos que a confirmação concede."
+          },
+          "credits_revoked": {
+            "type": "number",
+            "title": "Credits Revoked",
+            "description": "Créditos retirados por estorno ou contestação."
+          },
+          "period_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start",
+            "description": "Ciclo coberto (assinatura)."
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "method",
+          "status",
+          "provider",
+          "credits",
+          "credits_revoked",
+          "period_start",
+          "period_end",
+          "confirmed_at",
+          "created_at"
+        ],
+        "title": "PaymentItem"
+      },
+      "PaymentPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentItem"
+            },
+            "type": "array",
+            "title": "Items",
+            "description": "O mais novo primeiro. Sem valor em dinheiro: preço e plano ficam em tabela, provisórios (dono, 16/10)."
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "PaymentPage"
+      },
       "PendingApprovalSummary": {
         "properties": {
           "id": {
@@ -11242,6 +11672,149 @@
         ],
         "title": "SquadStatus"
       },
+      "SubscriptionState": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "none",
+              "pending",
+              "active",
+              "past_due",
+              "cancelled"
+            ],
+            "title": "Status",
+            "description": "none: sem assinatura; pending: aguardando o primeiro pagamento; past_due: o período pago acabou sem o próximo ciclo confirmado (nada é bloqueado)."
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan",
+            "description": "Nome do plano assinado.",
+            "examples": [
+              "Squad"
+            ]
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional",
+            "description": "Sem valor em dinheiro: preço e plano ficam em tabela, provisórios (dono, 16/10)."
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "asaas",
+                  "mercadopago",
+                  "mock"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
+          "method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "card",
+                  "pix"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Method"
+          },
+          "current_period_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Period Start"
+          },
+          "current_period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Period End",
+            "description": "Fim do período pago."
+          },
+          "next_cycle_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cycle At",
+            "description": "Quando começa o próximo ciclo (nulo se cancelada ou sem assinatura)."
+          },
+          "past_due_since": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Past Due Since"
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "plan",
+          "provisional",
+          "provider",
+          "method",
+          "current_period_start",
+          "current_period_end",
+          "next_cycle_at",
+          "past_due_since",
+          "cancelled_at"
+        ],
+        "title": "SubscriptionState"
+      },
       "UnreadCount": {
         "properties": {
           "conversations": {
@@ -11348,6 +11921,46 @@
           "full_name"
         ],
         "title": "User"
+      },
+      "WebhookReceipt": {
+        "properties": {
+          "received": {
+            "type": "boolean",
+            "const": true,
+            "title": "Received",
+            "default": true
+          },
+          "result": {
+            "type": "string",
+            "const": "SUCCESS",
+            "title": "Result",
+            "description": "Fila do Asaas com apiVersion antiga só aceita resposta com SUCCESS no corpo.",
+            "default": "SUCCESS"
+          },
+          "duplicate": {
+            "type": "boolean",
+            "title": "Duplicate",
+            "description": "Evento já recebido antes: nada foi aplicado de novo."
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "received",
+              "applied",
+              "no_change",
+              "ignored",
+              "needs_review"
+            ],
+            "title": "Outcome",
+            "description": "applied: mudou cobrança, assinatura ou créditos; no_change: estado igual ou fora de ordem; ignored: cobrança ou assinatura que não é desta plataforma; needs_review: conciliação à mão (estorno parcial)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "duplicate",
+          "outcome"
+        ],
+        "title": "WebhookReceipt"
       },
       "WorkItem": {
         "properties": {

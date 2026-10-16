@@ -850,6 +850,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/billing/webhooks/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Webhook de pagamento (Asaas, Mercado Pago, simulado): idempotente por event_id
+         * @description Sem token de usuário: a origem é verificada pela assinatura do provedor (Asaas: `asaas-access-token`; Mercado Pago: `x-signature` e `x-request-id`; simulado: `x-mock-signature`). Evento repetido responde 200 com `duplicate: true` e não repete efeito.
+         */
+        post: operations["receive_webhook_billing_webhooks__provider__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/billing/subscription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Estado da assinatura e próximo ciclo (só o owner; sem valores em dinheiro) */
+        get: operations["get_subscription_workspaces__workspace_id__billing_subscription_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/billing/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Histórico de pagamentos (só o owner; créditos e estado, sem valores em dinheiro) */
+        get: operations["list_payments_workspaces__workspace_id__billing_payments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -2866,6 +2920,68 @@ export interface components {
             user_id: string | null;
             agent_id: components["schemas"]["AgentId"] | null;
         };
+        /** PaymentItem */
+        PaymentItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "subscription_cycle" | "topup";
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "card" | "pix";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "confirmed" | "overdue" | "failed" | "refunded" | "charged_back" | "cancelled";
+            /**
+             * Provider
+             * @enum {string}
+             */
+            provider: "asaas" | "mercadopago" | "mock";
+            /**
+             * Credits
+             * @description Créditos que a confirmação concede.
+             */
+            credits: number;
+            /**
+             * Credits Revoked
+             * @description Créditos retirados por estorno ou contestação.
+             */
+            credits_revoked: number;
+            /**
+             * Period Start
+             * @description Ciclo coberto (assinatura).
+             */
+            period_start: string | null;
+            /** Period End */
+            period_end: string | null;
+            /** Confirmed At */
+            confirmed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** PaymentPage */
+        PaymentPage: {
+            /**
+             * Items
+             * @description O mais novo primeiro. Sem valor em dinheiro: preço e plano ficam em tabela, provisórios (dono, 16/10).
+             */
+            items: components["schemas"]["PaymentItem"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** PendingApprovalSummary */
         PendingApprovalSummary: {
             /**
@@ -3365,6 +3481,46 @@ export interface components {
              */
             agents: components["schemas"]["AgentStatus"][];
         };
+        /** SubscriptionState */
+        SubscriptionState: {
+            /**
+             * Status
+             * @description none: sem assinatura; pending: aguardando o primeiro pagamento; past_due: o período pago acabou sem o próximo ciclo confirmado (nada é bloqueado).
+             * @enum {string}
+             */
+            status: "none" | "pending" | "active" | "past_due" | "cancelled";
+            /**
+             * Plan
+             * @description Nome do plano assinado.
+             * @example Squad
+             */
+            plan: string | null;
+            /**
+             * Provisional
+             * @description Sem valor em dinheiro: preço e plano ficam em tabela, provisórios (dono, 16/10).
+             */
+            provisional: boolean;
+            /** Provider */
+            provider: ("asaas" | "mercadopago" | "mock") | null;
+            /** Method */
+            method: ("card" | "pix") | null;
+            /** Current Period Start */
+            current_period_start: string | null;
+            /**
+             * Current Period End
+             * @description Fim do período pago.
+             */
+            current_period_end: string | null;
+            /**
+             * Next Cycle At
+             * @description Quando começa o próximo ciclo (nulo se cancelada ou sem assinatura).
+             */
+            next_cycle_at: string | null;
+            /** Past Due Since */
+            past_due_since: string | null;
+            /** Cancelled At */
+            cancelled_at: string | null;
+        };
         /** UnreadCount */
         UnreadCount: {
             /** Conversations */
@@ -3408,6 +3564,33 @@ export interface components {
              * @description Idioma escolhido pela pessoa (cadastro, user_metadata.locale); null usa o do negócio.
              */
             locale?: ("pt-BR" | "en" | "es") | null;
+        };
+        /** WebhookReceipt */
+        WebhookReceipt: {
+            /**
+             * Received
+             * @default true
+             * @constant
+             */
+            received: true;
+            /**
+             * Result
+             * @description Fila do Asaas com apiVersion antiga só aceita resposta com SUCCESS no corpo.
+             * @default SUCCESS
+             * @constant
+             */
+            result: "SUCCESS";
+            /**
+             * Duplicate
+             * @description Evento já recebido antes: nada foi aplicado de novo.
+             */
+            duplicate: boolean;
+            /**
+             * Outcome
+             * @description applied: mudou cobrança, assinatura ou créditos; no_change: estado igual ou fora de ordem; ignored: cobrança ou assinatura que não é desta plataforma; needs_review: conciliação à mão (estorno parcial).
+             * @enum {string}
+             */
+            outcome: "received" | "applied" | "no_change" | "ignored" | "needs_review";
         };
         /** WorkItem */
         WorkItem: {
@@ -7374,6 +7557,203 @@ export interface operations {
             };
             /** @description Token ausente, inválido ou expirado. */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    receive_webhook_billing_webhooks__provider__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: "asaas" | "mercadopago" | "mock";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebhookReceipt"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_subscription_workspaces__workspace_id__billing_subscription_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionState"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_payments_workspaces__workspace_id__billing_payments_get: {
+        parameters: {
+            query?: {
+                /** @description Valor de `next_cursor` da página anterior. Vazio = primeira página. */
+                cursor?: string | null;
+                /** @description Itens por página (1 a 100). */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentPage"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
