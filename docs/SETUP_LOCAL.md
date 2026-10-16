@@ -314,6 +314,48 @@ curl -s -G $API/workspaces/$WS/memory/search --data-urlencode 'q=nao usar' -H "$
 
 Rotas novas: `GET /workspaces/{id}/conversations/unread`, `POST /conversations/{id}/read`, `POST /messages/{id}/reply`, `POST /memory/facts/{id}/state`, `POST /workspaces/{id}/memory/facts`, `POST /memory/suggestions/{id}/seen`, `PUT /workspaces/{id}/memory/profile`. Saída de um roteiro completo contra a API local em `docs/parciais/s1f/curl_conversa.txt`.
 
+### Trabalho rico (S1g)
+
+Frase viva, próximo passo, prazo, origem e histórico do trabalho; "Agora não" na autorização; projeto com datas, equipe e marcos; "Precisa de você" com "Em seguida"; status vivo do squad. Com as variáveis do bloco da S1b (`API`, `AUTH`, `JSON`, `WS` da Miolo):
+
+```bash
+# 1. O trabalho do seed: frase e próximo passo do estado, origem resolvida e histórico legível
+curl -s $API/work-items/5eed0000-0000-4000-8000-000000000301 -H "$AUTH"
+# "status_label": "v1 aguarda sua aprovação", "next_step": "Aprovar a v1", "awaiting_you": true,
+# "origin": {"type": "message", "conversation_kind": "agent_direct", "agent_id": "otto", …},
+# "history": [{"text": "Você pediu na conversa com o Otto", …}, {"text": "v1 entregue", "mark_label": "automático", …}]
+
+# 2. "Precisa de você": count só do que depende da pessoa agora; adiadas e "Em seguida" à parte
+curl -s $API/workspaces/$WS/needs -H "$AUTH"          # {"count": 1, "deferred_count": 0, "items": [{"type": "review", …}]}
+
+# 3. "Agora não" numa autorização (owner; só `authorize`): continua pendente, sem decisão, sai da contagem.
+#    "Decidir agora" volta a pedir. Nenhum run nasce e nada é cobrado.
+curl -s -X POST $API/approvals/<id da autorização>/defer -H "$AUTH" -H "$JSON" -d '{}'
+curl -s -X POST $API/approvals/<id da autorização>/resume -H "$AUTH"
+curl -s "$API/workspaces/$WS/approvals?status=pending&include_deferred=true" -H "$AUTH"   # as adiadas também
+
+# 4. Projeto com datas e equipe (editor ou acima); quem conduz entra sozinho na equipe
+P=$(curl -s -X POST $API/workspaces/$WS/projects -H "$AUTH" -H "$JSON" -d '{"name":"Campanha de Natal",
+  "starts_at":"2026-10-05T09:00:00-03:00","ends_at":"2026-12-20T18:00:00-03:00",
+  "participants":[{"agent_id":"bia","responsibility":"estratégia e conceito"}]}' | python3 -c 'import sys,json; print(json.load(sys.stdin)["id"])')
+curl -s -X POST $API/projects/$P/milestones -H "$AUTH" -H "$JSON" \
+  -d '{"title":"Revisão das peças","agent_id":"kaia","due_at":"2026-10-22T09:00:00-03:00","needs_you":true}'
+curl -s -X PATCH $API/projects/$P -H "$AUTH" -H "$JSON" -d '{"ends_at":null}'      # só o que vem muda
+curl -s "$API/workspaces/$WS/milestones?days=10" -H "$AUTH"                        # "Próximos marcos"
+
+# 5. Status vivo dos sete (modos da V4.6, mesma regra do status ao vivo do web)
+curl -s $API/workspaces/$WS/squad/status -H "$AUTH"
+# nexo live "coordenando" · otto wait "Otto · aguarda sua aprovação" · os outros idle "disponível"
+```
+
+**Frase viva e próximo passo**: o worker escreve a do agente em cada etapa ("Nexo organizando seu pedido", "Otto criando a primeira versão" · "Otto entrega a v1"); quando o trabalho muda de estado sem o agente reescrever, as colunas voltam a nulo e a API devolve a do estado, pelo catálogo do backend no idioma do workspace ("v2 aguarda sua aprovação" · "Aprovar a v2 até sex, 16/10"; "Aprovado. Falta decidir a publicação." · "Autorizar ou não a publicação"; "v2 aprovada · publicação não autorizada" · "Publicação quando você quiser").
+
+**Origem** (`origin.type`): `message` (pedido na conversa), `insight` (pedido na conversa de um "<Agente> percebeu"), `project` (pedido na conversa do projeto: o trabalho entra no projeto, o especialista na equipe e o trabalho vira marco) e `routine_run` (código da execução, Fase 3).
+
+**Realtime**: além de `approval.created` e `approval.<status>`, o canal do workspace recebe `approval.deferred` (`status: deferred`; a faixa tira o item) e `approval.resumed` (`status: pending`; volta).
+
+Rotas novas: `GET /workspaces/{id}/needs`, `GET /workspaces/{id}/squad/status`, `POST /approvals/{id}/defer`, `POST /approvals/{id}/resume`, `POST /workspaces/{id}/projects`, `PATCH /projects/{id}`, `PUT /projects/{id}/participants`, `POST /projects/{id}/milestones`, `PATCH /milestones/{id}`, `GET /workspaces/{id}/milestones`. Saída de um roteiro completo contra a API local em `docs/parciais/s1g/curl_trabalho_rico.txt`.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
