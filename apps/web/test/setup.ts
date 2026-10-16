@@ -24,3 +24,12 @@ vi.mock("@/app/app/[workspace]/actions", () => ({
   createDirectConversationAction: vi.fn(),
 }));
 vi.mock("@/lib/auth-actions", () => ({ signOut: vi.fn() }));
+
+// jsdom não tem ResizeObserver (o Início mede a composição como o protótipo).
+if (!("ResizeObserver" in globalThis)) {
+  (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}

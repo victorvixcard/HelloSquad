@@ -4,7 +4,7 @@ import { Agent, getAgent, Icon, NAV_ICONS, PRODUCT_ICONS, SQUAD, type AgentId, t
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createDirectConversationAction, sendMessageAction } from "@/app/app/[workspace]/actions";
 import { useShell } from "@/components/product/shell-context";
 import { SquadStage } from "./SquadStage";
@@ -78,8 +78,49 @@ export function HomeView({ firstName, business, needs, inProgress, actions }: Ho
   const estMain = short ? 406 : 463;
   const estGrid = short ? 300 : 320;
   const gapN = short ? 14 : 18;
-  const topE = Math.max(minT, Math.round((H - estMain - gapN - estGrid) / 2));
-  const topM = Math.max(minT, Math.round((H - estMain) * 0.47));
+  const [measured, setMeasured] = useState<{ e: number; m: number } | null>(null);
+  const inputRef = useRef(input);
+  inputRef.current = input;
+  const taH1 = useRef(0);
+  const topE = measured?.e ?? Math.max(minT, Math.round((H - estMain - gapN - estGrid) / 2));
+  const topM = measured?.m ?? Math.max(minT, Math.round((H - estMain) * 0.47));
+
+  // O topo medido, como o _homeLayout() do protótipo: a composição inteira fica no centro da área útil;
+  // o campo que cresce não conta (o topo fica parado enquanto se escreve); os resumos contam fechados.
+  useEffect(() => {
+    const sc = document.querySelector<HTMLElement>(".ps-main .ps-scroll");
+    const main = document.querySelector<HTMLElement>(".hm-main");
+    const grid = document.querySelector<HTMLElement>(".hm-grid");
+    if (!sc || !main || !grid) return;
+    const measure = () => {
+      const Hs = sc.clientHeight;
+      if (Hs < 200) return;
+      const taw = main.querySelector<HTMLElement>(".hm-ta-w");
+      if (taw && !inputRef.current) taH1.current = taw.offsetHeight;
+      const extra = taw && taH1.current ? Math.max(0, taw.offsetHeight - taH1.current) : 0;
+      const mainH = main.offsetHeight - extra;
+      const left = grid.firstElementChild as HTMLElement | null;
+      const side = grid.querySelector<HTMLElement>(".hm-side");
+      let gridH = grid.offsetHeight;
+      if (left && side && left !== side && Math.abs(left.offsetTop - side.offsetTop) < 2) {
+        const hs = side.querySelectorAll<HTMLElement>(".hm-card-h");
+        let sh = 0;
+        hs.forEach((h) => (sh += h.offsetHeight));
+        sh += (parseFloat(getComputedStyle(side).rowGap) || 0) * Math.max(0, hs.length - 1);
+        gridH = Math.max(left.offsetHeight, sh);
+      }
+      const shortS = window.innerHeight < 860;
+      const minS = shortS ? 16 : 24;
+      const gap = shortS ? 14 : 18;
+      const e = Math.max(minS, Math.round((Hs - mainH - gap - gridH) / 2));
+      const m = Math.max(minS, Math.round((Hs - mainH) * 0.47));
+      setMeasured((prev) => (prev && Math.abs(prev.e - e) <= 1 && Math.abs(prev.m - m) <= 1 ? prev : { e, m }));
+    };
+    const ro = new ResizeObserver(measure);
+    [main, grid, sc].forEach((el) => ro.observe(el));
+    measure();
+    return () => ro.disconnect();
+  }, [shell.conversation.mode]);
 
   function toggleAgent(a: AgentId) {
     setSel((prev) => {
