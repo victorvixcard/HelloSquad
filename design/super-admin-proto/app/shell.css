@@ -87,6 +87,9 @@ a{color:inherit}
 /* A · Branco elevado (operação) */
 .sa-card{position:relative;min-width:0;border-radius:var(--r-painel-s);background:var(--hs-branco);box-shadow:0 0 0 1px rgba(15,13,34,.08),0 22px 44px -36px rgba(15,13,34,.45)}
 .sa-card+.sa-card,.sa-card+.sa-row,.sa-row+.sa-card,.sa-row+.sa-row,.sa-mets+.sa-card,.sa-mets+.sa-row,.sa-tabs-w+.sa-card,.sa-note+.sa-card,.sa-card+.sa-note,.sa-note+.sa-row,.sa-tool+.sa-card,.sa-grp+.sa-card,.sa-card+.sa-grp,.sa-sec+.sa-sec{margin-top:16px}
+.sa-row>.sa-card+.sa-card,.sa-row>.sa-grp+.sa-grp,.sa-row>.sa-card+.sa-grp,.sa-row>.sa-grp+.sa-card{margin-top:0}
+.sa-grp+.sa-mets,.sa-card+.sa-mets,.sa-note+.sa-mets,.sa-row+.sa-mets,.sa-mets+.sa-grp,.sa-mets+.sa-note,.sa-grp+.sa-grp,.sa-grp+.sa-row,.sa-row+.sa-grp,.sa-row+.sa-note{margin-top:16px}
+.sa-row.is-eq{align-items:stretch}
 .sa-card-h{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0;padding:16px 18px 10px 20px}
 .sa-card-t{min-width:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .sa-card-t>h2,.sa-card-t>h3{font-size:15.5px;font-weight:800;letter-spacing:-.01em}
@@ -239,6 +242,24 @@ textarea.sa-inp{height:auto;min-height:120px;padding:12px 14px;line-height:1.55;
 .sa-bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--hs-tinta)}
 .sa-biz{width:36px;height:36px;flex:none;border-radius:11px;background:var(--hs-nevoa);color:var(--hs-tinta);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}
 .sa-biz.is-l{width:54px;height:54px;border-radius:17px;font-size:22px}
+
+/* ================================================= texto de prompt (markdown mínimo) e blocos montados */
+.sa-md{display:flex;flex-direction:column;gap:10px;font-size:14.5px;line-height:1.55;color:var(--hs-tinta)}
+.sa-md ul,.sa-md ol{display:flex;flex-direction:column;gap:6px;padding-left:20px}
+.sa-md ul{list-style:disc}
+.sa-md ol{list-style:decimal}
+.sa-md li::marker{color:var(--hs-rotulo)}
+.sa-md code{font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:1px 5px;border-radius:5px;background:var(--hs-nevoa)}
+.sa-var{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--hs-l2);font-family:'JetBrains Mono',monospace;font-size:11.5px;vertical-align:1px}
+.sa-md .sa-pre{font-size:12px}
+.sa-blk{border-radius:18px;background:var(--hs-papel);overflow:hidden}
+.sa-blk+.sa-blk{margin-top:10px}
+.sa-blk-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px 0}
+.sa-blk-h>b{font-size:13.5px;font-weight:800}
+.sa-blk .sa-pre{max-height:340px;background:transparent;padding-top:8px}
+.sa-sec-card{display:flex;flex-direction:column}
+.sa-sec-card .sa-card-b{flex:1}
+.sa-sec-f{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 20px 16px}
 
 /* ================================================= diálogo e aviso flutuante */
 .sa-ovl{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-start;justify-content:center;padding:9vh 20px 20px;background:rgba(15,13,34,.32);animation:sa-fade 180ms var(--e-saida)}

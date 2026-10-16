@@ -8,7 +8,7 @@ const ROOT = path.resolve(__dirname, '../../..');
 const { chromium } = require(path.join(ROOT, 'node_modules/.pnpm/playwright@1.64.1/node_modules/playwright'));
 const BASE = process.env.SA0_BASE || 'http://127.0.0.1:8020/';
 const out = path.resolve(process.argv[2] || path.join(ROOT, 'docs/parciais/sa0'));
-const pairs = process.argv.slice(3).map((a) => a.split('='));
+const pairs = process.argv.slice(3).map((a) => [a.slice(0, a.indexOf('=')), a.slice(a.indexOf('=') + 1)]);
 const LIST = pairs.length ? pairs : [
   ['01-contas', 'contas.html'], ['02-conta-miolo', 'conta.html?id=miolo'], ['03-catalogo', 'catalogo.html'],
   ['04-planos', 'planos.html'], ['05-pagamentos', 'pagamentos.html'], ['06-auditoria', 'auditoria.html'],

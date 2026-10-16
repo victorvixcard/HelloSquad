@@ -130,6 +130,12 @@ def main() -> None:
         soul_text = spath.read_text(encoding="utf-8")
         title, sections = soul_sections(soul_text)
         skills = {p.stem: skill(p) for p in sorted((SQUAD / aid / "skills").glob("*.md"))}
+        for d in skills:
+            # mesmo hash que o backend grava em agent_prompt_versions (squad/loader.py: manifest dos arquivos lidos)
+            files = {rel: hashlib.sha256((SQUAD / rel).read_bytes()).hexdigest() for rel in
+                     ("README.md", f"{aid}/agent.yaml", f"{aid}/SOUL.md", f"{aid}/skills/{d}.md")}
+            manifest = "".join(f"{path}\n{digest}\n" for path, digest in sorted(files.items()))
+            skills[d]["promptHash"] = hashlib.sha256(manifest.encode("utf-8")).hexdigest()
         agents.append({
             **cfg,
             "notas": yaml_comments(raw),

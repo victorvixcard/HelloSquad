@@ -23,7 +23,7 @@
 
   /* ---------------------------------------------------------------- contas */
   var contas = [
-    { id: 'miolo', marca: 'Miolo', negocio: 'Padaria de fermentação natural', cidade: 'Pinheiros, São Paulo/SP', tipo: 'PJ', plano: 'pro-mensal', creditos: 182, desde: '2026-10-01', idioma: 'pt-BR', estado: 'ativa', teste: 'Conta em uso: histórico, trabalhos, memória preenchida, rotinas.',
+    { id: 'miolo', marca: 'Miolo', negocio: 'Padaria de fermentação natural', cidade: 'Pinheiros, São Paulo/SP', tipo: 'PJ', plano: 'pro-mensal', creditos: 186, desde: '2026-10-01', idioma: 'pt-BR', estado: 'ativa', teste: 'Conta em uso: histórico, trabalhos, memória preenchida, rotinas.',
       membros: [{ nome: 'Marina Costa', email: 'marina@miolo.example', papel: 'owner', ultimo: '2026-10-16T08:41' }] },
     { id: 'vitta', marca: 'Vitta Estética', negocio: 'Clínica de estética e bem-estar', cidade: 'Vitória/ES', tipo: 'PJ', plano: 'pro-anual', creditos: 640, desde: '2026-10-03', idioma: 'pt-BR', estado: 'ativa', teste: 'Dois membros (owner + editor): papéis e aprovações.',
       membros: [{ nome: 'Rafael Nunes', email: 'rafael@vitta.example', papel: 'owner', ultimo: '2026-10-15T19:02' }, { nome: 'Carla Dias', email: 'carla@vitta.example', papel: 'editor', ultimo: '2026-10-16T07:55' }] },
@@ -33,7 +33,7 @@
       membros: [{ nome: 'Tiago Ramos', email: 'tiago@graomiudo.example', papel: 'owner', ultimo: '2026-10-16T07:12' }] },
     { id: 'barro', marca: 'Ateliê Barro Azul', negocio: 'Cerâmica utilitária', cidade: 'Belo Horizonte/MG', tipo: 'PF', plano: 'pro-mensal', creditos: 211, desde: '2026-08-20', idioma: 'pt-BR', estado: 'ativa',
       membros: [{ nome: 'Helena Duarte', email: 'helena@barroazul.example', papel: 'owner', ultimo: '2026-10-14T16:30' }] },
-    { id: 'vizinho', marca: 'Pet Vizinho', negocio: 'Pet shop e banho e tosa', cidade: 'Manaus/AM', tipo: 'PJ', plano: 'pro-mensal', creditos: 74, desde: '2026-08-05', idioma: 'pt-BR', estado: 'ativa',
+    { id: 'vizinho', marca: 'Pet Vizinho', negocio: 'Pet shop e banho e tosa', cidade: 'Manaus/AM', tipo: 'PJ', plano: 'pro-mensal', creditos: 118, desde: '2026-08-05', idioma: 'pt-BR', estado: 'ativa',
       membros: [{ nome: 'André Lopes', email: 'andre@petvizinho.example', papel: 'owner', ultimo: '2026-10-16T06:58' }, { nome: 'Bruna Teles', email: 'bruna@petvizinho.example', papel: 'editor', ultimo: '2026-10-15T18:20' }, { nome: 'Caio Mendes', email: 'caio@petvizinho.example', papel: 'viewer', ultimo: '2026-10-09T10:04' }] },
     { id: 'clara', marca: 'Clara Odontologia', negocio: 'Clínica odontológica', cidade: 'Recife/PE', tipo: 'PJ', plano: 'pro-anual', creditos: 1180, desde: '2026-08-14', idioma: 'pt-BR', estado: 'ativa',
       membros: [{ nome: 'Lívia Freitas', email: 'livia@claraodonto.example', papel: 'owner', ultimo: '2026-10-16T08:10' }, { nome: 'Otávio Reis', email: 'otavio@claraodonto.example', papel: 'admin', ultimo: '2026-10-15T14:45' }] },
@@ -43,7 +43,7 @@
       membros: [{ nome: 'Daniel Bastos', email: 'daniel@maresia.example', papel: 'owner', ultimo: '2026-10-16T00:41' }, { nome: 'Iara Lima', email: 'iara@maresia.example', papel: 'editor', ultimo: '2026-10-15T22:13' }] },
     { id: 'pinhal', marca: 'Pinhal Moda', negocio: 'Loja de roupas', cidade: 'Campinas/SP', tipo: 'PJ', plano: 'free', creditos: 14, desde: '2026-10-08', idioma: 'pt-BR', estado: 'ativa',
       membros: [{ nome: 'Paula Siqueira', email: 'paula@pinhalmoda.example', papel: 'owner', ultimo: '2026-10-13T09:30' }] },
-    { id: 'luz', marca: 'Taller Luz', negocio: 'Estudio de fotografía', cidade: 'Montevidéu, Uruguai', tipo: 'PJ', plano: 'pro-mensal', creditos: 156, desde: '2026-09-25', idioma: 'es', estado: 'ativa',
+    { id: 'luz', marca: 'Taller Luz', negocio: 'Estudio de fotografía', cidade: 'Montevidéu, Uruguai', tipo: 'PJ', plano: 'pro-mensal', creditos: 231, desde: '2026-09-25', idioma: 'es', estado: 'ativa',
       membros: [{ nome: 'Sofía Pereyra', email: 'sofia@tallerluz.example', papel: 'owner', ultimo: '2026-10-15T20:05' }] },
     { id: 'kiln', marca: 'Northkiln Pottery', negocio: 'Pottery studio', cidade: 'Toronto, Canadá', tipo: 'PJ', plano: 'free', creditos: 14, desde: '2026-10-11', idioma: 'en', estado: 'ativa',
       membros: [{ nome: 'Emma Clarke', email: 'emma@northkiln.example', papel: 'owner', ultimo: '2026-10-14T13:22' }] }
@@ -60,7 +60,7 @@
     vizinho: { trabalhos: 33, creditos: 189, opus: [355, 0.55, 2.05, 0.098], haiku: [120, 0.10, 0.15, 0.008], conversa: 0.36, tendencia: 0.06, turnos: 488 },
     clara: { trabalhos: 41, creditos: 296, opus: [430, 0.66, 2.70, 0.121], haiku: [170, 0.13, 0.22, 0.011], conversa: 0.29, tendencia: -0.03, turnos: 602 },
     folha: { trabalhos: 0, creditos: 0, opus: [0, 0, 0, 0], haiku: [0, 0, 0, 0], conversa: 0, tendencia: null, turnos: 0 },
-    maresia: { trabalhos: 17, creditos: 92, opus: [240, 0.38, 1.10, 0.085], haiku: [64, 0.05, 0.07, 0.004], conversa: 0.47, tendencia: 0.12, turnos: 352 },
+    maresia: { trabalhos: 31, creditos: 288, opus: [240, 0.38, 1.10, 0.085], haiku: [64, 0.05, 0.07, 0.004], conversa: 0.47, tendencia: 0.12, turnos: 352 },
     pinhal: { trabalhos: 4, creditos: 12, opus: [38, 0.06, 0.18, 0.011], haiku: [14, 0.01, 0.02, 0.001], conversa: 0.40, tendencia: null, turnos: 51 },
     luz: { trabalhos: 14, creditos: 88, opus: [150, 0.23, 0.88, 0.044], haiku: [50, 0.04, 0.06, 0.003], conversa: 0.30, tendencia: 0.03, turnos: 205 },
     kiln: { trabalhos: 2, creditos: 6, opus: [22, 0.03, 0.08, 0.006], haiku: [8, 0.01, 0.01, 0.0005], conversa: 0.55, tendencia: null, turnos: 30 }
@@ -168,7 +168,7 @@
   var auditoria = [
     { em: '2026-10-16T09:01', quem: 'admin', nome: 'Vic', conta: 'miolo', tipo: 'Acesso do suporte', acao: 'Entrou no ambiente do cliente', det: 'Motivo: conferir o erro de publicação no Instagram (run_8f2611). Sessão de 30 min.' },
     { em: '2026-10-16T08:58', quem: 'sistema', nome: 'Worker', conta: 'vitta', tipo: 'Execução', acao: 'Run iniciado', det: 'run_8f2bd4 · Bia · 02.03 · prompt fc8a1e2' },
-    { em: '2026-10-16T08:41', quem: 'cliente', nome: 'Marina Costa', conta: 'miolo', tipo: 'Aprovação', acao: 'Aprovou a peça "Dia Mundial do Pão"', det: 'Versão 2 · decisão do owner' },
+    { em: '2026-10-16T08:41', quem: 'cliente', nome: 'Marina Costa', conta: 'miolo', tipo: 'Aprovação', acao: 'Aprovou as legendas do Dia Mundial do Pão', det: 'Otto · 04.01 · versão 2 · decisão do owner' },
     { em: '2026-10-16T08:30', quem: 'sistema', nome: 'Otto', conta: 'vitta', tipo: 'Aprovação', acao: 'Pediu revisão das legendas de Natal', det: 'approval kind=review' },
     { em: '2026-10-16T08:12', quem: 'cliente', nome: 'Carla Dias', conta: 'vitta', tipo: 'Memória', acao: 'Sugeriu correção na memória', det: 'Editor sugere; só o owner confirma' },
     { em: '2026-10-16T08:03', quem: 'sistema', nome: 'Worker', conta: 'grao', tipo: 'Execução', acao: 'Run falhou após 3 tentativas', det: 'run_8f2805 · Anthropic 529; fallback recusou' },
