@@ -39,8 +39,13 @@ export function SuggestionBand({ items, selected, onPick }: { items: Suggestion[
 
   const chip = (c: Suggestion, dup: boolean) => {
     const multi = c.ags.length > 1;
+    // V4.6 L8295: "só a Íris participa" (com o artigo, `DA`) ou "Nexo, Bia e Kaia participam" (`EA`).
     const names = c.ags.map((a) => getAgent(a).name);
-    const who = c.ags.length === 1 ? t("chipOnly", { who: names[0] }) : t("chipMany", { who: names.join(t("and")) });
+    const first = getAgent(c.ags[0]);
+    const who =
+      c.ags.length === 1
+        ? t("chipOnly", { article: first.article, name: first.name })
+        : t("chipMany", { who: names.slice(0, -1).join(", ") + t("and") + names[names.length - 1] });
     const isSel = selected === c.t;
     return (
       <button

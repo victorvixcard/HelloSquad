@@ -39,6 +39,20 @@ describe("Início V3", () => {
     expect(screen.getByRole("button", { name: /^Modo Autônomo: Delegue o que se repete/ })).toBeInTheDocument();
   });
 
+  it("nomes acessíveis da V4.6: resumos com Ver detalhes/Recolher detalhes e sugestões com o artigo e a lista com vírgula", async () => {
+    const user = userEvent.setup();
+    renderWithShell(<HomeView firstName="Marina" business="Miolo" needs={needs} inProgress={[]} actions={actions()} />);
+    // L8356: ". Ver detalhes" fechado, ". Recolher detalhes" aberto.
+    const work = screen.getByRole("button", { name: "Trabalhos: Nada em andamento, 1 aguarda você. Ver detalhes" });
+    await user.click(work);
+    expect(work).toHaveAccessibleName("Trabalhos: Nada em andamento, 1 aguarda você. Recolher detalhes");
+    // L8295: "só a Íris participa" (artigo do agente) e "Nexo, Bia e Kaia participam" (EA).
+    expect(screen.getAllByRole("button", { name: "Analisar os resultados da semana. Preenche o pedido; só a Íris participa" })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Quero melhorar meu Instagram. Preenche o pedido; só o Otto participa" })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Preparar um lançamento. Preenche o pedido; Nexo, Bia e Kaia participam" })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Entender melhor meus clientes. Preenche o pedido; Bia e Max participam" })[0]).toBeInTheDocument();
+  });
+
   it("escolher um especialista vira conversa direta; o envio vai para a conversa dele e abre o painel", async () => {
     const user = userEvent.setup();
     const acts = actions();

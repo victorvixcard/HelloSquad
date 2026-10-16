@@ -31,7 +31,7 @@
   "and": " e ",
   "bandLabel": "Sugestões de pedidos. Escolher uma preenche o campo e prepara quem participa, sem enviar. Arraste para os lados para ver mais",
   "chipAria": "{text}. Preenche o pedido; {who}",
-  "chipOnly": "só {who} participa",
+  "chipOnly": "só {article, select, a {a} other {o}} {name} participa",
   "chipMany": "{who} participam",
   "suggestions": [
     { "t": "Planejar meus próximos conteúdos", "ags": ["otto", "kaia"] },
@@ -65,8 +65,8 @@
     "talkSub": "Objetivo, público, o que vende mais.",
     "talkGo": "Conversar"
   },
-  "open": ". Fechar",
-  "closed": ". Ver mais",
+  "open": ". Recolher detalhes",
+  "closed": ". Ver detalhes",
   "work": {
     "title": "Trabalhos",
     "inProgress": "{count} em andamento",

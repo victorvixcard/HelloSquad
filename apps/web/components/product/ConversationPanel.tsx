@@ -231,6 +231,9 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const agent = target.agent ? getAgent(target.agent) : null;
   const nexo = getAgent("nexo");
   const title = room ? t("roomTitle") : (agent?.name ?? "");
+  // Papel ao lado do nome (V4.6 L10894 e L13880): sai quando o objeto da conversa tem o mesmo nome (o ambiente dele).
+  const area = agent && !room ? tc(`areas.${agent.id}`) : "";
+  const role = area && target.context?.label !== area ? area : "";
   const messages = loaded?.key === key ? loaded.messages : [];
   // Status vivo da conversa (V4.6 L8511 e `.ps-cstat`): run em curso (trabalho), pendência desta conversa (espera)
   // ou conexão perdida (estado técnico). "<Nome> está escrevendo" enquanto um agente está numa etapa.
@@ -425,7 +428,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
             <div className="ps-cvh-t">
               <div className="ps-cvh-n">
                 <b>{title}</b>
-                {agent && !room ? <span className="ps-cvh-r">{tc(`areas.${agent.id}`)}</span> : null}
+                {role ? <span className="ps-cvh-r">{role}</span> : null}
               </div>
               <div className="ps-cvh-s">
                 {target.context ? (

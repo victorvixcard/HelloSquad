@@ -95,6 +95,23 @@ describe("painel de conversa universal", () => {
     expect(container.querySelector(".ps-conv")).not.toHaveClass("has-sug");
   });
 
+  it("papel ao lado do nome: na direta e no objeto, menos quando o objeto é o próprio ambiente (V4.6 L13880)", () => {
+    const head = (container: HTMLElement) => container.querySelector(".ps-cvh-n");
+    const env = renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, openShell());
+    expect(head(env.container)?.textContent).toBe("Otto");
+    expect(env.container.querySelector(".ps-cvh-r")).toBeNull();
+    env.unmount();
+    const post = makeShell({
+      layout: productLayout({ vw: 1440, vh: 900, sideMin: null, mode: "panel", pilot: true, pop: false }),
+      conversation: { mode: "panel", target: { conversationId: "otto-1", agent: "otto", context: { kind: "work_item", label: "Legenda do post de sábado" } } },
+    });
+    const obj = renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, post);
+    expect(obj.container.querySelector(".ps-cvh-r")?.textContent).toBe("Conteúdo");
+    obj.unmount();
+    const dm = renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, directShell({ conversationId: "otto-1", agent: "otto" }));
+    expect(dm.container.querySelector(".ps-cvh-r")?.textContent).toBe("Conteúdo");
+  });
+
   it("conversa com páginas anteriores ainda não carregadas não mostra as sugestões (a pessoa já escreveu antes)", async () => {
     const acts = actions({
       load: vi.fn(async () => ({
