@@ -8174,6 +8174,47 @@
         ],
         "title": "CreditEstimateRequest"
       },
+      "CurrentVersionSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "version_no": {
+            "type": "integer",
+            "title": "Version No"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DeliveryVersionStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovalDecision"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Última decisão sobre esta versão; vazio enquanto ninguém decidiu."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "version_no",
+          "status",
+          "created_at",
+          "decision"
+        ],
+        "title": "CurrentVersionSummary"
+      },
       "Delivery": {
         "properties": {
           "id": {
@@ -12371,6 +12412,17 @@
             "examples": [
               "etapa 1 de 3"
             ]
+          },
+          "current_version": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CurrentVersionSummary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Versão mais recente da entrega (número, estado, data e decisão)."
           }
         },
         "type": "object",
@@ -12643,6 +12695,17 @@
               "etapa 1 de 3"
             ]
           },
+          "current_version": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CurrentVersionSummary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Versão mais recente da entrega (número, estado, data e decisão)."
+          },
           "briefing": {
             "additionalProperties": true,
             "type": "object",
@@ -12870,6 +12933,17 @@
             "examples": [
               "etapa 1 de 3"
             ]
+          },
+          "current_version": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CurrentVersionSummary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Versão mais recente da entrega (número, estado, data e decisão)."
           },
           "briefing": {
             "additionalProperties": true,

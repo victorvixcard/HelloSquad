@@ -17,6 +17,7 @@ from hellosquad.domain import WorkItemStatus
 from hellosquad.i18n import t
 from hellosquad.work.live import history_text, live_fields, step_reason
 from hellosquad.work.schemas import (
+    CurrentVersionSummary,
     Delivery,
     DeliveryFile,
     DeliveryVersion,
@@ -66,7 +67,9 @@ select w.id, w.workspace_id, w.project_id, w.conversation_id, w.origin_message_i
        pa.id as pending_approval_id, pa.kind as pending_kind, pa.version_no as pending_version_no,
        pa.due_at as pending_due_at, pa.agent_id as pending_agent_id,
        pa.deferred as pending_deferred, dv.approved_version_no,
-       st.step_total, coalesce(st.step_active, st.step_next) as step_current
+       st.step_total, coalesce(st.step_active, st.step_next) as step_current,
+       cv.current_version_id, cv.current_version_no, cv.current_version_status,
+       cv.current_version_created_at, cv.current_version_decision
 from public.work_items w
 join public.workspaces s on s.id = w.workspace_id
 left join public.messages om on om.id = w.origin_message_id
@@ -99,6 +102,20 @@ left join lateral (
   from public.work_item_steps s
   where s.work_item_id = w.id and s.delivery_type is not null
 ) st on true
+left join lateral (
+  select v.id as current_version_id, v.version_no as current_version_no,
+         v.status::text as current_version_status, v.created_at as current_version_created_at,
+         (select a.decision::text
+          from public.approvals a
+          where a.delivery_version_id = v.id and a.status = 'decided'
+          order by a.decided_at desc, a.id desc
+          limit 1) as current_version_decision
+  from public.deliveries d
+  join public.delivery_versions v on v.delivery_id = d.id
+  where d.work_item_id = w.id
+  order by v.created_at desc, v.version_no desc
+  limit 1
+) cv on true
 """
 
 LIST_WORK_ITEMS = f"""
@@ -177,6 +194,15 @@ def work_item_fields(row: dict) -> dict:
         "origin": origin_of(row),
         "awaiting_you": pending is not None and not pending.deferred,
         "pending_approval": pending,
+        "current_version": CurrentVersionSummary(
+            id=row["current_version_id"],
+            version_no=row["current_version_no"],
+            status=row["current_version_status"],
+            created_at=row["current_version_created_at"],
+            decision=row["current_version_decision"],
+        )
+        if row.get("current_version_id")
+        else None,
         "step_label": t(
             row["locale"], "work.step_label", seq=row["step_current"], total=row["step_total"]
         )

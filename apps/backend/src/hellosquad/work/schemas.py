@@ -9,6 +9,7 @@ from hellosquad.approvals.schemas import Approval
 from hellosquad.autonomy.schemas import RunSummary
 from hellosquad.domain import (
     AgentId,
+    ApprovalDecision,
     ApprovalKind,
     ConversationKind,
     DeliveryVersionStatus,
@@ -261,6 +262,16 @@ class PendingApprovalSummary(BaseModel):
     deferred: bool = Field(description='"Agora não": fora de "Precisa de você" até decidir.')
 
 
+class CurrentVersionSummary(BaseModel):
+    id: UUID
+    version_no: int
+    status: DeliveryVersionStatus
+    created_at: datetime
+    decision: ApprovalDecision | None = Field(
+        description="Última decisão sobre esta versão; vazio enquanto ninguém decidiu."
+    )
+
+
 class WorkItem(BaseModel):
     id: UUID
     workspace_id: UUID
@@ -298,6 +309,9 @@ class WorkItem(BaseModel):
         default=None,
         description='Trabalho coordenado: a etapa em que está ("etapa 1 de 3").',
         examples=["etapa 1 de 3"],
+    )
+    current_version: CurrentVersionSummary | None = Field(
+        default=None, description="Versão mais recente da entrega (número, estado, data e decisão)."
     )
 
 

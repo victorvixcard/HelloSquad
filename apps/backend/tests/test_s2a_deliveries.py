@@ -241,6 +241,14 @@ async def test_delivery_end_to_end(api, access_token, admin_db, miolo, delivery_
     after = await delivered(admin_db, work["work_item_id"])
     assert (after["work_status"], after["version_status"]) == ("approved", "approved")
 
+    # A2b §5.1: a lista de trabalhos traz a versão atual (número, estado, data e decisão).
+    page = await api.get(f"/workspaces/{miolo}/work-items", headers=bearer(access_token(MARINA)))
+    assert page.status_code == 200, page.text
+    [listed_item] = [i for i in page.json()["items"] if i["id"] == work["work_item_id"]]
+    current = listed_item["current_version"]
+    assert (current["id"], current["version_no"]) == (str(after["version_id"]), 1)
+    assert (current["status"], current["decision"]) == ("approved", "approved")
+
 
 async def test_research_without_search_is_suggestion_only(api, access_token, admin_db, miolo):
     work = await request_work(api, access_token, miolo, "02.07")

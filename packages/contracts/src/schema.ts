@@ -2043,6 +2043,24 @@ export interface components {
              */
             work_item_id?: string | null;
         };
+        /** CurrentVersionSummary */
+        CurrentVersionSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Version No */
+            version_no: number;
+            status: components["schemas"]["DeliveryVersionStatus"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** @description Última decisão sobre esta versão; vazio enquanto ninguém decidiu. */
+            decision: components["schemas"]["ApprovalDecision"] | null;
+        };
         /** Delivery */
         Delivery: {
             /**
@@ -3738,6 +3756,8 @@ export interface components {
              * @example etapa 1 de 3
              */
             step_label?: string | null;
+            /** @description Versão mais recente da entrega (número, estado, data e decisão). */
+            current_version?: components["schemas"]["CurrentVersionSummary"] | null;
         };
         /**
          * WorkItemCreate
@@ -3849,6 +3869,8 @@ export interface components {
              * @example etapa 1 de 3
              */
             step_label?: string | null;
+            /** @description Versão mais recente da entrega (número, estado, data e decisão). */
+            current_version?: components["schemas"]["CurrentVersionSummary"] | null;
             /** Briefing */
             briefing: {
                 [key: string]: unknown;
@@ -3935,6 +3957,8 @@ export interface components {
              * @example etapa 1 de 3
              */
             step_label?: string | null;
+            /** @description Versão mais recente da entrega (número, estado, data e decisão). */
+            current_version?: components["schemas"]["CurrentVersionSummary"] | null;
             /** Briefing */
             briefing: {
                 [key: string]: unknown;
