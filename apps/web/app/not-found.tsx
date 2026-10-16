@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+// Sem `robots` aqui: o Next já põe o noindex em toda resposta 404 (H2-26, uma meta robots só).
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("site.notFound");
-  return { title: t("metaTitle"), robots: { index: false } };
+  return { title: t("metaTitle") };
 }
 
 export default async function NotFound() {
