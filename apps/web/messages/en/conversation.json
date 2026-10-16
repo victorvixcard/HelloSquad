@@ -94,5 +94,69 @@
   "team": {
     "kicker": "Campaign squad · Nexo coordinates",
     "open": "Open the project"
+  },
+  "objectAsk": {
+    "metric": [
+      {
+        "q": "Why did this metric change?",
+        "d": "When the change started and what coincides with it."
+      },
+      {
+        "q": "What can we improve?",
+        "d": "A suggestion based on the numbers."
+      },
+      {
+        "q": "Is this related to the campaign?",
+        "d": "What can and can’t be said."
+      }
+    ],
+    "calendar_post": [
+      {
+        "q": "I want to change the caption.",
+        "d": "Otto suggests two shorter versions."
+      },
+      {
+        "q": "Let’s explore another approach.",
+        "d": "Otto and Kaia bring a draft to compare."
+      },
+      {
+        "q": "Adapt it for stories.",
+        "d": "Kaia adapts the piece to 9:16."
+      },
+      {
+        "q": "I want more content like this.",
+        "d": "Otto suggests topics for the next plan."
+      }
+    ],
+    "opportunity": [
+      {
+        "q": "Why this opportunity?"
+      },
+      {
+        "q": "What can we improve?",
+        "d": "A suggestion based on the numbers."
+      },
+      {
+        "q": "Is this related to the campaign?",
+        "d": "What can and can’t be said."
+      }
+    ],
+    "opportunityOtto": [
+      {
+        "q": "How would this fit into the plan?"
+      },
+      {
+        "q": "I want more content like this.",
+        "d": "Otto suggests topics for the next plan."
+      },
+      {
+        "q": "Adapt it for stories.",
+        "d": "Kaia adapts the piece to 9:16."
+      }
+    ]
+  },
+  "figure": {
+    "vs": "{period} · vs {previous}",
+    "compared": "{period} · compared with {previous}"
   }
 }

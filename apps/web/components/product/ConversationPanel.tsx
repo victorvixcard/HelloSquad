@@ -17,7 +17,7 @@ import {
 } from "@/app/app/[workspace]/actions";
 import { addObjectiveAction } from "@/app/app/[workspace]/memory-actions";
 import { conversationLive, shortNowKey } from "@/lib/live/live-state";
-import { dayKey, dayLabel, shortTime, threadAt, threadTitleFrom } from "./conversation-format";
+import { dayKey, dayLabel, type MetricFigure, objectAskKey, shortTime, sparkPaths, threadAt, threadTitleFrom } from "./conversation-format";
 import { useLive } from "./live";
 import { MaterialCard, type MaterialCardActions } from "./MaterialCard";
 import { TeamCard } from "./TeamCard";
@@ -296,13 +296,19 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const userWrote = messages.some((m) => m.author_type === "user") || !!(loaded?.key === key && loaded.older);
   const objectiveMode = !!target.objective && target.agent === "nexo" && !userWrote && !typingAgent;
   const opening = loaded?.key === key ? (loaded.opening ?? null) : null;
-  const suggestions: string[] = objectiveMode
-    ? (t.raw("objective.options") as string[])
-    : !room && target.agent && !userWrote && !typingAgent && opening?.suggestions.length
-      ? opening.suggestions
-      : !room && target.agent && !userWrote && !typingAgent && !target.context?.ref && ["nexo", "otto", "iris"].includes(target.agent)
-        ? (t.raw(`suggestions.${target.agent as "nexo" | "otto" | "iris"}`) as string[])
-        : [];
+  // P-09: conversa de indicador, publicação ou oportunidade abre com as sugestões do tipo e a linha de apoio de cada uma
+  // (V4.6 `_cx`, L9792, L9806, L9823; `SUG_D`, L10982). A do ambiente segue com as da API (`opening`).
+  const objectAsk = target.context?.ref ? objectAskKey(target.context.kind, target.agent) : null;
+  const canAsk = !room && !userWrote && !typingAgent;
+  const suggestions: Array<{ q: string; d?: string }> = objectiveMode
+    ? (t.raw("objective.options") as string[]).map((q) => ({ q }))
+    : canAsk && target.agent && opening?.suggestions.length
+      ? opening.suggestions.map((q) => ({ q }))
+      : canAsk && target.agent && objectAsk
+        ? (t.raw(`objectAsk.${objectAsk}`) as Array<{ q: string; d?: string }>)
+        : canAsk && target.agent && !target.context?.ref && ["nexo", "otto", "iris"].includes(target.agent)
+          ? (t.raw(`suggestions.${target.agent as "nexo" | "otto" | "iris"}`) as string[]).map((q) => ({ q }))
+          : [];
   const suggestionsLabel = objectiveMode
     ? t("objective.ask", { business: shell.workspace.name })
     : agent
@@ -334,17 +340,20 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
         }
       : null;
   const md = agent ? live.modes[agent.id] : "idle";
-  const headStatus = room
-    ? st
-      ? `${st.m} · ${st.d}`
-      : t("roomStatus")
-    : agent
-      ? typingAgent === agent.id
-        ? tl("typingStatus")
-        : st && st.lead === agent.id
-          ? st.d
-          : tl(`short.${shortNowKey(agent.id, md)}`)
-      : "";
+  // V4.6 L10908: na conversa de objeto (indicador, publicação, oportunidade) o cabeçalho fica sem o status do especialista.
+  const headStatus = objectAsk
+    ? ""
+    : room
+      ? st
+        ? `${st.m} · ${st.d}`
+        : t("roomStatus")
+      : agent
+        ? typingAgent === agent.id
+          ? tl("typingStatus")
+          : st && st.lead === agent.id
+            ? st.d
+            : tl(`short.${shortNowKey(agent.id, md)}`)
+        : "";
   const headLive = st?.kind === "work" || md === "work";
   const headExpr = st && st.kind === "wait" && agent && st.lead === agent.id ? "big" : "oval";
   const headThink = !!agent && ((st?.kind === "work" && st.lead === agent.id) || typingAgent === agent.id);
@@ -491,6 +500,17 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
       ]
     : [];
   const showRail = wide && railOn && !!ctx && !!agent;
+  // P-09/P-10: o número do indicador, quando quem abriu a conversa o trouxe da série real (`MetricFigure`); sem ele,
+  // nem número nem curva (nada de "dados ilustrativos").
+  const figure = ctx?.kind === "metric" ? ((ctx as typeof ctx & { figure?: MetricFigure }).figure ?? null) : null;
+  const deltaCls = "ps-delta" + (figure?.up === false ? " is-down" : figure?.up ? " is-up" : "");
+  const cardSpark = figure ? sparkPaths(figure.points, 180, 38) : null;
+  const railSpark = figure ? sparkPaths(figure.points, 236, 64) : null;
+  const railSub = figure
+    ? figure.previous
+      ? t("figure.compared", { period: figure.period, previous: figure.previous })
+      : figure.period
+    : (ctx?.meta ?? apiCtx?.summary ?? null);
 
   const cls = baseCls + (suggestions.length ? " has-sug" : "") + (showRail ? " has-rail" : "");
   let lastDay = "";
@@ -708,6 +728,46 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                   </div>
                 </>
               ) : null}
+              {!opening && objectAsk && loaded?.key === key && !loaded.older && !loaded.error ? (
+                // P-09: a conversa de objeto começa com "Hoje" e, no indicador, o cartão do número (V4.6 `firstCard`, L5552).
+                // A primeira fala do especialista vem da API (`opening`, hoje só no ambiente): o web não inventa fala.
+                <>
+                  {messages.length === 0 ? (
+                    <div className="ps-day">
+                      <span>{t("today")}</span>
+                    </div>
+                  ) : null}
+                  {figure && agent ? (
+                    <div className="ps-msg">
+                      <div className="ps-msg-av">
+                        <Agent agent={agent.id} size={32} />
+                      </div>
+                      <div className="ps-msg-b">
+                        <div className="ps-msg-n">
+                          <b>{agent.name}</b>
+                          <span className="ps-msg-r">{tc(`areas.${agent.id}`)}</span>
+                        </div>
+                        <div className="ps-card cx-kpi">
+                          <span className="ps-card-k">{ctx?.label}</span>
+                          <div className="cx-kpi-r">
+                            <b>{figure.value}</b>
+                            {figure.delta ? <span className={deltaCls}>{figure.delta}</span> : null}
+                            {cardSpark ? (
+                              <svg className="cx-kpi-sp" viewBox="0 0 180 38" preserveAspectRatio="none" aria-hidden="true">
+                                <path d={cardSpark.area} style={{ fill: "rgba(31,91,255,.08)" }} />
+                                <path d={cardSpark.line} style={{ fill: "none", stroke: "#1F5BFF", strokeWidth: 1.8, strokeLinejoin: "round" }} />
+                              </svg>
+                            ) : null}
+                          </div>
+                          <small className="cx-kpi-n">
+                            {figure.previous ? t("figure.vs", { period: figure.period, previous: figure.previous }) : figure.period}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+                </>
+              ) : null}
               {messages.map((m) => {
                 const day = dayKey(m.created_at);
                 const sep =
@@ -761,7 +821,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
               {suggestions.length && agent ? (
                 <div className="cx-sug" role="group" aria-label={suggestionsLabel}>
                   <span className="cx-sug-k">{suggestionsLabel}</span>
-                  {suggestions.map((q) => (
+                  {suggestions.map(({ q, d }) => (
                     <button
                       key={q}
                       type="button"
@@ -774,6 +834,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                       </svg>
                       <span className="cx-sg-t">
                         <b>{q}</b>
+                        {d ? <small>{d}</small> : null}
                       </span>
                       <svg className="sb-ic cx-sg-a" viewBox="0 0 18 18" aria-hidden="true">
                         <path d={PRODUCT_ICONS.chevR} />
@@ -796,10 +857,25 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
             </div>
           </div>
           {showRail && ctx && agent ? (
-            <aside className="ps-rail" aria-label={t("rail.label")}>
+            // P-10: a regra `.ps-conv.is-cx .ps-rail` da V4.6 (L2889): a coluna tem a altura do conteúdo e "Voltar para
+            // <Ambiente>" fica logo abaixo dos fatos, não no pé.
+            <aside className="ps-rail" aria-label={t("rail.label")} style={{ alignSelf: "flex-start", maxHeight: "calc(100% - 28px)" }}>
               <span className="ps-k">{t("rail.label")}</span>
+              {figure ? (
+                // P-10: número, variação e curva do indicador (V4.6 `ps-rail-kpi`, L5575).
+                <div className="ps-rail-kpi">
+                  <b className="ps-big">{figure.value}</b>
+                  {figure.delta ? <span className={deltaCls}>{figure.delta}</span> : null}
+                  {railSpark ? (
+                    <svg className="ps-spk" viewBox="0 0 236 64" preserveAspectRatio="none" aria-hidden="true">
+                      <path d={railSpark.area} style={{ fill: "rgba(31,91,255,.09)" }} />
+                      <path d={railSpark.line} style={{ fill: "none", stroke: "#1F5BFF", strokeWidth: 2, strokeLinejoin: "round" }} />
+                    </svg>
+                  ) : null}
+                </div>
+              ) : null}
               <b className="ps-rail-t">{ctx.label}</b>
-              {(ctx.meta ?? apiCtx?.summary) ? <small className="ps-rail-s">{ctx.meta ?? apiCtx?.summary}</small> : null}
+              {railSub ? <small className="ps-rail-s">{railSub}</small> : null}
               <dl className="ps-facts is-s">
                 {railFacts.map((f) => (
                   <div key={f.k}>

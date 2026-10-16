@@ -94,5 +94,69 @@
   "team": {
     "kicker": "Squad de la campaña · Nexo coordina",
     "open": "Abrir el proyecto"
+  },
+  "objectAsk": {
+    "metric": [
+      {
+        "q": "¿Por qué cambió este indicador?",
+        "d": "Cuándo empezó el cambio y qué coincide con él."
+      },
+      {
+        "q": "¿Qué podemos mejorar?",
+        "d": "Una sugerencia a partir de los números."
+      },
+      {
+        "q": "¿Esto está relacionado con la campaña?",
+        "d": "Lo que se puede y lo que no se puede afirmar."
+      }
+    ],
+    "calendar_post": [
+      {
+        "q": "Quiero cambiar el texto.",
+        "d": "Otto propone dos versiones más cortas."
+      },
+      {
+        "q": "Exploremos otro enfoque.",
+        "d": "Otto y Kaia traen un borrador para comparar."
+      },
+      {
+        "q": "Adáptalo para stories.",
+        "d": "Kaia adapta la pieza a 9:16."
+      },
+      {
+        "q": "Quiero más contenidos en esta línea.",
+        "d": "Otto sugiere temas para el próximo plan."
+      }
+    ],
+    "opportunity": [
+      {
+        "q": "¿Por qué esta oportunidad?"
+      },
+      {
+        "q": "¿Qué podemos mejorar?",
+        "d": "Una sugerencia a partir de los números."
+      },
+      {
+        "q": "¿Esto está relacionado con la campaña?",
+        "d": "Lo que se puede y lo que no se puede afirmar."
+      }
+    ],
+    "opportunityOtto": [
+      {
+        "q": "¿Cómo entraría esto en el plan?"
+      },
+      {
+        "q": "Quiero más contenidos en esta línea.",
+        "d": "Otto sugiere temas para el próximo plan."
+      },
+      {
+        "q": "Adáptalo para stories.",
+        "d": "Kaia adapta la pieza a 9:16."
+      }
+    ]
+  },
+  "figure": {
+    "vs": "{period} · vs {previous}",
+    "compared": "{period} · comparado con {previous}"
   }
 }
