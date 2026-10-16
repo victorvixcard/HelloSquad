@@ -13,6 +13,96 @@
     "max": "Relación con clientes, recorridos y reactivación.",
     "iris": "Métricas, análisis y lecturas de desempeño."
   },
+  "cta": "Empezar con el squad",
+  "nav": {
+    "label": "Navegación del sitio",
+    "howItWorks": "Cómo funciona",
+    "squad": "Especialistas",
+    "faq": "Preguntas",
+    "about": "Sobre HelloSquad"
+  },
+  "crumbs": {
+    "label": "Estás aquí",
+    "inicio": "Inicio",
+    "comoFunciona": "Cómo funciona",
+    "squad": "Squad",
+    "faq": "Preguntas frecuentes",
+    "sobre": "Sobre HelloSquad"
+  },
+  "languages": "Idioma",
+  "agentArea": "{name} · {area}",
+  "landing": {
+    "squadLead": "Siete agentes especialistas que conocen tu marca y trabajan juntos, de la estrategia a la ejecución.",
+    "flowTitleLine1": "Del pedido a la entrega.",
+    "flowTitleLine2": "Todo en una conversación.",
+    "flowLead": "Mira cómo una simple conversación moviliza a los especialistas adecuados, organiza el trabajo y pone las decisiones en tus manos.",
+    "flowStep1": "Dices lo que necesitas, con tus propias palabras.",
+    "flowStep2": "Nexo convierte el pedido en un trabajo y llama a los especialistas adecuados.",
+    "flowStep3": "Los especialistas producen con lo que tu marca ya decidió.",
+    "flowStep4": "Revisas, pides ajustes o apruebas. Publicar, enviar e invertir requieren una autorización aparte.",
+    "flowLink": "Descubre cómo funciona",
+    "autoTitle": "Tu marketing, en modo autónomo.",
+    "autoText": "En el Modo Autónomo, delegas una responsabilidad recurrente, como preparar las publicaciones de la semana o dar seguimiento a los resultados todos los días. El squad acuerda contigo el alcance, la frecuencia y los límites, y cada ciclo queda registrado. Puedes pausar o revocar en cualquier momento, y nada sale de tu negocio sin la autorización que diste.",
+    "memoryTitleLine1": "Un Squad que conoce tu marca.",
+    "memoryTitleLine2": "Y aprende con cada nueva interacción.",
+    "memoryLead": "Tu marca, tus objetivos y tus decisiones se convierten en conocimiento compartido. Así, cada especialista trabaja con más contexto en cada interacción.",
+    "memoryText": "La Memoria de Marca guarda lo que tu negocio ya decidió: público, tono de voz, canales, productos, palabras que no usas y correcciones que hiciste. Todos los especialistas consultan la misma memoria, así que no tienes que repetir el brief. Lo que el squad detecta por su cuenta entra como sugerencia y solo se vuelve regla cuando tú lo confirmas.",
+    "resultsTitleLine1": "Tus resultados revelan oportunidades.",
+    "resultsTitleLine2": "Tu Squad las convierte en acción.",
+    "resultsText": "Íris lee los números de los canales que conectaste, siempre con fuente, período y unidad, y explica qué cambió en un lenguaje sencillo. Cuando la causa no está clara, lo dice. La recomendación se convierte en trabajo para el especialista adecuado, y cualquier cambio de presupuesto solo ocurre con tu autorización.",
+    "compareTitleLine1": "Más que herramientas.",
+    "compareTitleLine2": "Un Squad trabajando para ti.",
+    "compareWhat": "Qué entrega",
+    "compareUsSub": "Especialistas de marketing que trabajan juntos",
+    "compareSoftware": "Software tradicional",
+    "compareAssistants": "Asistentes de IA genéricos",
+    "compareRows": {
+      "coordinates": "Alguien coordina el trabajo por ti",
+      "memory": "Memoria de marca compartida por todos",
+      "creates": "Crea textos, piezas y campañas",
+      "routines": "Rutinas que siguen solas",
+      "results": "Da seguimiento a los resultados y recomienda el siguiente paso",
+      "actions": "Ejecuta acciones específicas en tus cuentas"
+    },
+    "compareYes": "Lo hace",
+    "comparePartial": "En parte o depende de ti",
+    "compareNo": "No es la propuesta central de esta solución: no asume esta operación como un equipo de marketing",
+    "faqTitle": "¿Dudas antes de empezar? Te respondemos.",
+    "faqAll": "Ver todas las preguntas"
+  },
+  "ld": {
+    "audience": "Pequeños y medianos negocios",
+    "orgDescription": "HelloSquad es un equipo de marketing con IA para pequeños y medianos negocios: siete especialistas que comparten la memoria de la marca, trabajan de forma coordinada y dejan las decisiones en manos de quien es dueño del negocio.",
+    "appDescription": "Equipo de marketing con IA para pequeños y medianos negocios. Siete especialistas (coordinación, estrategia, marca y creación, contenido, growth marketing, CRM y resultados) reciben pedidos en una conversación, organizan el trabajo y entregan material revisable. Publicar, enviar e invertir requieren la autorización del titular de la cuenta.",
+    "subCategory": "Marketing",
+    "squadList": "El squad de HelloSquad",
+    "knowsAbout": {
+      "k1": "marketing digital",
+      "k2": "estrategia de marketing",
+      "k3": "marketing de contenidos",
+      "k4": "growth marketing",
+      "k5": "SEO",
+      "k6": "CRM de marketing",
+      "k7": "análisis de resultados de marketing"
+    },
+    "features": {
+      "f1": "Sala del Squad: una conversación con todos los especialistas",
+      "f2": "Nexo coordina pedidos, proyectos y aprobaciones",
+      "f3": "Memoria de Marca compartida, confirmada por ti",
+      "f4": "Modo Autónomo para responsabilidades recurrentes",
+      "f5": "Aprobación y autorización separadas para publicar, enviar e invertir",
+      "f6": "Informes con fuente, período y unidad"
+    },
+    "serviceType": {
+      "nexo": "Coordinación de proyectos de marketing",
+      "bia": "Estrategia de marketing",
+      "kaia": "Diseño y dirección de arte",
+      "otto": "Marketing de contenidos",
+      "kiwi": "Growth marketing",
+      "max": "CRM de marketing",
+      "iris": "Análisis de resultados de marketing"
+    }
+  },
   "home": {
     "skipToContent": "Saltar al contenido",
     "homeLink": "HelloSquad, página de inicio",

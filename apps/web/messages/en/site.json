@@ -13,6 +13,96 @@
     "max": "Customer relationships, journeys, and reactivation.",
     "iris": "Metrics, analyses, and performance readouts."
   },
+  "cta": "Start with the squad",
+  "nav": {
+    "label": "Site navigation",
+    "howItWorks": "How it works",
+    "squad": "Specialists",
+    "faq": "Questions",
+    "about": "About"
+  },
+  "crumbs": {
+    "label": "You are here",
+    "inicio": "Home",
+    "comoFunciona": "How it works",
+    "squad": "Squad",
+    "faq": "FAQ",
+    "sobre": "About"
+  },
+  "languages": "Language",
+  "agentArea": "{name} · {area}",
+  "landing": {
+    "squadLead": "Seven specialist agents who know your brand and work together, from strategy to execution.",
+    "flowTitleLine1": "From request to delivery.",
+    "flowTitleLine2": "All in one conversation.",
+    "flowLead": "See how one simple conversation brings in the right specialists, organizes the work and puts the decisions in your hands.",
+    "flowStep1": "You say what you need, in your own words.",
+    "flowStep2": "Nexo turns the request into a piece of work and calls in the right specialists.",
+    "flowStep3": "The specialists produce using what your brand has already decided.",
+    "flowStep4": "You review, ask for changes or approve. Publishing, sending and spending each need a separate authorization.",
+    "flowLink": "See how it works",
+    "autoTitle": "Your marketing, in Autonomous Mode.",
+    "autoText": "In Autonomous Mode, you hand off a recurring responsibility, like preparing the week’s posts or tracking results every day. The squad agrees with you on scope, frequency and limits, and every cycle is logged. You can pause or revoke it at any time, and nothing goes out without the authorization you gave.",
+    "memoryTitleLine1": "A squad that knows your brand.",
+    "memoryTitleLine2": "And learns with every interaction.",
+    "memoryLead": "Your brand, your goals and your decisions become shared knowledge. So every specialist works with more context, every time.",
+    "memoryText": "Brand Memory keeps what your business has already decided: audience, tone of voice, channels, products, words you never use and corrections you made. Every specialist checks the same memory, so you never repeat the brief. What the squad notices on its own comes in as a suggestion and only becomes a rule when you confirm it.",
+    "resultsTitleLine1": "Your results reveal opportunities.",
+    "resultsTitleLine2": "Your squad turns them into action.",
+    "resultsText": "Íris reads the numbers from the channels you connected, always with source, period and unit, and explains what changed in plain language. When the cause isn’t clear, she says so. Her recommendation becomes work for the right specialist, and any budget change only happens with your authorization.",
+    "compareTitleLine1": "More than tools.",
+    "compareTitleLine2": "A squad working for you.",
+    "compareWhat": "What it delivers",
+    "compareUsSub": "Marketing specialists who work together",
+    "compareSoftware": "Traditional software",
+    "compareAssistants": "Generic AI assistants",
+    "compareRows": {
+      "coordinates": "Someone coordinates the work for you",
+      "memory": "Brand memory shared by everyone",
+      "creates": "Creates copy, visuals and campaigns",
+      "routines": "Routines that run on their own",
+      "results": "Tracks results and recommends the next step",
+      "actions": "Takes specific actions in your accounts"
+    },
+    "compareYes": "Does it",
+    "comparePartial": "Partly, or it depends on you",
+    "compareNo": "Not what this solution is built for: it doesn’t take on this work the way a marketing team would",
+    "faqTitle": "Questions before you start? We’ve got answers.",
+    "faqAll": "See all questions"
+  },
+  "ld": {
+    "audience": "Small and medium-sized businesses",
+    "orgDescription": "HelloSquad is an AI marketing team for small and medium-sized businesses: seven specialists who share the brand’s memory, work in coordination and leave the decisions to the business owner.",
+    "appDescription": "AI marketing team for small and medium-sized businesses. Seven specialists (coordination, strategy, brand and creative, content, growth marketing, CRM and results) take requests in a conversation, organize the work and deliver reviewable material. Publishing, sending and spending require the account owner’s authorization.",
+    "subCategory": "Marketing",
+    "squadList": "The HelloSquad squad",
+    "knowsAbout": {
+      "k1": "digital marketing",
+      "k2": "marketing strategy",
+      "k3": "content marketing",
+      "k4": "growth marketing",
+      "k5": "SEO",
+      "k6": "marketing CRM",
+      "k7": "marketing analytics"
+    },
+    "features": {
+      "f1": "Squad Room: one conversation with every specialist",
+      "f2": "Nexo coordinates requests, projects and approvals",
+      "f3": "Shared Brand Memory, confirmed by you",
+      "f4": "Autonomous Mode for recurring responsibilities",
+      "f5": "Separate approval and authorization to publish, send and spend",
+      "f6": "Reports with source, period and unit"
+    },
+    "serviceType": {
+      "nexo": "Marketing project coordination",
+      "bia": "Marketing strategy",
+      "kaia": "Design and art direction",
+      "otto": "Content marketing",
+      "kiwi": "Growth marketing",
+      "max": "Marketing CRM",
+      "iris": "Marketing results analysis"
+    }
+  },
   "home": {
     "skipToContent": "Skip to content",
     "homeLink": "HelloSquad, home page",
