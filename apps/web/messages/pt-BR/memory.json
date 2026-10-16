@@ -204,5 +204,37 @@
   },
   "context": {
     "meta": "Memória da Marca · {state}"
-  }
+  },
+  "topics": {
+    "business": {
+      "history": "História",
+      "value": "Proposta de valor",
+      "location": "Localização",
+      "products": "Produtos",
+      "differentials": "Diferenciais",
+      "operation": "Operação",
+      "goals": "Objetivos"
+    },
+    "brand": {
+      "positioning": "Posicionamento",
+      "visual": "Identidade visual",
+      "tone": "Tom de voz",
+      "creative": "Preferências criativas",
+      "references": "Referências"
+    },
+    "audience": {
+      "profile": "Perfil dos clientes",
+      "needs": "Necessidades",
+      "behaviors": "Comportamentos conhecidos",
+      "preferences": "Preferências identificadas"
+    },
+    "knowledge": {
+      "research": "Pesquisas",
+      "findings": "Descobertas",
+      "decisions": "Decisões",
+      "preferences": "Preferências",
+      "guidance": "Orientações confirmadas"
+    }
+  },
+  "objectiveKey": "Objetivo atual"
 }

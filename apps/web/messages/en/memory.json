@@ -204,5 +204,37 @@
   },
   "context": {
     "meta": "Brand Memory · {state}"
-  }
+  },
+  "topics": {
+    "business": {
+      "history": "History",
+      "value": "Value proposition",
+      "location": "Location",
+      "products": "Products",
+      "differentials": "Differentiators",
+      "operation": "Operations",
+      "goals": "Goals"
+    },
+    "brand": {
+      "positioning": "Positioning",
+      "visual": "Visual identity",
+      "tone": "Tone of voice",
+      "creative": "Creative preferences",
+      "references": "References"
+    },
+    "audience": {
+      "profile": "Customer profile",
+      "needs": "Needs",
+      "behaviors": "Known behaviors",
+      "preferences": "Identified preferences"
+    },
+    "knowledge": {
+      "research": "Research",
+      "findings": "Findings",
+      "decisions": "Decisions",
+      "preferences": "Preferences",
+      "guidance": "Confirmed guidance"
+    }
+  },
+  "objectiveKey": "Current goal"
 }
