@@ -1,15 +1,15 @@
 # S0 — progresso (Stark)
 
-Identidade, isolamento por tenant e API base. **Iniciada em 16/10/2026 00:14.** Relatório ao fechar: `docs/parciais/S0-relatorio.md`.
+Identidade, isolamento por tenant e API base. **Iniciada em 16/10/2026 00:14, fechada às 01:05.** Relatório: `docs/parciais/S0-relatorio.md`.
 
 | # | Item | Estado |
 |---|---|---|
 | 1 | Migrations: `workspaces`, `memberships`, `invitations`, `audit_events`, schema `app` com funções auxiliares, RLS habilitada e forçada, papel `hellosquad_api`, `auto_expose_new_tables = false` | ✅ `supabase db reset` aplica as 4 migrations (exit 0); 4 tabelas com `relrowsecurity` e `relforcerowsecurity` = t; `hellosquad_api` sem INHERIT/BYPASSRLS, membro de `authenticated` só com SET |
 | 2 | Seed idempotente (`make seed`): 3 workspaces e 5 usuários de `docs/DADOS_FICTICIOS.md` | ✅ `supabase/seed.sql` roda no `supabase db reset` ("Seeding data from supabase/seed.sql") e no `make seed`; duas execuções seguidas dão o mesmo estado (memberships sem `updated_at` alterado); login da Marina na Auth local → HTTP 200 |
 | 3 | Testes pgTAP de RLS e isolamento (varredura de RLS, Marina, Pedro, Carla, Rafael, `audit_events` imutável) | ✅ `make test-db`: 7 arquivos, 98 testes, `Result: PASS`. Testes de mutação (quebrar a RLS numa cópia transacional) derrubam a suíte em todos os 7 casos |
-| 4 | FastAPI: JWT (JWKS + fallback HS256), transação com `SET LOCAL ROLE authenticated`, `/me`, `/workspaces`, testes de integração | ✅ `make test-backend`: ruff ok, pytest 43 passed (22 unitários + 21 de integração com login real na Auth local); `curl` na API real: Marina vê só a Miolo, Pedro recebe `{"items":[]}`, token inválido → 401 |
+| 4 | FastAPI: JWT (JWKS + fallback HS256), transação com `SET LOCAL ROLE authenticated`, `/me`, `/workspaces`, testes de integração | ✅ `make test-backend`: ruff ok, pytest 45 passed (23 unitários + 22 de integração com login real na Auth local); `curl` na API real: Marina vê só a Miolo, Pedro recebe `{"items":[]}`, token inválido → 401 |
 | 5 | `make openapi` → `packages/contracts/openapi.json` | ✅ OpenAPI 3.1.0 com 5 rotas; rotas protegidas com `HTTPBearer`; erros 401/403/404/409/422/503 no envelope `ErrorResponse`; `tests/test_openapi.py` falha se o arquivo commitado ficar defasado |
-| 6 | `docs/SETUP_LOCAL.md` e `docs/parciais/S0-relatorio.md` | ⏳ em andamento |
+| 6 | `docs/SETUP_LOCAL.md` e `docs/parciais/S0-relatorio.md` | ✅ do zero (`supabase db reset`) `make up && make migrate && make seed && make test` exit 0: pytest 45 passed, pgTAP 98 `PASS`; clone limpo do GitHub também exit 0 |
 
 ## Observações iniciais
 
@@ -34,4 +34,4 @@ Identidade, isolamento por tenant e API base. **Iniciada em 16/10/2026 00:14.** 
 
 ## Próximo passo
 
-SETUP_LOCAL e relatório (item 6), com `make up && make migrate && make seed && make test` do zero.
+Fatia fechada. Perguntas de produto no relatório (§6); A0 (Aranha) pode começar (notas na §7 do relatório).
