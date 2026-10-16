@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { PlaceholderView } from "@/components/env/PlaceholderView";
+import { AutonomyView } from "@/components/auto/AutonomyView";
 import { workspaceOf } from "@/lib/workspace-page";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("pages.auto");
+  const t = await getTranslations("auto");
   return { title: t("title") };
 }
 
+/** Modo Autônomo: rotinas chegam na Fase 3; até lá, o estado da V4.6 sem nenhuma responsabilidade. */
 export default async function Page({ params }: { params: Promise<{ workspace: string }> }) {
   const workspace = await workspaceOf((await params).workspace);
-  return <PlaceholderView page="auto" business={workspace.name} />;
+  return <AutonomyView business={workspace.name} />;
 }

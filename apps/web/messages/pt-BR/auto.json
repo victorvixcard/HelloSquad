@@ -1,1 +1,65 @@
-{}
+{
+  "title": "Modo Autônomo",
+  "sub": "Deixe por conta do squad o que se repete. Você define os limites.",
+  "delegate": "Delegar uma responsabilidade",
+  "resps": {
+    "title": "Responsabilidades",
+    "sub": "o que o squad faz sozinho, em ciclos"
+  },
+  "empty": {
+    "title": "Nada delegado ainda.",
+    "text": "Comece pelo que mais se repete na sua semana. O squad conversa com você, mostra o combinado e só ativa depois do seu ok.",
+    "cta": "Delegar a primeira responsabilidade"
+  },
+  "more": {
+    "title": "O que mais pode ficar com o squad",
+    "sub": "cada delegação começa numa conversa",
+    "aria": "Delegar: {title}"
+  },
+  "templates": {
+    "plan": {
+      "title": "Planejar meus conteúdos toda semana",
+      "text": "Temas, legendas e artes, prontos para você aprovar."
+    },
+    "posts": {
+      "title": "Preparar posts toda segunda-feira",
+      "text": "Peças da semana com legenda, para você revisar."
+    },
+    "opp": {
+      "title": "Me avisar quando surgir uma oportunidade",
+      "text": "Datas, bairro, concorrentes e seus números."
+    },
+    "reviews": {
+      "title": "Responder avaliações do Google",
+      "text": "Respostas no tom de {business}, para você aprovar."
+    }
+  },
+  "levels": {
+    "title": "Como a autonomia funciona",
+    "sub": "três níveis, cada um com o seu limite",
+    "an": {
+      "k": "Analisar",
+      "d": "Pesquisa, acompanha e interpreta informações, só nas contas que você conectou.",
+      "w": "Faz sozinho"
+    },
+    "pr": {
+      "k": "Preparar",
+      "d": "Cria rascunhos, planos, peças e relatórios a cada ciclo, sem você pedir de novo.",
+      "w": "Faz sozinho · você aprova o que sai"
+    },
+    "ex": {
+      "k": "Executar",
+      "d": "Publicar, enviar mensagens, alterar campanhas e investir só acontecem com a autorização específica de cada ação.",
+      "w": "Só com a sua autorização"
+    },
+    "foot": "Aprovar um conteúdo não autoriza publicar, enviar mensagens, alterar campanhas ou investir. Cada uma dessas ações pede a sua própria autorização."
+  },
+  "next": {
+    "title": "Próximas execuções",
+    "empty": "Nada programado. Quando você delegar algo, as execuções aparecem aqui."
+  },
+  "history": {
+    "title": "Histórico de execuções",
+    "empty": "Cada execução fica registrada aqui, com o que foi feito, o que falhou e o trabalho que gerou."
+  }
+}

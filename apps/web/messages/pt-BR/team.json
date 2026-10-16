@@ -1,1 +1,172 @@
-{}
+{
+  "title": "Minha Equipe & Conversas",
+  "sub": {
+    "team": "Sete especialistas que conhecem {business}. Escolha um para ver o que está fazendo.",
+    "chats": "Tudo o que você conversou com o squad, por assunto e por contexto."
+  },
+  "openRoom": "Abrir a Sala do Squad",
+  "tabsLabel": "Minha Equipe e Conversas",
+  "tabs": {
+    "team": "Equipe",
+    "chats": "Conversas"
+  },
+  "stageLabel": "Escolha um especialista",
+  "nameAria": "{name} · {role}",
+  "talk": "Conversar {with}",
+  "ask": "Pedir algo",
+  "askTitle": "Pedidos comuns",
+  "profileTabs": {
+    "now": "Agora",
+    "skills": "Competências",
+    "made": "Entregas",
+    "with": "Trabalha com"
+  },
+  "noNow": "Nada em andamento agora. {intro}",
+  "noMade": "Ainda sem entregas para {business}.",
+  "now": {
+    "idle": "Disponível.",
+    "idleNexo": "Disponível. Peça qualquer coisa.",
+    "care": "Acompanha {count, plural, one {# trabalho} other {# trabalhos}} e te chama quando a decisão é sua.",
+    "irisIdle": "Espera uma fonte de dados, como o Instagram.",
+    "wait": "Aguarda a sua aprovação na v{version} {object}.",
+    "waitObject": {
+      "d0401": "da legenda",
+      "default": "do trabalho"
+    },
+    "waitPlain": "Aguarda você.",
+    "work": "{verb} “{title}”.",
+    "verb": {
+      "creating": "Criando",
+      "writing": "Escrevendo",
+      "researching": "Pesquisando",
+      "working": "Trabalhando em"
+    }
+  },
+  "work": {
+    "waitVersion": "v{version} aguarda sua aprovação"
+  },
+  "agents": {
+    "nexo": {
+      "pitch": "Organizo o squad e te chamo só quando a decisão é sua.",
+      "intro": "Coordeno o squad de {business}. Recebo seus pedidos, monto o time certo para cada trabalho e acompanho até o fim.",
+      "skills": {
+        "k1": "Organizar pedidos",
+        "k2": "Montar o time certo",
+        "k3": "Acompanhar prazos",
+        "k4": "Resumir o que importa"
+      },
+      "asks": {
+        "q1": "O que precisa de mim esta semana?",
+        "q2": "Vamos planejar uma campanha",
+        "q3": "Quero organizar meu marketing"
+      }
+    },
+    "bia": {
+      "pitch": "Encontro onde está a oportunidade de {business}.",
+      "intro": "Diagnóstico, posicionamento e planos com prioridade clara. Leio o mercado e o bairro antes de propor.",
+      "skills": {
+        "k1": "Diagnóstico de marketing",
+        "k2": "Pesquisa de mercado",
+        "k3": "Posicionamento",
+        "k4": "Estratégia de campanha"
+      },
+      "asks": {
+        "q1": "Onde {business} pode crescer até o Natal?",
+        "q2": "Crie uma promoção para esta semana",
+        "q3": "Analisar as padarias do bairro"
+      }
+    },
+    "kaia": {
+      "pitch": "Dou forma à marca de {business} em cada peça.",
+      "intro": "Posts, campanhas, materiais da loja e identidade visual, sempre com a cara de {business}.",
+      "skills": {
+        "k1": "Direção de arte",
+        "k2": "Peças para redes sociais",
+        "k3": "Materiais para a loja",
+        "k4": "Identidade visual"
+      },
+      "asks": {
+        "q1": "Criar um post para o Dia Mundial do Pão",
+        "q2": "Um cartaz de encomendas para o balcão",
+        "q3": "Novas capas para os destaques"
+      }
+    },
+    "otto": {
+      "pitch": "Mantenho {business} presente, com a voz dela.",
+      "intro": "Calendário, legendas, roteiros e textos para cada canal, no tom acolhedor de {business}.",
+      "skills": {
+        "k1": "Calendário editorial",
+        "k2": "Legendas e roteiros",
+        "k3": "Textos para o site",
+        "k4": "E-mails para clientes"
+      },
+      "asks": {
+        "q1": "Como está o plano da próxima semana?",
+        "q2": "Quero melhorar meu Instagram",
+        "q3": "Um roteiro de reels sobre a fermentação"
+      }
+    },
+    "kiwi": {
+      "pitch": "Faço {business} crescer: mais gente encontrando, mais visitas virando encomendas.",
+      "intro": "Busca no Google, anúncios, conversão e testes de crescimento. Nenhum real é investido sem a sua autorização.",
+      "skills": {
+        "k1": "Busca no Google",
+        "k2": "Anúncios com critério",
+        "k3": "Visitas que viram encomendas",
+        "k4": "Testes de crescimento"
+      },
+      "asks": {
+        "q1": "Onde {business} pode aparecer mais no Google?",
+        "q2": "Quanto investir em anúncios no Natal?",
+        "q3": "Por que tanta visita não vira encomenda?"
+      }
+    },
+    "max": {
+      "pitch": "Faço os clientes de {business} voltarem.",
+      "intro": "Segmentos, jornadas e mensagens para quem já comprou, sempre com consentimento.",
+      "skills": {
+        "k1": "Segmentação de clientes",
+        "k2": "Reativação",
+        "k3": "Jornadas por e-mail e WhatsApp",
+        "k4": "Fidelização"
+      },
+      "asks": {
+        "q1": "Reativar clientes que sumiram",
+        "q2": "Um e-mail para quem encomendou no Natal passado",
+        "q3": "Ideias de fidelidade para o balcão"
+      }
+    },
+    "iris": {
+      "pitch": "Leio os números e digo o que fazer com eles.",
+      "intro": "Indicadores, relatórios e recomendações, sempre com a fonte e sem inventar causa.",
+      "skills": {
+        "k1": "Indicadores do mês",
+        "k2": "Relatórios",
+        "k3": "Análise de campanhas",
+        "k4": "Recomendações"
+      },
+      "asks": {
+        "q1": "Analise meus últimos resultados",
+        "q2": "Qual post levou mais gente ao site?",
+        "q3": "Montar o relatório de outubro"
+      }
+    }
+  },
+  "chats": {
+    "search": "Buscar conversas",
+    "filterRoom": "Sala do Squad",
+    "room": "Sala do Squad",
+    "roomWho": "todos os especialistas",
+    "who": "{name} · {area}",
+    "about": "{who} · sobre {what}",
+    "aboutProject": "um projeto",
+    "aboutOther": "um contexto",
+    "untitled": "Conversa {with}",
+    "lastYou": "Você: {text}",
+    "lastAgent": "{name}: {text}",
+    "material": "enviou um material",
+    "none": "Nenhuma conversa com esse filtro.",
+    "clear": "Limpar filtros",
+    "newWith": "Nova conversa {with}"
+  }
+}
