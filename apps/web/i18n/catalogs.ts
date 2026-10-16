@@ -4,14 +4,16 @@ import type { Messages } from "@/messages/pt-BR";
 type Loader = () => Promise<{ default: Messages }>;
 
 /**
- * Catálogos já traduzidos. en e es entram aqui quando a tradução chegar (cada um com os mesmos
- * namespaces e chaves de pt-BR; o tipo Messages acusa chave faltando). Até lá, caem no padrão.
+ * Catálogo de cada idioma (ADR-0010), carregado só quando a tela usa: en e es têm os mesmos namespaces e chaves do
+ * pt-BR (o tipo Messages acusa chave faltando; `test/catalog-parity.test.ts` confere chaves, argumentos e formato).
  */
-const CATALOGS: Partial<Record<Locale, Loader>> = {
+const CATALOGS: Record<Locale, Loader> = {
   "pt-BR": () => import("@/messages/pt-BR"),
+  en: () => import("@/messages/en"),
+  es: () => import("@/messages/es"),
 };
 
 export async function loadMessages(locale: Locale): Promise<Messages> {
-  const load = CATALOGS[locale] ?? CATALOGS[DEFAULT_LOCALE]!;
+  const load = CATALOGS[locale] ?? CATALOGS[DEFAULT_LOCALE];
   return (await load()).default;
 }

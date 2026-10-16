@@ -1,5 +1,3 @@
-import { existsSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { createTranslator } from "next-intl";
 import { describe, expect, it } from "vitest";
 import { DEFAULT_LOCALE, LOCALES } from "@/i18n/config";
@@ -8,8 +6,11 @@ import { icuArguments, icuTags } from "@/i18n/icu";
 // Os catálogos de todos os idiomas, lidos do disco: idioma sem pasta falha aqui, com o nome do idioma.
 const CATALOGS: Record<string, Record<string, unknown> | undefined> = {};
 for (const locale of LOCALES) {
-  const file = fileURLToPath(new URL(`../messages/${locale}/index.ts`, import.meta.url));
-  CATALOGS[locale] = existsSync(file) ? (await import(`../messages/${locale}/index.ts`)).default : undefined;
+  try {
+    CATALOGS[locale] = (await import(`../messages/${locale}/index.ts`)).default;
+  } catch {
+    CATALOGS[locale] = undefined;
+  }
 }
 
 const SOURCE = CATALOGS[DEFAULT_LOCALE]!;
