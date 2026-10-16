@@ -50,7 +50,8 @@ begin
       update auth.users
       set encrypted_password = extensions.crypt(v_password, extensions.gen_salt('bf', 10)),
           email_confirmed_at = coalesce(email_confirmed_at, now()),
-          raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb)
+          -- O idioma escolhido pela pessoa (A2a) volta ao padrão: nenhum teste herda o en de outro.
+          raw_user_meta_data = (coalesce(raw_user_meta_data, '{}'::jsonb) - 'locale')
             || jsonb_build_object('full_name', v_user.full_name),
           banned_until = null,
           deleted_at = null,
@@ -61,6 +62,7 @@ begin
           or encrypted_password <> extensions.crypt(v_password, encrypted_password)
           or email_confirmed_at is null
           or raw_user_meta_data ->> 'full_name' is distinct from v_user.full_name
+          or raw_user_meta_data ? 'locale'
           or banned_until is not null
           or deleted_at is not null
         );

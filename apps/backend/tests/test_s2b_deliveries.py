@@ -766,7 +766,7 @@ async def test_locale_in_me_and_business_language_change(api, access_token, admi
     audit = await one(
         admin_db,
         "select payload from public.audit_events where action = 'workspace.locale_changed' "
-        "and workspace_id = %s",
+        "and workspace_id = %s order by created_at desc, id desc limit 1",
         miolo,
     )
     assert audit["payload"] == {"from": "pt-BR", "to": "en"}
