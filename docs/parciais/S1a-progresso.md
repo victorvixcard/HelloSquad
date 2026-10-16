@@ -5,7 +5,7 @@ funções, RLS, filas, Realtime e pgTAP. Início: 16/10/2026, 03:26.
 
 | Item | Estado |
 |---|---|
-| 1. Enums e tabelas (conversas, mensagens, projetos, trabalhos, entregas, aprovações, runs) | em andamento |
+| 1. Enums e tabelas (conversas, mensagens, projetos, trabalhos, entregas, aprovações, runs) | feito: migration `20261016063500`, 13 tabelas com RLS forçada e só SELECT para `authenticated`, `app.post_message`; pgTAP 08 (12) e 09 (16) verdes, 01 continua verde |
 | 2. Máquina de estados dos trabalhos (`work_item_transitions`, `app.transition_work_item`) | pendente |
 | 3. Filas pgmq, `app.enqueue_run`, `app.create_work_item_from_message` | pendente |
 | 4. Realtime Broadcast a partir do banco (`run_events`, `approvals`) | pendente |
