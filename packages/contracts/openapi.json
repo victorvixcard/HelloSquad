@@ -6478,6 +6478,32 @@
         ],
         "title": "CardAction"
       },
+      "CardMember": {
+        "properties": {
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "responsibility": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsibility",
+            "examples": [
+              "estratégia e conceito"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "agent_id"
+        ],
+        "title": "CardMember"
+      },
       "CardOption": {
         "properties": {
           "id": {
@@ -9408,6 +9434,34 @@
               }
             ],
             "title": "Agent Ids"
+          },
+          "members": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CardMember"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Members",
+            "description": "`team`: cada responsável com a responsabilidade dele na equipe."
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project Id",
+            "description": "`team`: o projeto da equipe."
           },
           "credits": {
             "anyOf": [

@@ -159,6 +159,7 @@ async def test_coordinated_campaign_closes_with_one_owner_per_step(
         room_id,
     )
     assert [t["agent"] for t in team] == ["nexo"]
+    assert team[0]["card"]["agent_ids"] == ["bia", "kaia", "otto"]
     assert [(m["agent_id"], m["responsibility"]) for m in team[0]["card"]["members"]] == [
         ("bia", "estratégia e conceito"),
         ("kaia", "peças da campanha"),

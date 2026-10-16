@@ -1411,6 +1411,15 @@ export interface components {
             /** @description Decisão que o botão manda em `POST /approvals/{id}/decision`. */
             decision?: components["schemas"]["ApprovalDecision"] | null;
         };
+        /** CardMember */
+        CardMember: {
+            agent_id: components["schemas"]["AgentId"];
+            /**
+             * Responsibility
+             * @example estratégia e conceito
+             */
+            responsibility?: string | null;
+        };
         /** CardOption */
         CardOption: {
             /** Id */
@@ -2633,6 +2642,16 @@ export interface components {
             options?: components["schemas"]["CardOption"][] | null;
             /** Agent Ids */
             agent_ids?: components["schemas"]["AgentId"][] | null;
+            /**
+             * Members
+             * @description `team`: cada responsável com a responsabilidade dele na equipe.
+             */
+            members?: components["schemas"]["CardMember"][] | null;
+            /**
+             * Project Id
+             * @description `team`: o projeto da equipe.
+             */
+            project_id?: string | null;
             /** Credits */
             credits?: string | null;
             /** @description Estado atual da pendência ligada. */

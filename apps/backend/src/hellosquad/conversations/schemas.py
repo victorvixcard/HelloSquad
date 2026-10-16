@@ -301,6 +301,11 @@ class CardOption(BaseModel):
     label: str = Field(examples=["Nos dois"])
 
 
+class CardMember(BaseModel):
+    agent_id: AgentId
+    responsibility: str | None = Field(default=None, examples=["estratégia e conceito"])
+
+
 class MessageCard(BaseModel):
     """Cartão dentro da mensagem do agente (FLUXOS_DA_V46.md §4.5), sempre ligado ao objeto."""
 
@@ -320,6 +325,10 @@ class MessageCard(BaseModel):
     version_no: int | None = None
     options: list[CardOption] | None = None
     agent_ids: list[AgentId] | None = None
+    members: list[CardMember] | None = Field(
+        default=None, description="`team`: cada responsável com a responsabilidade dele na equipe."
+    )
+    project_id: UUID | None = Field(default=None, description="`team`: o projeto da equipe.")
     credits: Decimal | None = None
     approval_status: ApprovalStatus | None = Field(
         default=None, description="Estado atual da pendência ligada."

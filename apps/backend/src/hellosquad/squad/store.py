@@ -1396,6 +1396,7 @@ class RunStore:
                 message_id,
                 {
                     "type": "team",
+                    "agent_ids": agents,
                     "members": team,
                     "project_id": str(project_id) if project_id else None,
                     "actions": [],
