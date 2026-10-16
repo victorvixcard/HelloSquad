@@ -13,6 +13,12 @@
 | 15/10/2026 | **Repositório oficial:** `github.com/victorvixcard/HelloSquad`, público. | Nenhum segredo, chave, token ou `.env` entra no repo. Commits pequenos e frequentes em `main`. O Diogo (design) receberá acesso. |
 | 15/10/2026 | Sete agentes com nomes, cores e papéis do handoff; definição em `squad/`. | `squad/<agente>/agent.yaml` e `SOUL.md` são a fonte dos prompts. Mudança neles gera versão nova, nunca edição silenciosa. |
 
+## 🚨 Regra geral do Vic (16/10/2026, vale para todos os projetos e todos os agentes)
+
+**Nenhum agente muda deliberadamente nada do que foi combinado: botão, cor, front, backend, UX, UI, regra de negócio, contrato de API. Nada.** Se durante a execução parecer necessário, melhor ou mais seguro mudar algo combinado, o agente **para aquele ponto**, registra a dúvida no relatório da fatia (o que foi combinado, o que propõe, por quê) e segue com o que não depende dela. O Thor leva a pergunta ao Vic; só o Vic decide. "Decidi provisoriamente e registrei" deixa de ser aceitável para qualquer coisa já combinada. Para a interface, o combinado é a Product UI V4.6 e a Landing V1 R32 do handoff, tela por tela, com o Diogo como revisor visual.
+
+Consequência imediata: as divergências que a A0 introduziu por conta própria (bolinha de cor em vez do agente mini na barra lateral, menu da pessoa no cabeçalho em vez do pé da barra, gaveta no celular, nome do agente em cor diferente) ficam **marcadas para reverter** à V4.6, salvo decisão explícita do Vic e do Diogo.
+
 ## Regras herdadas do Documento Mestre (valem como decisão do dono)
 
 1. Decisão comercial pendente (preço, créditos, planos, paywall) **não vira regra hardcoded**. Vai para tabela configurável com valor provisório marcado como provisório.
