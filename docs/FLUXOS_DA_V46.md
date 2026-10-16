@@ -5,6 +5,7 @@
 ## Como ler
 
 - Texto entre aspas é o **rótulo exato do protótipo**, copiado do código. Não troque palavra, maiúscula nem pontuação.
+- Quando o código monta o texto (nome do agente + frase, número + palavra), as aspas mostram o resultado na tela, e `<…>`, `N` ou `vN` marcam a parte variável. A conferência automática (`python3 docs/parciais/x1/verifica_rotulos.py`) acha 1.567 aspas literais e 112 montadas no protótipo. As 96 restantes são frases montadas com nome, frases do handoff ou termos deste documento ("Rejeitar", "a Kiwi"), listadas em `docs/parciais/x1/verifica_rotulos.txt`.
 - `(L1234)` é a linha em `ProductUIV4.dc.html`; `(Land L1234)` é a linha na landing. Os extratos por linha ficam em `docs/parciais/x1/out/` (regenerar com `python3 docs/parciais/x1/extract.py`); as notas de leitura, em `docs/parciais/x1/notas_*.md`.
 - O protótipo é feito em **camadas**: classe base V3 (L6408–9587) e camadas V4, V4.1, V4.2, V4.3, V4.4, V4.5 e V4.6 que sobrescrevem métodos com `Object.assign(Component.prototype, …)`. **Vale a camada mais tardia.** Quando a V4.x reaproveita a V3, isto é dito.
 - Tudo no protótipo é simulado: "Nada é publicado, enviado ou pago." (L5612). Relógio fixo em segunda, 12/10/2026, a partir de 10:24 (L6404). Respostas dos agentes são roteiros locais, sem IA.
@@ -123,7 +124,7 @@ Na landing, o Nexo nunca entra na lista: ele sempre coordena.
 | Cadastro, sem pedido | "Crie sua conta grátis." · "Diga o que você precisa e o squad começa por aí." | idem | idem |
 | Login | "Bem-vindo de volta." · "Entre para ver o que o seu squad fez desde a última vez." | "Seu e-mail" · "Entrar" | "Entrando" → "Pronto" |
 
-Depois de enviar, os dois modos mostram "Nesta versão, nenhuma conta foi criada e nada foi enviado." O pedido digitado na Hero fica em `sessionStorage` (`hs-landing-pedido`) e só o cadastro o mostra. No protótipo, a Hero grava também as sugestões que toca sozinha, de modo que quem abre o cadastro sem digitar vê uma sugestão automática como "Seu pedido". Não aparecem no protótipo: senha, nome, termos, "esqueci a senha", login social, mensagens de erro e o que acontece depois do cadastro (§11).
+Depois de enviar, os dois modos mostram "Nesta versão, nenhuma conta foi criada e nada foi enviado." O pedido digitado na Hero fica em `sessionStorage` (`hs-landing-pedido`) e só o cadastro o mostra. No protótipo, a Hero grava também as sugestões que toca sozinha, de modo que quem abre o cadastro sem digitar vê uma sugestão automática como "Seu pedido". Não aparecem no protótipo: senha, nome, termos, recuperação de senha, login social, mensagens de erro e o que acontece depois do cadastro (§11).
 
 ## 2. Objetos e estados visíveis
 
@@ -231,13 +232,13 @@ Nenhuma jornada envia nada sozinha: cada uma só prepara a conversa certa com o 
 | # | Quem | Texto-roteiro | Decisão e botões | Efeito |
 |---|---|---|---|---|
 | 1 | Marina | o pedido acima | enviar | O roteador reconhece post e data (L6611–6617) e chama `_j1Start`. A Kaia aparece digitando por 1,2 s. Mandado a outro especialista, o pedido gera "Isso a Kaia resolve direto, sem reunir o squad. Passei o seu pedido para ela." (L6618), e a conversa da Kaia abre. |
-| 2 | Kaia | "Combinado. Um post 4:5 para o Instagram, com a identidade da Miolo, para sexta, 16/10. Chamei o Otto para a legenda." + cartão "Trabalho criado · entrega pontual" · "Post do Dia Mundial do Pão" · "Kaia com o Otto" (L6738, L8607) | o cartão abre o trabalho | Trabalho `w-post` criado (post em `making`), com histórico "Você pediu na conversa com a Kaia". A conversa passa a se chamar "Post do Dia do Pão". Status vivo: "Kaia · criando a primeira versão", com o Otto. **Colaboração: a Kaia chama o Otto.** |
+| 2 | Kaia | "Combinado. Um post 4:5 para o Instagram, com a identidade da Miolo, para sexta, 16/10. Chamei o Otto para a legenda." + cartão "Trabalho criado · entrega pontual" · "Post do Dia Mundial do Pão" · "Kaia com o Otto" (L6738, L8607) | o cartão abre o trabalho | Trabalho `w-post` criado (post em `making`), com histórico "Você pediu na conversa com a Kaia". A conversa passa a se chamar "Post do Dia do Pão". Status vivo da conversa: "criando a primeira versão" (Kaia, com o Otto). Na Sala, o status aparece como "<Nome> · <o que faz>"; na conversa direta, só o que o agente faz (L8511). **Colaboração: a Kaia chama o Otto.** |
 | 3 | Kaia | após 4,6 s: "Primeira versão pronta. Usei o pão como protagonista e o convite para sábado logo abaixo. O que acha?" + cartão do material (L6744) | "Aprovar v1" · "Pedir ajuste" · abrir a peça (L8616, L5539) | Post em `review`; histórico "v1 entregue". Status: "aguarda sua aprovação". Se a pessoa está em outra tela, chega o aviso "A Kaia entregou a v1 do post". Nasce a pendência "Para você revisar" (§5). |
 | 4 | Marina | "Quero pedir um ajuste nesta versão." | "Pedir ajuste" | Kaia: "Claro. O que você quer mudar? Eu mudo só isso e mantenho o resto." + os ajustes ainda não usados: "Deixar a data mais visível", "Título mais curto", "Fundo verde da Miolo", "Destacar a fornada de sábado" (L6766–6768, L5784–5787). Texto livre também escolhe o ajuste por palavra-chave: data, curto, verde, sábado (L6751–6759). "Outra abordagem" só aparece na conversa do Otto sobre o post (L9637, L9949). |
-| 5 | Kaia | "Mudo só a data. O resto fica igual." e, após 3,8 s, "Pronto, v2: data em destaque. Falta a sua aprovação." + cartão da v2 (L6776–6784) | "Aprovar v2" · "Pedir ajuste" | Histórico: "Você pediu: “Deixar a data mais visível”" e "v2 entregue · só a data mudou". O cartão da v1 passa a dizer "Substituída pela v2" (L8615). Aviso: "A Kaia entregou a v2 do post". |
+| 5 | Kaia | "Mudo só a data. O resto fica igual." e, após 3,8 s, "Pronto, v2: data em destaque. Falta a sua aprovação." + cartão da v2 (L6776–6784) | "Aprovar v2" · "Pedir ajuste" | Histórico: "Você pediu: “Deixar a data mais visível.”" e "v2 entregue · só a data mudou". O cartão da v1 passa a dizer "Substituída pela v2" (L8615). Aviso: "A Kaia entregou a v2 do post". |
 | 6 | Marina | "Aprovar v2", no cartão, no detalhe do trabalho ou por texto ("aprov", "perfeit", "pode seguir", "está ótimo", "fechado", L6624) | aprovar | Nota "Você aprovou a v2 · 10:31". Histórico: "Você aprovou a v2". Status: "v2 aprovada". Aviso: "v2 aprovada. A Kaia foi avisada." (L6795–6799). |
 | 7 | Kaia | "Obrigada! Quer que o Otto publique no Instagram na sexta, às 9h? Aprovar a peça não publica nada sozinho." + cartão de autorização (L6800) | "Autorizar publicação" · "Agora não" (L5544) | Nasce a pendência "Para você autorizar": "Publicação do post" (§5). |
-| 8a | Kaia | "Combinado: o Otto agendou para sexta, às 9h, com a legenda dele. Ele te avisa quando o Instagram confirmar." | "Autorizar publicação" | Histórico do Otto: "Publicação autorizada para sex, 16/10, 9h". Status vivo: "Otto · publicação agendada · sex, 9h". Aviso: "Publicação agendada · simulação". O trabalho mostra "Publicação autorizada · sex, 16/10, 9h", "simulação" e "Confirmada só quando o Instagram confirmar." (L6807–6811, L5016). **Colaboração: a Kaia entrega e o Otto publica.** |
+| 8a | Kaia | "Combinado: o Otto agendou para sexta, às 9h, com a legenda dele. Ele te avisa quando o Instagram confirmar." | "Autorizar publicação" | Histórico do Otto: "Publicação autorizada para sex, 16/10, 9h". Status vivo: Otto, "publicação agendada", "sex, 9h". Aviso: "Publicação agendada · simulação". O trabalho mostra "Publicação autorizada · sex, 16/10, 9h", "simulação" e "Confirmada só quando o Instagram confirmar." (L6807–6811, L5016). **Colaboração: a Kaia entrega e o Otto publica.** |
 | 8b | Kaia | "Sem problema. A peça fica pronta em Trabalhos; você autoriza a publicação quando quiser." | "Agora não" | Post com `pub: 'no'`. O cartão vira "Publicação não autorizada por enquanto". O trabalho mostra "Publicação ainda não autorizada." e o botão "Decidir agora", que volta a pedir a autorização (L6812–6814, L5017, L9189). |
 
 **Estados do post:** `none` → `making` → `review` → (ajuste) `making` → `review` → `approved`. Publicação: `none` → `ask` → `yes` ou `no`. Em Projetos, o trabalho em revisão aparece como "v2 aguarda sua aprovação" · "Aguarda você", com o próximo passo "Aprovar a v2 até sex, 16/10" (L8011).
@@ -263,7 +264,7 @@ Nenhuma jornada envia nada sozinha: cada uma só prepara a conversa certa com o 
 
 | # | Quem | Texto-roteiro | Decisão e botões | Efeito |
 |---|---|---|---|---|
-| 1 | Marina | o pedido acima | enviar | `_d5Kind` reconhece "planej/conteúd/plano/posts/instagram" e escolhe o modelo `plan` (L13165). A conversa se chama "Nova responsabilidade". Sem modelo reconhecido, o Nexo pergunta "O que você quer deixar por conta do squad? Pode escrever do seu jeito, como “quero que vocês planejem meus conteúdos toda semana”." e oferece "Planejar conteúdos toda semana", "Preparar posts toda segunda", "Avisar sobre oportunidades" e "Responder avaliações do Google". |
+| 1 | Marina | o pedido acima | enviar | `_d5Kind` reconhece `planej|conteúd|plano|posts|instagram` e escolhe o modelo `plan` (L13165). A conversa se chama "Nova responsabilidade". Sem modelo reconhecido, o Nexo pergunta "O que você quer deixar por conta do squad? Pode escrever do seu jeito, como “quero que vocês planejem meus conteúdos toda semana”." e oferece "Planejar conteúdos toda semana", "Preparar posts toda segunda", "Avisar sobre oportunidades" e "Responder avaliações do Google". |
 | 2 | Nexo | "Isso fica com o Otto, com a Kaia quando houver produção visual. Eu coordeno e te chamo quando algo depender de você." Logo depois, a mensagem de sistema "O Nexo chamou o Otto e a Kaia para esta conversa" (L13177, L9867) | — | O Otto conduz as perguntas. **Colaboração: o Nexo passa a palavra ao responsável.** Fora da jornada, se a rotina já existe: "O Otto já cuida disso: “planejar meus conteúdos toda semana”, toda quinta, às 9h (ativa). Para não ter duas rotinas iguais, eu ajusto a que existe." com "Ajustar a rotina atual" e "Ver no Modo Autônomo" (L13171). Pedido de rotina feito a outro especialista: "O que se repete passa pelo Nexo, no Modo Autônomo. Chamei ele." (L6638). |
 | 3 | Otto | "Qual é o foco desses conteúdos?" | "Trazer encomendas pelo site" · "Mostrar o processo da padaria" · "Manter o Instagram ativo" | A resposta fica no combinado (`cfg.obj`), mas nenhuma tela a mostra depois. |
 | 4 | Otto | "Em que dia você quer receber o plano da semana seguinte?" | "Toda segunda" · "Toda quinta" · "Toda sexta" | — |
@@ -288,10 +289,6 @@ Editar uma responsabilidade usa a mesma conversa ("Confira como fica o combinado
 | 6 | Marina | — | "Aprovar o plano" (L5561) | "PL-43" passa a "Aprovado por você hoje, HH:MM. Cada publicação continua pedindo a sua aprovação." Aviso: "Plano da semana 43 aprovado. Nada é publicado sem a sua aprovação de cada post." O próximo ciclo vira "Plano da semana 44" (qui, 22/10). |
 
 Se a preferência já existe, a Kaia responde "O preço já está em destaque nessa peça. A preferência continua na Memória da Marca, do jeito que você deixou." (L13047). O plano tem três peças: "seg · Encomendas de panetone" (com o selo "R$ 89" se o preço está confirmado), "qua · Bastidores" e "sex · Pão de abóbora" (L13466–13470). A faixa mostra "Plano da semana 43" · "Para você aprovar" · "Revisar o plano", mas esse botão abre o trabalho, que não tem "Aprovar": no protótipo, aprova-se pelo cartão da conversa. O ajuste da jornada 1 e o conceito da jornada 2 **não** viram sugestão na Memória; só o pedido de preço da jornada 4 vira.
-
-### 3.4 Ciclo de aprendizado da Memória: preço em destaque (Kaia → Memória → planejamento)
-
-<!-- §3.4 em redação -->
 
 ## 4. Conversa
 
@@ -339,7 +336,7 @@ Sugestões de pergunta ("Pergunte à Kaia") somem depois da primeira mensagem da
 ### 4.5 Como o agente responde
 
 - **Envio:** "Enter" envia; a mensagem da pessoa entra com hora e nome dos anexos. Só anexo também envia (L6593–6598).
-- **"Digitando":** "<Nome> está escrevendo" e o status "escrevendo…" por 700 a 2400 ms, conforme o roteiro (L6576, L8540).
+- **Digitando:** "<Nome> está escrevendo" e o status "escrevendo…" por 700 a 2400 ms, conforme o roteiro (L6576, L8540).
 - **Roteiro:** a cadeia de roteadores (V4.5 → V4.4 → V4 → V3, L13394, L12492, L9871, L6606) reconhece as jornadas, os pedidos de cada especialista (`_intent`, L6647) e as intenções sobre o objeto da conversa.
 - **Resposta-padrão para texto fora do roteiro** (L6727–6728, L9942):
   - Conversa comum: "Anotei. Neste protótipo eu respondo a alguns roteiros de exemplo. Experimente:" + dois pedidos de exemplo.

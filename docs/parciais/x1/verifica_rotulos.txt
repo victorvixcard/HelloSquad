@@ -1,0 +1,103 @@
+aspas verificadas: 1777
+literais: 1567
+montadas (todas as partes existem): 112
+não encontradas: 98
+
+- Rejeitar
+- a Kiwi
+- a Kiwi
+- a Kiwi
+- <Nome> <descrição>
+- O que pedir à Bia
+- Nexo organiza os projetos da Miolo e te chama quando a decisão é sua.
+- Bia encontra onde está a oportunidade da Miolo.
+- Kaia dá forma à marca da Miolo em cada peça.
+- Otto cuida do calendário, das legendas e do que a Miolo fala em cada canal.
+- Kiwi cuida do crescimento da Miolo: busca, anúncios e mais visitas virando encomendas.
+- Max cuida de quem já é cliente, sempre com consentimento.
+- Íris lê os números da Miolo e diz o que fazer com eles, sem inventar causa.
+- O que você quer fazer com a Bia?
+- A Bia conduz o briefing na conversa, sem formulário.
+- Buscar: diagnóstico, concorrentes…
+- Nada com “…”. Escreva na conversa o que você precisa: a Bia entende.
+- Quando o pedido envolve outra especialidade, a Bia chama quem precisa na mesma conversa.
+- Hello, Marina.
+- ↵ enviar
+- Conversa direta com a Kaia
+- Bia, Kaia e Otto · conversa em grupo
+- Kaia (Criação) está a postos
+-  (coral) | 
+-  (e todo texto que começa por 
+-  · com <colaborador>
+- Kaia ajustando a data
+- Kaia preparando as peças · 3 de 5 prontas
+- mudou: data em destaque
+- Kaia criou e ajustou
+- <n> ativos · <n> pausados · <n> decisões suas por perto
+- Ativo no Modo Autônomo · desde 28/09
+- Acompanha 3 trabalhos e te chama quando a decisão é sua.
+- Protótipo · conta em uso · dados fictícios
+- Protótipo · primeiro acesso · dados fictícios
+- Oi, eu sou a Kaia. Me diga o que precisa e eu crio com a cara da Miolo.
+- <Nome> · <o que faz>
+- Pronto, v2: data em destaque. Falta a sua aprovação.
+- Você pediu: “Deixar a data mais visível.”
+- Você aprovou a v2 · 10:31
+- Bia · desenvolvendo a estratégia
+- Bia · aguarda sua aprovação
+- Kaia · preparando as peças
+- Isso fica com o Otto, com a Kaia quando houver produção visual. Eu coordeno e te chamo quando algo depender de você.
+- O Nexo chamou o Otto e a Kaia para esta conversa
+- O Otto já cuida disso: “planejar meus conteúdos toda semana”, toda quinta, às 9h (ativa). Para não ter duas rotinas iguais, eu ajusto a que existe.
+- Toda quinta
+- Você delegou: planejar meus conteúdos toda semana
+- Kaia percebeu · …
+- Não usada, porque ainda é sugestão: “…”
+- A conversa é a interface principal
+- Mensagem para a Kaia…
+- Conversa direta com a Kaia
+- Ver <Ambiente>
+- Calendário · semana
+- Resultados · mês
+- Pergunte à Kaia
+- <Nome> · <Ambiente>
+- · sobre uma publicação
+- <Nome>: …
+- Anotei. Neste protótipo eu respondo a alguns roteiros de exemplo. Experimente:
+- Você aprovou a v2 · 10:31
+- com Kaia e Otto
+- @<Nome> 
+- <Líder> assumiu o trabalho, com …
+- Pronto. Está em Projetos, dentro de <projeto>.
+- Uma pendência por faixa; quando há mais de uma, a primeira aparece e as outras abrem logo abaixo, no mesmo formato. Sem pendência, sem faixa.
+- Kaia ajustou: data em destaque, como você pediu · sai sex, 16/10, 9h, se você aprovar
+- <conhecimento sugerido>?
+- Aprovar vN
+- Você aprovou a vN
+- vN aprovada. A Kaia foi avisada.
+- Substituída pela vN
+- Rejeitar
+- <Nome> · <papel>
+- Kaia percebeu · preferências criativas
+- Ver o que o Otto consulta
+- , de você), texto e data, e leva ao item. Exemplos (`LOG5`, L12910): 
+- . Vazio: 
+-  Cada item também tem o próprio histórico, que termina em 
+- <Nome> lidera · com <colaborador> · <frequência>
+- Pausada: nada novo até você retomar
+- <O Otto> lidera · com … · o Nexo coordena · desde …
+- Ativa, Pausada, Aguarda aprovação, Bloqueada por integração, Falha, Programada, Não executada e Encerrada
+- Toda quinta às 9h, o Otto apresenta o plano da semana seguinte com 3 posts por semana. A Kaia cria as artes. Nada é publicado sem a sua aprovação.
+- Retomada. O Otto volta na quinta.
+- publicar sozinho
+- Você aprovou a v2 · 10:31
+- Digitando
+- Kaia · criando a primeira versão
+- Substituída pela vN
+- Dono
+- dono + Diogo
+- Rejeitar
+- Excluir
+- @Nome
+- @Nome
+- a Kiwi

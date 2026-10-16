@@ -110,4 +110,5 @@ land_04576_perguntas-frequentes-r22.txt	4576-4608	33 linhas	perguntas frequentes
 land_04609_gaze-engine-c1-rules-on-the-approved-dra.txt	4609-4855	248 linhas	gaze engine (C1 rules on the approved drawings)
 land_04856_lifecycle.txt	4856-5061	207 linhas	lifecycle
 land_05062_view-model.txt	5062-5385	331 linhas	view model
-land_strings.tsv	-	276 linhas	literais de texto em português do script
+land_rotulos.tsv	-	381 linhas	literais com cara de rótulo (maiúscula inicial, inclusive uma palavra)
+land_strings.tsv	-	285 linhas	literais de texto em português do script
