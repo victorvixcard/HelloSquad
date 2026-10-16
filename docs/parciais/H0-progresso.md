@@ -10,8 +10,8 @@
 | 1 | Isolamento e autorização (alvos 1 a 5) | ✅ nada quebrou |
 | 2 | Web (alvos 6 e 7) | ✅ 4 achados (3🟡 1ℹ️), núcleo resistiu |
 | 3 | Diretrizes do dono (alvos 8 a 11) | ✅ conforme, sem achado |
-| 4 | Reprodutibilidade (alvos 12 e 13) | 🟡 em andamento |
-| 5 | Relatório `H0-relatorio.md` e limpeza (seed, portas, containers) | ⏳ |
+| 4 | Reprodutibilidade (alvos 12 e 13) | ✅ clone verde; 1 achado de doc |
+| 5 | Relatório `H0-relatorio.md` e limpeza (seed, portas, containers) | 🟡 em andamento |
 
 ## Ambiente no início
 
@@ -53,3 +53,9 @@ Achados:
 - **Alvo 9 (segredos no histórico).** `git log -p --all` (36 commits, 48.8k linhas): 0 de `eyJ…`, `sb_secret_…`, `sb_publishable_…`, `sk-ant-…`, `super-secret-jwt-token`, chave privada. `service_role` (24x) é nome de papel; `Senha!Teste123` (17x) é a senha fictícia documentada. `.env` nunca foi commitado e está em `.gitignore:2`. `.env.example` com chaves sensíveis vazias (só `DATABASE_URL` traz o default local público `postgres:postgres`, documentado — ℹ️, local).
 - **Alvo 10 (dados fictícios).** Seed só com e-mails `.example`. Sem CPF/CNPJ, sem telefone real em código. Únicos e-mails fora de `.example`: `admin@email.com` **comentado** (template do CLI) e o placeholder `seunegocio.com.br`. Captura `02-marina-shell.png` conferida: Miolo, Marina Costa, marina@miolo.example — tudo fictício.
 - **Alvo 11 (pt-BR, sem emoji, identificadores em inglês).** 0 emoji em `apps/**` e `packages/**/src`. Códigos de erro da API em inglês (`workspace_not_found`, `validation_error`, `forbidden`…) com mensagem em pt-BR; `VALIDATION_MESSAGES` em pt-BR; UI em pt-BR. Observação: "Disponível na Fase 1." (jargão interno) é a pergunta aberta A0 §6.2.
+
+## Bloco 4 — Reprodutibilidade (alvos 12 e 13)
+
+- **Alvo 12 (clone limpo).** `git clone` do GitHub em `/tmp/hellosquad-h0` (HEAD = local, `074b8b8`), `cp .env`, `make up && make seed && make test && make e2e`: **todos exit 0**. `make test`: pytest 45, Vitest 53 (9+44), pgTAP Files=7 Tests=98 PASS. `make e2e`: 5/5 Playwright, seed reaplicado. Clone apagado (tinha cópia do `.env`). O Supabase é um por máquina (project_id `hellosquad`): o `make up` do clone reusa os containers (migrations `applied:[]`).
+  - **Achado H0-06 (🟡 doc):** a ordem documentada em `SETUP_LOCAL.md` ("Subir do zero") põe `make up` **antes** de `cp .env.example .env`, mas `make up` chama `make migrate` → `hellosquad-local-db roles`, que exige `DATABASE_URL`/`API_DATABASE_URL` do `.env`. Provado: sem `.env`, `make migrate` → exit 2 "erro: DATABASE_URL vazio no .env". Quem segue a doc ao pé da letra quebra no primeiro `make up`.
+- **Alvo 13 (aderência dos relatórios).** 15/15 afirmações conferidas no disco: **J0** (project_id `hellosquad`; edge_runtime `enabled=false`; `pnpm@12.11.2`; CI em `infra/github/workflows/` e sem `.github/`; `@types/node ^24`). **S0** (hellosquad_api noinherit+nobypassrls+nosuper; 4 migrations; pgTAP 00–06; `BeforeValidator` no slug; trigger do último owner). **A0** (primitivos Button/CommandField/StatePill/Agent/Icon/AgentDot; sem favicon de terceiro; `hs-kbd` no `shell.css`; 0 refs a fonts.googleapis/gstatic no build; rotas `/app/[workspace]`). Nenhuma divergência.
