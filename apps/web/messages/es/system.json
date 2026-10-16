@@ -8,5 +8,11 @@
     "label": "Dirección no encontrada",
     "title": "Esta página no existe.",
     "lead": "Revisa la dirección o vuelve al <link>inicio de tu squad</link>."
-  }
+  },
+  "error": {
+    "title": "No pudimos abrir esta página ahora.",
+    "lead": "Algo falló de nuestro lado. Inténtalo de nuevo; si sigue pasando, vuelve al <home>inicio</home>.",
+    "retry": "Intentar de nuevo"
+  },
+  "loading": "Cargando…"
 }

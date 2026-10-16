@@ -8,5 +8,11 @@
     "label": "Address not found",
     "title": "This page doesn’t exist.",
     "lead": "Check the address or go back to <link>your squad’s home</link>."
-  }
+  },
+  "error": {
+    "title": "We couldn’t open this page right now.",
+    "lead": "Something went wrong on our side. Try again; if it keeps happening, go back to the <home>start</home>.",
+    "retry": "Try again"
+  },
+  "loading": "Loading…"
 }
