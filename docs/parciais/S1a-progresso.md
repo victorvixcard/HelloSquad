@@ -12,7 +12,7 @@ funções, RLS, filas, Realtime e pgTAP. Início: 16/10/2026, 03:26.
 | 5. pgTAP das novas tabelas e funções | feito: arquivos 08 a 13 (96 asserções novas); `make test-db` 14 arquivos, 216 testes, PASS |
 | 6. Seed da Miolo (conversas, mensagens, trabalho 04.01 em `needs_you`) | feito: bloco `$seed_nucleo$` com ids e horários fixos; `make seed` duas vezes seguidas, mesmo estado (Miolo 2 conversas, 3 mensagens, 1 trabalho, 1 review pendente; Vitta e Trilha vazias; filas vazias) |
 | 7. `docs/SETUP_LOCAL.md` (linha do web e filas pgmq) | feito: linha do web trocada pelo texto da A0b §3 item 6; linha nova sobre inspecionar as filas (comando conferido) |
-| 8. Relatório `S1a-relatorio.md` | pendente |
+| 8. Relatório `S1a-relatorio.md` | feito: `supabase db reset` + `make up && make migrate && make seed && make test` exit 0 (pytest 51, Vitest 9 + 44, pgTAP 216 PASS); canal privado provado com cliente Realtime real; banco no seed; 8100 livre |
 
 ## Notas
 
@@ -23,3 +23,4 @@ funções, RLS, filas, Realtime e pgTAP. Início: 16/10/2026, 03:26.
   `supabase_realtime_admin`, e o `postgres` consegue criar política nela (supautils).
 - Não toco em `apps/web/` nem crio endpoint. `docs/PLANO_DE_ACAO_FASE0.md` modificado no disco não é meu
   e fica fora dos meus commits.
+- Fechado às 03:50. Relatório em `docs/parciais/S1a-relatorio.md`.
