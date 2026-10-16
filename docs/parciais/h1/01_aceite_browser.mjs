@@ -77,6 +77,15 @@ try {
   await approve.dblclick();
   await expect(main.getByText("Aprovada por você").first()).toBeVisible({ timeout: 15_000 });
   step("aprovado");
+  // O painel da conversa, aberto ao lado, acompanha a decisão sem recarregar?
+  const live = panel.locator(".ps-mat").filter({ hasText: "Material · v1" }).last();
+  let panelOk = false;
+  try {
+    await expect(live.getByText("Aprovada por você")).toBeVisible({ timeout: 10_000 });
+    panelOk = true;
+  } catch {}
+  step("painel-ao-lado-sem-recarregar", { aprovadaNoPainel: panelOk, botaoAprovarAinda: await live.getByRole("button", { name: "Aprovar v1" }).count(), texto: (await live.innerText()).replace(/\s+/g, " ").slice(-80) });
+  await page.screenshot({ path: `${OUT}/04b-painel-10s-depois.png` });
   await page.screenshot({ path: `${OUT}/04-trabalho-aprovado.png`, fullPage: true });
   const mainText = (await main.innerText()).replace(/\s+/g, " ");
   const hist = mainText.match(/Histórico.{0,600}/);
