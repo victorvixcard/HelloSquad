@@ -9,10 +9,15 @@ conferido no código do protótipo (trechos curtos por linha) e no nosso código
 listas registradas ou quando é só dado diferente. Listas conferidas: A2b §4 (1–30) e §6; A2a §4 (1–8); A1b §4 (1–28);
 FLUXOS §1.2, §1.3 e §5; S2a §5; achados da H1 (H1-01 a H1-11). Regra do dono: o que o protótipo não responde é pergunta,
 não achado; "a Kiwi" e o rótulo "Growth" na barra são decisão do dono.
-**Escritas no banco:** nenhuma de pedido, entrega, aprovação ou importação. O único `POST` de dado foi abrir "Conversar
-com Bia" na Miolo, que cria (ou reabre) a conversa do ambiente, como a própria tela faz (A2b §3 item 2), sem mensagem.
+**Escritas no banco:** nenhuma de pedido, entrega, aprovação ou importação, e nenhuma mensagem. Os únicos `POST` de
+dado foram abrir "Conversar com Bia" (19:04) e "Analisar Pedidos com Íris" (19:10 e 19:18) na Miolo, que criam (ou
+reabrem) a conversa do objeto, como a própria tela faz (A2b §3 item 2); as rodadas do Hulk reaplicaram o seed depois.
 Os outros `POST` na rede são as Server Actions de leitura das páginas (calendário, resumo de contatos, token do
 Realtime, eventos do run).
+**Dados:** as entregas do Hulk na Miolo apareceram e sumiram com o seed reaplicado pelas rodadas dele (19:14–19:15,
+19:17–19:21). Para as telas com documento e calendário, o lado "nosso" usa as capturas da própria A2b
+(`docs/parciais/a2b/nosso-a2b-*.png`, build de produção das 17:21) e o código; depois da A2b não houve mudança em
+`apps/web` fora do site público (A2c), conferido por `git log --since 17:25 -- apps/web packages/ui`.
 
 ## Tabela-resumo
 
@@ -26,11 +31,9 @@ Realtime, eventos do run).
 | P-06 | CRM · frase "Nada é enviado sem consentimento…" | Colada na borda esquerda e no pé do cartão dos números, fora do respiro dos outros blocos | ℹ️ |
 | P-07 | Growth · objeto da conversa do ambiente | Nome "Growth Marketing" no nome acessível do botão e no cartão; na V4.6 o objeto se chama "Growth" (`ENVS.media.l`) | ℹ️ |
 | P-08 | Conversas de objeto novas (Indicador na tela; Publicação e Oportunidade pelo código) | Abrem mudas: sem "Hoje", sem a primeira fala do agente, sem o cartão do objeto no histórico e sem "Pergunte à <Nome>"; a V4.6 abre cada uma com fala, cartão e três sugestões do tipo | 🟡 |
-| P-11 | Conversa do indicador · coluna "Contexto da conversa" | Sem o número, a variação e a curva do indicador e sem a linha "setembro · comparado com agosto" abaixo do título; "Voltar para Resultados" vai para o pé da coluna | 🟡 |
-| P-09 | Documento (Bia, Íris, Kiwi, Max) · cartão da decisão | Falta a regra da V4.4 "Aprovar o diagnóstico não cria trabalhos…" / "Aprovar o plano define a direção…"; no lugar, textos da legenda do Otto: "…com a legenda à vista." e, aprovado, "Aprovar não publica: a publicação pede autorização própria." | 🟡 |
-| P-10 | Documento · migalha, botão de conversa e cartão extra | Migalha com o título do trabalho ("Quero analisar meu negócio") e o h1 com o do documento (na V4.6 os dois são `bd.title`); "Conversar com a Bia" no lugar de "Conversar sobre o diagnóstico"/"…as prioridades"; cartão com o rosto "Bia" que a V4.6 não tem | ℹ️ |
-
-(Tabela em construção: as telas da Miolo com documentos entram depois das entregas reais do Hulk.)
+| P-09 | Conversa do indicador · coluna "Contexto da conversa" | Sem o número, a variação e a curva do indicador e sem a linha "setembro · comparado com agosto" abaixo do título; "Voltar para Resultados" vai para o pé da coluna | 🟡 |
+| P-10 | Documento (Bia, Íris, Kiwi, Max) · cartão da decisão | Falta a regra da V4.4 "Aprovar o diagnóstico não cria trabalhos…" / "Aprovar o plano define a direção…"; no lugar, textos da legenda do Otto: "…com a legenda à vista." e, aprovado, "Aprovar não publica: a publicação pede autorização própria." | 🟡 |
+| P-11 | Documento · migalha, botão de conversa e cartão extra | Migalha com o título do trabalho ("Quero analisar meu negócio") e o h1 com o do documento (na V4.6 os dois são `bd.title`); "Conversar com a Bia" no lugar de "Conversar sobre o diagnóstico"/"…as prioridades"; cartão com o rosto "Bia" que a V4.6 não tem | ℹ️ |
 
 ## Achados
 
@@ -126,7 +129,8 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    (`apps/web/components/env/crm/CrmEnvironment.tsx:176`), com `margin:8px 0 0` e sem recuo
    (`apps/web/components/env/crm/crm.css:17`): o texto começa na borda do cartão (x≈300, os outros blocos em x≈320) e
    encosta no pé.
-4. **Prova:** `nosso-max.png` (abaixo da barra de consentimento).
+4. **Prova:** `nosso-max.png` (abaixo da barra de consentimento) e `docs/parciais/a2b/nosso-a2b-max-importacao.png`
+   (mesmo desalinhamento, com o vão entre os números e a barra) × `proto-max.png`.
 5. **Severidade:** ℹ️. A frase sempre visível está declarada na A2b §1 item 3; o desalinhamento não.
 
 ### P-07 · O objeto "ambiente" da Kiwi se chama "Growth Marketing", não "Growth" · ℹ️
@@ -169,7 +173,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    hora da primeira fala do **ambiente**; item 6 é a faixa de período. A1b §4 item 9 cobre a conversa do conhecimento
    da Memória. Nenhum registra que as conversas de indicador, publicação e oportunidade abrem vazias.
 
-### P-11 · Coluna "Contexto da conversa" do indicador sem o número · 🟡
+### P-09 · Coluna "Contexto da conversa" do indicador sem o número · 🟡
 
 1. **Tela e rota:** Resultados → conversa do indicador "Pedidos" → "Expandir a conversa" (coluna aberta como vem).
 2. **Protótipo:** a coluna do objeto Indicador abre com o cartão do número (`hasBig: !cx.p && !!cx.big`, `big`,
@@ -187,7 +191,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    devolve"; a §4 só registra os rótulos novos "Segmento" e "Documento" (item 8) e o rótulo do período (item 27). O
    número do indicador fora da coluna não está registrado.
 
-### P-09 · Cartão da decisão do documento sem a regra "aprovar não cria trabalhos" e com texto da legenda · 🟡
+### P-10 · Cartão da decisão do documento sem a regra "aprovar não cria trabalhos" e com texto da legenda · 🟡
 
 1. **Tela e rota:** detalhe de qualquer entrega em documento, `/app/miolo/squad/<bia|iris|kiwi|max>/trabalho/<id>`,
    primeiro cartão da coluna da direita.
@@ -203,14 +207,15 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    legenda 04.01 do Otto, aplicados a diagnóstico, plano, relatório, plano de mídia e segmento.
 4. **Como reproduzir:** Marina → Estratégia → "Planos e diagnósticos" → abrir o diagnóstico (pendente ou aprovado).
 5. **Prova:** pendente, `docs/parciais/a2b/nosso-a2b-bia-documento.png` (captura da própria A2b, mesmo código) ×
-   `proto-bia-doc.png`; aprovado, `nosso-bia-doc.png` (captura desta rodada, depois das entregas do Hulk).
+   `proto-bia-doc.png` (cartão "v2 · em revisão" com "Aprovar o plano define a direção. Cada iniciativa vira trabalho
+   só quando você pedir."). O estado aprovado só pelo código (as entregas do Hulk sumiram antes da captura).
 6. **Severidade:** 🟡 (some uma regra combinada da tela e entra uma regra de outro objeto).
 **Conferido:** A2b §4 item 9 registra só os botões extras ("Pedir nova proposta", "Cancelar trabalho") e o item 10 o
 "Baixar PDF"; os textos do cartão não estão registrados.
 
-### P-10 · Documento: migalha, rótulo da conversa e cartão de equipe diferentes · ℹ️
+### P-11 · Documento: migalha, rótulo da conversa e cartão de equipe diferentes · ℹ️
 
-1. **Tela e rota:** a mesma do P-09.
+1. **Tela e rota:** a mesma do P-10.
 2. **Protótipo:** a migalha e o h1 mostram o mesmo `{{bd.title}}` (L5072–L5073); o botão é "Conversar sobre o
    diagnóstico" ou "Conversar sobre as prioridades" (`talkL`, L12608); a coluna tem estado, Versões, ações e Histórico
    (L5077); "Especialistas envolvidos" é seção do corpo do plano (L5075).
@@ -218,7 +223,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    `titulo` do conteúdo ("Diagnóstico de marketing da Miolo") (`apps/web/components/env/docs/DocumentDetail.tsx:133` e
    `:142`); botão "Conversar com a Bia" (`:226`); cartão extra com o rosto e o nome do time entre as ações e o Histórico
    (`:235-246`).
-4. **Prova:** `docs/parciais/a2b/nosso-a2b-bia-documento.png` e `nosso-bia-doc.png` × `proto-bia-doc.png`.
+4. **Prova:** `docs/parciais/a2b/nosso-a2b-bia-documento.png` × `proto-bia-doc.png`.
 5. **Severidade:** ℹ️.
 
 ## Conferido e bateu
