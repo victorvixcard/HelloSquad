@@ -444,6 +444,19 @@ async def test_rejection_and_cancellation_feed_the_reflection_queue(
         "select count(*) from public.memory_reflections where status = 'succeeded'",
     ) == (2)
 
+    # Cancelado por outro caminho (sem recusa): também alimenta a fila, uma vez.
+    dropped = await request_work(api, access_token, MARINA, miolo, FIRST_REQUEST)
+    await admin_db.execute(
+        "select app.transition_work_item(%s, 'cancelled', 'system', 'teste')", (dropped,)
+    )
+    [cancelled] = await rows(
+        admin_db,
+        "select outcome::text, idempotency_key from public.memory_reflections"
+        " where work_item_id = %s",
+        dropped,
+    )
+    assert cancelled == {"outcome": "cancelled", "idempotency_key": f"cancel:{dropped}"}
+
 
 def test_diff_and_evidence_labels() -> None:
     before = {"versoes": [{"texto": "Promoção imperdível: pão.\nVocês vão adorar."}]}
