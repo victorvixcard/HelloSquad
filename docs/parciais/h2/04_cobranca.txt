@@ -1,0 +1,12 @@
+
+ASAAS 10 idênticos + 3 gêmeos em paralelo: [(200, 'applied', False), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'no_change', False), (200, 'no_change', False), (200, 'no_change', False)]
+ASAAS saldo 260.00 -> 310.00; lançamentos do pagamento: 1; eventos gravados: 4
+.
+MP 6 idênticas + 5 notificações distintas do mesmo ciclo em paralelo: [(200, 'applied', False), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'applied', True), (200, 'no_change', False), (200, 'no_change', False), (200, 'no_change', False), (200, 'no_change', False), (200, 'no_change', False)]
+MP saldo 20.00 -> 120.00; grants de pagamento da Vitta: 1
+.
+assinaturas forjadas: {'mp_assinatura_de_outro_recurso': 401, 'mp_segredo_errado': 401, 'mp_sem_request_id': 401, 'mp_sem_assinatura': 401, 'mp_ts_de_2020_reenviado': 200, 'asaas_sem_token': 401, 'asaas_token_errado': 401, 'mock_assinatura_errada': 401, 'provedor_inexistente': 422}; eventos gravados 0 -> 1
+.
+dois schedulers: RenewalReport(checked=2, renewed=1, past_due=1, provider_errors=0) | RenewalReport(checked=2, renewed=1, past_due=1, provider_errors=0); grants de ciclo da assinatura: 2
+.
+4 passed in 1.61s
