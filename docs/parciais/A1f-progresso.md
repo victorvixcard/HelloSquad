@@ -19,3 +19,9 @@
 | 09:11 | `make test-web` exit 0 (contracts 9, ui 49, web 28); `pnpm --filter web build` exit 0 (`/` estática) | feito |
 | 09:13 | Etapas da entrega com o texto da V4.6; captura 1280×800 (painel 364 px por cima) | feito (`730e1c0`) |
 | 09:15 | API que eu subi derrubada (`Stopping reloader process [70303]`, 8100 livre); 3100 livre, nenhum `next` | feito |
+| 09:17 | Mensagem do Thor (decisões do dono de 08:55) recebida depois do fechamento: lidas diretrizes (08:55), contrato (`follow_up`, `before=`), protótipo (seletor L5506–5507, `_newThread` L6537, título L6600, `_agentThread` L6518) | feito |
+| 09:24 | Referência do seletor no protótipo (`proto-10`, `proto-11`): "CONVERSAS NOVA CONVERSA COM A KAIA", "08:40", "23/09", "agora" | feito |
+| 09:29 | Só o owner decide; rejeitar com duas saídas; painel pelas mais recentes (`before=latest`) e anteriores ao subir; seletor + "Nova conversa"; 9 testes novos; `make test-web` exit 0 (web 37); build exit 0 | feito (`9c24f72`, push conferido) |
+| 09:32 | Navegador (Marina): `before=latest` 200 no log da API; seletor do Nexo; quatro decisões do owner (nada clicado); sem erro de console; API e web derrubados, 3100 e 8100 livres | feito |
+| 09:33 | Relatório: §1 item 8, §2.7, §3 (linhas novas), §4 (mockado), §5 perguntas 14–18, §6, §7 | feito |
+

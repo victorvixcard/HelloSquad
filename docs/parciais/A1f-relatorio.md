@@ -1,6 +1,6 @@
 # A1f — Relatório (Aranha)
 
-**Fatia:** A1f, fidelidade visual à Product UI V4.6 (Fase 1). **Data:** 16/10/2026, 08:27 → 09:15 (48 min).
+**Fatia:** A1f, fidelidade visual à Product UI V4.6 (Fase 1). **Data:** 16/10/2026, 08:27 → 09:15 (48 min); decisões do dono de 08:55 (mensagem do Thor das 08:58, recebida às 09:17) aplicadas de 09:17 a 09:33 (§1 item 8, §2.7).
 **Regra que guiou a fatia:** nada do que foi combinado muda (regra do dono, 16/10). O combinado é o protótipo do Diogo, tela por tela. Onde não deu para reproduzir igual, a diferença está na §3 com a pergunta; não "melhorei" nada por conta própria.
 Não toquei em `apps/backend`, `supabase/`, `squad/`. Não rodei `make e2e` nem `make seed`. Única escrita no banco: **uma** mensagem na conversa da Miolo com o Otto (§2.5).
 
@@ -14,6 +14,7 @@ Não toquei em `apps/backend`, `supabase/`, `squad/`. Não rodei `make e2e` nem 
 | 4 | **Painel de conversa universal** | `ConversationPanel` na casca (persiste entre ambientes): 380 px a partir de 1360, 364 abaixo, **por cima** a 1280 nos pilotos (medidas do `renderVals()`); cabeçalho com "Conversando sobre [objeto ↗]"; mensagens de pessoa (bolha Tinta) e de agente (agente 32 px, nome, área, hora mono); separador Hoje/Ontem/data; "Pergunte ao Otto" (sugestões da V4.6); campo do DS ligado a `POST /conversations/{id}/messages` (Server Action; primeira mensagem a um especialista sem conversa cria a conversa direta); Esc fecha e devolve o foco a quem abriu; expandir → conversa dedicada; **Sala do Squad** é a mesma conversa, dedicada, na rota `/sala-do-squad`. Histórico real pelo `GET` (só leitura). | `0d7f639`, `2d41376`, `1987773` |
 | 5 | **Otto/Conteúdo, quatro camadas** | Identidade (`v4-id`, "O que pedir ao Otto", "Conversar com Otto"); visão protagonista (calendário editorial: Semana/Mês/Lista, navegação de semana, "12 a 18 out · esta semana") com o **estado vazio da própria V4.6** ("O Otto ainda não tem um calendário…"); componentes inteligentes (Próximas publicações, Desempenho orgânico, **"Otto percebeu" com contorno na cor do agente**), todos com o vazio da V4.6; conversa contextual (painel). **Faixa "Precisa de você"** com a revisão do seed (Otto · Para você revisar · título real · ação), abrindo a **entrega pontual**: etapas (Preparação, Sua aprovação, Publicação, Confirmação), a legenda real do seed à vista, versões, decisão "Otto aguarda você" com **Aprovar v1** e **Pedir ajuste** ligados a `POST /approvals/{id}/decision` (`approved` / `changes_requested` + abre a conversa ao lado), abas Legenda/Briefing/Histórico. Os outros seis ambientes ganharam a camada de identidade, a faixa e um vazio honesto (fora do escopo desta fatia). | `2d41376`, `730e1c0` |
 | 6 | **Comparação lado a lado** | `docs/parciais/a1f/`: `proto-*.png` (protótipo servido na 8010) × `nosso-*.png` (web na 3100, Marina, dados do seed), mesmo tamanho (1440×900; e 1280×800 para a sobreposição), e `lado-a-lado-*.png` (9 pares). Tabela na §3. | `ac0038c` … `730e1c0` |
+| 8 | **Decisões do dono (16/10 08:55)** | (1) **Só o owner decide:** `canDecide` na casca vem de `membership.role === "owner"` (`GET /me`). O owner vê Aprovar, Pedir ajuste e as duas saídas da rejeição; editor e admin veem a mesma pendência **em modo leitura**, sem botões, com a nota "**Quem decide é o dono da conta**" (entrega pontual, faixa "Precisa de você" e Trabalhos do Início). (2) **Rejeitar com duas saídas:** "**Pedir nova proposta**" → `POST /approvals/{id}/decision` com `decision: rejected, follow_up: revise`; "**Cancelar trabalho**" → `rejected` + `cancel`. Depois de decidir: nova proposta e pedir ajuste mostram o cartão `ps-dec is-wait` da V4.6 (agente pensando + "Você recebe a nova versão aqui e na conversa."); cancelar mostra "Trabalho cancelado". (3) **Conversa abre pelas mais recentes:** `GET …/messages?before=latest&limit=30` (o `before=` da S1c, `810d11e`); rolagem começa no fim; subir até o topo traz as anteriores com `before=<next_cursor>` mantendo o ponto de leitura; página que não enche a coluna busca as anteriores sozinha. (4) **Conversa direta com histórico + "Nova conversa":** seletor do cabeçalho igual ao da V4.6 (`ps-thw`/`ps-thb`/`ps-pop-thr`/`ps-mi2`, L5506–5507): lista as conversas diretas com o mesmo especialista (mais recente primeiro, hora de hoje "09:10" ou dia "23/09") e "Nova conversa", que abre um rascunho; a primeira mensagem cria uma conversa **nova** (`POST …/conversations` `agent_direct`, nunca reaproveita) com o título do protótipo (até 34 caracteres; acima disso 32 + "…", L6600) e ela entra no topo do histórico. Abrir um especialista retoma a conversa mais recente, como o `_agentThread` do protótipo (L6518). O seletor só aparece na conversa direta sem objeto (`showThr`, L10896); a área do agente foi para o lado do nome (`ps-cvh-r`), como na V4.6. | `9c24f72` |
 | 7 | Testes e docs | Vitest no web (28 testes, API mockada), testes de defasagem do CSS, do bundle e do palco no `@hellosquad/ui`; e2e da A0 atualizado para a casca nova (não rodado, §4); `packages/ui/README.md`; este relatório e o progresso. | `60740d8`, `96b9a62`, `730e1c0` |
 
 ## 2. Como foi verificado
@@ -70,6 +71,29 @@ Pela interface, como a Marina, na conversa direta com o Otto (`5eed0000-…-0000
 
 `grep` em `apps/web/app`, `components`, `lib` (09:11): sobrou só o wordmark "HelloSquad" (marca, como o handoff manda: texto vivo) e as mensagens de configuração do `lib/env.ts` (erro de `.env` para quem sobe o servidor, não é tela).
 
+### 2.7 Decisões do dono (09:17–09:33)
+
+`make test-web` (09:29, exit 0): eslint sem problemas; typecheck de contracts, ui e web `Done`; **contracts 9, ui 49, web 37** (eram 28; 9 novos). `pnpm --filter web build` exit 0 (`/` segue `○` estática).
+
+| Teste novo | Prova |
+|---|---|
+| `Approval.test.tsx`: Pedir nova proposta | `decide("ap-1", "rejected", undefined, "revise")`; cartão "Otto criando uma nova proposta" + "Você recebe a nova versão aqui e na conversa."; Aprovar some; a conversa não abre. |
+| `Approval.test.tsx`: Cancelar trabalho | `decide("ap-1", "rejected", undefined, "cancel")`; "Trabalho cancelado" · "Otto não segue com esta entrega." |
+| `Approval.test.tsx`: depois de Pedir ajuste | cartão "Otto ajustando a versão 1". |
+| `Approval.test.tsx`: quem não é owner | "Otto aguarda a decisão" + "Quem decide é o dono da conta"; **nenhum** dos quatro botões; a legenda continua à vista; `decide` nunca chamado. |
+| `Approval.test.tsx`: faixa para quem não é owner | nome acessível termina em "Quem decide é o dono da conta"; "Revisar a legenda" não aparece. |
+| `Approval.test.tsx`: owner | os quatro botões e nenhuma nota de leitura. |
+| `ConversationPanel.test.tsx`: mais recentes primeiro | `load` devolve a última página com `older: "cur-1"`; o painel chama `older("otto-1", "cur-1")` e a ordem fica "A anterior", "A mais recente"; uma chamada só (cursor nulo encerra). |
+| `ConversationPanel.test.tsx`: seletor | botão "Conversa com o Otto" (`aria-expanded`); menu "Conversas Nova conversa com o Otto" com "Conversa com o Otto 09:10", "Ideias para o Dia do Pão 23/09" e "Nova conversa"; a atual com `is-on`; escolher outra → `openConversation({ conversationId: "otto-0", … })`; "Nova conversa" → `{ conversationId: null, fresh: true }`; **Esc fecha só o seletor** e devolve o foco ao botão. |
+| `ConversationPanel.test.tsx`: nova conversa | rascunho não chama `load`; a primeira mensagem chama `create("ws-1", "otto", "Quero ideias de posts para a sem…")`, depois `send("nova", …)`, `rememberThread` e o painel segue na conversa criada. |
+
+**No navegador** (Playwright 1440×900, Marina, seed da Miolo; API que eu subi às 09:30 e derrubei às 09:32):
+
+- Log da API: `GET /conversations/5eed0000-…-000000000102/messages?before=latest&limit=30` → **200** ao abrir a conversa com o Otto; rolagem no fim (`scrollTop + clientHeight ≥ scrollHeight`).
+- Início → "Conversar" (Nexo, conversa direta sem objeto): botão "Nova conversa"; menu `"CONVERSAS NOVA CONVERSA COM O NEXO / Nova conversa · agora / Nova conversa"`; o foco entra no menu; Esc fecha o menu, o painel continua aberto e o foco volta ao `ps-thb`. Captura `nosso-10-conversas-do-especialista.png` ao lado de `proto-10-conversas-do-especialista.png` (e `proto-11-nova-conversa.png`).
+- Entrega 04.01 como owner: `.ps-dec-a` = "Aprovar v1", "Pedir ajuste", "Pedir nova proposta", "Cancelar trabalho". **Nada foi clicado**: nenhuma decisão foi ao banco. Captura `nosso-11-entrega-decisoes-owner.png`.
+- Console sem erros em todas as telas da rodada.
+
 ## 3. O que ainda difere do protótipo, e por quê
 
 Legenda: **D** = dado que o banco/a API ainda não tem (estado vazio honesto, regra 5 do Documento Mestre); **P** = só existe no protótipo; **?** = decisão do dono (pergunta na §5).
@@ -89,7 +113,13 @@ Legenda: **D** = dado que o banco/a API ainda não tem (estado vazio honesto, re
 | Início | Escolher 2 a 6 especialistas ("conversa em grupo"): o pedido vai para a Sala do Squad, porque a API só tem Sala, conversa direta e conversa de objeto | ? | 7 |
 | Início | Lista de sugestões = a da conta em uso (a do primeiro acesso começa por "Criar um post para o Dia Mundial do Pão") | ? | 8 |
 | Conversa | Sem a primeira fala do agente (no protótipo é roteiro pré-escrito); o painel mostra só o histórico real | D (não inventar fala de agente) | — |
-| Conversa | Sem seletor de conversas ("Nova conversa"), sem trilho de contexto, sem "Chamar alguém", sem status ao vivo ("Otto está escrevendo…") | D (Realtime e runtime são A1a/S1c) | — |
+| Conversa | Sem trilho de contexto, sem "Chamar alguém", sem status ao vivo ("Otto está escrevendo…") | D (Realtime e runtime são A1a/S1c) | — |
+| Conversa | Seletor de conversas: título do menu "**Conversas Nova conversa com o Otto**", literal do protótipo (`'Conversas ' + newL`, L5507/L8531). Parece engano do protótipo ("Conversas com o Otto"?), mas reproduzi igual | P/? (Diogo) | 14 |
+| Conversa | "Nova conversa" não traz a primeira fala roteirizada ("Oi, eu sou… O que você precisa?" e três pedidos); abre o rascunho com as sugestões que já existem ("Pergunte ao Otto") | D (não inventar fala de agente) | — |
+| Entrega | Rejeitar não tem desenho na V4.6 (só "Pedir ajuste", "Outra direção", "Agora não"; FLUXOS §11 item 2). "Pedir nova proposta" e "Cancelar trabalho" entraram como botões `soft` no mesmo `ps-dec-a`, depois de "Pedir ajuste"; na coluna de 340 px os quatro quebram em três linhas | ? (Diogo) | 15 |
+| Entrega | "Cancelar trabalho" decide na hora, sem confirmação (a primeira decisão vale na API) | ? | 16 |
+| Entrega, faixa, Início | Visão de quem não é owner (sem desenho na V4.6): mesma tela sem botões + "Quem decide é o dono da conta"; o título do cartão vira "Otto aguarda a decisão". Os outros textos com "você" ("Sua aprovação", "Para você revisar", "1 aguarda você") ficaram como estão | ? | 17 |
+| Entrega | Textos novos depois de decidir: "Otto criando uma nova proposta", "Otto ajustando a versão 1", "Trabalho cancelado" · "Otto não segue com esta entrega." (o "Você recebe a nova versão aqui e na conversa." é da V4.6) | ? | 18 |
 | Sala do Squad | Sem "Campanha de Natal · 7 especialistas ⌄" e sem o trilho "Projeto em contexto" (não há projeto no seed); cabeçalho "todos os especialistas · o Nexo coordena" | D | — |
 | Conteúdo | Calendário, Próximas publicações, Desempenho e "Otto percebeu" no **estado vazio da própria V4.6** (nada datado nem número no seed) | D | — |
 | Conteúdo | Faixa: subtítulo "Legenda, versão 1, aguarda a sua revisão" e ação "Revisar a legenda" (a V4.6: "A publicação de sex… depende da sua aprovação da v2" / "Revisar a peça"), porque o seed não tem data de publicação e a entrega é texto | ? | 9 |
@@ -104,6 +134,13 @@ Legenda: **D** = dado que o banco/a API ainda não tem (estado vazio honesto, re
 Fora isso, as capturas lado a lado mostram a mesma composição, as mesmas medidas, cores, tipografia e estados (`lado-a-lado-01` a `08`).
 
 ## 4. O que ficou de fora
+
+**Mockado ou não exercitado com dado real nas decisões do dono:**
+- As quatro decisões (`approved`, `changes_requested`, `rejected` + `revise`, `rejected` + `cancel`) só foram exercitadas **com a API mockada** (Vitest). No navegador, nenhum botão de decisão foi clicado.
+- **Visão de quem não é owner** só nos testes: a Miolo não tem editor no seed (a Carla é editor da Vitta, que não tem pendência) e eu não escrevo no banco.
+- Carregar as anteriores ao subir: provado com mock. A conversa real do seed tem 2 mensagens (cabe na coluna), então no navegador só deu para provar o `before=latest` (log da API) e a rolagem no fim.
+- Histórico com mais de uma conversa direta: o seed tem uma só (com o Otto, aberta com o contexto "Conteúdo", que não mostra seletor, como na V4.6). No navegador, o seletor foi visto no rascunho do Nexo; a lista com várias conversas está provada nos testes.
+
 
 1. **`make e2e`** não rodou (proibido durante a S1c). Atualizei `apps/web/e2e/auth-shell.spec.ts` para a casca nova (conta no pé, "Hello, Marina.", nomes acessíveis da V4.6), mas **ele não foi executado**; precisa de uma rodada quando o banco estiver livre.
 2. Motor de arrastar da faixa de sugestões e o "+N" da faixa "Precisa de você" (§3).
@@ -125,9 +162,15 @@ Fora isso, as capturas lado a lado mostram a mesma composição, as mesmas medid
 8. Sugestões do Início: a lista da conta em uso ou a do primeiro acesso?
 9. Faixa "Precisa de você" da legenda: "Legenda, versão 1, aguarda a sua revisão" e "Revisar a legenda". Aprova?
 10. **Diogo:** a entrega 04.01 é só texto. Na mesa ela entra num cartão Branco com a sombra da peça. É esse o desenho?
-11. **Pedir ajuste:** o briefing pede a decisão `changes_requested` na hora; o protótipo só abre a conversa e escreve "Quero pedir um ajuste nesta versão." Qual dos dois? (Liga com a pergunta 4 da S1a: rejeitar cancela ou pede outra proposta?)
+11. **Pedir ajuste:** o briefing pede a decisão `changes_requested` na hora; o protótipo só abre a conversa e escreve "Quero pedir um ajuste nesta versão." Qual dos dois? (A parte de rejeitar foi respondida em 16/10 08:55: duas saídas, §1 item 8.)
 12. Depois de aprovar, "Aprovada por você. Aprovar não publica: a publicação pede autorização própria." até existir a autorização de publicação. Aprova o texto?
 13. Mobile: a V4.6 não tem desenho. Mantenho a barra recolhida (como o protótipo abaixo de 1100 px) até o Diogo desenhar o celular, ou volto a gaveta da A0 como proposta?
+
+14. **Diogo:** o título do seletor de conversas no protótipo sai "Conversas Nova conversa com a Kaia" (`'Conversas ' + newL`). Reproduzi igual. Fica assim ou é "Conversas com a Kaia"?
+15. **Diogo:** onde ficam "Pedir nova proposta" e "Cancelar trabalho"? Hoje: botões `soft` depois de "Pedir ajuste", no mesmo bloco. O protótipo tem "Outra direção" em outro fluxo: é o mesmo que "Pedir nova proposta"?
+16. "Cancelar trabalho" é definitivo (a primeira decisão vale). Quer uma confirmação antes ("Cancelar este trabalho? O Otto para.")? O protótipo não desenha confirmação para nenhuma decisão.
+17. Visão de quem não é owner: além da nota, troco os textos com "você" ("Sua aprovação", "Para você revisar", "1 aguarda você") para essa pessoa? Sugestão: "Aprovação do dono", "Para o dono revisar". Não troquei.
+18. Aprova os textos depois de decidir: "Otto criando uma nova proposta", "Otto ajustando a versão 1", "Trabalho cancelado · Otto não segue com esta entrega."?
 
 ## 6. Onde discordei ou decidi algo técnico
 
@@ -135,9 +178,14 @@ Fora isso, as capturas lado a lado mostram a mesma composição, as mesmas medid
 - **Portar o CSS e o motor do palco por script, em vez de reescrever.** É o que garante "igual": 396 KB de CSS com a cascata V3 → V4.6 intacta, e o motor dos agentes como o Diogo deixou. O custo é peso (o CSS inteiro vai para a área logada); otimizar fica para depois, com teste visual.
 - **next-intl 4.3.12, não a 4.9:** a 4.5+ puxa compilador e observador de arquivos com script de instalação, bloqueados pela política do pnpm (A0). A 4.3 tem tudo o que o ADR-0010 pede (catálogo, ICU, rotas por idioma quando vierem).
 - **Links no lugar de botões** na barra e nos negócios: mesmo desenho, mas navegação real (URL, voltar do navegador, abrir em outra aba). `product.css` só tira o sublinhado.
+- **"Não reutilize automaticamente" (Thor, 08:58):** li como "Nova conversa sempre cria uma conversa nova", o que a API já garante. Abrir um especialista (Início com um selecionado, "Conversar") **retoma a conversa direta mais recente**, como o `_agentThread` do protótipo; o histórico e o "Nova conversa" ficam no seletor. Se a intenção era abrir sempre uma conversa nova ao falar com um especialista, isso muda o protótipo: fica para o Vic decidir.
 - **Acidente de índice:** apaguei a casca da A0 com `git rm` e, antes do meu commit, o commit `b015aaf` (X1) entrou com essas remoções junto. O resultado no `main` é o pretendido; só a autoria do commit ficou trocada.
 
 ## 7. Estado em que deixei a máquina
+
+**Rodada das decisões do dono (09:33):** a API (`make dev-api`, reloader 94191) e o web (`next start` 3100, 94181) que eu subi às 09:30 foram derrubados às 09:32 (`Stopping reloader process [94191]`); 3100 e 8100 livres. Banco sem escrita nesta rodada (só leituras `GET`). O banco foi reaplicado por outra fatia depois da minha mensagem de 09:10: a conversa com o Otto tem hoje 2 mensagens do seed. Logs em `/tmp/a1f2/`.
+
+**Rodada anterior (09:15):**
 
 - Porta 3100 livre, nenhum `next` rodando (conferido com `ss` e `ps`).
 - API: a instância que eu subi com `make dev-api` (a segunda; a primeira foi parada por outra pessoa às ~08:58, quando a S1c reiniciou a API) foi derrubada ao fim: `Stopping reloader process [70303]`, porta 8100 livre. O Supabase do HelloSquad seguiu no ar, sem reinício.
