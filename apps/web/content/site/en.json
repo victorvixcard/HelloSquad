@@ -1,0 +1,1846 @@
+{
+  "locale": "en",
+  "source": "docs/conteudo/site/en",
+  "pages": {
+    "como-funciona": {
+      "key": "como-funciona",
+      "path": "/en/how-it-works",
+      "title": "How HelloSquad works: AI marketing agents you control",
+      "description": "You ask in a conversation, Nexo organizes, the specialists produce and you approve. Nothing is published, sent or spent without your authorization.",
+      "h1": "How HelloSquad's AI marketing agents work",
+      "tagline": "You ask in a conversation. The squad organizes, produces and shows you what needs your decision.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "HelloSquad is an AI marketing team for small and medium-sized businesses. Seven AI marketing agents (coordination, Strategy, Brand & Creative, Content, Growth Marketing, CRM and Results) share your brand's memory and work together. This page walks through how a request becomes a delivery, and who decides at each step."
+        }
+      ],
+      "sections": [
+        {
+          "id": "in-short",
+          "title": "In short",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "You describe what you need in your own words, in a conversation.",
+                "Nexo, the squad's coordinator, turns the request into a piece of work and calls in the right specialists.",
+                "The specialists produce using Brand Memory: what your business has already decided.",
+                "You review, ask for changes or approve. Every version is saved.",
+                "Publishing, sending a message and spending on ads each need their own authorization, separate from approval."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "you-say-what-you-need-in-your-own-words",
+          "title": "1. You say what you need, in your own words",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "You don't need the technical name for what you want. You can write \"I want to sell more on weekends,\" \"I need posts for the week\" or \"why doesn't my website show up in search?\" Your request comes in through the Squad Room, the conversation with every specialist, or straight into one specialist's conversation."
+            },
+            {
+              "type": "p",
+              "text": "If something essential is missing, the squad asks a few direct questions before it starts. If your request is enough, nobody asks for the sake of asking."
+            }
+          ]
+        },
+        {
+          "id": "nexo-organizes-the-work-and-calls-in-the-right-specialist",
+          "title": "2. Nexo organizes the work and calls in the right specialist",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Nexo is the squad's coordinator. He identifies the goal, the context and the constraints of your request, then picks the path: a simple request goes to one specialist; a request that spans several specialties becomes a project with steps, owners and recorded decisions."
+            },
+            {
+              "type": "p",
+              "text": "Every piece of work has one lead. Other specialists join when they add something to the delivery, not to pad it."
+            }
+          ]
+        },
+        {
+          "id": "the-specialists-produce-with-your-brand-s-memory",
+          "title": "3. The specialists produce with your brand's memory",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Before producing anything, each specialist checks Brand Memory, the record of what your business has already decided: audience, tone of voice, channels, products, words you avoid and corrections you've made. That's why you never have to repeat the brief with each new request."
+            },
+            {
+              "type": "p",
+              "text": "Anything a specialist notices about your business comes in as a suggestion (\"Otto noticed…\") and only becomes a rule when you confirm it."
+            }
+          ]
+        },
+        {
+          "id": "you-review-ask-for-changes-or-approve",
+          "title": "4. You review, ask for changes or approve",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Each delivery arrives as material you can review: a document, a visual, a calendar, a report. You can approve it, ask for a specific change or turn it down. When you turn it down, you choose between canceling the work and asking the specialist for a new proposal."
+            },
+            {
+              "type": "p",
+              "text": "Every version stays in the history, with author and date. Nothing gets lost when you ask for a change."
+            }
+          ]
+        },
+        {
+          "id": "publishing-sending-and-spending-need-their-own-authorization",
+          "title": "5. Publishing, sending and spending need their own authorization",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Approving content doesn't authorize publishing it. Approving a media plan doesn't authorize spending. Every action that leaves your business and reaches the outside world (publishing a post, sending a message to customers, launching or changing an ad) needs a specific authorization, with the account connected and, for ads, an approved spending cap."
+            },
+            {
+              "type": "p",
+              "text": "The account owner decides. Other people on your team can follow everything, but approval and authorization stay with the account owner."
+            }
+          ]
+        },
+        {
+          "id": "iris-tracks-the-results-and-proposes-the-next-step",
+          "title": "6. Íris tracks the results and proposes the next step",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Once something goes live, Íris reads the numbers from your connected channels, always with source, period and unit. She compares, explains what changed and tells you when the cause isn't clear. Her recommendation becomes new work for the right specialist."
+            },
+            {
+              "type": "p",
+              "text": "With no connected data, Íris shows no numbers: she tells you what still needs to be connected."
+            }
+          ]
+        },
+        {
+          "id": "three-ways-to-work-with-the-squad",
+          "title": "Three ways to work with the squad",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "You can work with the squad in three ways: a one-off delivery, a coordinated project or an ongoing responsibility in Autonomous Mode. What changes is how long the work lasts and how many specialists it involves."
+            },
+            {
+              "type": "table",
+              "head": [
+                "Mode",
+                "When to use it",
+                "Fictitious example"
+              ],
+              "rows": [
+                [
+                  "**One-off delivery**",
+                  "It starts and ends: a visual, an assessment, a report.",
+                  "Trilha Urbana asks Bia for a marketing assessment."
+                ],
+                [
+                  "**Coordinated project**",
+                  "Several specialties, steps and approvals for a bigger goal.",
+                  "Miolo asks for its year-end campaign: Bia, Kaia, Otto and Kiwi on the same project."
+                ],
+                [
+                  "**Ongoing responsibility**",
+                  "Something that repeats, handed off with a frequency and limits, in Autonomous Mode.",
+                  "Vitta Estética hands Otto its weekly post lineup."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "what-needs-you-means",
+          "title": "What \"Needs you\" means",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "\"Needs you\" is the list of what only you can decide. The squad never takes silence as approval. Decision requests come in six types:"
+            },
+            {
+              "type": "ul",
+              "items": [
+                "**Review**: look at material before it moves on.",
+                "**Approve**: say a version is good to go.",
+                "**Authorize**: allow an external action, like publishing, sending or spending.",
+                "**Confirm**: say a piece of information about your brand is right.",
+                "**Reconnect**: renew access to a channel that expired.",
+                "**Reply**: give the squad information it asked for."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "autonomous-mode",
+          "title": "Autonomous Mode",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "In Autonomous Mode, you hand off a recurring responsibility, like \"prepare the week's posts\" or \"track results every day.\" Nexo clarifies the scope, the frequency and the limits, and only sets up the routine after you confirm. Every cycle is logged, with what was done and what failed, and you can pause or revoke it whenever you want."
+            }
+          ]
+        },
+        {
+          "id": "what-hellosquad-doesn-t-do",
+          "title": "What HelloSquad doesn't do",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "HelloSquad handles marketing. It doesn't do sales support, negotiate deals, run ERP, inventory, purchasing or accounting, or manage your whole company. At HelloSquad, CRM means relationship marketing with contacts who opted in, not a sales funnel."
+            },
+            {
+              "type": "p",
+              "text": "HelloSquad also doesn't promise guaranteed revenue growth, and it never simulates the results of an action that didn't happen."
+            }
+          ]
+        },
+        {
+          "id": "fictitious-example-miolo-s-year-end-campaign",
+          "title": "Fictitious example: Miolo's year-end campaign",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "*Fictitious example: the brand and the numbers are illustrative.* Miolo is a sourdough bakery in Pinheiros, São Paulo."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "Miolo's owner writes in the Squad Room: \"I want a Christmas campaign for preorders.\"",
+                "Nexo asks just one thing: is the campaign for in-store sales, website preorders or both? She answers \"both.\"",
+                "Nexo opens the \"Year-end campaign\" project and calls in Bia, Kaia, Otto and Kiwi.",
+                "Bia proposes the concept \"Christmas Takes Time,\" with 36 hours of natural fermentation as proof of care, for neighborhood families and for people buying gifts for their teams, in a warm tone with no artificial urgency.",
+                "Kaia creates the visuals in Miolo's style and Otto writes the copy. Brand Memory records the one word Miolo never uses to describe its bread, and no copy uses it.",
+                "Kiwi proposes how to promote the campaign, with a spending cap. Nothing is spent until the owner authorizes it.",
+                "The owner approves the visuals and authorizes publishing. Íris tracks the preorders over the following days and proposes the next step."
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "faq": {
+      "key": "faq",
+      "path": "/en/faq",
+      "title": "HelloSquad FAQ: questions about the AI marketing team",
+      "description": "What HelloSquad is, what its AI agents do, who approves the work, what happens to your data and which languages the squad works in. Straight answers.",
+      "h1": "HelloSquad FAQ: questions about the AI marketing team",
+      "tagline": "Straight answers for anyone getting to know the squad.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "HelloSquad is an AI marketing team for small and medium-sized businesses. Below are the questions people ask most before they start, each with an answer that stands on its own."
+        }
+      ],
+      "sections": [
+        {
+          "id": "about-hellosquad",
+          "title": "About HelloSquad",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "What is HelloSquad?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "HelloSquad is an AI marketing team for small and medium-sized businesses. Seven specialists (coordination, Strategy, Brand & Creative, Content, Growth Marketing, CRM and Results) share your brand's memory and work together. You ask in a conversation, the squad organizes and delivers, and the decisions stay with you."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Do I need to know marketing to use HelloSquad?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. You explain what you need in your own words, for example \"I want to sell more on weekends.\" Nexo, the squad's coordinator, turns the request into work, asks only the questions that are still open and calls in the right specialists."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "What kind of business is HelloSquad built for?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "HelloSquad is built for small and medium-sized businesses that want to organize and grow their marketing without deep knowledge of marketing tools: a bakery, a clinic, a shop. It works whether you only use social media and messaging or already have a website, ads and a customer list."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Who are HelloSquad's AI agents and what does each one do?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "There are seven. Nexo coordinates requests and projects. Bia handles strategy. Kaia creates the visuals and the visual identity. Otto writes and publishes the content. Kiwi handles Growth Marketing: ads, search engines and conversion. Max takes care of customer relationships. Íris reads the results and recommends the next step."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "How is HelloSquad different from a regular AI assistant?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "A regular assistant answers one question at a time and forgets the context. At HelloSquad, specialists with defined roles work together, someone coordinates the work, everyone uses the same memory of your brand, and every request becomes a piece of work with history, versions and approval."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Is HelloSquad a marketing agency?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. HelloSquad is software: a team of AI agents you bring in through a conversation. The work stays on record in your business, with history and versions, and the decisions to approve, publish, send and spend are always yours."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "working-with-the-squad",
+          "title": "Working with the squad",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Can I talk to each agent directly?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes. You can talk to Nexo, go straight to a specialist or use the Squad Room, where everyone follows the conversation and one specialist answers at a time. When a piece of work needs several specialties, the agents collaborate on that same work."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "How do HelloSquad's agents learn my brand?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Through Brand Memory, which gathers what your business has already decided: audience, tone of voice, channels, products, words you avoid and corrections you made. Every specialist checks the same memory. What the squad notices on its own comes in as a suggestion and only becomes a rule when you confirm it."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Do I have to connect my social media accounts to get started?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. You can start by telling the squad what you already have: what the business sells, to whom and what it needs right now. A website, files and connected channels help the squad understand the business better, but a connection is only required to publish, send or read a channel's numbers."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "How does Autonomous Mode work?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "In Autonomous Mode, you hand off a recurring responsibility, like preparing the week's posts or tracking results every day. The squad agrees with you on scope, frequency and limits, logs every cycle, and you can pause or revoke it at any time."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Can I ask for another version if I don't like a delivery?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes. You can ask for a specific change, approve or turn it down. When you turn it down, you choose between canceling the work and asking the specialist for a new proposal. Every version stays in the history, with author and date."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "control-and-safety",
+          "title": "Control and safety",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Will HelloSquad publish posts or spend money on ads without my approval?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. Connecting an account or requesting work doesn't authorize any action. Publishing a post, sending a message to customers and spending on ads each require a specific authorization from you and, for ads, an approved spending cap."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "What's the difference between approving and authorizing in HelloSquad?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Approving means saying a piece of material is good: some copy, a visual, a plan. Authorizing means allowing an action that leaves your business: publishing, sending or spending. They are separate decisions, and approving content never authorizes publishing it."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Who can approve deliveries on my account?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "The account owner. Other people invited to the business can follow the conversations, the work and the history, but approving, declining and authorizing external actions stay with the account owner."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Does HelloSquad make up numbers or results?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. The specialists only show numbers from connected sources or imported spreadsheets, always with source, period and unit. With no data, they tell you what needs to be connected. A hypothesis is labeled as a hypothesis, and a cause is only stated with evidence."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Can HelloSquad guarantee I'll sell more?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. HelloSquad doesn't promise guaranteed revenue growth. What it does is organize your marketing, produce professional deliveries, track real results and recommend the next step based on them."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Will HelloSquad handle my customers or make sales for me?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. HelloSquad handles marketing. It doesn't do sales support or negotiate deals, and it doesn't run inventory, purchasing or accounting. Max's CRM is relationship marketing, with messages only to contacts who opted in."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Is my business data kept separate from other companies' data?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes. Conversations, Brand Memory, deliveries, contacts and metrics are isolated by business, and no other company ever sees anything of yours. Customer contacts only come in with their source recorded, and messages only go to people who opted in."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "What languages does HelloSquad work in?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "HelloSquad works in Portuguese, English and Spanish. The language is set per business and per person, and the specialists work in your business's language."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "inicio": {
+      "key": "inicio",
+      "path": "/en",
+      "title": "HelloSquad: your AI squad takes over the marketing",
+      "description": "HelloSquad is an AI marketing team for small and medium-sized businesses: seven specialists who know your brand and work together. You make the decisions."
+    },
+    "sobre": {
+      "key": "sobre",
+      "path": "/en/about",
+      "title": "About HelloSquad: an AI marketing team for small business",
+      "description": "HelloSquad exists so small businesses can have a complete marketing team that knows the brand and leaves the decisions with the people who own it.",
+      "h1": "About HelloSquad, the AI marketing team",
+      "tagline": "A complete marketing team for small businesses, with the decisions in the owner's hands.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "HelloSquad is an AI marketing team for small and medium-sized businesses. Seven specialists share the brand's memory, organize the work and deliver professional material. The business owner says what's needed and decides what goes out into the world."
+        }
+      ],
+      "sections": [
+        {
+          "id": "why-hellosquad-exists",
+          "title": "Why HelloSquad exists",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Marketing a small business takes strategy, creative, content, ads, customer relationships, numbers and coordination. With separate tools, the owner has to split up the tasks, pick the tools, remember the context and follow up on every step. That leaves little time for the business itself."
+            },
+            {
+              "type": "p",
+              "text": "HelloSquad brings all of that together in one team that talks to each other, knows the brand and takes on the work, with clear limits and authorizations you control."
+            }
+          ]
+        },
+        {
+          "id": "what-changes-for-you",
+          "title": "What changes for you",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "From scattered tasks to organized work, each piece with a lead specialist.",
+                "From one-off requests to history, context and versions that stay saved.",
+                "From disconnected tools to a team that coordinates the flow.",
+                "From rushed marketing to recurring responsibilities handed off with control.",
+                "From loose numbers to readings and recommendations based on real data."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "the-principles-hellosquad-follows",
+          "title": "The principles HelloSquad follows",
+          "blocks": [
+            {
+              "type": "ol",
+              "items": [
+                "**Less tooling, more team.** You ask for goals; you don't have to manage commands or agents.",
+                "**Quality before volume.** A generic or unusable delivery isn't done.",
+                "**Coordination without a gatekeeper.** Nexo organizes, but you can talk directly to any specialist.",
+                "**Real specialization.** Each specialist has a distinct responsibility and written limits.",
+                "**Shared context.** Brand, history and decisions travel with the work, with no new brief.",
+                "**Controlled autonomy.** Silence isn't approval. Permissions are explicit, limited, revocable and logged.",
+                "**Transparency.** The squad always tells apart a suggested idea, prepared material, approved content, an authorized action, a confirmed execution and a measured effect.",
+                "**Proactive, with judgment.** Alerts and suggestions show up because of evidence or an agreed routine, not to look busy."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "what-hellosquad-doesn-t-promise",
+          "title": "What HelloSquad doesn't promise",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "HelloSquad doesn't promise guaranteed revenue growth and never simulates the results of an action that didn't happen. It doesn't do sales support, negotiate deals or run your whole company. Its commitment is a different one: organized work, professional deliveries, honest numbers and decisions in your hands."
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "squad-bia": {
+      "key": "squad-bia",
+      "path": "/en/squad/bia",
+      "title": "Bia, AI marketing strategy | HelloSquad",
+      "description": "Bia assesses your business, defines your positioning and audience, and builds a marketing plan with clear priorities. No made-up market numbers.",
+      "agent": {
+        "nome": "Bia",
+        "pronome": "she",
+        "area": "Strategy",
+        "papel": "Strategy & Intelligence",
+        "cor": "#8A3BFF"
+      },
+      "h1": "Bia, AI marketing strategy",
+      "tagline": "I find where the opportunity is for your business.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "Bia is the AI marketing strategist on HelloSquad's squad, the AI marketing team for small and medium-sized businesses. She reads the market, the audience and your business before proposing anything, then tells you where the opportunity is and what to tackle first."
+        }
+      ],
+      "sections": [
+        {
+          "id": "what-bia-does",
+          "title": "What Bia does",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Bia starts with the conclusion and then shows her reasoning. She'd rather give you three well-chosen priorities than ten loose possibilities. In every assessment, she separates what she actually saw from what she's assuming, and when the data falls short, she tells you what's missing and how to get it."
+            },
+            {
+              "type": "p",
+              "text": "Her work becomes the foundation for everyone else's: the campaign concept Bia defines guides Kaia's visuals, Otto's copy and Kiwi's media plan."
+            }
+          ]
+        },
+        {
+          "id": "what-bia-delivers",
+          "title": "What Bia delivers",
+          "blocks": [
+            {
+              "type": "table",
+              "head": [
+                "Delivery",
+                "What you get"
+              ],
+              "rows": [
+                [
+                  "Initial marketing assessment",
+                  "An objective evaluation of your business, with gaps, opportunities and assumptions identified."
+                ],
+                [
+                  "Positioning, audience and goals",
+                  "A documented direction that fits your business and can be adjusted in the conversation."
+                ],
+                [
+                  "Marketing plan with priorities",
+                  "Actions in priority order, with the suggested lead specialist and the time frame."
+                ],
+                [
+                  "Integrated campaign strategy",
+                  "Concept, audience, messages and priorities that feed Kaia, Otto and Kiwi on the same project."
+                ],
+                [
+                  "Digital presence and reputation assessment",
+                  "A review of your website, channels and customer reviews, with positioning opportunities. SEO strategy stays with Kiwi."
+                ],
+                [
+                  "Review and voice-of-customer analysis",
+                  "Recurring themes in reviews and comments, without claiming the sample represents your whole audience."
+                ],
+                [
+                  "Competitor and trend research",
+                  "Findings with source, link and collection date. Anything not validated shows up as a hypothesis."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "how-bia-works-with-the-rest-of-the-squad",
+          "title": "How Bia works with the rest of the squad",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Bia points out the problem and the direction; the specialists execute. When an assessment reveals a search problem, she records it and Kiwi sets the SEO strategy. Once a campaign strategy is approved, it becomes the reference document that Kaia, Otto and Kiwi follow throughout the project."
+            }
+          ]
+        },
+        {
+          "id": "what-bia-doesn-t-do",
+          "title": "What Bia doesn't do",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "She doesn't lead hands-on SEO or ad management. That's Kiwi's job.",
+                "She doesn't produce the final visual or copy. That's Kaia and Otto.",
+                "She doesn't invent market numbers, cite sources she hasn't read or present a generic trend as a finding about your business.",
+                "She doesn't promise results or claim a cause without evidence."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fictitious-example-trilha-urbana-s-assessment",
+          "title": "Fictitious example: Trilha Urbana's assessment",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "*Fictitious example, with a made-up brand.* Trilha Urbana is a shop for city bikes and e-bikes in Curitiba, Paraná, that has just created its account."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "The owner asks: \"I want an assessment of my marketing.\"",
+                "Bia reads what Brand Memory already has. Since the account is new, almost nothing is confirmed yet, and she says so at the start of the assessment.",
+                "The assessment lays out gaps, opportunities and assumptions in separate blocks. One assumption reads: \"Assumption: most sales happen in the physical store. Confirm it so I can adjust the plan.\"",
+                "For competitors, Bia shows what she found, with a link and the collection date. Anything she couldn't verify is marked as a hypothesis, never as research.",
+                "What she notices about the audience comes in as a suggestion (\"Bia noticed…\") and only goes into Brand Memory once the owner confirms it."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ask-bia",
+          "title": "Ask Bia",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "\"Where can my business grow before Christmas?\"",
+                "\"Create a promotion for this week\"",
+                "\"Analyze the competitors in my neighborhood\""
+              ]
+            }
+          ]
+        },
+        {
+          "id": "questions-about-bia",
+          "title": "Questions about Bia",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Can Bia build a marketing plan for my business?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes. Bia's plan lists actions in priority order, the squad specialist who handles each one and the time frame. She starts from the assessment and the positioning you approved, and you can adjust the plan in the conversation."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Where does the competitor research data come from?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "From sources Bia actually checked, with a link and the collection date. When search isn't available or turns up no source, she says so and marks the finding as a hypothesis."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "squad-iris": {
+      "key": "squad-iris",
+      "path": "/en/squad/iris",
+      "title": "Íris, AI marketing results analysis | HelloSquad",
+      "description": "Íris pulls your numbers together with source and period, compares them, explains what changed and recommends the next step. No made-up data or causes.",
+      "agent": {
+        "nome": "Íris",
+        "pronome": "she",
+        "area": "Results",
+        "papel": "Data & Results",
+        "cor": "#1F5BFF"
+      },
+      "h1": "Íris, AI marketing results analysis",
+      "tagline": "I read the numbers and tell you what to do with them.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "Íris is the analyst on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and she handles AI marketing results analysis. She collects, consolidates, interprets and compares your marketing metrics, builds reports and recommends the next step. Always with source, period and unit."
+        }
+      ],
+      "sections": [
+        {
+          "id": "what-iris-does",
+          "title": "What Íris does",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Íris shows you the number, the source and the period first, then her reading. She tells you what the data shows, what it doesn't show and what would be needed to be sure. Correlation isn't causation, and a small sample is a small sample: she says so in plain language."
+            },
+            {
+              "type": "p",
+              "text": "With no connected source or imported spreadsheet, Íris shows no numbers. She shows you what still needs to be connected."
+            }
+          ]
+        },
+        {
+          "id": "what-iris-delivers",
+          "title": "What Íris delivers",
+          "blocks": [
+            {
+              "type": "table",
+              "head": [
+                "Delivery",
+                "What you get"
+              ],
+              "rows": [
+                [
+                  "Consolidated metrics",
+                  "Indicators with source, period and unit and, when data is missing, a clear note that it's missing."
+                ],
+                [
+                  "Performance analysis",
+                  "A useful, contextual explanation of what changed, without claiming a cause without evidence."
+                ],
+                [
+                  "Period comparison and report",
+                  "A clear, reviewable report tied to your business's history."
+                ],
+                [
+                  "Prioritized recommendations",
+                  "Findings turned into actions to discuss with Nexo and the specialists."
+                ],
+                [
+                  "Recurring executive report",
+                  "A weekly summary by channel, with changes, hypotheses, suggested decisions and the source data."
+                ],
+                [
+                  "Metric monitoring",
+                  "Recurring readings and alerts, only with up-to-date, reliable data."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "how-iris-works-with-the-rest-of-the-squad",
+          "title": "How Íris works with the rest of the squad",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Íris reads Kiwi's tests, measures whether Max's campaigns brought customers back and tells Bia what the numbers say about the plan. When a finding calls for action, she recommends it and Nexo turns the recommendation into work for the right specialist."
+            }
+          ]
+        },
+        {
+          "id": "what-iris-doesn-t-do",
+          "title": "What Íris doesn't do",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "She doesn't take any external action. Analysis is where her role ends.",
+                "She doesn't invent data or fill gaps with estimates without labeling them as estimates.",
+                "She doesn't attribute a sale to a channel without a configured, stated attribution model.",
+                "She doesn't extrapolate a trend from a few data points, and she never presents outdated data as current."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fictitious-example-miolo-s-month",
+          "title": "Fictitious example: Miolo's month",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "*Fictitious example: the brand and the numbers are made up.* Miolo is a sourdough bakery in Pinheiros, São Paulo."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "The owner asks: \"How did my month go?\"",
+                "Íris consolidates the metrics from the connected channels and flags it right at the start: one of the sources is missing three days of data, and those days were left out of the comparison.",
+                "The reading: \"Website visits rose 35% compared with the previous month. Behind-the-scenes posts drove more visits than offer posts. The link is likely, not proven.\"",
+                "The recommendation: publish more behind-the-scenes posts for two weeks to confirm the pattern. Nexo takes the proposal to Otto, and Íris tracks the result."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ask-iris",
+          "title": "Ask Íris",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "\"Analyze my latest results\"",
+                "\"Which post drove the most people to the website?\"",
+                "\"Put together this month's report\""
+              ]
+            }
+          ]
+        },
+        {
+          "id": "questions-about-iris",
+          "title": "Questions about Íris",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Can Íris analyze my marketing results?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes, from the sources you connect or the spreadsheets you import. She consolidates the numbers with source, period and unit, compares them with the previous period, explains what changed and recommends the next step."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "What if I don't have any data yet?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Íris doesn't make anything up. With no connected source, she tells you which data is missing and how to connect it. When a source has gaps, she shows where they are and never fills them with estimates without telling you."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "squad-kaia": {
+      "key": "squad-kaia",
+      "path": "/en/squad/kaia",
+      "title": "Kaia, AI social media design and branding | HelloSquad",
+      "description": "Kaia creates posts, carousels, visual identity and in-store materials that match your brand, with previews, review rounds and a full version history.",
+      "agent": {
+        "nome": "Kaia",
+        "pronome": "she",
+        "area": "Brand & Creative",
+        "papel": "Brand & Creative",
+        "cor": "#FF2E9A"
+      },
+      "h1": "Kaia, Brand & Creative: AI social media design",
+      "tagline": "I shape your brand in every piece.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "Kaia is the art director on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and she handles AI social media design for your brand. Everything your brand shows goes through her: identity, social media visuals, in-store materials, mockups and edits."
+        }
+      ],
+      "sections": [
+        {
+          "id": "what-kaia-does",
+          "title": "What Kaia does",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Before creating anything, Kaia reads what your brand has already confirmed: palette, typography, visual tone, approved references and what you corrected in earlier pieces. She proposes one clear direction, not five, and explains the choice in a sentence."
+            },
+            {
+              "type": "p",
+              "text": "When a request is too visual to put into words, she asks for a reference instead of guessing. And she never marks a piece as ready if she wouldn't approve it herself."
+            }
+          ]
+        },
+        {
+          "id": "what-kaia-delivers",
+          "title": "What Kaia delivers",
+          "blocks": [
+            {
+              "type": "table",
+              "head": [
+                "Delivery",
+                "What you get"
+              ],
+              "rows": [
+                [
+                  "Static marketing visual",
+                  "An image and a final file that match your brand, with preview, review and versioning."
+                ],
+                [
+                  "Social media carousel",
+                  "A consistent set of slides, reviewable as a set and ready to export."
+                ],
+                [
+                  "Format variations and adaptations",
+                  "Approved pieces adapted to other formats without losing identity or history."
+                ],
+                [
+                  "Logo, identity and brand book",
+                  "A complete flow with choices, applications and a usable file."
+                ],
+                [
+                  "Promotional materials and packaging",
+                  "Visual proposals for materials, labels and packaging, with a mockup and an exportable file. It's communication design, not product engineering."
+                ],
+                [
+                  "Photo editing with brand references",
+                  "Compositions and adjustments based on your photos and approved references, with every version kept."
+                ],
+                [
+                  "Motion and video",
+                  "Moving pieces you can review, suited to each channel, once the feature is available."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "how-kaia-works-with-the-rest-of-the-squad",
+          "title": "How Kaia works with the rest of the squad",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "The text inside each piece comes from Otto or from what you approved; Kaia doesn't write captions or copy. When a piece is part of a campaign, she follows the concept Bia defined. Otto handles publishing, and only with your authorization."
+            }
+          ]
+        },
+        {
+          "id": "what-kaia-doesn-t-do",
+          "title": "What Kaia doesn't do",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "She doesn't write captions or copy. That's Otto.",
+                "She doesn't publish. Publishing belongs to Otto, with its own authorization.",
+                "She doesn't invent products, technical specs or manufacturable packaging.",
+                "She doesn't use third-party images, logos or photos without usage rights.",
+                "She doesn't delete earlier versions."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fictitious-example-miolo-s-christmas-carousel",
+          "title": "Fictitious example: Miolo's Christmas carousel",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "*Fictitious example, with a made-up brand.* Miolo is a sourdough bakery in Pinheiros, São Paulo."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "On the year-end campaign project, Bia's concept \"Christmas Takes Time\" has been approved.",
+                "Kaia reads Brand Memory: a warm, direct tone and the visual references the owner has already approved.",
+                "She proposes a visual direction, with one sentence explaining the choice, and builds the carousel with the copy Otto wrote.",
+                "The owner asks to swap the photo on the second slide. Kaia creates version 2, and version 1 stays in the history.",
+                "Once the carousel is approved, Kaia adapts the set to the vertical format. Publishing stays with Otto, after authorization."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ask-kaia",
+          "title": "Ask Kaia",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "\"Create a post for a special date\"",
+                "\"A poster for the counter\"",
+                "\"New covers for the highlights\""
+              ]
+            }
+          ]
+        },
+        {
+          "id": "questions-about-kaia",
+          "title": "Questions about Kaia",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Can Kaia create posts that match my brand's look?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes. Kaia uses the palette, typography, visual tone and references you confirmed in Brand Memory, and she learns from every correction. Every piece arrives with a preview, and you can review it before you approve."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Can I use my own photos?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes. Kaia edits and composes from your business's photos and the references you approved, staying true to the product. She doesn't use third-party photos or logos without usage rights."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "squad-kiwi": {
+      "key": "squad-kiwi",
+      "path": "/en/squad/kiwi",
+      "title": "Kiwi, AI growth marketing | HelloSquad",
+      "description": "Kiwi runs ads, SEO and conversion with numbers and sources. She sets a plan before spending and only moves budget within the cap you authorize.",
+      "agent": {
+        "nome": "Kiwi",
+        "pronome": "she",
+        "area": "Growth Marketing",
+        "papel": "Growth Marketing",
+        "cor": "#B6FF2E"
+      },
+      "h1": "Kiwi, AI Growth Marketing",
+      "tagline": "I grow your business with clear criteria, within the cap you authorize.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "Kiwi is the Growth Marketing specialist on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and she brings AI growth marketing to paid and organic acquisition: ads, search engines, conversion, testing and optimization. Not a cent of ad money is spent without your authorization."
+        }
+      ],
+      "sections": [
+        {
+          "id": "what-kiwi-does",
+          "title": "What Kiwi does",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Kiwi speaks in numbers and sources. Instead of \"reach is low,\" she tells you which metric changed, by how much, over what period and where the data came from. She proposes the cap before she proposes the action, and she always keeps three things apart: what is a reading, what is a recommendation and what would be an external action."
+            },
+            {
+              "type": "p",
+              "text": "Planning isn't spending. An assessment isn't permission to change your account. Every change to an ad needs your permission, with a spending cap, a scope and an expiration date."
+            }
+          ]
+        },
+        {
+          "id": "what-kiwi-delivers",
+          "title": "What Kiwi delivers",
+          "blocks": [
+            {
+              "type": "table",
+              "head": [
+                "Delivery",
+                "What you get"
+              ],
+              "rows": [
+                [
+                  "Media plan and budget recommendation",
+                  "Goals, channels, proposed limits and hypotheses, without spending anything."
+                ],
+                [
+                  "Ad audiences and tests",
+                  "Targeting, messages, variations and a test plan for you to approve."
+                ],
+                [
+                  "Review of existing campaigns",
+                  "A reading of real metrics from the accounts you authorized, with period, source and limitations."
+                ],
+                [
+                  "Ad account audit",
+                  "An analysis of the connected account's structure, targeting and creatives, with opportunities to improve."
+                ],
+                [
+                  "Ongoing optimization of authorized campaigns",
+                  "Cycles of analysis and budget or targeting adjustments, only within the limits you approved."
+                ],
+                [
+                  "Creating, launching or changing ads",
+                  "Changes applied only with explicit permission, an approved cap and a record of every action. Kiwi confirms through the ad platform's response, not the intention."
+                ],
+                [
+                  "SEO assessment and strategy (website and local SEO)",
+                  "An organic search audit covering technical and on-page factors, keywords and local opportunities, in a prioritized plan."
+                ],
+                [
+                  "Conversion and funnel optimization",
+                  "An analysis of steps, drop-off, pages and calls to action, with measurable improvements and defined tests."
+                ],
+                [
+                  "Growth experiments",
+                  "Hypothesis, test, success criteria and an optimization routine, with Íris reading the results."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "how-kiwi-works-with-the-rest-of-the-squad",
+          "title": "How Kiwi works with the rest of the squad",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Kiwi puts into practice what Bia defines: positioning and the strategic audience belong to Bia. The ads use Kaia's visuals and Otto's copy. In organic search, Kiwi sets the strategy and the keywords, and Otto writes the articles. Íris reads the test results."
+            }
+          ]
+        },
+        {
+          "id": "what-kiwi-doesn-t-do",
+          "title": "What Kiwi doesn't do",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "She doesn't spend on, create, launch or change any ad without permission and an approved cap.",
+                "She doesn't change a campaign \"just to test\" without permission.",
+                "She doesn't invent rates, costs or results, and she doesn't attribute a sale to an ad without attribution evidence.",
+                "She doesn't set positioning or the strategic audience. That's Bia.",
+                "She doesn't write the article or design the visual. That's Otto and Kaia."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fictitious-example-trilha-urbana-in-search",
+          "title": "Fictitious example: Trilha Urbana in search",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "*Fictitious example: the brand and the numbers are made up.* Trilha Urbana is a shop for city bikes and e-bikes in Curitiba, Paraná."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "The owner asks Kiwi: \"Why doesn't my website show up in search?\"",
+                "Kiwi asks to connect the search engine data. Without it, she explains what she can assess from the public website alone and what stays out of reach.",
+                "With the data connected, she delivers a prioritized plan: two technical fixes, the pages missing for e-bike searches in the city and the shop's local profile.",
+                "The new pages become work for Otto, built on the keywords Kiwi defined.",
+                "For the year-end ads, Kiwi proposes a plan with a goal, channels, a monthly cap and a cutoff rule. Nothing is spent until the owner authorizes the cap."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "How Kiwi talks (illustrative numbers): \"Visits from search dropped 18% from October 1 to 7 compared with the previous week. Before I propose a change, I want to see whether the drop is across every page or only the e-bike pages.\""
+            }
+          ]
+        },
+        {
+          "id": "ask-kiwi",
+          "title": "Ask Kiwi",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "\"How much should I spend on ads at Christmas?\"",
+                "\"Test two ads for my main product\"",
+                "\"Why doesn't my website show up in search?\""
+              ]
+            }
+          ]
+        },
+        {
+          "id": "questions-about-kiwi",
+          "title": "Questions about Kiwi",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Can Kiwi change my ads without me knowing?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. Reading and analyzing your account is different from changing it. Every new ad, launch or change needs your permission, with a spending cap, a scope and an expiration date, and every one is logged. The ad budget is yours, and Kiwi never goes over the authorized cap."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Does Kiwi do SEO for my website?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes. Kiwi runs the organic search and local SEO assessment and delivers a prioritized plan. Otto writes the pages and articles from the keywords and guidelines she defines."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "squad-max": {
+      "key": "squad-max",
+      "path": "/en/squad/max",
+      "title": "Max, AI marketing CRM and retention | HelloSquad",
+      "description": "Max segments your customers and builds reactivation and journeys by email and messages, only for contacts who opted in and only when you authorize it.",
+      "agent": {
+        "nome": "Max",
+        "pronome": "he",
+        "area": "CRM",
+        "papel": "CRM & Relationships",
+        "cor": "#00E5C3"
+      },
+      "h1": "Max, AI marketing CRM",
+      "tagline": "I bring your customers back.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "Max handles customer relationships on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and he runs AI marketing CRM for the people who already know you. He looks after customers who have bought or shown interest: segmentation, reactivation, loyalty and journeys by email and messages. Always with consent."
+        }
+      ],
+      "sections": [
+        {
+          "id": "what-max-does",
+          "title": "What Max does",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Max thinks about frequency and relevance before volume. Before proposing any send, he shows you the size of the segment and where the contacts came from. To him, one more message to someone who didn't ask for it is harm, not reach."
+            },
+            {
+              "type": "p",
+              "text": "At HelloSquad, CRM means relationship marketing. Max doesn't sell, doesn't negotiate and doesn't manage a sales pipeline."
+            }
+          ]
+        },
+        {
+          "id": "what-max-delivers",
+          "title": "What Max delivers",
+          "blocks": [
+            {
+              "type": "table",
+              "head": [
+                "Delivery",
+                "What you get"
+              ],
+              "rows": [
+                [
+                  "Reactivation or loyalty campaign",
+                  "Goal, proposed segment, offer and schedule, all reviewable."
+                ],
+                [
+                  "Email and message sequences",
+                  "Copy and steps for you to review before anything is sent."
+                ],
+                [
+                  "Customer list segmentation",
+                  "Segments with the data source and a consent check, with no duplicate contacts."
+                ],
+                [
+                  "Relationship journeys",
+                  "Steps and triggers mapped out, making clear what is a planned flow and what is an active automation."
+                ],
+                [
+                  "Opt-in contact capture",
+                  "Sign-up forms and new contacts linked to segments, with source and opt-in recorded."
+                ],
+                [
+                  "Actual sending by email and messages",
+                  "Sending only to eligible, authorized contacts, with the integration working, and a record of every delivery and failure."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "how-max-works-with-the-rest-of-the-squad",
+          "title": "How Max works with the rest of the squad",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "The tone of the messages comes from Otto, and the content goes through your approval. Bia helps define the audience and the offer when the campaign is part of a bigger strategy. Íris measures whether customers actually came back."
+            }
+          ]
+        },
+        {
+          "id": "what-max-doesn-t-do",
+          "title": "What Max doesn't do",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "He doesn't send to anyone who hasn't opted in, and he never ignores an unsubscribe request.",
+                "He doesn't send twice because of an automatic retry.",
+                "He doesn't import a spreadsheet without recording the source and the legal basis for the contacts.",
+                "He doesn't invent contacts or segments: with no imported or connected list, he asks you to import one.",
+                "He doesn't negotiate, sell or handle customer service."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fictitious-example-miolo-s-reactivation",
+          "title": "Fictitious example: Miolo's reactivation",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "*Fictitious example, with a made-up brand.* Miolo is a sourdough bakery in Pinheiros, São Paulo."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "The owner asks: \"I want to bring back the customers who disappeared.\"",
+                "Max reads the imported list and splits it into two groups: people who haven't bought anything in more than 30 days, to reactivate, and people who buy every week, to reward their loyalty.",
+                "Before proposing a send, he shows how many contacts in each group agreed to receive messages. Only those join the campaign.",
+                "Otto helps with the tone, and Max builds a two-message sequence with an exit rule: anyone who opens neither message leaves the journey.",
+                "The owner approves the copy. Sending is a separate decision: it only happens when she authorizes it, and Max logs every delivery and every failure."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ask-max",
+          "title": "Ask Max",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "\"Win back customers who drifted away\"",
+                "\"An email for people who bought last year\"",
+                "\"Loyalty ideas for the counter\""
+              ]
+            }
+          ]
+        },
+        {
+          "id": "questions-about-max",
+          "title": "Questions about Max",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Can Max message my customers on his own?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. Approving a sequence doesn't authorize sending it. Sending requires your authorization, contacts with recorded consent and a working sending integration. Anyone who hasn't opted in doesn't get the message."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Does Max work like a sales CRM?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. Max does relationship marketing: segmentation, reactivation, loyalty and journeys with contacts who opted in. He doesn't manage a sales pipeline, negotiate or handle customer service."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "squad-nexo": {
+      "key": "squad-nexo",
+      "path": "/en/squad/nexo",
+      "title": "Nexo, AI marketing coordinator | HelloSquad",
+      "description": "Nexo takes your request, builds the right team, tracks every step and only calls you in when the decision is yours. Meet HelloSquad's coordinator.",
+      "agent": {
+        "nome": "Nexo",
+        "pronome": "he",
+        "area": "Projects",
+        "papel": "Marketing Coordination",
+        "cor": "#FF4D1F"
+      },
+      "h1": "Nexo, AI marketing coordinator",
+      "tagline": "I organize the squad and only call you in when the decision is yours.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "Nexo is the AI marketing coordinator at HelloSquad, the AI marketing team for small and medium-sized businesses. He takes your requests, figures out what you actually need, puts together the right team for each piece of work and sees it through to the end. Most requests come in through him."
+        }
+      ],
+      "sections": [
+        {
+          "id": "what-nexo-does",
+          "title": "What Nexo does",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Nexo turns a loose request into organized work. He identifies the goal, the context and the constraints, decides whether the request goes to one specialist or becomes a project with several steps, and passes the context along so nobody has to ask again."
+            },
+            {
+              "type": "p",
+              "text": "When something essential is missing, he asks two direct questions at most before moving on. When the request is enough, he doesn't ask."
+            }
+          ]
+        },
+        {
+          "id": "what-nexo-delivers",
+          "title": "What Nexo delivers",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Nexo delivers organization: a clear brief, one project per goal, a single place to follow progress and decisions, and recurring routines you can pause at any time. Here is what you get from each of his four deliveries."
+            },
+            {
+              "type": "table",
+              "head": [
+                "Delivery",
+                "What you get"
+              ],
+              "rows": [
+                [
+                  "Qualified request and organized brief",
+                  "Goal, context and constraints recorded and routed to the right specialist, with nothing lost along the way."
+                ],
+                [
+                  "Coordinated project with several specialists",
+                  "A campaign becomes a single project, with steps, owners, decisions and trackable deliveries."
+                ],
+                [
+                  "Tracking and approval requests",
+                  "Progress, the next decision, history and blockers in one place. No sensitive action happens without your authorization."
+                ],
+                [
+                  "Delegated recurring responsibility",
+                  "A routine agreed with you (scope, frequency and limits), with a record of every run and every failure. You can pause it at any time."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "how-nexo-works-with-the-rest-of-the-squad",
+          "title": "How Nexo works with the rest of the squad",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Nexo names who's handling what: \"Otto is writing the captions; Kaia comes in next with the visuals.\" When a request involves strategy, creative, content, ads, customer relationships and results, he calls in Bia, Kaia, Otto, Kiwi, Max and Íris in the order the delivery needs them."
+            },
+            {
+              "type": "p",
+              "text": "He doesn't replace any specialist's technical call. If he disagrees with a choice, he records the point and lets the specialist respond."
+            }
+          ]
+        },
+        {
+          "id": "what-nexo-doesn-t-do",
+          "title": "What Nexo doesn't do",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "He doesn't write, design, analyze data or manage ads. That's the specialists' job.",
+                "He doesn't publish, send, spend or change campaigns. Those actions need your authorization and are carried out by the specialist in charge.",
+                "He doesn't invent a deadline a specialist didn't give, and he never marks work as done without a verified delivery.",
+                "He doesn't take silence as approval."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fictitious-example-vitta-estetica-wants-more-bookings",
+          "title": "Fictitious example: Vitta Estética wants more bookings",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "*Fictitious example, with a made-up brand.* Vitta Estética is an aesthetics clinic in Vitória, Espírito Santo, with two people on the account: the owner and an editor."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "The editor writes to Nexo: \"I want more bookings in November.\"",
+                "Nexo asks two questions: which service the clinic wants to prioritize, and where bookings come from today.",
+                "With the answers, he opens the \"November bookings\" project: Bia builds the plan, Otto prepares the posts and Kiwi proposes ads with a spending cap.",
+                "Nexo shows the progress to both of them. \"Approve Bia's plan\" shows up in \"Needs you,\" and the account owner is the one who approves it."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ask-nexo",
+          "title": "Ask Nexo",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "\"What do you need from me this week?\"",
+                "\"Let’s plan a campaign\"",
+                "\"I want to organize my marketing\""
+              ]
+            }
+          ]
+        },
+        {
+          "id": "questions-about-nexo",
+          "title": "Questions about Nexo",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Do I always have to talk to Nexo?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. Nexo is the simplest way in, but you can talk directly to any specialist. When a request needs another specialty, the specialist tells you who handles it and Nexo organizes the rest."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Does Nexo make decisions for me?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. Nexo organizes the work and asks for the decisions that are yours: approving a delivery, authorizing a post, confirming a piece of information about your brand. He doesn't take silence as approval."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "squad-otto": {
+      "key": "squad-otto",
+      "path": "/en/squad/otto",
+      "title": "Otto, AI social media content | HelloSquad",
+      "description": "Otto writes captions, scripts and articles in your brand's voice, runs your editorial calendar and only publishes when you authorize it.",
+      "agent": {
+        "nome": "Otto",
+        "pronome": "he",
+        "area": "Content",
+        "papel": "Content & Communication",
+        "cor": "#FFE11A"
+      },
+      "h1": "Otto, AI social media content",
+      "tagline": "I keep your brand showing up, in its own voice.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "Otto is the writer and editor on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and he creates AI social media content in your brand's voice. He handles the editorial calendar, captions, scripts, website copy, emails and articles. He's also the one who publishes, when you authorize it."
+        }
+      ],
+      "sections": [
+        {
+          "id": "what-otto-does",
+          "title": "What Otto does",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Otto writes in your brand's voice, not his own: short, concrete sentences, no marketing clichés, one idea per piece. He reads what you cut or changed in earlier copy and doesn't repeat the mistake."
+            },
+            {
+              "type": "p",
+              "text": "When your tone of voice isn't defined yet, he proposes two short directions and asks you to choose. Your choice goes into Brand Memory and applies to everything he writes next."
+            }
+          ]
+        },
+        {
+          "id": "what-otto-delivers",
+          "title": "What Otto delivers",
+          "blocks": [
+            {
+              "type": "table",
+              "head": [
+                "Delivery",
+                "What you get"
+              ],
+              "rows": [
+                [
+                  "Marketing copy and captions",
+                  "Reviewable copy for each channel, goal and your brand's tone of voice."
+                ],
+                [
+                  "Editorial calendar and weekly lineup",
+                  "Dates, channels, formats, topics and owners in a calendar that stays saved. You can hand off the weekly lineup in Autonomous Mode."
+                ],
+                [
+                  "Multichannel posts and scripts",
+                  "Versions for each channel, consistent with Bia's strategy and Kaia's visuals."
+                ],
+                [
+                  "Scheduling and publishing with authorization",
+                  "Publishing only after a valid connection, approved content and a specific authorization, with a record of success or failure."
+                ],
+                [
+                  "Content for your local business profile on search engines",
+                  "Posts and offers for your business profile, with review and authorized publishing."
+                ],
+                [
+                  "Draft replies to public comments",
+                  "Suggested brand replies to authorized comments, published only after your approval."
+                ],
+                [
+                  "Articles for search engines",
+                  "Articles built on the keywords and guidelines Kiwi defined, reviewed before publishing."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "how-otto-works-with-the-rest-of-the-squad",
+          "title": "How Otto works with the rest of the squad",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "SEO strategy belongs to Kiwi; Otto produces the content from it. Images belong to Kaia; Otto requests them in the work conversation. Max's relationship messages go out in the tone Otto helps define. On a campaign, everyone follows Bia's concept, the one you approved."
+            }
+          ]
+        },
+        {
+          "id": "what-otto-doesn-t-do",
+          "title": "What Otto doesn't do",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "He doesn't publish without a recorded authorization, and he never publishes twice because of a network error.",
+                "He doesn't set SEO strategy. Kiwi sets it; Otto writes.",
+                "He doesn't create images. That's Kaia.",
+                "He doesn't handle customer service or sales in the comments. When a complaint turns into a service issue, he passes it to you.",
+                "He doesn't invent data, offers or commercial terms in any copy."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fictitious-example-miolo-s-week",
+          "title": "Fictitious example: Miolo's week",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "*Fictitious example, with a made-up brand.* Miolo is a sourdough bakery in Pinheiros, São Paulo."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "The owner handed Otto a lineup of three posts a week in Autonomous Mode: Monday, Wednesday and Friday.",
+                "Otto reads Brand Memory: a warm, direct tone with no slang; the anchor product, the long-fermentation loaf; and the one word the brand decided never to use.",
+                "He proposes the week: behind the scenes at the oven on Monday, the Saturday bake on Wednesday, preorders on Friday. Each post arrives with a caption and a visual request for Kaia.",
+                "The owner changes Wednesday's topic. Otto adjusts and records the correction.",
+                "With the posts approved and publishing authorized, Otto schedules them and confirms when each one went live."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ask-otto",
+          "title": "Ask Otto",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "\"How's the plan for next week?\"",
+                "\"I want to improve my social media\"",
+                "\"A short video script about our process\""
+              ]
+            }
+          ]
+        },
+        {
+          "id": "questions-about-otto",
+          "title": "Questions about Otto",
+          "blocks": [
+            {
+              "type": "qa",
+              "question": "Can Otto write captions in my brand's tone of voice?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "Yes. Otto writes from the tone of voice, the banned words and the corrections recorded in Brand Memory. If your tone isn't defined yet, he proposes two directions and you choose."
+                }
+              ]
+            },
+            {
+              "type": "qa",
+              "question": "Does Otto post to my social media on his own?",
+              "answer": [
+                {
+                  "type": "p",
+                  "text": "No. Approving copy doesn't authorize publishing it. Otto only publishes with the account connected, the content approved and a specific authorization from you, and he records whether the post went through or failed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    },
+    "squad": {
+      "key": "squad",
+      "path": "/en/squad",
+      "title": "The seven AI marketing agents | HelloSquad",
+      "description": "Meet the squad behind HelloSquad: coordination, strategy, creative, content, growth, CRM and results. Each specialist has a clear role and clear limits.",
+      "h1": "The squad: seven AI marketing agents",
+      "tagline": "Each one owns a part of your marketing. One coordinates. You decide.",
+      "intro": [
+        {
+          "type": "p",
+          "text": "HelloSquad is an AI marketing team for small and medium-sized businesses. The squad has seven AI marketing agents, each with a distinct responsibility and clear limits, and all of them work from the same Brand Memory. You can talk to Nexo, who coordinates, or go straight to any specialist."
+        }
+      ],
+      "sections": [
+        {
+          "id": "who-does-what",
+          "title": "Who does what",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Each of the seven specialists owns one area of your marketing, delivers specific work and follows written limits. Nexo coordinates; Bia, Kaia, Otto, Kiwi, Max and Íris produce. The table shows what each one delivers and what each one won't do."
+            },
+            {
+              "type": "table",
+              "head": [
+                "Specialist",
+                "Area",
+                "What they deliver",
+                "What they don't do"
+              ],
+              "rows": [
+                [
+                  "[**Nexo**](/en/squad/nexo)",
+                  "Projects and coordination",
+                  "Qualifies the request, builds the team, organizes projects, tracks steps and asks for your decisions.",
+                  "Doesn't write, design, analyze data or take external actions."
+                ],
+                [
+                  "[**Bia**](/en/squad/bia)",
+                  "Strategy",
+                  "Assessment, positioning, audience, marketing plan, campaign strategy, competitor research.",
+                  "Doesn't manage ads or lead SEO; doesn't produce the final piece."
+                ],
+                [
+                  "[**Kaia**](/en/squad/kaia)",
+                  "Brand & Creative",
+                  "Visuals, carousels, format adaptations, visual identity, in-store materials.",
+                  "Doesn't write captions, doesn't publish, doesn't use images without usage rights."
+                ],
+                [
+                  "[**Otto**](/en/squad/otto)",
+                  "Content",
+                  "Captions, editorial calendar, scripts, articles for search engines and authorized publishing.",
+                  "Doesn't set SEO strategy, create images or handle customer service."
+                ],
+                [
+                  "[**Kiwi**](/en/squad/kiwi)",
+                  "Growth Marketing",
+                  "Media plan, ad audiences and tests, SEO, conversion optimization and experiments.",
+                  "Doesn't spend without an authorized cap; doesn't set positioning."
+                ],
+                [
+                  "[**Max**](/en/squad/max)",
+                  "CRM",
+                  "Opt-in segmentation, reactivation, loyalty, email and message sequences.",
+                  "Doesn't sell, doesn't negotiate, never messages anyone who hasn't opted in."
+                ],
+                [
+                  "[**Íris**](/en/squad/iris)",
+                  "Results",
+                  "Metrics with source and period, comparisons, reports and recommendations.",
+                  "Doesn't invent data, claim a cause without evidence or take external actions."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "how-they-work-together",
+          "title": "How they work together",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Every piece of work has **one lead**. The others join when the delivery needs their specialty: Bia sets a campaign's concept, Kaia and Otto build the visuals and the copy from it, Kiwi maps out how to promote it and Íris reads the results."
+            },
+            {
+              "type": "p",
+              "text": "**Nexo** organizes that sequence, passes the context along and shows you the progress. He doesn't replace a specialist's technical call: if he disagrees, he records the point and lets the specialist respond."
+            },
+            {
+              "type": "p",
+              "text": "In the **Squad Room** you talk to everyone at once, and one specialist answers at a time. In a specialist's own conversation, you talk only to that specialist."
+            }
+          ]
+        },
+        {
+          "id": "why-seven-specialists-and-not-just-one-assistant",
+          "title": "Why seven specialists and not just one assistant",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "A generic assistant answers anything and is accountable for nothing. In the squad, each specialist has one responsibility, a way of working and written limits: Kiwi doesn't spend without a cap, Max doesn't send without consent, Íris doesn't show a number without a source. That makes it clear who made each delivery, and why."
+            },
+            {
+              "type": "p",
+              "text": "All seven share Brand Memory. What you confirm for one applies to all of them."
+            }
+          ]
+        },
+        {
+          "id": "what-every-specialist-follows",
+          "title": "What every specialist follows",
+          "blocks": [
+            {
+              "type": "ul",
+              "items": [
+                "They use only what your brand has confirmed; anything they notice on their own stays a suggestion until you confirm it.",
+                "They don't invent data, metrics, contacts or results. With no connected source, they tell you what's missing.",
+                "Approving content doesn't authorize publishing, sending, spending or changing a campaign.",
+                "A vague request gets a direct question, not a generic answer.",
+                "They always keep these apart: suggested idea, prepared material, approved content, authorized action, confirmed execution and measured effect."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "where-to-start",
+          "title": "Where to start",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "A few requests that work well as a first piece of work:"
+            },
+            {
+              "type": "ul",
+              "items": [
+                "\"What do you need from me this week?\" (Nexo)",
+                "\"Where can my business grow before Christmas?\" (Bia)",
+                "\"Create a post for a special date\" (Kaia)",
+                "\"How's the plan for next week?\" (Otto)",
+                "\"Why doesn't my website show up in search?\" (Kiwi)",
+                "\"Win back customers who drifted away\" (Max)",
+                "\"Analyze my latest results\" (Íris)"
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": true
+    }
+  }
+}
