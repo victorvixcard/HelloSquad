@@ -22,6 +22,7 @@ from hellosquad.llm.base import (
     Usage,
 )
 from hellosquad.llm.pricing import ModelPrice, cost_usd
+from hellosquad.memory.embeddings import DisabledEmbeddings, Embeddings
 from hellosquad.research.websearch import (
     DisabledWebSearch,
     SearchResponse,
@@ -157,6 +158,8 @@ class Squad:
     web_search: WebSearch = field(default_factory=DisabledWebSearch)
     learning_top_k: int = 5
     learning_review_days: int = 90
+    # Busca por significado (ADR-0009): desligada; a recuperação fica na busca textual por idioma.
+    embeddings: Embeddings = field(default_factory=DisabledEmbeddings)
 
 
 def status_fields(locale: str, agent: AgentDefinition, mode: str, phrase: str) -> dict[str, str]:

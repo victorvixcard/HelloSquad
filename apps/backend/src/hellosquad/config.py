@@ -95,6 +95,8 @@ class Settings(BaseSettings):
     learning_review_days: int = Field(default=90, ge=1)
     learning_promotion_confidence: float = Field(default=0.7, ge=0, le=1)
     learning_promotion_repeats: int = Field(default=2, ge=2)
+    # Embeddings da memória (ADR-0009): desligados até o dono escolher o fornecedor.
+    embeddings_provider: Literal["disabled"] = "disabled"
 
     @field_validator("auth_jwt_algorithms", "api_cors_origins", mode="before")
     @classmethod

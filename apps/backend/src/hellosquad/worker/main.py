@@ -24,6 +24,7 @@ from hellosquad.config import Settings, get_settings
 from hellosquad.i18n import DEFAULT_LOCALE, catalog, t
 from hellosquad.llm.base import LLMClient, LLMError
 from hellosquad.llm.factory import build_llm_client
+from hellosquad.memory.embeddings import build_embeddings
 from hellosquad.research.websearch import WebSearch, build_web_search
 from hellosquad.runtime import configure_logging
 from hellosquad.squad.flow import FlowError, Squad, run_flow, run_reply
@@ -103,6 +104,7 @@ class Worker:
             memory_budget=settings.memory_context_tokens,
             learning_top_k=settings.learning_top_k,
             learning_review_days=settings.learning_review_days,
+            embeddings=build_embeddings(settings.embeddings_provider),
             web_search=web_search
             or build_web_search(
                 settings.web_search_provider,
