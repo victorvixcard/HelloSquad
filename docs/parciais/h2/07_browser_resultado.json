@@ -1,0 +1,61 @@
+{
+  "personas": {
+    "kiwi": {
+      "steps": [
+        "pedido enviado",
+        "aprovado pela tela"
+      ],
+      "request": "Quero planejar uma campanha paga.",
+      "card": "Proponho até R$ 1.200 por mês, abaixo dos R$ 1.500 que você informou: a maior parte no Instagram e no Facebook, para quem mora perto, e uma parte menor no Google, para quem já procura pão de fermentaç",
+      "workId": "8cc5d225-728b-48d4-a20d-6afd4d2f826b",
+      "url": "/app/miolo/squad/kiwi/trabalho/8cc5d225-728b-48d4-a20d-6afd4d2f826b",
+      "approveLabel": "Aprovar v1"
+    },
+    "bia": {
+      "steps": [
+        "pedido enviado",
+        "aprovado pela tela"
+      ],
+      "request": "Quero analisar meu negócio.",
+      "card": "A Miolo tem produto forte e público fiel no bairro, mas depende do movimento espontâneo da loja. Para vender mais até o Natal, o que mais pesa é transformar quem já compra em encomenda antecipada e da",
+      "workId": "8845330a-9321-4783-8f33-3fd31e25b133",
+      "url": "/app/miolo/squad/bia/trabalho/8845330a-9321-4783-8f33-3fd31e25b133",
+      "approveLabel": "Aprovar o diagnóstico"
+    },
+    "max": {
+      "steps": [
+        "pedido enviado",
+        "aprovado pela tela"
+      ],
+      "request": "Quero segmentar meus clientes.",
+      "card": "Organizei a base em quatro segmentos pelo tempo desde a última compra e pela frequência, para falar com cada grupo do jeito certo: quem comprou há pouco, quem está esfriando, quem sumiu e quem compra ",
+      "workId": "19970b18-0c65-4943-934e-ce90996cb52d",
+      "url": "/app/miolo/squad/max/trabalho/19970b18-0c65-4943-934e-ce90996cb52d",
+      "approveLabel": "Aprovar v1"
+    },
+    "iris": {
+      "steps": [
+        "pedido enviado",
+        "aprovado pela tela"
+      ],
+      "request": "Quero analisar um indicador.",
+      "card": "Nos últimos 30 dias, comparados aos 30 anteriores, o alcance no Instagram subiu e os seguidores cresceram pouco, enquanto as sessões no site caíram e os pedidos ficaram praticamente estáveis, com leve",
+      "workId": "554de371-641e-40c9-b0f9-efe5dfc29779",
+      "url": "/app/miolo/squad/iris/trabalho/554de371-641e-40c9-b0f9-efe5dfc29779",
+      "approveLabel": "Aprovar v1"
+    },
+    "nexo": {
+      "steps": [],
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'Conversa' }).getByRole('textbox', { name: /^Mensagem para o Nexo/ })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('region', { name: 'Conversa' }).getByRo"
+    }
+  },
+  "room": {
+    "url": "/app/miolo/sala-do-squad",
+    "after": [
+      "Bom dia, squad! Nesta semana o foco é o pão de fermentação longa.",
+      "Quero uma campanha de Natal para vender mais panetones."
+    ],
+    "teamCard": 0
+  },
+  "console": []
+}

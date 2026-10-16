@@ -1,0 +1,17 @@
+bônus|200.00
+browser exit=0
+[22:14:30] login ok
+[22:14:33] kiwi {"steps":["pedido enviado","aprovado pela tela"],"request":"Quero planejar uma campanha paga.","card":"Proponho até R$ 1.200 por mês, abaixo dos R$ 1.500 que você informou: a maior parte no Instagram e no Facebook, para quem mora perto, e uma parte menor no Google, para quem já procura pão de fermentaç","workId":"8cc5d225-728b-48d4-a20d-6afd4d2f826b","url":"/app/miolo/squad/k
+[22:14:37] bia {"steps":["pedido enviado","aprovado pela tela"],"request":"Quero analisar meu negócio.","card":"A Miolo tem produto forte e público fiel no bairro, mas depende do movimento espontâneo da loja. Para vender mais até o Natal, o que mais pesa é transformar quem já compra em encomenda antecipada e da","workId":"8845330a-9321-4783-8f33-3fd31e25b133","url":"/app/miolo/squad/bia/trab
+[22:14:40] max {"steps":["pedido enviado","aprovado pela tela"],"request":"Quero segmentar meus clientes.","card":"Organizei a base em quatro segmentos pelo tempo desde a última compra e pela frequência, para falar com cada grupo do jeito certo: quem comprou há pouco, quem está esfriando, quem sumiu e quem compra ","workId":"19970b18-0c65-4943-934e-ce90996cb52d","url":"/app/miolo/squad/max/tra
+[22:14:43] iris {"steps":["pedido enviado","aprovado pela tela"],"request":"Quero analisar um indicador.","card":"Nos últimos 30 dias, comparados aos 30 anteriores, o alcance no Instagram subiu e os seguidores cresceram pouco, enquanto as sessões no site caíram e os pedidos ficaram praticamente estáveis, com leve","workId":"554de371-641e-40c9-b0f9-efe5dfc29779","url":"/app/miolo/squad/iris/tra
+[22:14:59] nexo {"steps":[],"error":"Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'Conversa' }).getByRole('textbox', { name: /^Mensagem para o Nexo/ })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('region', { name: 'Conversa' }).getByRo"}
+[22:15:26] sala {"url":"/app/miolo/sala-do-squad","after":["Bom dia, squad! Nesta semana o foco é o pão de fermentação longa.","Quero uma campanha de Natal para vender mais panetones."],"teamCard":0}
+== trabalhos criados pela tela desde 2026-10-16 22:14:27.675389+00
+05.01|kiwi|approved|1|captured:10.00|1
+02.01|bia|approved|1|captured:10.00|1
+06.03|max|approved|1|captured:10.00|1
+07.02|iris|approved|1|captured:10.00|1
+== mensagens da Sala depois do pedido
+user|-|Quero uma campanha de Natal para vender mais panetones.
+concluídos no worker: 4
