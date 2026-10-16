@@ -15,11 +15,14 @@ reabrem) a conversa do objeto, como a própria tela faz (A2b §3 item 2); as rod
 Os outros `POST` na rede são as Server Actions de leitura das páginas (calendário, resumo de contatos, token do
 Realtime, eventos do run).
 **Dados:** as entregas do Hulk na Miolo apareceram e sumiram com o seed reaplicado pelas rodadas dele (19:14–19:15,
-19:17–19:21). Para as telas com documento e calendário, o lado "nosso" usa as capturas da própria A2b
+19:17–19:21); a 04.02 das 19:26 ficou e foi capturada (calendário, inspetor e a pauta em documento). Para os outros
+documentos, o lado "nosso" usa as capturas da própria A2b
 (`docs/parciais/a2b/nosso-a2b-*.png`, build de produção das 17:21) e o código; depois da A2b não houve mudança em
 `apps/web` fora do site público (A2c), conferido por `git log --since 17:25 -- apps/web packages/ui`.
 
 ## Tabela-resumo
+
+**Contagem:** 🔴 0 · 🟡 9 · ℹ️ 4.
 
 | # | Tela · elemento | Diferença | Sev. |
 |---|---|---|---|
@@ -33,8 +36,12 @@ Realtime, eventos do run).
 | P-08 | Growth · objeto da conversa do ambiente | Nome "Growth Marketing" no nome acessível do botão e no cartão; na V4.6 o objeto se chama "Growth" (`ENVS.media.l`) | ℹ️ |
 | P-09 | Conversas de objeto novas (Indicador na tela; Publicação e Oportunidade pelo código) | Abrem mudas: sem "Hoje", sem a primeira fala do agente, sem o cartão do objeto no histórico e sem "Pergunte à <Nome>"; a V4.6 abre cada uma com fala, cartão e três sugestões do tipo | 🟡 |
 | P-10 | Conversa do indicador · coluna "Contexto da conversa" | Sem o número, a variação e a curva do indicador e sem a linha "setembro · comparado com agosto" abaixo do título; "Voltar para Resultados" vai para o pé da coluna | 🟡 |
-| P-11 | Documento (Bia, Íris, Kiwi, Max) · cartão da decisão | Falta a regra da V4.4 "Aprovar o diagnóstico não cria trabalhos…" / "Aprovar o plano define a direção…"; no lugar, textos da legenda do Otto: "…com a legenda à vista." e, aprovado, "Aprovar não publica: a publicação pede autorização própria." | 🟡 |
+| P-11 | Documento (Bia, Otto 04.02, Íris, Kiwi, Max) · cartão da decisão | Falta a regra da V4.4 "Aprovar o diagnóstico não cria trabalhos…" / "Aprovar o plano define a direção…"; no lugar, textos da legenda do Otto: "…com a legenda à vista." e, aprovado, "Aprovar não publica: a publicação pede autorização própria." | 🟡 |
 | P-12 | Documento · migalha, botão de conversa e cartão extra | Migalha com o título do trabalho ("Quero analisar meu negócio") e o h1 com o do documento (na V4.6 os dois são `bd.title`); "Conversar com a Bia" no lugar de "Conversar sobre o diagnóstico"/"…as prioridades"; cartão com o rosto "Bia" que a V4.6 não tem | ℹ️ |
+| P-13 | Documento · card "Versões" | "v1" e a data colados ("v116/10") e a versão aberta sem o contorno: a classe é `is-on`, o CSS portado só tem `.bd-v.is-cur`, e o botão não ocupa a largura | 🟡 |
+
+Nenhum 🔴: nada quebra uma jornada combinada nem inventa dado. Os mais sérios são P-01 e P-02 (a tela e a fala negam
+números que a própria Resultados mostra) e P-11 (some a regra "aprovar não cria trabalhos" do documento).
 
 ## Achados
 
@@ -208,7 +215,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 
 ### P-11 · Cartão da decisão do documento sem a regra "aprovar não cria trabalhos" e com texto da legenda · 🟡
 
-1. **Tela e rota:** detalhe de qualquer entrega em documento, `/app/miolo/squad/<bia|iris|kiwi|max>/trabalho/<id>`,
+1. **Tela e rota:** detalhe de qualquer entrega em documento, `/app/miolo/squad/<bia|otto|iris|kiwi|max>/trabalho/<id>`,
    primeiro cartão da coluna da direita.
 2. **Protótipo (V4.4, que a A2b adotou):** `apL` (L12605): pendente, "Aprovar o diagnóstico não cria trabalhos: cada
    recomendação vira ação quando você pedir." (plano: "Aprovar o plano define a direção. Cada iniciativa vira trabalho só
@@ -221,7 +228,8 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    pede autorização própria." (`apps/web/messages/pt-BR/content.json:65` e a chave `approvedText`). São os textos da
    legenda 04.01 do Otto, aplicados a diagnóstico, plano, relatório, plano de mídia e segmento.
 4. **Como reproduzir:** Marina → Estratégia → "Planos e diagnósticos" → abrir o diagnóstico (pendente ou aprovado).
-5. **Prova:** pendente, `docs/parciais/a2b/nosso-a2b-bia-documento.png` (captura da própria A2b, mesmo código) ×
+5. **Prova:** pendente, `nosso-pauta-doc.png` (19:31, a pauta 04.02 do Hulk: "Primeira versão." e "O ajuste abre a
+   conversa com o Otto ao lado, com a legenda à vista.") e `docs/parciais/a2b/nosso-a2b-bia-documento.png` (diagnóstico) ×
    `proto-bia-doc.png` (cartão "v2 · em revisão" com "Aprovar o plano define a direção. Cada iniciativa vira trabalho
    só quando você pedir."). O estado aprovado só pelo código (as entregas do Hulk sumiram antes da captura).
 6. **Severidade:** 🟡 (some uma regra combinada da tela e entra uma regra de outro objeto).
@@ -238,8 +246,24 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    `titulo` do conteúdo ("Diagnóstico de marketing da Miolo") (`apps/web/components/env/docs/DocumentDetail.tsx:133` e
    `:142`); botão "Conversar com a Bia" (`:226`); cartão extra com o rosto e o nome do time entre as ações e o Histórico
    (`:235-246`).
-4. **Prova:** `docs/parciais/a2b/nosso-a2b-bia-documento.png` × `proto-bia-doc.png`.
+4. **Prova:** `nosso-pauta-doc.png` (migalha "Calendário H2 IDOR", h1 "Calendário da semana de 19 a 25/10", cartão
+   "Otto") e `docs/parciais/a2b/nosso-a2b-bia-documento.png` × `proto-bia-doc.png`.
 5. **Severidade:** ℹ️.
+
+### P-13 · Card "Versões" do documento: número e data colados, versão aberta sem destaque · 🟡
+
+1. **Tela e rota:** a mesma do P-11, card "Versões".
+2. **Protótipo:** cada versão é uma linha com o número numa ponta e a data na outra
+   (`.bd-v{display:flex;…;justify-content:space-between}`, L3498), e a versão em leitura tem fundo branco e contorno
+   (`.bd-v.is-cur`, L3499); na captura, "v1 … 09/10" e "v2 … hoje" com o contorno na v2.
+3. **Nosso:** `apps/web/components/env/docs/DocumentDetail.tsx:208-217` desenha cada versão como `<button
+   className="bd-v is-on">`: o botão não ocupa a largura, então "v1" e "16/10" ficam colados ("v116/10"), e a classe
+   `is-on` não existe no CSS portado (`packages/ui/src/generated/product-ui.css` só tem `.bd-v.is-cur`), então a versão
+   aberta não se destaca.
+4. **Como reproduzir:** abrir qualquer documento com versão (ex.: a pauta do Otto em Conteúdo → post → "Abrir entrega").
+5. **Prova:** `nosso-pauta-doc.png` e `docs/parciais/a2b/nosso-a2b-bia-documento.png` (card "Versões") ×
+   `proto-bia-doc.png`.
+6. **Severidade:** 🟡 (o número da versão pode ser lido como "v116"; com duas versões não se vê qual está aberta).
 
 ## Conferido e bateu
 
@@ -273,8 +297,8 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 
 - **Kiwi com 05.01/05.02, Max com segmento (06.03, painel "Público selecionado"), Íris com 07.02–07.04 e o estado
   "aprovado" dos documentos:** as entregas do Hulk na Miolo (19:14) sumiram com o seed reaplicado antes da captura, e
-  até 19:28 só voltaram 04.02. O que está dito sobre documentos vale pelo código comum (`DocumentDetail`) e pela
-  captura da A2b.
+  até 19:31 só voltou a 04.02 (capturada: calendário, inspetor e a pauta em documento). O que está dito sobre os outros
+  documentos vale pelo código comum (`DocumentDetail`) e pela captura da A2b.
 - **Conversas de publicação e de oportunidade:** só pelo código (P-09); não abri para não criar conversa nova no meio
   dos testes do Hulk.
 - **Primeira fala da Íris no ambiente (P-02):** só pelo código, pelo mesmo motivo.
