@@ -1,0 +1,18 @@
+$ make test-web   # 16/10/2026 17:23, árvore final da fatia
+$ eslint
+packages/contracts typecheck$ tsc --noEmit
+packages/ui typecheck$ tsc --noEmit
+packages/contracts typecheck: Done
+packages/ui typecheck: Done
+apps/web typecheck$ tsc --noEmit
+apps/web typecheck: Done
+packages/contracts test:  Test Files  1 passed (1)
+packages/contracts test:       Tests  9 passed (9)
+packages/contracts test: Done
+packages/ui test:  Test Files  5 passed (5)
+packages/ui test:       Tests  49 passed (49)
+packages/ui test: Done
+apps/web test:  Test Files  26 passed (26)
+apps/web test:       Tests  229 passed (229)
+apps/web test: Done
+make test-web exit=0

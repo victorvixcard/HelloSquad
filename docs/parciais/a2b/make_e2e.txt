@@ -1,0 +1,33 @@
+$ make e2e   # 16/10/2026 17:20:49 → 17:21:50, build de produção + Playwright com o worker simulado (E2E_SCREENSHOTS=/tmp/a2b/shots-final)
+$ next build
+ ✓ Compiled successfully in 2.2s
+   Generating static pages (0/11) ...
+   Generating static pages (2/11) 
+   Generating static pages (5/11) 
+   Generating static pages (8/11) 
+ ✓ Generating static pages (11/11)
+Route (app)                                           Size  First Load JS
+├ ƒ /app/[workspace]/squad/[agente]                24.5 kB         223 kB
+├ ƒ /app/[workspace]/squad/[agente]/trabalho/[id]  12.1 kB         142 kB
++ First Load JS shared by all                       102 kB
+  ✓   1 [chromium] › e2e/a1b.spec.ts:18:7 › Projetos e Memória da Marca (A1b) › o Quadro de Projetos mostra o trabalho do seed na coluna Precisa de você (850ms)
+  ✓   2 [chromium] › e2e/a1b.spec.ts:32:7 › Projetos e Memória da Marca (A1b) › dossiê da Miolo: o que o squad sabe, de onde vem, principais conhecimentos e o que espera o seu ok (727ms)
+  ✓   3 [chromium] › e2e/a1b.spec.ts:51:7 › Projetos e Memória da Marca (A1b) › Marina confirma o que o Otto percebeu, o conhecimento aparece e a outra aba recebe ao vivo (3.1s)
+  ✓   4 [chromium] › e2e/auth-shell.spec.ts:5:7 › área logada › sem sessão, /app manda para o login e volta para onde a pessoa ia (385ms)
+  ✓   5 [chromium] › e2e/auth-shell.spec.ts:14:7 › área logada › senha errada mostra o erro em português e mantém o e-mail (275ms)
+  ✓   6 [chromium] › e2e/auth-shell.spec.ts:23:7 › área logada › Marina entra e vê a barra lateral com o workspace Miolo (2.3s)
+  ✓   7 [chromium] › e2e/auth-shell.spec.ts:82:7 › site público › página inicial em pt-BR com SEO e crawlers de IA liberados (199ms)
+  ✓   8 [chromium] › e2e/live.spec.ts:63:7 › Ao vivo (A1a), com o worker do squad em modo simulado › Marina pede uma legenda, vê o Otto escrevendo, recebe a v1 sem recarregar, revisa e aprova (3.6s)
+  ✓   9 [chromium] › e2e/live.spec.ts:120:7 › Ao vivo (A1a), com o worker do squad em modo simulado › Marina pede ajuste pela conversa, vê o Otto ajustando e aprova a v2 que chega ao vivo (3.4s)
+  ✓  10 [chromium] › e2e/onboarding.spec.ts:11:7 › Onboarding progressivo (A2a) › Pedro entra sem negócio, cria o negócio e faz o onboarding inteiro em pt-BR até o primeiro pedido ao Nexo (7.1s)
+  ✓  11 [chromium] › e2e/onboarding.spec.ts:103:7 › Onboarding progressivo (A2a) › Marina (conta configurada) não vê o onboarding: o Início mostra Resultados no vazio honesto (436ms)
+  ✓  12 [chromium] › e2e/onboarding.spec.ts:132:7 › Idioma por pessoa (A2a, ADR-0010) › Marina troca para en, vê a casca traduzida (também depois de recarregar) e volta para pt-BR (2.0s)
+  ✓  13 [chromium] › e2e/onboarding.spec.ts:168:7 › Idioma por pessoa (A2a, ADR-0010) › site público em /en e /es com hreflang para as três versões (270ms)
+  ✓  14 [chromium-a2b] › e2e/a2b-ambiente.spec.ts:15:7 › Conversa do ambiente (A2b, H1-04) › Estratégia: Conversar com Bia abre a conversa do ambiente, com a primeira fala e as sugestões (2.6s)
+  ✓  15 [chromium-a2b] › e2e/a2b-ambiente.spec.ts:54:7 › Conversa do ambiente (A2b, H1-04) › Conteúdo: a conversa do ambiente do Otto é outra, não a conversa direta do seed (1.2s)
+  ✓  16 [chromium-a2b] › e2e/a2b-bia.spec.ts:18:7 › Estratégia · Bia (A2b) › Analisar meu negócio vira o diagnóstico em documento, aprovado e na prateleira (3.5s)
+  ✓  17 [chromium-a2b] › e2e/a2b-iris.spec.ts:18:7 › Resultados · Íris (A2b) › indicadores com número e origem; Montar um relatório vira o relatório do período em documento (2.4s)
+  ✓  18 [chromium-a2b] › e2e/a2b-max.spec.ts:14:7 › CRM · Max com a base real (A2b) › importa uma planilha CSV e mostra as linhas recusadas, sem dado pessoal (969ms)
+  ✓  19 [chromium-a2b] › e2e/a2b-otto.spec.ts:21:7 › Conteúdo · Otto (A2b) › Preparar o calendário editorial vira a pauta proposta no calendário, aprovada pela Marina (6.1s)
+  19 passed (44.3s)
+make e2e exit=0
