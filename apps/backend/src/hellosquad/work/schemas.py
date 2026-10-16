@@ -366,3 +366,50 @@ class WorkItemDetail(WorkItem):
     history: list[WorkItemHistoryEntry] = Field(
         default_factory=list, description="Do mais antigo ao mais recente."
     )
+
+
+class NeedProject(BaseModel):
+    id: UUID
+    name: str
+
+
+class NeedItem(BaseModel):
+    type: Literal[
+        "review", "approve", "authorize", "confirm", "reconnect", "respond", "decide", "next"
+    ] = Field(
+        description=(
+            'Tipo da linha da faixa: os da pendência ("Para você revisar"…, "Para você decidir") '
+            'ou `next` ("Em seguida": marco seu que ainda não depende de você).'
+        )
+    )
+    agent_id: AgentId = Field(description="Quem pede.")
+    approval: Approval | None = None
+    milestone: ProjectMilestone | None = None
+    project: NeedProject | None = None
+    due_at: datetime | None = None
+
+
+class NeedsYou(BaseModel):
+    count: int = Field(description="Só o que depende da pessoa agora (sem adiadas e sem `next`).")
+    deferred_count: int = Field(description='Autorizações adiadas por "Agora não".')
+    items: list[NeedItem] = Field(
+        description="O que é agora (mais antigo primeiro), depois `next`."
+    )
+
+
+class AgentStatus(BaseModel):
+    agent_id: AgentId
+    mode: Literal["idle", "work", "wait", "live", "monitor", "sleep"]
+    status_short: str = Field(examples=["escrevendo"], description="Rótulo curto (`_shortNow`).")
+    status_label: str | None = Field(
+        examples=["Otto · criando a primeira versão"], description="Frase da conversa."
+    )
+    run_id: UUID | None = None
+    work_item_id: UUID | None = None
+    conversation_id: UUID | None = None
+    approval_id: UUID | None = None
+
+
+class SquadStatus(BaseModel):
+    workspace_id: UUID
+    agents: list[AgentStatus] = Field(description="Os sete, na ordem do squad.")

@@ -51,12 +51,6 @@ order by p.created_at desc, p.id desc
 limit %(limit)s
 """
 
-GET_PROJECT = f"""
-select {PROJECT_COLUMNS}
-from public.projects p
-where p.id = %s and p.workspace_id in (select app.current_user_workspace_ids())
-"""
-
 # Trabalho com a origem resolvida, a pendência aberta (a que depende de você primeiro; as adiadas
 # por último) e as versões, para a frase do estado.
 WORK_ITEM_SELECT = """
@@ -254,19 +248,6 @@ async def list_projects(
         rows = await (await conn.execute(LIST_PROJECTS, params)).fetchall()
     page, next_cursor = split_page(rows, limit, "created_at")
     return ProjectPage(items=[Project(**row) for row in page], next_cursor=next_cursor)
-
-
-@router.get(
-    "/projects/{project_id}",
-    summary="Um projeto",
-    responses=error_responses(401, 404, 422, 503),
-)
-async def get_project(project_id: UUID, principal: CurrentPrincipal, db: DatabaseDep) -> Project:
-    async with db.transaction_as(principal) as conn:
-        row = await (await conn.execute(GET_PROJECT, (project_id,))).fetchone()
-    if row is None:
-        raise ApiError(404, "not_found", "Projeto não encontrado.")
-    return Project(**row)
 
 
 @router.post(

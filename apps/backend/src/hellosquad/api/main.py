@@ -20,6 +20,8 @@ from hellosquad.credits.routes import router as credits_router
 from hellosquad.db import Database
 from hellosquad.identity.routes import router as identity_router
 from hellosquad.memory.routes import router as memory_router
+from hellosquad.work.needs import router as needs_router
+from hellosquad.work.projects import router as projects_router
 from hellosquad.work.routes import router as work_router
 
 
@@ -65,6 +67,8 @@ register_error_handlers(app)
 app.include_router(identity_router)
 app.include_router(conversations_router)
 app.include_router(work_router)
+app.include_router(projects_router)
+app.include_router(needs_router)
 app.include_router(approvals_router)
 app.include_router(runs_router)
 app.include_router(memory_router)
