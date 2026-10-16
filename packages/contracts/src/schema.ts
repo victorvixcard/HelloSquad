@@ -1945,6 +1945,11 @@ export interface components {
             /** Current Version Id */
             current_version_id: string | null;
             /**
+             * Step Id
+             * @description Etapa do trabalho coordenado.
+             */
+            step_id?: string | null;
+            /**
              * Created At
              * Format: date-time
              */
@@ -2999,6 +3004,8 @@ export interface components {
              * @description Quem conduz primeiro.
              */
             participants: components["schemas"]["ProjectParticipant"][];
+            /** @description O dono da conta: participa do projeto e decide cada entrega. */
+            owner?: components["schemas"]["ProjectOwner"] | null;
             /**
              * Milestones
              * @description Por data; sem data por último.
@@ -3078,6 +3085,30 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /**
+             * Step Id
+             * @description Etapa do trabalho coordenado.
+             */
+            step_id?: string | null;
+        };
+        /** ProjectOwner */
+        ProjectOwner: {
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /**
+             * Role
+             * @default owner
+             * @constant
+             */
+            role: "owner";
+            /**
+             * Responsibility
+             * @example decide cada entrega
+             */
+            responsibility: string;
         };
         /** ProjectPage */
         ProjectPage: {
@@ -3429,6 +3460,12 @@ export interface components {
             awaiting_you: boolean;
             /** @description A pendência aberta (a que depende de você primeiro). */
             pending_approval?: components["schemas"]["PendingApprovalSummary"] | null;
+            /**
+             * Step Label
+             * @description Trabalho coordenado: a etapa em que está ("etapa 1 de 3").
+             * @example etapa 1 de 3
+             */
+            step_label?: string | null;
         };
         /**
          * WorkItemCreate
@@ -3534,6 +3571,12 @@ export interface components {
             awaiting_you: boolean;
             /** @description A pendência aberta (a que depende de você primeiro). */
             pending_approval?: components["schemas"]["PendingApprovalSummary"] | null;
+            /**
+             * Step Label
+             * @description Trabalho coordenado: a etapa em que está ("etapa 1 de 3").
+             * @example etapa 1 de 3
+             */
+            step_label?: string | null;
             /** Briefing */
             briefing: {
                 [key: string]: unknown;
@@ -3614,6 +3657,12 @@ export interface components {
             awaiting_you: boolean;
             /** @description A pendência aberta (a que depende de você primeiro). */
             pending_approval?: components["schemas"]["PendingApprovalSummary"] | null;
+            /**
+             * Step Label
+             * @description Trabalho coordenado: a etapa em que está ("etapa 1 de 3").
+             * @example etapa 1 de 3
+             */
+            step_label?: string | null;
             /** Briefing */
             briefing: {
                 [key: string]: unknown;
@@ -3647,7 +3696,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "requested" | "delivered" | "decided";
+            kind: "requested" | "delivered" | "decided" | "team" | "step";
             /**
              * Text
              * @example Você aprovou a v2
@@ -3733,18 +3782,59 @@ export interface components {
             seq: number;
             /** Title */
             title: string;
+            /** @description Responsável pela etapa. */
             agent_id: components["schemas"]["AgentId"] | null;
             status: components["schemas"]["WorkItemStepStatus"];
             /** Started At */
             started_at: string | null;
             /** Finished At */
             finished_at: string | null;
+            /**
+             * Delivery Type
+             * @description Etapa planejada pelo Nexo (01.02): a delivery da etapa. Nulo = fase do run.
+             * @example 02.04
+             */
+            delivery_type?: string | null;
+            /**
+             * Depends On
+             * @description Etapas (seq) cuja saída esta etapa lê antes de começar.
+             */
+            depends_on?: number[];
+            /**
+             * Responsibility
+             * @description Como aparece na equipe.
+             * @example estratégia e conceito
+             */
+            responsibility?: string | null;
+            /**
+             * Instruction
+             * @description O recorte do pedido para a etapa.
+             */
+            instruction?: string | null;
+            /**
+             * Status Reason
+             * @description Código do motivo (image_engine_pending, depends_on_step, work_cancelled).
+             */
+            status_reason?: string | null;
+            /**
+             * Status Reason Label
+             * @description O motivo no idioma do workspace.
+             * @example Aguardando o motor de imagem
+             */
+            status_reason_label?: string | null;
+            /**
+             * Delivery Version Id
+             * @description A versão que a etapa entregou ou que a fechou (saída).
+             */
+            delivery_version_id?: string | null;
+            /** Version No */
+            version_no?: number | null;
         };
         /**
          * WorkItemStepStatus
          * @enum {string}
          */
-        WorkItemStepStatus: "pending" | "in_progress" | "done" | "failed" | "skipped";
+        WorkItemStepStatus: "pending" | "in_progress" | "needs_you" | "waiting_engine" | "blocked" | "done" | "failed" | "skipped";
         /** Workspace */
         Workspace: {
             /**

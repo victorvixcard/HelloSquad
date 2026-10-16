@@ -7719,6 +7719,19 @@
             ],
             "title": "Current Version Id"
           },
+          "step_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step Id",
+            "description": "Etapa do trabalho coordenado."
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -10347,6 +10360,17 @@
             "title": "Participants",
             "description": "Quem conduz primeiro."
           },
+          "owner": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectOwner"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "O dono da conta: participa do projeto e decide cada entrega."
+          },
           "milestones": {
             "items": {
               "$ref": "#/components/schemas/ProjectMilestone"
@@ -10505,6 +10529,19 @@
             "type": "string",
             "format": "date-time",
             "title": "Updated At"
+          },
+          "step_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step Id",
+            "description": "Etapa do trabalho coordenado."
           }
         },
         "type": "object",
@@ -10526,6 +10563,34 @@
           "updated_at"
         ],
         "title": "ProjectMilestone"
+      },
+      "ProjectOwner": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "role": {
+            "type": "string",
+            "const": "owner",
+            "title": "Role",
+            "default": "owner"
+          },
+          "responsibility": {
+            "type": "string",
+            "title": "Responsibility",
+            "examples": [
+              "decide cada entrega"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "responsibility"
+        ],
+        "title": "ProjectOwner"
       },
       "ProjectPage": {
         "properties": {
@@ -11403,6 +11468,21 @@
               }
             ],
             "description": "A pendência aberta (a que depende de você primeiro)."
+          },
+          "step_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step Label",
+            "description": "Trabalho coordenado: a etapa em que está (\"etapa 1 de 3\").",
+            "examples": [
+              "etapa 1 de 3"
+            ]
           }
         },
         "type": "object",
@@ -11660,6 +11740,21 @@
             ],
             "description": "A pendência aberta (a que depende de você primeiro)."
           },
+          "step_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step Label",
+            "description": "Trabalho coordenado: a etapa em que está (\"etapa 1 de 3\").",
+            "examples": [
+              "etapa 1 de 3"
+            ]
+          },
           "briefing": {
             "additionalProperties": true,
             "type": "object",
@@ -11873,6 +11968,21 @@
             ],
             "description": "A pendência aberta (a que depende de você primeiro)."
           },
+          "step_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step Label",
+            "description": "Trabalho coordenado: a etapa em que está (\"etapa 1 de 3\").",
+            "examples": [
+              "etapa 1 de 3"
+            ]
+          },
           "briefing": {
             "additionalProperties": true,
             "type": "object",
@@ -11975,7 +12085,9 @@
             "enum": [
               "requested",
               "delivered",
-              "decided"
+              "decided",
+              "team",
+              "step"
             ],
             "title": "Kind"
           },
@@ -12215,7 +12327,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Responsável pela etapa."
           },
           "status": {
             "$ref": "#/components/schemas/WorkItemStepStatus"
@@ -12243,6 +12356,107 @@
               }
             ],
             "title": "Finished At"
+          },
+          "delivery_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Type",
+            "description": "Etapa planejada pelo Nexo (01.02): a delivery da etapa. Nulo = fase do run.",
+            "examples": [
+              "02.04"
+            ]
+          },
+          "depends_on": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Depends On",
+            "description": "Etapas (seq) cuja saída esta etapa lê antes de começar."
+          },
+          "responsibility": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsibility",
+            "description": "Como aparece na equipe.",
+            "examples": [
+              "estratégia e conceito"
+            ]
+          },
+          "instruction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instruction",
+            "description": "O recorte do pedido para a etapa."
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason",
+            "description": "Código do motivo (image_engine_pending, depends_on_step, work_cancelled)."
+          },
+          "status_reason_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason Label",
+            "description": "O motivo no idioma do workspace.",
+            "examples": [
+              "Aguardando o motor de imagem"
+            ]
+          },
+          "delivery_version_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Version Id",
+            "description": "A versão que a etapa entregou ou que a fechou (saída)."
+          },
+          "version_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version No"
           }
         },
         "type": "object",
@@ -12262,6 +12476,9 @@
         "enum": [
           "pending",
           "in_progress",
+          "needs_you",
+          "waiting_engine",
+          "blocked",
           "done",
           "failed",
           "skipped"
