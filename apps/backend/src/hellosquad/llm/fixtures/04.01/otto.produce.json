@@ -3,37 +3,6 @@
   "step": "otto.produce",
   "cases": [
     {
-      "name": "nova_versao_com_retorno_sem_dia",
-      "usage": {
-        "input_tokens": 1320,
-        "output_tokens": 530,
-        "cache_read_tokens": 2900
-      },
-      "output": {
-        "entrega": {
-          "canal": "instagram",
-          "objetivo": "Levar clientes à loja",
-          "versoes": [
-            {
-              "texto": "Pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo cedo e leve o seu ainda morno.",
-              "hashtags": [
-                "#fermentacaonatural",
-                "#pinheiros",
-                "#padariadebairro"
-              ],
-              "cta": "Passe na loja e leve o seu."
-            }
-          ],
-          "notas": "Nova versão a partir do seu retorno."
-        },
-        "mensagem": "Fiz a nova versão da legenda a partir do seu retorno. Agora é com você: aprove ou peça outro ajuste."
-      },
-      "when": {
-        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\"",
-        "not_matches": "s[áa]bado"
-      }
-    },
-    {
       "name": "nova_versao_com_retorno",
       "usage": {
         "input_tokens": 1320,
@@ -58,6 +27,36 @@
           "notas": "Nova versão a partir do seu retorno: o sábado de manhã ficou logo na primeira linha."
         },
         "mensagem": "Fiz a nova versão da legenda com o que você pediu e mantive o resto. Agora é com você: aprove ou peça outro ajuste."
+      },
+      "when": {
+        "matches": "(?s)(?=.*<retorno_da_pessoa decisao=\"(changes_requested|rejected)\")(?=.*s[áa]bado)"
+      }
+    },
+    {
+      "name": "nova_versao_com_retorno_sem_dia",
+      "usage": {
+        "input_tokens": 1320,
+        "output_tokens": 530,
+        "cache_read_tokens": 2900
+      },
+      "output": {
+        "entrega": {
+          "canal": "instagram",
+          "objetivo": "Levar clientes à loja",
+          "versoes": [
+            {
+              "texto": "Pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo cedo e leve o seu ainda morno.",
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#padariadebairro"
+              ],
+              "cta": "Passe na loja e leve o seu."
+            }
+          ],
+          "notas": "Nova versão a partir do seu retorno."
+        },
+        "mensagem": "Fiz a nova versão da legenda a partir do seu retorno. Agora é com você: aprove ou peça outro ajuste."
       },
       "when": {
         "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
