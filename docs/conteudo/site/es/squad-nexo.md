@@ -54,7 +54,7 @@ No reemplaza la decisión técnica de ningún especialista. Si no está de acuer
 
 ## Pídele a Nexo
 
-- "¿Qué necesita de mí esta semana?"
+- "¿Qué necesitas de mí esta semana?"
 - "Vamos a planificar una campaña"
 - "Quiero organizar mi marketing"
 
