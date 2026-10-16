@@ -12,7 +12,7 @@ cta: "Start with the squad"   # proposta (P1 do relatório); o botão implementa
 
 A página inicial em inglês é a **Landing V1 R32**, já aprovada, com o texto do catálogo `apps/web/messages/en/`. Este arquivo não reescreve a landing: indica, seção por seção, o que é **copy aprovada** (valor literal do catálogo en, não muda), o que é **copy aprovada (R32), tradução proposta** (a string pt-BR ainda não está no catálogo) e o que é **texto de SEO/GEO** proposto para o HTML inicial sem alterar o desenho (parágrafo de definição, textos alternativos, resumo de cada seção para quem lê sem animação). Ordem das seções igual à da R32.
 
-<!-- O title acima é o do catálogo (`site.json`, `meta.title`), como no pt-BR e no es. Proposta de SEO, que só entra com o OK do dono (P3): "HelloSquad: the AI marketing team for your business", que traz a palavra-chave "AI marketing team". -->
+<!-- O title acima é o título de metadados do catálogo (`site.json`), como no pt-BR e no es. Proposta de SEO, que só entra com o OK do dono (P3): "HelloSquad: the AI marketing team for your business", que traz a palavra-chave "AI marketing team". -->
 
 ## 1. Above the fold
 
