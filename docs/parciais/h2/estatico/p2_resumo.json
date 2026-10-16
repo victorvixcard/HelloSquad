@@ -1,0 +1,340 @@
+{
+ "quando": "2026-10-16T22:10:21.892Z",
+ "commit": "bc58140",
+ "alvo": "next start (build de produção) em 127.0.0.1:3198, worktree /tmp/h2_web",
+ "cookieSessao": {
+  "name": "sb-127-auth-token",
+  "domain": "127.0.0.1",
+  "path": "/",
+  "httpOnly": true,
+  "sameSite": "Lax",
+  "secure": false,
+  "expires": "2026-10-23T22:03:14.912Z",
+  "duracaoDias": 7,
+  "value": "base64-eyJ***(2541)",
+  "setCookie": {
+   "rota": "/entrar",
+   "status": 303,
+   "attrs": [
+    "Path=/",
+    "Expires=Fri, 23 Oct 2026 22:03:14 GMT",
+    "Max-Age=604800",
+    "HttpOnly",
+    "SameSite=lax"
+   ]
+  },
+  "visivelEmDocumentCookie": false
+ },
+ "noindex": {
+  "logado": [
+   {
+    "rota": "/app",
+    "final": "/app/miolo",
+    "status": 200,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex, nofollow, nocache"
+    ]
+   },
+   {
+    "rota": "/app/miolo",
+    "final": "/app/miolo",
+    "status": 200,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex, nofollow, nocache"
+    ]
+   },
+   {
+    "rota": "/app/miolo/equipe",
+    "final": "/app/miolo/equipe",
+    "status": 200,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex, nofollow, nocache"
+    ]
+   },
+   {
+    "rota": "/app/miolo/squad/nexo",
+    "final": "/app/miolo/squad/nexo",
+    "status": 200,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex, nofollow, nocache"
+    ]
+   },
+   {
+    "rota": "/app/novo-workspace",
+    "final": "/app/novo-workspace",
+    "status": 200,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex, nofollow, nocache"
+    ]
+   },
+   {
+    "rota": "/app/inexistente",
+    "final": "/app/inexistente",
+    "status": 404,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex, nofollow, nocache",
+     "noindex"
+    ]
+   },
+   {
+    "rota": "/admin",
+    "final": "/admin",
+    "status": 404,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex",
+     "noindex"
+    ]
+   },
+   {
+    "rota": "/admin/usuarios",
+    "final": "/admin/usuarios",
+    "status": 404,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex",
+     "noindex"
+    ]
+   },
+   {
+    "rota": "/entrar",
+    "final": "/app/miolo",
+    "status": 200,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex, nofollow, nocache"
+    ]
+   },
+   {
+    "rota": "/",
+    "final": "/",
+    "status": 200,
+    "xrt": null,
+    "metas": []
+   }
+  ],
+  "anon": [
+   {
+    "rota": "/app",
+    "final": "/entrar",
+    "status": 200,
+    "xrt": null,
+    "metas": [
+     "noindex, follow"
+    ],
+    "redirects": [
+     {
+      "url": "/app",
+      "status": 307,
+      "xrt": "noindex, nofollow"
+     }
+    ]
+   },
+   {
+    "rota": "/app/miolo",
+    "final": "/entrar",
+    "status": 200,
+    "xrt": null,
+    "metas": [
+     "noindex, follow"
+    ],
+    "redirects": [
+     {
+      "url": "/app/miolo",
+      "status": 307,
+      "xrt": "noindex, nofollow"
+     }
+    ]
+   },
+   {
+    "rota": "/admin",
+    "final": "/admin",
+    "status": 404,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex",
+     "noindex"
+    ],
+    "redirects": []
+   },
+   {
+    "rota": "/admin/usuarios",
+    "final": "/admin/usuarios",
+    "status": 404,
+    "xrt": "noindex, nofollow",
+    "metas": [
+     "noindex",
+     "noindex"
+    ],
+    "redirects": []
+   },
+   {
+    "rota": "/entrar",
+    "final": "/entrar",
+    "status": 200,
+    "xrt": null,
+    "metas": [
+     "noindex, follow"
+    ],
+    "redirects": []
+   },
+   {
+    "rota": "/criar-conta",
+    "final": "/criar-conta",
+    "status": 200,
+    "xrt": null,
+    "metas": [],
+    "redirects": []
+   },
+   {
+    "rota": "/sair",
+    "final": "/sair",
+    "status": 200,
+    "xrt": null,
+    "metas": [
+     "noindex, nofollow"
+    ],
+    "redirects": []
+   }
+  ]
+ },
+ "seo": {
+  "urlsSitemap": 37,
+  "status200": 37,
+  "hreflangPares": 96,
+  "hreflangParesOk": 96,
+  "blocosJsonLd": 36,
+  "tipos": {
+   "Organization": 3,
+   "ImageObject": 3,
+   "WebSite": 3,
+   "SoftwareApplication": 3,
+   "BusinessAudience": 24,
+   "BreadcrumbList": 33,
+   "ListItem": 108,
+   "WebPage": 3,
+   "ItemList": 3,
+   "FAQPage": 3,
+   "Question": 57,
+   "Answer": 57,
+   "AboutPage": 3,
+   "Service": 21
+  },
+  "hostsSitemap": [
+   "http://127.0.0.1:3100"
+  ],
+  "hostsCanonico": [
+   "http://127.0.0.1:3100"
+  ],
+  "hostsHreflang": [
+   "http://127.0.0.1:3100"
+  ],
+  "hostsJsonLd": [
+   "https://schema.org",
+   "http://127.0.0.1:3100"
+  ],
+  "sitemapAlternates": {
+   "iguais": 144,
+   "divergentes": 0
+  },
+  "extras": {
+   "/favicon.ico": 404,
+   "/icon.png": 404,
+   "/apple-icon.png": 404,
+   "/en/criar-conta": 404,
+   "/es/criar-conta": 404,
+   "/en/sign-up": 404,
+   "/es/crear-cuenta": 404
+  },
+  "robots": {
+   "status": 200,
+   "bytes": 498,
+   "userAgents": [
+    "*",
+    "GPTBot",
+    "ClaudeBot",
+    "PerplexityBot",
+    "Google-Extended",
+    "OAI-SearchBot",
+    "ChatGPT-User",
+    "Claude-SearchBot",
+    "Claude-User",
+    "Perplexity-User",
+    "Applebot-Extended"
+   ],
+   "disallow": [
+    "/app",
+    "/app/",
+    "/admin",
+    "/admin/",
+    "/sair"
+   ],
+   "allow": [
+    "/"
+   ],
+   "sitemap": [
+    "http://127.0.0.1:3100/sitemap.xml"
+   ],
+   "fornecedorForaDeUserAgent": []
+  },
+  "llms": {
+   "status": 200,
+   "bytes": 10216,
+   "hosts": [
+    "http://127.0.0.1:3100"
+   ],
+   "links": 36,
+   "linksNao200": [],
+   "fornecedor": 0,
+   "sitemapForaDoLlms": [
+    "/criar-conta"
+   ]
+  },
+  "defeitosAutomaticos": 0,
+  "observacoes": [
+   "/como-funciona jsonld-id-externo",
+   "/en/how-it-works jsonld-id-externo",
+   "/es/como-funciona jsonld-id-externo",
+   "/sobre jsonld-id-externo",
+   "/en/about jsonld-id-externo",
+   "/es/sobre jsonld-id-externo",
+   "/squad/nexo jsonld-id-externo",
+   "/en/squad/nexo jsonld-id-externo",
+   "/es/squad/nexo jsonld-id-externo",
+   "/squad/bia jsonld-id-externo",
+   "/en/squad/bia jsonld-id-externo",
+   "/es/squad/bia jsonld-id-externo",
+   "/squad/kaia jsonld-id-externo",
+   "/en/squad/kaia jsonld-id-externo",
+   "/es/squad/kaia jsonld-id-externo",
+   "/squad/otto jsonld-id-externo",
+   "/en/squad/otto jsonld-id-externo",
+   "/es/squad/otto jsonld-id-externo",
+   "/squad/kiwi jsonld-id-externo",
+   "/en/squad/kiwi jsonld-id-externo",
+   "/es/squad/kiwi jsonld-id-externo",
+   "/squad/max jsonld-id-externo",
+   "/en/squad/max jsonld-id-externo",
+   "/es/squad/max jsonld-id-externo",
+   "/squad/iris jsonld-id-externo",
+   "/en/squad/iris jsonld-id-externo",
+   "/es/squad/iris jsonld-id-externo",
+   "/criar-conta hreflang",
+   "/criar-conta jsonld"
+  ]
+ },
+ "urlsCitadas": {
+  "total": 75,
+  "status200": 75,
+  "hosts": [
+   "http://127.0.0.1:3100"
+  ]
+ },
+ "lighthouse": "lighthouse-mobile-h2.json"
+}

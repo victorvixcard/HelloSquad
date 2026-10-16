@@ -4,7 +4,7 @@ Rascunho em andamento (16/10/2026, a partir de 18:59). Árvore auditada: `main` 
 e de dados rodou na árvore principal; o site rodou num build de produção separado, no worktree `/tmp/h2_web`).
 Nada em `apps/`, `packages/`, `squad/`, `supabase/`, `infra/` ou `Makefile` foi alterado.
 
-Seções a completar: i18n (item 1) e site em produção (parte 2).
+Seção a completar: site em produção (parte 2).
 
 ## Achados da parte 1 (itens 2 a 5), já provados
 
@@ -64,6 +64,86 @@ Seções a completar: i18n (item 1) e site em produção (parte 2).
   vive na pasta que vira prompt do agente.
 - **Correção proposta:** "conector de CRM a definir".
 - **Prova:** `marcas.txt` da varredura: `squad  squad/max/agent.yaml:35  RD Station` e `HubSpot` (únicas marcas não-canal em `squad/`).
+
+### E-05 🟡 — O catálogo do backend não tem 209 das 290 chaves em en nem em es; a falta cai calada no pt-BR
+
+- **Onde:** `apps/backend/src/hellosquad/i18n/en.json` e `es.json` (81 chaves cada) × `pt-BR.json` (290). A queda está
+  em `apps/backend/src/hellosquad/i18n/__init__.py:24` (`catalog(locale).get(key) or catalog(DEFAULT_LOCALE).get(key) or key`),
+  assumida na docstring (`:3`, "o resto cai no pt-BR"). Faltam, iguais em en e es: `agent` 28, `data` 2, `date` 10,
+  `delivery_version` 4, `environment` 23, `history` 28, `memory` 28, `run_error` 11, `status` 22, `triage` 17,
+  `work` 19, `work_item_step` 17. As 53 `email.*` estão completas nos três (confere com a S2f).
+- **Cenário (provado no código):** num workspace en ou es, a primeira fala de cada ambiente sai de
+  `conversations/opening.py:142` com `environment.first.specialist` em pt-BR ("… O que você precisa?", "Disponível."),
+  a data de `date.day` sai "sex, 16/10" (`opening.py:64-72`), o conhecimento adicionado na Memória da Marca ganha a
+  chave "Contado por você" e o assunto padrão "História"/"Posicionamento" (`memory/routes.py:506-507`), mostrados em
+  `apps/web/components/memory/MemoryView.tsx:410`; status, histórico, triagem e nomes de etapa (`work_item_step.*`)
+  idem. Fere a regra do dono "nenhum texto fixo" na prática: o cliente en/es lê português.
+- **Correção proposta:** traduzir as 209 chaves em en e es e pôr um teste de paridade de chaves no backend (o web já
+  tem `apps/web/test/catalog-parity.test.ts`); trocar a queda calada por erro em teste.
+- **Prova:** `python3 docs/parciais/h2/estatico/i18n_catalogos.py backend` →
+  `pt-BR: 290 chaves; email.*=53 | en: 81 chaves; email.*=53 | es: 81 chaves; email.*=53` e
+  `{'FALTA[en]': 209, 'FALTA[es]': 209, 'IDENTICO[es]': 6}` (os 6 idênticos são espanhol válido).
+
+### E-06 🟡 — Saudação e pedidos sugeridos dos especialistas vêm fixos em pt-BR do `agent.yaml`, sem idioma
+
+- **Onde:** `apps/backend/src/hellosquad/conversations/opening.py:123` lê `config.get("saudacao")` e `:81` lê
+  `pedidos_sugeridos` do `squad/<agente>/agent.yaml` (ex.: `squad/bia/agent.yaml:10` "Oi, eu sou a Bia.",
+  `:21-24` os pedidos). Não passam pelo catálogo; mostrados em `apps/web/components/product/ConversationPanel.tsx:300-301` e `:698`.
+- **Cenário:** em en/es o cliente abre o ambiente da Bia e lê "Oi, eu sou a Bia. Disponível. O que você precisa?" e
+  botões em português. Continua assim mesmo depois do E-05, porque o texto nem está no catálogo.
+- **Correção proposta:** chaves `agent.<id>.greeting` e `environment.suggestion.<id>.<n>` no catálogo (ou campos por
+  idioma no YAML), lidas com o idioma do workspace.
+- **Prova:** `grep -rn "saudacao" squad --include=*.yaml` → 7 linhas "Oi, eu sou …"; `grep -n "saudacao\|pedidos_sugeridos" apps/backend/src/hellosquad/conversations/opening.py` → `:81` e `:123`.
+
+### E-07 🟡 — Mensagens de erro da API escritas em pt-BR no código aparecem na tela em en/es
+
+- **Onde:** 37 `ApiError(status, code, "mensagem")` com texto pt-BR literal no backend (5 em `memory/routes.py`,
+  5 em `billing/routes.py`, 4 em `work/projects.py`, `contacts/routes.py` e `api/deps.py`, 3 em `identity/routes.py`,
+  2 em `work/routes.py`, `credits/routes.py` e `conversations/routes.py`, 1 em `work/calendar.py`,
+  `metrics/routes.py` e `memory/learnings.py`), mais `api/errors.py:74` (`VALIDATION_MESSAGES`), `:109`, `:113-117`,
+  `:121-133` (`SQLSTATE_ERRORS`) e `:148` (repassa o RAISE do banco, em português). Nenhuma usa `t(locale, …)`.
+  O web interpola o `message`: `apps/web/components/env/crm/ImportPanel.tsx:54` (`t("failed", { message: res.message })`),
+  `components/memory/MemoryView.tsx:95,119`, `components/product/ConversationPanel.tsx:462`.
+- **Cenário:** em en, importar um CSV vazio mostra "Could not import: O arquivo está vazio." (`contacts/routes.py:192`).
+- **Correção proposta:** o web traduz pelo `code` estável (`errors.<code>` nos catálogos) e usa o `message` só como
+  reserva; ou o backend localiza a mensagem pelo idioma do workspace.
+- **Prova:** `grep -rnE "ApiError\(" --include=*.py apps/backend/src/hellosquad | grep -v "class ApiError" | wc -l` → `37`;
+  `grep -rn "O arquivo está vazio" apps/backend/src/hellosquad` → `contacts/routes.py:192: raise ApiError(422, "invalid_csv", "O arquivo está vazio.")`.
+
+### E-08 🟡 — O objetivo do primeiro acesso é gravado com assunto e chave fixos em pt-BR
+
+- **Onde:** `apps/web/lib/onboarding.ts:10` (`OBJECTIVE_FACT = { area: "business", topic: "Objetivos", key: "Objetivo atual" }`),
+  enviado por `apps/web/app/app/[workspace]/memory-actions.ts:94,105` sem `kind`. A API só traduz assunto e chave
+  quando recebe `kind: "objective"` (`apps/backend/src/hellosquad/memory/routes.py:497-499`; en "Goals"/"Current goal",
+  es "Objetivos"/"Objetivo actual"); o contrato aceita esse campo.
+- **Cenário:** um dono en conta o objetivo no primeiro acesso e a Memória da Marca mostra "Objetivos · Objetivo atual";
+  em es aparece "Objetivo atual" (português) no lugar de "Objetivo actual".
+- **Correção proposta:** enviar `{ area: "business", kind: "objective", content }` e trocar `isObjective`
+  (`apps/web/lib/onboarding.ts:37`, que compara `f.topic === "Objetivos"`) por um critério que não dependa do texto.
+- **Prova:** `sed -n 8,12p apps/web/lib/onboarding.ts` → a linha 10 acima; `sed -n 90,106p apps/web/app/app/[workspace]/memory-actions.ts` → corpo `{ area, content, topic, key }` sem `kind`.
+
+### E-09 🟡 — A Memória da Marca ordena assuntos e acha os "Principais conhecimentos" comparando texto pt-BR
+
+- **Onde:** `apps/web/components/memory/memory-model.ts:16-21` (`TOPIC_ORDER`, 21 assuntos em pt-BR) e `:24-32`
+  (`KEY_TOPICS`, 7), usados em `groupItems` e `keyFact` (chamado em `MemoryView.tsx:178`). O comentário da linha 15
+  diz que "o assunto é texto do idioma do workspace".
+- **Cenário:** hoje funciona por acaso, porque en/es recebem os assuntos padrão em pt-BR (efeito do E-05). Quando o
+  E-05 e o E-08 forem corrigidos, um workspace en terá "Goals"/"Value proposition": a ordenação manda tudo para o fim
+  e o dossiê não acha nenhum dos 7 "Principais conhecimentos".
+- **Correção proposta:** identificar o assunto por um id estável vindo da API e traduzir só o rótulo no catálogo.
+- **Prova:** `sed -n 15,32p apps/web/components/memory/memory-model.ts`.
+
+### E-10 ℹ️ — Não há `error.tsx`, `global-error.tsx` nem `loading.tsx` em `apps/web/app`
+
+- **Cenário:** num erro de execução, o cliente pt-BR ou es vê a página padrão do Next, em inglês.
+- **Correção proposta:** páginas de erro com o catálogo (`system.json` já existe).
+- **Prova:** `find apps/web/app -name 'error.tsx' -o -name 'global-error.tsx' -o -name 'loading.tsx' | wc -l` → `0`.
+
+### E-11 ℹ️ — `home.hello` é "Hello, {name}." nos três idiomas
+
+- **Onde:** `apps/web/messages/pt-BR/home.json:3`, `es/home.json:3`, `en/home.json:3`. Parece intencional (eco da
+  marca HelloSquad), mas é inglês na tela pt-BR e es. Confirmar com o dono; se não for, "Olá, {name}." / "Hola, {name}.".
+- **Prova:** `grep -n '"hello"' apps/web/messages/*/home.json` → 3 linhas iguais.
 
 ## Parte 1 — o que conferi e passou (itens 2 a 5)
 
