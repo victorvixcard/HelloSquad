@@ -3,7 +3,7 @@
 import type { components } from "@hellosquad/contracts";
 import type { AgentId } from "@hellosquad/ui";
 import { createContext, useContext } from "react";
-import type { DeliveryType } from "@/lib/delivery-types";
+import type { RequestDelivery } from "@/lib/delivery-types";
 import type { ConversationMode, Layout } from "@/lib/product-layout";
 
 /** Objeto da conversa na API (`ContextRef`, S1f/S2a): com ele, o painel cria ou reabre a conversa do objeto. */
@@ -48,7 +48,7 @@ export type ConversationTarget = {
   /** Primeiro acesso, "Conte o resto ao Nexo" (V4.6 L4659): as escolhas de objetivo; a escolhida vai para a Memória. */
   objective?: boolean;
   /** Pedido do catálogo (A2b): a mensagem da pessoa vira trabalho desta entrega, com o especialista dela à frente. */
-  deliveryType?: DeliveryType;
+  deliveryType?: RequestDelivery;
 };
 
 /** Conversa direta anterior com um especialista (seletor "Conversas com…" do cabeçalho, V4.6). */

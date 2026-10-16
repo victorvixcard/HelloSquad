@@ -6,7 +6,7 @@ import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent as 
 import { usePopoverDismiss } from "@/components/product/Popover";
 import { useShell } from "@/components/product/shell-context";
 import { CAPABILITIES, capabilityKey, type Capability } from "@/lib/capabilities";
-import { DELIVERY_OWNER } from "@/lib/delivery-types";
+import { requestOwner } from "@/lib/delivery-types";
 
 /** Sem acento e em minúsculas, como a busca do protótipo (`capNorm`, L11789). */
 function norm(text: string): string {
@@ -31,7 +31,7 @@ export function useOpenCapability() {
       const key = capabilityKey(cap.id);
       const business = shell.workspace.name;
       const label = t(`items.${key}.label` as "items.bDiag.label", { business });
-      const owner = DELIVERY_OWNER[cap.code];
+      const owner = requestOwner(cap.code);
       const origin = tc(`areas.${agent}`);
       shell.openConversation({
         conversationId: null,

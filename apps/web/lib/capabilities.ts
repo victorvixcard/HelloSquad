@@ -1,18 +1,19 @@
 import type { AgentId } from "@hellosquad/ui";
-import type { DeliveryType } from "./delivery-types";
+import type { RequestDelivery } from "./delivery-types";
 
 /**
  * Catálogo "O que você quer fazer com <agente>?" (V4.2/V4.3 `CAPX_L` e `CAP_G`, L11337–11587, com os ajustes de
  * linguagem da V4.3 L11785 e da V4.4 L12230 e L12238). Os textos ficam no catálogo de mensagens (`caps`), pelo `id`.
  * `code` é a entrega que o squad executa para o pedido; sem código, o pedido ainda não tem entrega nesta versão.
- * A ordem e os grupos são os do protótipo.
+ * A ordem e os grupos são os do protótipo. "Coordenar uma campanha" é do Nexo (`ag: 'coord'`, L11353): o projeto
+ * coordenado 01.02 (S2d), em que ele monta a equipe e chama a Bia para a estratégia.
  */
-export type Capability = { id: string; group: number; code: DeliveryType | null };
+export type Capability = { id: string; group: number; code: RequestDelivery | null };
 
 export const CAPABILITIES: Record<AgentId, Capability[]> = {
   nexo: [
     { id: "n-proj", group: 0, code: null },
-    { id: "n-camp", group: 0, code: "02.04" },
+    { id: "n-camp", group: 0, code: "01.02" },
     { id: "n-dele", group: 0, code: null },
     { id: "n-acomp", group: 1, code: null },
     { id: "n-appr", group: 1, code: null },

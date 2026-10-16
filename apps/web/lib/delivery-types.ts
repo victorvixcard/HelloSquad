@@ -42,3 +42,19 @@ export function deliveryTypeKey(type: string | null | undefined): DeliveryTypeKe
 export function isDocumentDelivery(type: string | null | undefined): type is Exclude<DeliveryType, "04.01"> {
   return isDeliveryType(type) && type !== "04.01";
 }
+
+/**
+ * Projeto coordenado (S2d): o trabalho do Nexo com a entrega 01.02 ("Coordenar projeto com múltiplos agentes"). O
+ * Nexo monta a equipe e as etapas; cada etapa tem a entrega do especialista dela (`steps[].delivery_type`).
+ */
+export const COORDINATED_DELIVERY = "01.02";
+export type RequestDelivery = DeliveryType | typeof COORDINATED_DELIVERY;
+
+export function isCoordinated(type: string | null | undefined): type is typeof COORDINATED_DELIVERY {
+  return type === COORDINATED_DELIVERY;
+}
+
+/** Quem responde pelo pedido: o dono da entrega ou, no projeto coordenado, o Nexo. */
+export function requestOwner(type: RequestDelivery): AgentId {
+  return isCoordinated(type) ? "nexo" : DELIVERY_OWNER[type];
+}

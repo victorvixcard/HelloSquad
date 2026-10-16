@@ -432,7 +432,14 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     const posted = result.data;
 
     // O que a mensagem faz no squad (ajuste, resposta ou pedido que vira trabalho): use-squad-effect.ts.
-    const done = await squadEffect({ conversationId, messageId: posted.id, body, adjust, deliveryType: target.deliveryType });
+    const done = await squadEffect({
+      conversationId,
+      messageId: posted.id,
+      body,
+      adjust,
+      deliveryType: target.deliveryType,
+      coordinator: room || target.agent === "nexo",
+    });
     if (!done) setSendError(true);
     setSending(false);
 
