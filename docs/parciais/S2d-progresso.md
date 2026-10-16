@@ -14,4 +14,14 @@ Disparada às 16:47 de 16/10/2026 pela main (Opus 5.5), em paralelo com a A2b do
 | 17:05 | 1–4. Fluxo: Nexo coordena (01.02) e cada etapa roda sem nova triagem; Kaia aguarda o motor; catálogo pt-BR/en/es; fixture `01.02/nexo.plan.json` | `c86e64e` | feito |
 | 17:06 | 5. pytest do critério da fase (`test_coordinated_project.py`) | `d006931` | feito |
 | 17:09 | 1, 3, 5. API: etapas com responsável, motivo e "etapa N de M"; histórico da equipe e das etapas; dono no projeto; seed limpa o handoff; pytest 4/4 | `ac46ef7` | feito |
-| — | 6. pgTAP, suíte completa, contrato, `SETUP_LOCAL.md`, relatório | — | em andamento |
+| 17:10 | Regressão minha pega pela suíte (`test_learnings`): a 200100 perdeu o briefing da reflexão da S2c; corrigida em migration nova | `e458e7b` | feito |
+| 17:12 | 6. Contrato (53 → 53 operações, nada removido, campos novos opcionais) | `2fca10c` | feito |
+| 17:15 | 6. pgTAP `24_coordinated_work` (48) | `cb17f31` (o autosave `76e7275` levou o arquivo antes) | feito |
+| 17:17 | 6. Roteiro curl contra a API no ar; reflexão simulada da 02.04 e da 04.03 sem aprendizado inventado | `288d2cc` | feito |
+| 17:18 | Cartão `team` com `agent_ids` (contrato da S1f) e `members`/`project_id` opcionais | `8460b10` | feito |
+| 17:20 | Histórico registra a etapa concluída, na ordem; marcos na ordem das etapas | `a1b4773` (autosave), `3e45ce1` | feito |
+| 17:22 | 6. `SETUP_LOCAL.md`, `.env.example`, saída do roteiro | `4c71452` | feito |
+| 17:23 | Verificação final: backend 197/197, pgTAP 641/641, contracts e `tsc` do web ok | — | feito |
+| 17:28 | `S2d-relatorio.md` | este | feito |
+
+**Fatia fechada às 17:28.** Relatório: `docs/parciais/S2d-relatorio.md`.
