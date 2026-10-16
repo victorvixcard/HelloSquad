@@ -1,0 +1,151 @@
+{
+  "title": "Home",
+  "hello": "Hello, {name}.",
+  "question": "What are we working on today?",
+  "composeLabel": "Ask the squad",
+  "attach": "Attach to request",
+  "attachTip": "Attach",
+  "placeholderAll": "Ask the squad. Nexo organizes who does what…",
+  "placeholderOne": "Write {to}…",
+  "placeholderMany": "Write to {names}…",
+  "requestTo": "Request {to}",
+  "toRoom": "to the Squad Room",
+  "toMany": "to {names}",
+  "send": "Send {to}",
+  "sendHint": "send",
+  "squad": "Squad",
+  "squadAllAria": "Whole squad: everyone participates, in the Squad Room",
+  "squadCallAria": "Call the whole squad, in the Squad Room",
+  "whoLabel": "Who participates. Choose one or more specialists",
+  "selRoom": "Squad Room",
+  "selOne": "Direct conversation {with}",
+  "selMany": "{who} · group conversation",
+  "selCount": "{count} specialists",
+  "selHint": "At least one specialist participates",
+  "avAll": "{name}, {area}, participating with the squad. Choose only {pronoun}",
+  "avOn": "{name}, {area}, participating",
+  "avOnRemove": "{name}, {area}, participating. Remove",
+  "avOff": "{name}, {area}, not in this conversation. Add",
+  "avTip": "{name} · {area}",
+  "pronoun": "{article, select, a {her} other {him}}",
+  "and": " and ",
+  "bandLabel": "Request suggestions. Choosing one fills in the field and sets who participates, without sending. Drag sideways to see more",
+  "chipAria": "{text}. Fills in the request; {who}",
+  "chipOnly": "only {name} participates",
+  "chipMany": "{who} participate",
+  "suggestions": [
+    {
+      "t": "Plan my upcoming content",
+      "ags": [
+        "otto",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Analyze the week’s results",
+      "ags": [
+        "iris"
+      ]
+    },
+    {
+      "t": "Create a promotion for this week",
+      "ags": [
+        "bia",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Review my visual identity",
+      "ags": [
+        "kaia"
+      ]
+    },
+    {
+      "t": "Understand my customers better",
+      "ags": [
+        "bia",
+        "max"
+      ]
+    },
+    {
+      "t": "Prepare a launch",
+      "ags": [
+        "nexo",
+        "bia",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Win back customers who drifted away",
+      "ags": [
+        "max"
+      ]
+    },
+    {
+      "t": "I want to improve my Instagram",
+      "ags": [
+        "otto"
+      ]
+    }
+  ],
+  "fold": {
+    "show": "Show summaries",
+    "hide": "Hide summaries",
+    "hideAria": "Hide summaries and show only the squad",
+    "showNeeds": "Show summaries. {count, plural, one {One decision is waiting for you} other {# decisions are waiting for you}}"
+  },
+  "summaries": "Summaries for {business}",
+  "onb": {
+    "title": "So the squad can get to know {business}",
+    "done": "{done} of {total}",
+    "site": "Send your website",
+    "siteSub": "Nexo reads it and picks out what’s useful.",
+    "siteLabel": "Website address",
+    "sitePlaceholder": "yourbusiness.example",
+    "siteRead": "Read the website",
+    "insta": "Connect Instagram",
+    "instaSub": "Connecting doesn’t authorize posting.",
+    "instaConnect": "Connect",
+    "talk": "Tell Nexo the rest",
+    "talkSub": "Goal, audience, what sells best.",
+    "talkGo": "Talk",
+    "objective": "Goal: {objective}"
+  },
+  "res": {
+    "title": "Results",
+    "irisSays": "Íris: ",
+    "open": "Open Results",
+    "talk": "Talk to Íris"
+  },
+  "open": ". Hide details",
+  "closed": ". Show details",
+  "work": {
+    "title": "Work",
+    "inProgress": "{count} in progress",
+    "none": "Nothing in progress",
+    "needs": "{count, plural, one {# waiting for you} other {# waiting for you}}",
+    "aria": "Work: {summary}",
+    "needH": "{count, plural, one {Today, one decision is yours} other {Today, # decisions are yours}}",
+    "rowsH": "In progress",
+    "empty": "Nothing in production right now. Ask the squad for something and Nexo organizes who does what.",
+    "all": "View all work",
+    "pendSub": "{kind} · {agent}",
+    "openWork": "Open work {title}: {status}"
+  },
+  "mem": {
+    "title": "The squad noticed",
+    "none": "Nothing to confirm right now",
+    "aria": "The squad noticed: {summary}",
+    "empty": "When the squad notices something new about {business}, it shows up here for you to confirm.",
+    "go": "View Brand Memory"
+  },
+  "auto": {
+    "title": "Autonomous Mode",
+    "none": "Delegate what repeats",
+    "aria": "Autonomous Mode: {summary}",
+    "empty": "Nothing set up yet. Delegate what repeats: the squad handles it on its own and asks for your approval when needed.",
+    "setup": "Set up a routine",
+    "go": "View Autonomous Mode"
+  },
+  "sendError": "The request wasn’t sent. Try again."
+}

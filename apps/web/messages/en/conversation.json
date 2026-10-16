@@ -1,0 +1,83 @@
+{
+  "label": "Conversation",
+  "roomTitle": "Squad Room",
+  "roomStatus": "all specialists · Nexo coordinates",
+  "about": "Talking about",
+  "openContext": "Open {name}",
+  "expand": "Expand the conversation",
+  "expandTip": "Expand",
+  "collapse": "Open on the side of the screen",
+  "collapseTip": "Open on the side",
+  "close": "Close the conversation",
+  "closeTip": "Close",
+  "attach": "Attach",
+  "placeholder": "Message {to}…",
+  "placeholderRoom": "Write to the squad…",
+  "ask": "Ask {name}",
+  "loading": "Opening the conversation",
+  "loadError": "Couldn’t open the conversation right now. Try again in a moment.",
+  "sendError": "The message wasn’t sent. Try again.",
+  "sending": "Sending",
+  "empty": "No messages in this conversation yet.",
+  "you": "You",
+  "yesterday": "Yesterday",
+  "today": "Today",
+  "suggestions": {
+    "nexo": [
+      "What do you need from me this week?",
+      "Which project needs the most attention?",
+      "I want to start a new project."
+    ],
+    "otto": [
+      "How’s the plan for next week?",
+      "What content worked best?",
+      "I want to improve my Instagram."
+    ],
+    "iris": [
+      "How did last week go?",
+      "What brought in the most orders?",
+      "What should I track for Christmas?"
+    ]
+  },
+  "capAria": "What else to ask {name}",
+  "roomHint": "Nexo routes it to whoever is needed",
+  "threadsH": "Conversations New conversation {with}",
+  "threadUntitled": "Conversation {with}",
+  "newThread": "New conversation",
+  "now": "now",
+  "card": {
+    "material": "Material · v{version}",
+    "open": "Open v{version}: {title}",
+    "state": {
+      "review": "Waiting for your approval",
+      "approved": "Approved by you",
+      "making": "New version on the way",
+      "superseded": "Replaced by v{next}"
+    },
+    "error": "Couldn’t record that right now. Try again."
+  },
+  "rail": {
+    "label": "Conversation context",
+    "toggle": "Show context",
+    "tip": "Context",
+    "env": "Area",
+    "type": "Type",
+    "period": "Period",
+    "business": "Business",
+    "origin": "Origin",
+    "typeEnv": "Area",
+    "typeMemory": "Knowledge",
+    "responds": "in charge · {env}",
+    "back": "Back to {env}"
+  },
+  "objective": {
+    "ask": "To start: what’s the most important goal for {business} right now?",
+    "options": [
+      "Get more orders",
+      "Bring new people into the store",
+      "Strengthen the brand"
+    ],
+    "saved": "Noted in Brand Memory: “{objective}”.",
+    "error": "The goal wasn’t saved. Try again."
+  }
+}

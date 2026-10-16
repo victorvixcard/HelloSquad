@@ -1,0 +1,74 @@
+{
+  "skipToContent": "Skip to content",
+  "navLabel": "HelloSquad",
+  "mainLabel": "Content",
+  "toggle": {
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
+  },
+  "groups": {
+    "main": "Main",
+    "squad": "Your squad",
+    "mgmt": "Management"
+  },
+  "items": {
+    "home": "Home",
+    "room": "Squad Room",
+    "auto": "Autonomous Mode",
+    "mem": "Brand Memory",
+    "team": "My Team & Conversations"
+  },
+  "areas": {
+    "nexo": "Projects",
+    "bia": "Strategy",
+    "kaia": "Brand & Creative",
+    "otto": "Content",
+    "kiwi": "Growth",
+    "max": "CRM",
+    "iris": "Results"
+  },
+  "itemAria": "{label}, with {agent}",
+  "itemAriaSay": "{label}, with {agent}, {say}",
+  "itemAriaSayOnly": "{label}, {say}",
+  "itemTip": "{label} · {agent}",
+  "itemTipSay": "{label} · {say}",
+  "say": {
+    "roomAll": "all specialists",
+    "roomWorking": "the squad is working",
+    "needs": "{count, plural, one {# waiting for you} other {# waiting for you}}",
+    "autoNone": "not set up",
+    "memPending": "{count, plural, one {# item to confirm} other {# items to confirm}}",
+    "unread": "new messages"
+  },
+  "account": {
+    "aria": "Account, business, and settings. {name}, {business}",
+    "tip": "{name} · {business}",
+    "dialog": "Account, business, and settings",
+    "business": "Business",
+    "addBusiness": "Add a business",
+    "addBusinessSub": "Another brand on the same account",
+    "businessLanguage": "Business language",
+    "businessLanguageSub": "The squad replies in this language",
+    "myAccount": "My account",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "credits": "{plan} plan · this month’s credits",
+    "creditsNoPlan": "This month’s credits",
+    "creditsPct": "{pct}%",
+    "language": "Language",
+    "languageOption": "{language}, display language",
+    "languageError": "Couldn’t change the language. Try again.",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "editor": "Editor",
+      "viewer": "Viewer"
+    }
+  },
+  "notifications": {
+    "label": "Notifications",
+    "aria": "Notifications",
+    "ariaNew": "Notifications, there’s something new",
+    "empty": "Nothing new here. When the squad needs you, it shows up here."
+  }
+}
