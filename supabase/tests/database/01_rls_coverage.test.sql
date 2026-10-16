@@ -1,11 +1,14 @@
 -- S0 (a): varredura de segurança do schema public. Não lista tabela por nome: qualquer objeto novo
 -- que escapar da RLS forçada, ficar visível para anon ou ganhar função SECURITY DEFINER sem
 -- search_path fixo derruba o teste.
+-- S0b (H0-01): anon e service_role não têm privilégio nenhum em tabela, sequência ou função de public
+-- e app. É o que segura um token forjado na Data API: service_role ignora a RLS, então só a falta de
+-- GRANT o impede de ler.
 begin;
 set local client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
-select plan(7);
+select plan(8);
 
 select isnt_empty(
   $$select 1 from pg_class c where c.relnamespace = 'public'::regnamespace and c.relkind in ('r', 'p')$$,
@@ -43,28 +46,42 @@ select is_empty(
 );
 
 select is_empty(
-  $$select c.relname, p.privilege
+  $$select r.rolname, c.oid::regclass, p.privilege
     from pg_class c
+    cross join (values ('anon'), ('service_role')) as r (rolname)
     cross join unnest(array['SELECT', 'INSERT', 'UPDATE', 'REFERENCES']) as p (privilege)
-    where c.relnamespace = 'public'::regnamespace
+    where c.relnamespace in ('public'::regnamespace, 'app'::regnamespace)
       and c.relkind in ('r', 'p', 'v', 'm', 'f')
-      and has_any_column_privilege('anon', c.oid, p.privilege)
+      and has_any_column_privilege(r.rolname, c.oid, p.privilege)
     union all
-    select c.relname, p.privilege
+    select r.rolname, c.oid::regclass, p.privilege
     from pg_class c
-    cross join unnest(array['DELETE', 'TRUNCATE', 'TRIGGER']) as p (privilege)
-    where c.relnamespace = 'public'::regnamespace
+    cross join (values ('anon'), ('service_role')) as r (rolname)
+    cross join unnest(array['DELETE', 'TRUNCATE', 'TRIGGER', 'MAINTAIN']) as p (privilege)
+    where c.relnamespace in ('public'::regnamespace, 'app'::regnamespace)
       and c.relkind in ('r', 'p', 'v', 'm', 'f')
-      and has_table_privilege('anon', c.oid, p.privilege)$$,
-  'anon não tem privilégio em nenhuma relação de public'
+      and has_table_privilege(r.rolname, c.oid, p.privilege)$$,
+  'anon e service_role não têm privilégio em nenhuma tabela ou view de public nem de app'
 );
 
 select is_empty(
-  $$select p.oid::regprocedure
+  $$select r.rolname, c.oid::regclass, p.privilege
+    from pg_class c
+    cross join (values ('anon'), ('service_role')) as r (rolname)
+    cross join unnest(array['USAGE', 'SELECT', 'UPDATE']) as p (privilege)
+    where c.relnamespace in ('public'::regnamespace, 'app'::regnamespace)
+      and c.relkind = 'S'
+      and has_sequence_privilege(r.rolname, c.oid, p.privilege)$$,
+  'anon e service_role não têm privilégio em nenhuma sequência de public nem de app'
+);
+
+select is_empty(
+  $$select r.rolname, p.oid::regprocedure
     from pg_proc p
+    cross join (values ('anon'), ('service_role')) as r (rolname)
     where p.pronamespace in ('public'::regnamespace, 'app'::regnamespace)
-      and has_function_privilege('anon', p.oid, 'execute')$$,
-  'anon não executa nenhuma função de public nem de app'
+      and has_function_privilege(r.rolname, p.oid, 'execute')$$,
+  'anon e service_role não executam nenhuma função de public nem de app'
 );
 
 select is_empty(
