@@ -67,3 +67,19 @@ describe("CSS da Product UI V4.6", () => {
     expect(css).not.toContain("fonts.googleapis");
   });
 });
+
+describe("palco do Início V3", () => {
+  it("src/generated/squad-stage.ts está em dia com o protótipo (rode pnpm --filter @hellosquad/ui extract:stage)", async () => {
+    const { buildSquadStage, OUT_STAGE, STAGE_SOURCE } = await import("../scripts/extract-squad-stage");
+    expect(readFileSync(OUT_STAGE, "utf8")).toBe(buildSquadStage(readFileSync(STAGE_SOURCE, "utf8")));
+  });
+
+  it("traz os sete agentes em cena, cada um com as seis expressões", async () => {
+    const { SQUAD_STAGE_SVG } = await import("../src/generated/squad-stage");
+    const names = [...SQUAD_STAGE_SVG.matchAll(/class="hm-ag" data-n="(\w+)"/g)].map((m) => m[1]);
+    expect(names.sort()).toEqual(["arch", "coord", "funnel", "hex", "leaf", "pill", "square"]);
+    for (const x of ["oval", "big", "happy", "wink", "serio", "sleep"]) {
+      expect(SQUAD_STAGE_SVG.split(`hs-x-${x}"`).length - 1).toBe(7);
+    }
+  });
+});

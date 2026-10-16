@@ -112,7 +112,12 @@ export function readProductUiData(file = SOURCES.productUi): ProductUiData {
     .filter((l) => !l.includes("IC.nav."))
     .join("\n");
   const extraNav = parseJsLiteral(extraLiteral) as Record<string, string[]>;
-  const navIcons = { ...baseNav, ...extraNav };
+  // Reatribuições posteriores (a V4.2 troca o ícone de "media" pela curva do Growth: IC.nav.media = [...]).
+  const overrides: Record<string, string[]> = {};
+  for (const m of html.matchAll(/^IC\.nav\.(\w+) = (\[[^\n]*\]);$/gm)) {
+    overrides[m[1]] = parseJsLiteral(m[2]) as string[];
+  }
+  const navIcons = { ...baseNav, ...extraNav, ...overrides };
   const panel = /\bpanel: '([^']+)'/.exec(html);
   if (!panel) throw new Error("Ícone panel não encontrado");
   return { statusGlyphs, navIcons, panelIcon: panel[1] };

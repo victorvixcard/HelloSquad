@@ -18,10 +18,11 @@
   "scripts": {
     "build:tokens": "node scripts/build-tokens.ts",
     "extract:ds": "node scripts/extract-ds.ts",
-    "generate": "node scripts/build-tokens.ts && node scripts/extract-ds.ts && node scripts/extract-product-ui-css.ts",
+    "generate": "node scripts/build-tokens.ts && node scripts/extract-ds.ts && node scripts/extract-product-ui-css.ts && node scripts/extract-squad-stage.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "extract:css": "node scripts/extract-product-ui-css.ts"
+    "extract:css": "node scripts/extract-product-ui-css.ts",
+    "extract:stage": "node scripts/extract-squad-stage.ts"
   },
   "peerDependencies": {
     "react": "^19.1.0",
