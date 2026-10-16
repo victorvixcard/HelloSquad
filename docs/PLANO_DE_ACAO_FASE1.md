@@ -48,6 +48,12 @@ A chave da API da Anthropic ainda não foi fornecida. Todo o núcleo (schema, es
 
 1. Fila liberada (S1c + A1f em paralelo). 2. Acesso do Diogo: depois. 3. Chave da Anthropic: fica pendente, runtime simulado. 4. Regras de identidade da S0: ficam como estão; o Stark não altera mais nada sem perguntar. 5. Preço e créditos por último; agora é teste. 6. As perguntas de produto do núcleo serão reapresentadas em linguagem simples (Thor). 7. Escopo `workflow` do token: explicação devida (Thor); CI pode esperar. 8. Pagamento recorrente é requisito: Asaas e Mercado Pago (ADR-0008). 9. Motor de imagem é do Vic; Kaia espera. 10. Embeddings: explicação devida (ADR-0009). 11. Idiomas pt-BR, en, es (ADR-0010). 12. Data API desligada em produção (ADR-0011). 13. Domínio: depois. 14. Créditos no mobile e na web.
 
+## Respostas do Vic às perguntas de produto (16/10 08:55) — viraram diretrizes
+
+1. Conversas visíveis a todos os membros do negócio; outra empresa nunca vê. 2. **Só o owner (dono da assinatura) decide aprovações**; vale também para autorizar ações externas, inclusive autorizar antecipadamente publicação planejada (Fase 3). 3. Rejeitar = duas saídas (cancelar ou pedir nova proposta). 4. `scheduled → done` automático com confirmação do canal. 5. Nexo coordena e delega; usuário pode falar com qualquer agente; conversas diretas com histórico + "nova conversa"; painel abre nas mais recentes. ADR-0008, 0009 e 0011 aprovados.
+
+**Impacto imediato (repassado às fatias em execução):** S1c ajusta `app.decide_approval` para owner-only e implementa `follow_up` de rejeição (`cancel` | `revise`); A1f mostra botões de decisão só ao owner, oferece as duas saídas na rejeição, abre o painel pelo fim e lista o histórico de conversas diretas com "nova conversa".
+
 ## Decisão de ritmo (Thor, 16/10 04:20; cumprida 04:40)
 
 De madrugada rodei só até a S1b (banco + API do núcleo prontos, 241 testes pgTAP e 64 pytest verdes). **A fila está pausada em S1c** até o primeiro sinal do Vic, para ele acompanhar o desenho do runtime do squad e para não consumir a cota semanal sem supervisão. Ao retomar: S1c (Stark) e A1a (Aranha) podem rodar em paralelo, porque não se tocam (worker e `squad/` × `apps/web`), desde que a A1a não rode `make e2e` enquanto a S1c usa o banco.
