@@ -13,12 +13,15 @@
     "@hellosquad/contracts": "workspace:*",
     "@hellosquad/ui": "workspace:*",
     "@next/env": "15.5.28",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.3",
     "next": "15.5.28",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24",
     "@types/react": "^19",
