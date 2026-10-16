@@ -1,0 +1,24 @@
+{
+  "short": {
+    "available": "disponible",
+    "creating": "creando",
+    "writing": "escribiendo",
+    "researching": "investigando",
+    "working": "trabajando",
+    "waiting": "te espera",
+    "coordinating": "coordinando"
+  },
+  "typingStatus": "escribiendo…",
+  "typing": "{name} está escribiendo",
+  "detail": {
+    "organizing": "organizando tu pedido",
+    "creatingFirst": "creando la primera versión",
+    "adjusting": "ajustando la versión {version}",
+    "adjustingNext": "ajustando la versión",
+    "waitApproval": "espera tu aprobación",
+    "waitAnswer": "espera tu respuesta"
+  },
+  "lost": "Conexión perdida",
+  "lostDetail": "intentando de nuevo",
+  "toastDelivered": "{who} entregó la v{version}"
+}

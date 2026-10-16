@@ -1,0 +1,94 @@
+{
+  "calendar": "Calendario editorial",
+  "viewsLabel": "Vista del calendario",
+  "views": {
+    "week": "Semana",
+    "month": "Mes",
+    "list": "Lista"
+  },
+  "prevWeek": "Semana anterior",
+  "nextWeek": "Semana siguiente",
+  "thisWeek": "esta semana",
+  "rangeSame": "{from} al {to} de {month}",
+  "rangeCross": "{from} de {monthFrom} al {to} de {month}",
+  "empty": {
+    "title": "{agent} aún no tiene un calendario de {business}",
+    "text": "Puede planificar los contenidos cada semana, en el Modo Autónomo. Tú apruebas antes de cualquier publicación.",
+    "delegate": "Delegar la planificación semanal",
+    "askKaia": "Pedirle un post a Kaia"
+  },
+  "next": {
+    "title": "Próximas publicaciones",
+    "talk": "Hablar con Otto sobre las próximas publicaciones",
+    "talkTip": "Hablar con Otto",
+    "empty": "Nada programado por ahora."
+  },
+  "perf": {
+    "title": "Desempeño orgánico",
+    "talk": "Analizar el desempeño con Íris",
+    "talkTip": "Analizar con Íris",
+    "empty": "Íris aún no tiene números de Instagram para leer."
+  },
+  "noticed": {
+    "title": "Otto notó",
+    "talk": "Explorar oportunidades con Otto",
+    "talkTip": "Explorar con Otto",
+    "empty": "Las oportunidades aparecerán cuando Otto conozca {business} e Íris tenga los primeros números."
+  },
+  "work": {
+    "back": "Contenido",
+    "tag": "entrega única",
+    "origin": "pedido en la conversación con {agent} · {date}",
+    "steps": "Etapas: preparación, aprobación, publicación y confirmación",
+    "prep": "Preparación",
+    "prepSub": "{agent} lo creó",
+    "review": "Tu aprobación",
+    "reviewSub": "v{version} te espera",
+    "reviewDone": "v{version} aprobada",
+    "publish": "Publicación",
+    "publishSub": "solo con tu autorización",
+    "confirm": "Confirmación",
+    "confirmSub": "cuando el canal lo confirme",
+    "versions": "Versiones",
+    "waits": "{agent} te espera",
+    "waitsText": "La versión {version} está lista para ti.",
+    "facts": {
+      "format": "Formato",
+      "channel": "Canal",
+      "publication": "Publicación",
+      "notIncluded": "no incluida"
+    },
+    "approve": "Aprobar v{version}",
+    "approving": "Aprobando",
+    "adjust": "Pedir ajuste",
+    "adjustDraft": "Quiero pedir un ajuste en esta versión.",
+    "adjustNote": "El ajuste abre la conversación con {agent} al lado, con el pie de foto a la vista.",
+    "approved": "Aprobada por ti",
+    "approvedText": "Aprobar no publica: la publicación requiere su propia autorización.",
+    "decideError": "No se pudo registrar tu decisión en este momento. Inténtalo de nuevo.",
+    "tabs": {
+      "caption": "Pie de foto",
+      "brief": "Brief",
+      "history": "Historial"
+    },
+    "captionBy": "· pie de foto",
+    "brief": {
+      "canal": "Canal",
+      "objetivo": "Objetivo",
+      "tom": "Tono",
+      "restricoes": "Restricciones"
+    },
+    "talk": "Hablar con {name}",
+    "notFound": "Este trabajo ya no existe o no es de este negocio.",
+    "prepSubAdjusted": "{agent} lo creó y lo ajustó",
+    "newProposal": "Pedir nueva propuesta",
+    "cancelWork": "Cancelar trabajo",
+    "waitsDecision": "{agent} espera la decisión",
+    "makingAdjust": "{agent} ajustando la versión {version}",
+    "makingRevise": "{agent} creando una nueva propuesta",
+    "makingText": "Recibes la nueva versión aquí y en la conversación.",
+    "cancelled": "Trabajo cancelado",
+    "cancelledText": "{agent} no sigue con esta entrega."
+  },
+  "today": "Hoy"
+}

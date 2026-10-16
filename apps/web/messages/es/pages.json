@@ -1,0 +1,46 @@
+{
+  "needs": {
+    "label": "Necesita de ti",
+    "labelCount": "Necesita de ti: {count}",
+    "itemAria": "{who} · {kind}: {title}. {cta}",
+    "sub": "{type}, versión {version}, espera tu revisión",
+    "subNoVersion": "Te espera",
+    "cta": {
+      "review": "Revisar {object}",
+      "approve": "Aprobar {object}",
+      "authorize": "Autorizar {object}",
+      "confirm": "Confirmar {object}",
+      "reconnect": "Reconectar {object}",
+      "respond": "Responder {object}",
+      "decide": "Decidir {object}"
+    },
+    "object": {
+      "d0401": "el pie de foto",
+      "default": "el trabajo"
+    },
+    "more": "Ver {count, plural, one {# pendiente más} other {# pendientes más}}",
+    "less": "Ocultar los demás pendientes",
+    "moreBtn": "+{count}",
+    "closeBtn": "Cerrar"
+  },
+  "env": {
+    "talk": "Hablar con {name}",
+    "talkAria": "Hablar con {name} sobre {area}, al lado",
+    "ask": "Qué pedirle",
+    "describe": {
+      "nexo": "organiza los proyectos de {business} y te avisa cuando la decisión es tuya.",
+      "bia": "encuentra dónde está la oportunidad de {business}.",
+      "kaia": "le da forma a la marca de {business} en cada pieza.",
+      "otto": "se encarga del calendario, los pies de foto y lo que {business} dice en cada canal.",
+      "kiwi": "se encarga del crecimiento de {business}: búsqueda, anuncios y más visitas que se convierten en pedidos.",
+      "max": "cuida a quienes ya son clientes, siempre con consentimiento.",
+      "iris": "lee los números de {business} y dice qué hacer con ellos, sin inventar causas."
+    },
+    "provisional": "Este espacio aún está en construcción. Por ahora, habla con {name} en el panel de al lado.",
+    "askTo": " a {name}",
+    "askAria": "Ver qué se le puede pedir a {name}"
+  },
+  "room": {
+    "title": "Sala del Squad"
+  }
+}
