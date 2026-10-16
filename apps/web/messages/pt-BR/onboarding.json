@@ -1,1 +1,26 @@
-{}
+{
+  "metaTitle": "Adicionar um negócio",
+  "skipToContent": "Pular para o conteúdo",
+  "signOut": "Sair",
+  "titleFirst": "Comece pelo seu negócio.",
+  "titleAnother": "Adicionar um negócio.",
+  "lead": "O squad trabalha para uma marca de cada vez. Diga o nome e escolha o endereço.",
+  "backTo": "Voltar para {name}",
+  "form": {
+    "name": "Nome do negócio",
+    "slug": "Endereço do seu squad",
+    "slugHint": "Letras minúsculas, números e hífen, de 3 a 48 caracteres. Fica assim: <code>/app/{slug}</code>",
+    "slugExample": "seu-negocio",
+    "submit": "Criar e entrar",
+    "submitting": "Criando"
+  },
+  "errors": {
+    "nameRequired": "Digite o nome do negócio.",
+    "nameTooLong": "Use até 120 caracteres.",
+    "slugRequired": "Escolha um endereço.",
+    "slugLength": "O endereço precisa ter de 3 a 48 caracteres.",
+    "slugPattern": "Use só letras minúsculas, números e hífen.",
+    "slugReserved": "Esse endereço é reservado. Escolha outro.",
+    "slugTaken": "Esse endereço já está em uso. Escolha outro."
+  }
+}

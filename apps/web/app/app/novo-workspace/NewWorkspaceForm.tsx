@@ -1,12 +1,14 @@
 "use client";
 
 import { Button } from "@hellosquad/ui";
+import { useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 import { TextField } from "@/components/TextField";
 import { createWorkspace } from "./actions";
 import { slugify, type WorkspaceFormState } from "./validation";
 
 export function NewWorkspaceForm() {
+  const t = useTranslations("onboarding.form");
   const [state, action, pending] = useActionState<WorkspaceFormState, FormData>(createWorkspace, {});
   const [name, setName] = useState(state.values?.name ?? "");
   const [slug, setSlug] = useState(state.values?.slug ?? "");
@@ -14,7 +16,7 @@ export function NewWorkspaceForm() {
   return (
     <form action={action} className="hs-form" noValidate>
       <TextField
-        label="Nome do negócio"
+        label={t("name")}
         name="name"
         autoComplete="organization"
         required
@@ -27,7 +29,7 @@ export function NewWorkspaceForm() {
         error={state.fieldErrors?.name}
       />
       <TextField
-        label="Endereço do seu squad"
+        label={t("slug")}
         name="slug"
         required
         minLength={3}
@@ -40,12 +42,10 @@ export function NewWorkspaceForm() {
           setSlugEdited(true);
           setSlug(event.target.value.toLowerCase());
         }}
-        hint={
-          <>
-            Letras minúsculas, números e hífen, de 3 a 48 caracteres. Fica assim:{" "}
-            <span className="font-mono">/app/{slug || "seu-negocio"}</span>
-          </>
-        }
+        hint={t.rich("slugHint", {
+          slug: slug || t("slugExample"),
+          code: (chunks) => <span className="font-mono">{chunks}</span>,
+        })}
         error={state.fieldErrors?.slug}
       />
       {state.error ? (
@@ -53,8 +53,8 @@ export function NewWorkspaceForm() {
           {state.error}
         </p>
       ) : null}
-      <Button type="submit" block state={pending ? "loading" : "rest"} loadingLabel="Criando">
-        Criar e entrar
+      <Button type="submit" block state={pending ? "loading" : "rest"} loadingLabel={t("submitting")}>
+        {t("submit")}
       </Button>
     </form>
   );

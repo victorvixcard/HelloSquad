@@ -2,15 +2,22 @@
 
 import { isApiError, unwrap, type Workspace } from "@hellosquad/contracts";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { serverApi } from "@/lib/api";
 import { validateWorkspaceForm, type WorkspaceFormState } from "./validation";
 
 export async function createWorkspace(_prev: WorkspaceFormState, formData: FormData): Promise<WorkspaceFormState> {
+  const t = await getTranslations("onboarding.errors");
   const name = String(formData.get("name") ?? "").trim().replace(/\s+/g, " ");
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
   const values = { name, slug };
-  const fieldErrors = validateWorkspaceForm(values);
-  if (fieldErrors) return { fieldErrors, values };
+  const invalid = validateWorkspaceForm(values);
+  if (invalid) {
+    const fieldErrors: WorkspaceFormState["fieldErrors"] = {};
+    if (invalid.name) fieldErrors.name = t(invalid.name);
+    if (invalid.slug) fieldErrors.slug = t(invalid.slug);
+    return { fieldErrors, values };
+  }
 
   let created: Workspace | null = null;
   let sessionExpired = false;
@@ -20,7 +27,7 @@ export async function createWorkspace(_prev: WorkspaceFormState, formData: FormD
   } catch (error) {
     if (!isApiError(error)) throw error;
     if (error.code === "slug_taken") {
-      return { fieldErrors: { slug: "Esse endereço já está em uso. Escolha outro." }, values };
+      return { fieldErrors: { slug: t("slugTaken") }, values };
     }
     if (error.code === "validation_error") {
       const byField: WorkspaceFormState["fieldErrors"] = {};

@@ -1,17 +1,21 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 // Dentro da casca (por exemplo /app/miolo/squad/fulano).
-export default function WorkspacePageNotFound() {
+export default async function WorkspacePageNotFound() {
+  const t = await getTranslations("system.workspaceNotFound");
   return (
     <header className="pg-head">
-      <p className="hs-label">Endereço não encontrado</p>
-      <h1>Essa página não existe.</h1>
+      <p className="hs-label">{t("label")}</p>
+      <h1>{t("title")}</h1>
       <p className="pg-desc">
-        Confira o endereço ou volte para o{" "}
-        <Link className="hs-link" href="/app">
-          início do seu squad
-        </Link>
-        .
+        {t.rich("lead", {
+          link: (chunks) => (
+            <Link className="hs-link" href="/app">
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
     </header>
   );

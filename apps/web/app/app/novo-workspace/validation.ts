@@ -1,8 +1,13 @@
+import type { Messages } from "@/messages/pt-BR";
+
 export type WorkspaceFormState = {
   error?: string;
   fieldErrors?: Partial<Record<"name" | "slug", string>>;
   values?: { name: string; slug: string };
 };
+
+/** Chave da mensagem de validação em onboarding.errors do catálogo. */
+export type WorkspaceErrorKey = keyof Messages["onboarding"]["errors"];
 
 /** Endereços que a área logada usa como rota própria e não podem virar workspace. */
 export const RESERVED_SLUGS = ["novo-workspace"];
@@ -21,14 +26,17 @@ export function slugify(name: string): string {
     .replace(/-+$/, "");
 }
 
-/** Mesmas regras da API (3 a 48 caracteres, a-z, 0-9 e hífen), com mensagens em português. */
-export function validateWorkspaceForm(values: { name: string; slug: string }): WorkspaceFormState["fieldErrors"] | null {
-  const errors: NonNullable<WorkspaceFormState["fieldErrors"]> = {};
-  if (!values.name) errors.name = "Digite o nome do negócio.";
-  else if (values.name.length > 120) errors.name = "Use até 120 caracteres.";
-  if (!values.slug) errors.slug = "Escolha um endereço.";
-  else if (values.slug.length < 3 || values.slug.length > 48) errors.slug = "O endereço precisa ter de 3 a 48 caracteres.";
-  else if (!SLUG_PATTERN.test(values.slug)) errors.slug = "Use só letras minúsculas, números e hífen.";
-  else if (RESERVED_SLUGS.includes(values.slug)) errors.slug = "Esse endereço é reservado. Escolha outro.";
+/** Mesmas regras da API (3 a 48 caracteres, a-z, 0-9 e hífen); devolve a chave da mensagem de cada campo. */
+export function validateWorkspaceForm(values: {
+  name: string;
+  slug: string;
+}): Partial<Record<"name" | "slug", WorkspaceErrorKey>> | null {
+  const errors: Partial<Record<"name" | "slug", WorkspaceErrorKey>> = {};
+  if (!values.name) errors.name = "nameRequired";
+  else if (values.name.length > 120) errors.name = "nameTooLong";
+  if (!values.slug) errors.slug = "slugRequired";
+  else if (values.slug.length < 3 || values.slug.length > 48) errors.slug = "slugLength";
+  else if (!SLUG_PATTERN.test(values.slug)) errors.slug = "slugPattern";
+  else if (RESERVED_SLUGS.includes(values.slug)) errors.slug = "slugReserved";
   return Object.keys(errors).length ? errors : null;
 }
