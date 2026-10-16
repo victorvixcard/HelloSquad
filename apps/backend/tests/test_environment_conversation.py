@@ -154,7 +154,7 @@ async def test_environment_suggestions_are_the_v46_asks_in_the_workspace_locale(
                 assert opening["message"].startswith(t(locale, f"agent.{agent}.greeting"))
             seen.setdefault(agent, {})[locale] = opening["suggestions"]
 
-    for agent in SPECIALISTS:
+    for agent in SQUAD:
         assert seen[agent]["en"] != seen[agent]["pt-BR"], agent
     assert seen["kiwi"]["pt-BR"] == [
         "Onde a Miolo pode aparecer mais no Google?",
