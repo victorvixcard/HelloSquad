@@ -5,7 +5,7 @@ alternates: { en: /en/squad/kiwi, es: /es/squad/kiwi, x-default: /squad/kiwi }
 title: "Kiwi, growth marketing com IA | HelloSquad"
 description: "A Kiwi cuida de anúncios, SEO e conversão com número e fonte. Planeja antes de investir e só mexe na verba dentro do teto que você autorizar."
 jsonld: [Service, BreadcrumbList]   # README §5.4
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 agente: { nome: Kiwi, artigo: a, area: Growth Marketing, papel: Growth Marketing, cor: "#B6FF2E" }
 ---
 

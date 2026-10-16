@@ -5,7 +5,7 @@ alternates: { en: /en/squad, es: /es/squad, x-default: /squad }
 title: "Os sete especialistas de marketing com IA | HelloSquad"
 description: "Conheça o squad da HelloSquad: coordenação, estratégia, criação, conteúdo, growth, CRM e resultados. Cada especialista com papel e limites claros."
 jsonld: [ItemList, BreadcrumbList]   # README §5.2 e §5.3
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 ---
 
 # O squad: sete especialistas de marketing com IA

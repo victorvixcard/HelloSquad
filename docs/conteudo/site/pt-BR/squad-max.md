@@ -5,7 +5,7 @@ alternates: { en: /en/squad/max, es: /es/squad/max, x-default: /squad/max }
 title: "Max, CRM e relacionamento com IA | HelloSquad"
 description: "O Max segmenta sua base, planeja reativação e jornadas por e-mail e mensagens, só para contatos com consentimento e só quando você autoriza o envio."
 jsonld: [Service, BreadcrumbList]   # README §5.4
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 agente: { nome: Max, artigo: o, area: CRM, papel: CRM e Relacionamento, cor: "#00E5C3" }
 ---
 

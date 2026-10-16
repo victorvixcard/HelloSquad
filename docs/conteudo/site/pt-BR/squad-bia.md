@@ -5,7 +5,7 @@ alternates: { en: /en/squad/bia, es: /es/squad/bia, x-default: /squad/bia }
 title: "Bia, estratégia de marketing com IA | HelloSquad"
 description: "A Bia faz o diagnóstico do seu negócio, define posicionamento e público e monta um plano de marketing com prioridades. Sem número de mercado inventado."
 jsonld: [Service, BreadcrumbList]   # README §5.4
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 agente: { nome: Bia, artigo: a, area: Estratégia, papel: Estratégia e Inteligência, cor: "#8A3BFF" }
 ---
 

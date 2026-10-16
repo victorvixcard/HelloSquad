@@ -5,7 +5,7 @@ alternates: { en: /en/how-it-works, es: /es/como-funciona, x-default: /como-func
 title: "Como funciona a HelloSquad: do pedido à entrega"
 description: "Você pede numa conversa, o Nexo organiza, os especialistas produzem e você aprova. Nada é publicado, enviado ou investido sem a sua autorização."
 jsonld: [WebPage (about = SoftwareApplication), BreadcrumbList]   # README §5.2 e §5.6
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 ---
 
 # Como funciona a HelloSquad

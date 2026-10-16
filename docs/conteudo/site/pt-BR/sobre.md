@@ -5,7 +5,7 @@ alternates: { en: /en/about, es: /es/sobre, x-default: /sobre }
 title: "Sobre a HelloSquad: equipe de marketing com IA"
 description: "A HelloSquad existe para que o pequeno negócio tenha uma equipe de marketing completa, que conhece a marca e deixa as decisões com quem é dono."
 jsonld: [AboutPage (about = Organization), BreadcrumbList]   # README §5.6
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 ---
 
 # Sobre a HelloSquad

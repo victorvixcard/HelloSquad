@@ -5,7 +5,7 @@ alternates: { en: /en/squad/nexo, es: /es/squad/nexo, x-default: /squad/nexo }
 title: "Nexo, coordenação de marketing com IA | HelloSquad"
 description: "O Nexo recebe seu pedido, monta o time certo, acompanha cada etapa e só te chama quando a decisão é sua. Conheça o coordenador da HelloSquad."
 jsonld: [Service, BreadcrumbList]   # README §5.4
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 agente: { nome: Nexo, artigo: o, area: Projetos, papel: Coordenação de Marketing, cor: "#FF4D1F" }
 ---
 

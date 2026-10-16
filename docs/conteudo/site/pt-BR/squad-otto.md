@@ -5,7 +5,7 @@ alternates: { en: /en/squad/otto, es: /es/squad/otto, x-default: /squad/otto }
 title: "Otto, conteúdo e redes sociais com IA | HelloSquad"
 description: "O Otto escreve legendas, roteiros e artigos com a voz da sua marca, organiza o calendário editorial e publica só quando você autoriza."
 jsonld: [Service, BreadcrumbList]   # README §5.4
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 agente: { nome: Otto, artigo: o, area: Conteúdo, papel: Conteúdo e Comunicação, cor: "#FFE11A" }
 ---
 

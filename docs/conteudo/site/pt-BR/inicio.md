@@ -5,7 +5,7 @@ alternates: { en: /en, es: /es, x-default: / }
 title: "HelloSquad: seu squad de IA assume o marketing"
 description: "Equipe de marketing com IA para pequenos e médios negócios: sete especialistas que conhecem sua marca e trabalham juntos. Você toma as decisões."
 jsonld: [Organization, WebSite, SoftwareApplication]   # README §5.1
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 ---
 
 # Página inicial (`/`)
@@ -91,7 +91,7 @@ Ajuste já decidido pelo Vic (15/10), não por este documento: o cartão da Kiwi
 
 **Copy aprovada (R32):** "Dúvidas antes de começar? A gente responde."
 
-Mostrar seis perguntas curtas da `/faq` (1, 2, 7, 8, 9 e 12 de `faq.md`, as mesmas da R32 sem a de créditos) com link "Ver todas as perguntas" → `/faq`. A pergunta da R32 "Posso começar gratuitamente? Como funcionam os créditos?" fica fora até o dono decidir preço (pergunta P2 do relatório). O `FAQPage` em JSON-LD fica só na `/faq`.
+Mostrar seis perguntas curtas da `/faq` (1, 2, 7, 8, 9 e 12 de `faq.md`, as mesmas da R32 sem a de créditos) com link "Ver todas as perguntas" → `/faq`. Este documento não traz a pergunta da R32 "Posso começar gratuitamente? Como funcionam os créditos?", porque a resposta depende de preço; se ela sai da landing implementada é decisão do dono (pergunta P2 do relatório). O `FAQPage` em JSON-LD fica só na `/faq`.
 
 ## 10. Encerramento
 

@@ -5,7 +5,7 @@ alternates: { en: /en/squad/iris, es: /es/squad/iris, x-default: /squad/iris }
 title: "Íris, resultados e métricas de marketing | HelloSquad"
 description: "A Íris consolida seus números com fonte e período, compara, explica o que mudou e recomenda o próximo passo. Sem dado inventado, sem causa sem prova."
 jsonld: [Service, BreadcrumbList]   # README §5.4
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 agente: { nome: Íris, artigo: a, area: Resultados, papel: Dados e Resultados, cor: "#1F5BFF" }
 ---
 

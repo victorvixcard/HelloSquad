@@ -5,7 +5,7 @@ alternates: { en: /en/squad/kaia, es: /es/squad/kaia, x-default: /squad/kaia }
 title: "Kaia, marca e criação com IA | HelloSquad"
 description: "A Kaia cria peças, carrosséis, identidade visual e materiais para a loja no padrão da sua marca, com prévia, revisão e histórico de versões."
 jsonld: [Service, BreadcrumbList]   # README §5.4
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 agente: { nome: Kaia, artigo: a, area: Marca & Criação, papel: Marca e Criação, cor: "#FF2E9A" }
 ---
 

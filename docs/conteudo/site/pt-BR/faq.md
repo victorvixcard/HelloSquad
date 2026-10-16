@@ -5,7 +5,7 @@ alternates: { en: /en/faq, es: /es/preguntas-frecuentes, x-default: /faq }
 title: "Perguntas frequentes sobre a HelloSquad"
 description: "O que é a HelloSquad, o que os agentes fazem, quem aprova, o que acontece com seus dados e em quais idiomas o squad trabalha. Respostas diretas."
 jsonld: [FAQPage, BreadcrumbList]   # README §5.5: cada ### vira Question; o parágrafo, acceptedAnswer (texto idêntico)
-cta: "Começar com o squad"
+cta: "Começar com o squad"   # proposta (P1 do relatório); o botão implementado segue o da R32 até o dono decidir
 ---
 
 # Perguntas frequentes sobre a HelloSquad
@@ -98,4 +98,4 @@ A HelloSquad funciona em português, inglês e espanhol. O idioma é escolhido p
 
 [Começar com o squad]
 
-<!-- Nota de implementação: 19 perguntas. Antes de publicar, conferir que cada resposta continua verdadeira na versão no ar (em especial idiomas, Modo Autônomo e conexões). A pergunta da R32 sobre créditos e gratuidade fica fora até o dono decidir preço (P2). -->
+<!-- Nota de implementação: 19 perguntas. Antes de publicar, conferir que cada resposta continua verdadeira na versão no ar (em especial idiomas, Modo Autônomo e conexões). A pergunta da R32 sobre créditos e gratuidade não está nesta página porque a resposta depende de preço; a decisão é do dono (P2). -->
