@@ -157,7 +157,7 @@ export function CapCatalog({ agent }: { agent: AgentId }) {
                     <button
                       key={x.cap.id}
                       type="button"
-                      className="cap-i"
+                      className="cap-o"
                       aria-label={`${x.label}. ${x.text}. ${tcap("opens", { with: withAgent })}`}
                       onClick={() => pick(x.cap)}
                     >
