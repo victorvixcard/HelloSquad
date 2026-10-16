@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
+import { clientMessages } from "@/i18n/client-messages";
 import { siteUrl } from "@/lib/env";
 import { openGraphBase } from "@/lib/site";
 import { gabarito, jetbrainsMono } from "./fonts";
@@ -30,10 +31,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  // Só as áreas do catálogo que os componentes cliente desta parte usam (H2-08); entrar/criar conta e a área logada
+  // abrem o próprio provider com as delas.
   return (
     <html lang={locale} className={`${gabarito.variable} ${jetbrainsMono.variable}`}>
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider messages={await clientMessages("root")}>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
