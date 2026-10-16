@@ -28,7 +28,7 @@ install: ## Instala dependências JS (pnpm) e Python (uv) a partir dos lockfiles
 up: install ## Sobe o Supabase local (projeto hellosquad) e aplica migrations pendentes
 	$(SUPABASE) start
 	$(SUPABASE) migration up --local
-	@echo "Supabase local no ar. Chaves locais: make status (copie para o .env)."
+	@echo "Supabase local no ar. Chaves locais: pnpm exec supabase status -o env (ANON_KEY e SERVICE_ROLE_KEY vão para o .env)."
 
 down: ## Para o Supabase local do HelloSquad (os dados ficam no volume Docker)
 	$(SUPABASE) stop
