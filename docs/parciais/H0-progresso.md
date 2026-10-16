@@ -9,8 +9,8 @@
 | 0 | Leitura do PASSO 0 (diretrizes, plano, relatórios J0/S0/A0, setup, dados fictícios, arquitetura §3.1) | ✅ |
 | 1 | Isolamento e autorização (alvos 1 a 5) | ✅ nada quebrou |
 | 2 | Web (alvos 6 e 7) | ✅ 4 achados (3🟡 1ℹ️), núcleo resistiu |
-| 3 | Diretrizes do dono (alvos 8 a 11) | 🟡 em andamento |
-| 4 | Reprodutibilidade (alvos 12 e 13) | ⏳ |
+| 3 | Diretrizes do dono (alvos 8 a 11) | ✅ conforme, sem achado |
+| 4 | Reprodutibilidade (alvos 12 e 13) | 🟡 em andamento |
 | 5 | Relatório `H0-relatorio.md` e limpeza (seed, portas, containers) | ⏳ |
 
 ## Ambiente no início
@@ -46,3 +46,10 @@ Achados:
 - **H0-03 (🟡):** cookie de sessão `sb-127-auth-token` é legível por JS (`httpOnly=false`), visível em `document.cookie`. Padrão do `@supabase/ssr`, já declarado pela A0. Um XSS exfiltra o access_token; agravado pela ausência de CSP (H0-02).
 - **H0-04 (🟡):** a API aceita o slug reservado `novo-workspace` (201, cria workspace); só o web recusa. Gap já apontado por A0 §5.3 e S0. Provado com o Pedro (criado e removido; Pedro volta a 0 memberships).
 - **H0-05 (ℹ️):** a defesa da chave secreta funciona (middleware recusa com 500 e a chave **não** vaza para o bundle do browser — 0 arquivos em `.next/static`), mas "o web recusa subir" (A0 §2.7) é impreciso: build e boot passam, a home pública serve 200, e a falha é um 500 opaco só nas rotas de auth/app, com a mensagem apenas no log do servidor.
+
+## Bloco 3 — Diretrizes do dono (alvos 8 a 11): conforme, sem achado
+
+- **Alvo 8 (nuvem).** `git grep` por `supabase.co|vercel|railway|.com.br` fora de design/docs: só `.gitignore` do create-next-app (`.vercel`), placeholder de UI `voce@seunegocio.com.br` e um comentário de link para a doc do Supabase. Varredura de URLs http(s) fora de design/docs/lockfiles: todas 127.0.0.1/localhost, fora refs de licença de fonte (github.com/JetBrains, naipefoundry) e comentários. CI sem passo de deploy/publish. `site_url`, `API_URL`, `NEXT_PUBLIC_SITE_URL` todos locais. Nada aponta para nuvem.
+- **Alvo 9 (segredos no histórico).** `git log -p --all` (36 commits, 48.8k linhas): 0 de `eyJ…`, `sb_secret_…`, `sb_publishable_…`, `sk-ant-…`, `super-secret-jwt-token`, chave privada. `service_role` (24x) é nome de papel; `Senha!Teste123` (17x) é a senha fictícia documentada. `.env` nunca foi commitado e está em `.gitignore:2`. `.env.example` com chaves sensíveis vazias (só `DATABASE_URL` traz o default local público `postgres:postgres`, documentado — ℹ️, local).
+- **Alvo 10 (dados fictícios).** Seed só com e-mails `.example`. Sem CPF/CNPJ, sem telefone real em código. Únicos e-mails fora de `.example`: `admin@email.com` **comentado** (template do CLI) e o placeholder `seunegocio.com.br`. Captura `02-marina-shell.png` conferida: Miolo, Marina Costa, marina@miolo.example — tudo fictício.
+- **Alvo 11 (pt-BR, sem emoji, identificadores em inglês).** 0 emoji em `apps/**` e `packages/**/src`. Códigos de erro da API em inglês (`workspace_not_found`, `validation_error`, `forbidden`…) com mensagem em pt-BR; `VALIDATION_MESSAGES` em pt-BR; UI em pt-BR. Observação: "Disponível na Fase 1." (jargão interno) é a pergunta aberta A0 §6.2.
