@@ -38,6 +38,14 @@ function valuesByDay(s: MetricSeries): Map<number, number> {
   return out;
 }
 
+/** Valores diários de uma série dentro do período, na ordem (a curva do indicador na conversa, V4.6 `_spark`). */
+export function pointsIn(s: MetricSeries, range: Range): number[] {
+  return [...valuesByDay(s).entries()]
+    .filter(([d]) => d >= range.start && d <= range.end)
+    .sort((a, b) => a[0] - b[0])
+    .map(([, v]) => v);
+}
+
 /** Último dia com dado entre todas as séries (o fim do período, como `atualizado_ate` do worker). */
 export function lastDataDay(series: MetricSeries[]): number | null {
   let last: number | null = null;

@@ -5,6 +5,7 @@ import type { AgentId } from "@hellosquad/ui";
 import { createContext, useContext } from "react";
 import type { RequestDelivery } from "@/lib/delivery-types";
 import type { ConversationMode, Layout } from "@/lib/product-layout";
+import type { MetricFigure } from "./conversation-format";
 
 /** Objeto da conversa na API (`ContextRef`, S1f/S2a): com ele, o painel cria ou reabre a conversa do objeto. */
 export type ApiContextRef = components["schemas"]["ContextRef"];
@@ -30,6 +31,8 @@ export type ConversationContextRef = {
    * reaproveitada; o pedido do catálogo, `capability`, abre uma por pedido, na primeira mensagem).
    */
   ref?: ApiContextRef;
+  /** Indicador (A2d, P-09/P-10): número, variação e curva do período, lidos da série (V4.6 `big`, `bigD`, `firstCard`). */
+  figure?: MetricFigure;
 };
 
 export type ConversationTarget = {

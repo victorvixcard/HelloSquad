@@ -17,6 +17,7 @@ import {
   PERIOD_DAYS,
   PERIODS,
   periodRanges,
+  pointsIn,
   seriesKey,
   summarize,
   type Summary,
@@ -114,6 +115,20 @@ function ResultsView({ business, series, last, analyses }: { business: string; s
   const talk = (s: MetricSeries) => {
     const title = L.label(s);
     const origin = t(`origin.${period}`);
+    // A2d (P-09/P-10): o número, a variação e a curva do período vão com a conversa, lidos da mesma série da página;
+    // sem número no período, a conversa abre sem o cartão (nunca um número inventado).
+    const sum = summaries.get(seriesKey(s));
+    const figure =
+      sum && sum.now !== null
+        ? {
+            value: L.num(sum.now),
+            delta: sum.variation === null ? null : L.signed(sum.variation),
+            up: sum.variation === null ? null : sum.variation >= 0,
+            points: pointsIn(s, current),
+            period: L.range(current.start, current.end),
+            previous: sum.daysBefore > 0 ? L.range(previous.start, previous.end) : null,
+          }
+        : undefined;
     const context: ConversationContextRef = {
       kind: "metric",
       label: title,
@@ -121,6 +136,7 @@ function ResultsView({ business, series, last, analyses }: { business: string; s
       period: periodText,
       origin,
       ref: { type: "metric", key: seriesKey(s), title, period: periodText, origin },
+      figure,
     };
     shell.openConversation({ conversationId: null, agent: "iris", context });
   };
