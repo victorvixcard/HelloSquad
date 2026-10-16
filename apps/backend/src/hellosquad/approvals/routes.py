@@ -160,7 +160,7 @@ async def defer_approval(
     "/approvals/{approval_id}/resume",
     summary='"Decidir agora": a autorização adiada volta a pedir a decisão (só o owner)',
     description='Volta para "Precisa de você". Sem adiamento, devolve o estado atual.',
-    responses=error_responses(401, 403, 404, 409, 503),
+    responses=error_responses(401, 403, 404, 409, 422, 503),
 )
 async def resume_approval(
     approval_id: UUID, principal: CurrentPrincipal, db: DatabaseDep

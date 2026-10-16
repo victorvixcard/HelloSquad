@@ -1749,11 +1749,6 @@ export interface components {
          * @enum {string}
          */
         FactSourceState: "declared" | "connected" | "outdated" | "needs_reconnect" | "not_connected" | "unavailable";
-        /** HTTPValidationError */
-        HTTPValidationError: {
-            /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
-        };
         /** Health */
         Health: {
             /**
@@ -2928,19 +2923,6 @@ export interface components {
             email: string | null;
             /** Full Name */
             full_name: string | null;
-        };
-        /** ValidationError */
-        ValidationError: {
-            /** Location */
-            loc: (string | number)[];
-            /** Message */
-            msg: string;
-            /** Error Type */
-            type: string;
-            /** Input */
-            input?: unknown;
-            /** Context */
-            ctx?: Record<string, never>;
         };
         /** WorkItem */
         WorkItem: {
@@ -5298,13 +5280,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Dados inválidos. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
             /** @description Dependência indisponível (banco ou Auth). */
