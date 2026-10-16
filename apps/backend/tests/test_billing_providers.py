@@ -2,6 +2,7 @@
 webhook de cada um, simulado e escolha do provedor pelo `.env`. Sem banco."""
 
 import json
+import time
 from collections.abc import AsyncIterator
 from datetime import date
 from decimal import Decimal
@@ -382,6 +383,28 @@ async def test_mercadopago_webhook_signature_and_resource_lookup(fakes, http) ->
         headers=unknown_headers, query=unknown_query, body=unknown_body
     )
     assert simulated.payment is None
+
+
+async def test_mercadopago_webhook_ts_outside_tolerance_is_refused(fakes, http) -> None:
+    _, fake_mp = fakes
+    provider = mercadopago(http)
+    now = int(time.time())
+    refused = (
+        "1577836800",
+        str(now - 360),
+        str(now + 360),
+        str((now - 360) * 1000),
+        "agora",
+    )
+    for ts in refused:
+        query, headers, body = fake_mp.webhook("payment", "123456", ts=ts)
+        with pytest.raises(InvalidWebhookSignature, match="tolerância"):
+            await provider.parse_webhook(headers=headers, query=query, body=body)
+
+    for ts in (str(now), str(now - 240), str(now + 240), str(now * 1000)):
+        query, headers, body = fake_mp.webhook("payment", "123456", ts=ts, notification_id=7)
+        event = await provider.parse_webhook(headers=headers, query=query, body=body)
+        assert event.event_id == "7"
 
 
 def test_scrub_drops_card_and_personal_data() -> None:

@@ -9,6 +9,7 @@ secreta). Assinatura pela API só com cartão (`card_token_id`). Fontes e datas:
 import hashlib
 import hmac
 import json
+import time
 from collections.abc import Mapping
 from dataclasses import replace
 from datetime import date, datetime
@@ -37,6 +38,12 @@ from hellosquad.billing.provider import (
 # Cobrança de ciclo da assinatura = authorized_payment (as retentativas são do mesmo ciclo); o id
 # guardado leva este prefixo para não se confundir com o id de um pagamento avulso.
 AUTHORIZED_PREFIX = "ap:"
+
+# Distância máxima entre o `ts` do x-signature e o relógio local, para trás e para a frente.
+SIGNATURE_TOLERANCE_SECONDS = 5 * 60
+# A documentação mostra o `ts` em segundos no exemplo e diz milissegundos no texto: a partir de
+# 10^11 (1973 em milissegundos, ano 5138 em segundos) o valor é lido como milissegundos.
+TS_MILLISECONDS_FROM = 10**11
 
 PAYMENT_STATUS: dict[str, PaymentStatus | None] = {
     "pending": "pending",
@@ -91,6 +98,14 @@ def signature_manifest(data_id: str | None, request_id: str | None, ts: str) -> 
         parts.append(f"request-id:{request_id};")
     parts.append(f"ts:{ts};")
     return "".join(parts)
+
+
+def _ts_seconds(ts: str) -> float | None:
+    try:
+        value = int(ts)
+    except ValueError:
+        return None
+    return value / 1000 if value >= TS_MILLISECONDS_FROM else float(value)
 
 
 class MercadoPagoProvider:
@@ -357,6 +372,10 @@ class MercadoPagoProvider:
         return event
 
     def _verify(self, header: str, data_id: str | None, request_id: str | None) -> None:
+        """Confere o x-signature: HMAC-SHA256 do manifesto com a assinatura secreta e `ts`
+        (segundos ou milissegundos) a no máximo SIGNATURE_TOLERANCE_SECONDS (5 minutos) do relógio
+        local, para trás ou para a frente; notificação capturada e reenviada depois é recusada.
+        Toda falha levanta InvalidWebhookSignature: 401 e nada gravado."""
         if not self._webhook_secret:
             raise InvalidWebhookSignature("MERCADOPAGO_WEBHOOK_SECRET vazio: webhook recusado.")
         fields = dict(part.strip().split("=", 1) for part in header.split(",") if "=" in part)
@@ -370,6 +389,9 @@ class MercadoPagoProvider:
         ).hexdigest()
         if not hmac.compare_digest(expected, received):
             raise InvalidWebhookSignature("x-signature não confere.")
+        signed_at = _ts_seconds(ts)
+        if signed_at is None or abs(time.time() - signed_at) > SIGNATURE_TOLERANCE_SECONDS:
+            raise InvalidWebhookSignature("x-signature fora da tolerância de tempo.")
 
     @staticmethod
     def _subscription(data: dict[str, Any]) -> ProviderSubscription:

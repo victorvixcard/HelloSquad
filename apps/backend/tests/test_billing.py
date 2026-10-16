@@ -226,6 +226,10 @@ async def test_webhook_without_valid_signature_is_refused_and_not_recorded(
     assert (
         await webhook(billing_api, "mercadopago", mp_headers, mp_body, query)
     ).status_code == 401
+    query, mp_headers, mp_body = fakes.mercadopago.webhook("payment", "123", ts="1577836800")
+    replayed = await webhook(billing_api, "mercadopago", mp_headers, mp_body, query)
+    assert replayed.status_code == 401
+    assert replayed.json()["error"]["code"] == "invalid_signature"
 
     body_mock = json.dumps({"id": "evt-x", "type": "payment.confirmed"}).encode()
     forged = await webhook(
