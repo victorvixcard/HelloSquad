@@ -14,9 +14,9 @@ Horas = hora do commit.
 | 20:03 | H2-01 (2/3): Quadro e Lista mostram o 01.02 como "Projeto" com o nome do projeto e "etapa N de M"; e2e novo `e2e/a2d-projeto.spec.ts` (Sala → equipe → Bia aprovada → Kaia aguardando motor → Otto com a estratégia no contexto → projeto fechado) **1 passed (13,5 s)** no worktree `/tmp/hs-a2d` (build exit 0) | d8df994 | feito |
 | 20:08 | H2-01 (3/3): testes de componente `test/A2dProject.test.tsx` (8); lado a lado `a2d/proto-sala-campanha.png` × `a2d/a2d-sala-campanha.png` e `a2d/proto-projeto-estrategia.png` × `a2d/a2d-projeto-estrategia.png` | este | feito |
 | 20:27 | Sessão abortada pelo gateway (espera de sub-agentes). Retomada às 20:30 pelo disco, sem sub-agentes | — | — |
-| 20:33 | Retomada, PASSO 0: árvore limpa. O arquivo solto da sessão anterior (`e2e/a2d-idioma.spec.ts`, e2e do H2-04) entrou pelo autosave `a45538b`; avaliado: fica (é o e2e que a H2 pede, "pessoa sem idioma num negócio en"; passou no e2e das 20:19, 28 passed) | este | feito |
+| 20:30 | Retomada, PASSO 0: árvore limpa. O arquivo solto da sessão anterior (`e2e/a2d-idioma.spec.ts`, e2e do H2-04) entrou pelo autosave `a45538b`; avaliado: fica (é o e2e que a H2 pede, "pessoa sem idioma num negócio en"; passou no e2e das 20:19, 28 passed) | este | feito |
 
-### Lista de conferência (20:33, `git log` + `grep` no código)
+### Lista de conferência (20:30, `git log` + `grep` no código)
 
 | Item | Estado | Onde |
 |---|---|---|
@@ -36,4 +36,5 @@ Horas = hora do commit.
 
 Falta, na ordem: prova do H2-04 e do H2-08 no build final; lado a lado do documento (H2-12/32); `make test-web`, build e
 `make e2e` no worktree `/tmp/hs-a2d`; relatório completo e "→ corrigido em A2d" na tabela (a) da H2.
-| 20:34 | H2-08 provado no build de produção de `0856d41` (worktree `/tmp/hs-a2d`, build exit 0, `next start` na 3199, já parado): `/sobre` 190.529 → 32.892 bytes; `/` 277.732 → 78.059; `/en/about` 189.749 → 32.457; `/en/faq` 248.724 → 55.454; nomes de plataforma no HTML (Instagram, Google Ads, WhatsApp, Facebook, TikTok, Mailchimp, RD Station, HubSpot) 36 → 0 em cada uma; texto da área logada ("aguarda você") em `/sobre` 7 → 0. "Antes" = build de `7b83679` (`/tmp/hs-a2d-base`) | este | feito |
+| 20:32 | H2-08 provado no build de produção de `0856d41` (worktree `/tmp/hs-a2d`, build exit 0, `next start` na 3199, já parado): `/sobre` 190.529 → 32.892 bytes; `/` 277.732 → 78.059; `/en/about` 189.749 → 32.457; `/en/faq` 248.724 → 55.454; nomes de plataforma no HTML (Instagram, Google Ads, WhatsApp, Facebook, TikTok, Mailchimp, RD Station, HubSpot) 36 → 0 em cada uma; texto da área logada ("aguarda você") em `/sobre` 7 → 0. "Antes" = build de `7b83679` (`/tmp/hs-a2d-base`) | este | feito |
+| 20:38 | `make test-web` na árvore principal: exit 0 (ESLint, `tsc` dos três pacotes; Vitest contracts 9, ui 49, web 35 arquivos / 406 testes). Testes da A2d um a um (`--reporter=verbose`): `A2dLocale` 7 (H2-04), `A2dMemoryTopics` 7 (H2-06), `A2dSeo` 40 (H2-26), `A2dDocs` 6 (H2-12/32), `A2dFidelity` 8 (H2-09/10/31), `A2dObjectConversation` 3 (H2-11), `A2dProject` 11 (H2-01), todos verdes | este | feito |
