@@ -27,4 +27,12 @@ Horas = hora do commit (`git log --date=format:%H:%M`).
 | 19:59 | H2-17 + H2-18: revogação de consentimento (rota owner/admin com auditoria; reimportação com "não" revoga), fórmula de planilha neutralizada; migration `20261016230100` | `69dc709` | Stark | feito |
 | 20:00 | H2-27: `make seed` apaga os convites | `9113341` | aux. infra | feito |
 | 20:01 | Erros novos da revogação pelo catálogo nos três idiomas | `f8ae6ad` | Stark | feito |
-| — | H2-20 (telefones), guia do 2º checkout, `make test` final, `make openapi` + contratos, relatório | — | — | em andamento |
+| 20:02 | H2-20: telefones do teste de importação na convenção | `e34c4ac` | aux. infra | feito |
+| 20:02 | H2-28: `make seed` confere a senha do `hellosquad_api` antes de aplicar | `519bc7b` | aux. infra | feito |
+| 20:02 | H2-29: teste das sugestões confere os sete ambientes em en | `af3fcb4` | aux. erros | feito |
+| 20:03 | H2-28/H2-27: guia do segundo checkout, trava única e convites no `SETUP_LOCAL.md` | `cf0b330` | aux. infra | feito |
+| 20:06 | `make openapi` + `pnpm --filter contracts generate`: 58 → 59 operações, nada removido | `efe6e1f` | Stark | feito |
+| 20:08 | pgTAP `27_consent_revocation` (12); `supabase test db` 712/712 | `0f74e39` | Stark | feito |
+| 20:12 | Verificação final: `make test-infra` 21/21; backend + pgTAP numa trava: ruff ok, pytest 267 passed, pgTAP 700/700 (712 com o 27); `make test` inteiro vermelho só no `test-web` (3 testes do `apps/web`, A2d em andamento); relatório; H2 anotada | este | Stark | feito |
+
+**Fatia fechada às 20:12.** Relatório: `docs/parciais/S2g-relatorio.md`.
