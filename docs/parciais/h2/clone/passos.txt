@@ -22,7 +22,7 @@ hora      comando                                                         exit  
 19:01:48  make up                                                         0     9s       0 migrations; "já confere…; nada gravado"
 19:01:57  make seed                                                       0     0s       5 usuários fictícios; "já confere…; nada gravado"
 19:02:39  make test                                                       2     88s      ruff ok · pytest 220 passed (54.67s) · eslint ok · tsc ok · Vitest 9+49+327 · pgTAP FAIL 14/700 (4 arquivos) → test-infra não rodou
-          (falha do pgTAP: roteiro "H2 QA" de outra sessão rodando fora da trava às 19:03:40–19:04:03, bônus de 300 na Miolo e na Vitta e 12 trabalhos novos; ver C-03)
+          (falha do pgTAP: a trava ficou livre entre o pytest (19:03:34) e o pgTAP (19:03:52); outra sessão ("H2 QA") entrou no meio e deixou bônus de 300 na Miolo e na Vitta às 19:03:40; ver C-03)
 19:07:08  [trava] API_PORT=8199 make dev-api + pedido S1b (201/201/201) + make worker + SIGTERM no grupo   0   5s   "worker no ar…LLM simulated"; run concluído: entrega v1, needs_you, 10 créditos, US$ 0.037860; worker encerrado; 8199 livre
 19:07:26  [conferência] API do dono                                       -     -        200 / 200
 19:07:34  make test (2a; banco reaplicado por outra sessão às 19:07:1x)    2     67s      pytest 220 passed (50.05s) · Vitest 385 · pgTAP FAIL 8/700 (bônus "H2 QA" da Vitta às 19:08:34, entre o pytest e o pgTAP)
