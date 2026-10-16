@@ -25,9 +25,10 @@ install: ## Instala dependências JS (pnpm) e Python (uv) a partir dos lockfiles
 	pnpm install --frozen-lockfile
 	cd $(BACKEND_DIR) && uv sync --locked
 
-up: install ## Sobe o Supabase local (projeto hellosquad) e aplica migrations pendentes
+up: install ## Sobe o Supabase local (projeto hellosquad), aplica migrations e grava a senha do hellosquad_api
 	$(SUPABASE) start
-	$(MAKE) --no-print-directory migrate
+	$(SUPABASE) migration up --local
+	cd $(BACKEND_DIR) && uv run hellosquad-local-db roles --optional
 	@echo "Supabase local no ar. Chaves locais: pnpm exec supabase status -o env (PUBLISHABLE_KEY e SECRET_KEY vão para o .env)."
 
 down: ## Para o Supabase local do HelloSquad (os dados ficam no volume Docker)

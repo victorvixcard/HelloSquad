@@ -22,12 +22,12 @@ git clone https://github.com/victorvixcard/HelloSquad.git
 cd HelloSquad
 corepack enable pnpm
 
-make up                              # instala dependências (pnpm + uv), sobe o Supabase local e aplica as migrations
-cp .env.example .env                 # o .env nunca é commitado
-pnpm exec supabase status -o env     # copie PUBLISHABLE_KEY e SECRET_KEY para o .env (ver "Chaves locais");
-                                     # a PUBLISHABLE_KEY vai também em NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (web)
-openssl rand -hex 24                 # senha local do papel da API: monte API_DATABASE_URL no .env (ver abaixo)
-make migrate                         # grava a senha do hellosquad_api no banco
+cp .env.example .env                 # o .env nunca é commitado; o DATABASE_URL já vem preenchido
+openssl rand -hex 24                 # senha local do papel da API: monte API_DATABASE_URL no .env (ver "Chaves locais")
+make up                              # instala dependências (pnpm + uv), sobe o Supabase local, aplica as migrations
+                                     # e grava a senha do hellosquad_api
+pnpm exec supabase status -o env     # com o Supabase no ar: copie PUBLISHABLE_KEY e SECRET_KEY para o .env (ver
+                                     # "Chaves locais"); a PUBLISHABLE_KEY vai também em NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 make seed                            # tenants e usuários fictícios de docs/DADOS_FICTICIOS.md
 make test                            # backend (ruff + pytest), web e pacotes (lint, tipos, Vitest) e banco (pgTAP)
 make dev                             # API em http://127.0.0.1:8100 e web em http://127.0.0.1:3100
@@ -35,6 +35,8 @@ make e2e                             # opcional: fluxos ponta a ponta no navegad
 ```
 
 O primeiro `make up` baixa as imagens Docker do Supabase (alguns GB) e leva alguns minutos. Os seguintes sobem em segundos.
+
+O `.env` nasce antes do `make up`, com o `API_DATABASE_URL`; as chaves do Supabase entram logo depois, porque só existem com ele no ar (o CLI vem no `pnpm install` do `make up`). Se o `make up` rodar sem `.env` ou com `DATABASE_URL`/`API_DATABASE_URL` vazios, ele avisa em uma linha e segue sem gravar a senha do papel; preencha o `.env` e rode `make migrate`. Chamados direto, `make migrate` e `make seed` exigem as duas URLs.
 
 Conferir: `make status` mostra o Supabase, a API (`/health`) e a web. `curl http://127.0.0.1:8100/health` responde `{"status":"ok","version":"0.1.0","environment":"local"}`.
 
@@ -63,7 +65,7 @@ As chaves legadas `ANON_KEY` e `SERVICE_ROLE_KEY` (JWT) não são usadas pelo c�
 API_DATABASE_URL=postgresql://hellosquad_api:<senha-gerada>@127.0.0.1:56322/postgres
 ```
 
-`make migrate` (e também `make up` e `make seed`) grava essa senha no banco com hash SCRAM calculado no cliente; o log do Postgres nunca vê a senha em claro. Ao subir, a API confere que o papel não é superusuário nem ignora a RLS e se recusa a rodar se for.
+`make up`, `make migrate` e `make seed` gravam essa senha no banco com hash SCRAM calculado no cliente; o log do Postgres nunca vê a senha em claro. Ao subir, a API confere que o papel não é superusuário nem ignora a RLS e se recusa a rodar se for.
 
 **Validação do JWT na API.** Padrão: chave pública do JWKS da Auth (`/auth/v1/.well-known/jwks.json`). A Auth local assina os tokens de usuário em **ES256**, então o padrão `AUTH_JWT_ALGORITHMS=ES256` é o caminho usado hoje. Fallback, só se a Auth assinar com segredo compartilhado: `AUTH_JWT_ALGORITHMS=HS256` e `SUPABASE_JWT_SECRET` com o `JWT_SECRET` do `status -o env`.
 
@@ -91,7 +93,7 @@ As portas do Supabase ficam em `supabase/config.toml`; os alvos `make dev-api` e
 
 | Comando | O que faz |
 |---|---|
-| `make up` | Instala dependências pelos lockfiles, sobe o Supabase local e aplica migrations pendentes. |
+| `make up` | Instala dependências pelos lockfiles, sobe o Supabase local, aplica migrations pendentes e grava a senha do `hellosquad_api` (sem `.env`, só avisa). |
 | `make down` | Para os containers do HelloSquad. Os dados ficam no volume Docker. |
 | `make status` | Estado do Supabase, da API e da web. |
 | `make migrate` | Aplica migrations pendentes de `supabase/migrations/` e grava a senha do `hellosquad_api` (de `API_DATABASE_URL`). |
@@ -193,6 +195,7 @@ O mesmo conjunto de verificações roda local com `make test` e `make build`.
 | `make test-db` falha com conexão recusada | Supabase local parado | `make up`. |
 | Teste pgTAP falha em "seed presente" ou "Pedro sem membership" | Seed não aplicado ou alterado por teste manual | `make seed`. |
 | API não sobe: `API_DATABASE_URL vazio` | Falta a URL do papel da API no `.env` | Gere a senha e preencha (seção "Chaves locais"), depois `make migrate`. |
+| `make up` termina com `aviso: .env ausente ou sem …` | `.env` criado depois do `make up` ou com as URLs vazias | Crie e preencha o `.env` ("Subir do zero"), depois `make migrate`. |
 | `password authentication failed for user "hellosquad_api"` | Senha do `.env` ainda não gravada no banco (ou `db reset` recente) | `make migrate`. |
 | Login de teste responde 429 | Limite de login da Auth local (300 a cada 5 min por IP) | Esperar alguns minutos. |
 | `Seed fictício recusado` | Há usuário com e-mail fora de `.example` no banco local | Remover esse usuário (dados de teste são só fictícios) ou `pnpm exec supabase db reset`. |
