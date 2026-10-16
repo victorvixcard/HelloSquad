@@ -12,6 +12,10 @@
 | 15:30 | 1–3. Fluxo lê a base e as métricas (números calculados, nunca do modelo; fato sem evidência e causa sem teste viram hipótese; estado vazio pede importação ou conexão sem cobrar); skills e fixtures de Kiwi, Max e Íris (sub-agentes, revisados pela verificação) | feito | `b125b79` (autosave), `c239954` |
 | 15:32 | 2. Rotas `POST /workspaces/{id}/contacts/imports`, `GET …/contacts/summary`, `GET …/metrics` | feito | `c239954` |
 | 15:34 | 4–5. pytest `test_s2b_deliveries` 20/20 (8 deliveries ponta a ponta com preço provisório reservado e capturado, cartão `material`, status por etapa; base e métricas; estado vazio; causa sem evidência; importação) | feito | `ef22a1a`, `e5a982c` |
-| 15:38 | 5. pgTAP `22_contacts_consents_metrics` 35/35 (suíte 554/554) | feito | este |
-| | Contrato, `SETUP_LOCAL.md`, roteiro curl, relatório | em andamento | |
-| | Pedido da A2a: `locale` do usuário e do workspace no `GET /me` | pendente | |
+| 15:35 | 5. pgTAP `22_contacts_consents_metrics` 35/35 (suíte 554/554) | feito | `e932feb` |
+| 15:37 | Pedido da A2a (§5): `locale` da pessoa e do negócio no `GET /me`, `PATCH /workspaces/{id}` (owner/admin, auditoria); seed devolve o idioma dos usuários fictícios | feito | `03167b5`, `39bc4da`, `cc7c399` |
+| 15:38 | 5. Contrato (47 → 51 operações, nada removido), `make test-web` 181/181 com o contrato novo, backend 185/185 | feito | `03167b5`, `522ecc3` |
+| 15:39 | Roteiro curl contra a API no ar (importação, base, métricas, 8 deliveries, idioma, Trilha sem dado) e `SETUP_LOCAL.md` §"Kiwi, Max e Íris (S2b)" | feito | `c6453fe`, `cbf5b0d` |
+| 15:43 | Verificação final (backend 185/185, pgTAP 554/554, web 181/181, infra 8/8) e `S2b-relatorio.md` | feito | este |
+
+**Fatia fechada às 15:43.** Relatório: `docs/parciais/S2b-relatorio.md`.

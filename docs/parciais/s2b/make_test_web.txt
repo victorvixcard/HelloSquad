@@ -1,0 +1,51 @@
+pnpm --filter web lint
+$ eslint
+pnpm -r --if-present typecheck
+packages/contracts typecheck$ tsc --noEmit
+packages/ui typecheck$ tsc --noEmit
+packages/contracts typecheck: Done
+packages/ui typecheck: Done
+apps/web typecheck$ tsc --noEmit
+apps/web typecheck: Done
+pnpm -r --if-present test
+Scope: 3 of 4 workspace projects
+packages/contracts test$ vitest run
+packages/ui test$ vitest run
+packages/contracts test: 
+packages/contracts test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/packages/contracts
+packages/contracts test: 
+packages/ui test: 
+packages/ui test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/packages/ui
+packages/ui test: 
+packages/contracts test: 
+packages/contracts test:  Test Files  1 passed (1)
+packages/contracts test:       Tests  9 passed (9)
+packages/contracts test:    Start at  15:38:29
+packages/contracts test:    Duration  509ms (import 59%, tests 38%, transform 3%, worker 1%)
+packages/contracts test: 
+packages/contracts test: Done
+packages/ui test: 
+packages/ui test:  Test Files  5 passed (5)
+packages/ui test:       Tests  49 passed (49)
+packages/ui test:    Start at  15:38:29
+packages/ui test:    Duration  708ms (environment 65%, tests 16%, setup 11%, transform 3%, import 3%, worker 1%)
+packages/ui test: 
+packages/ui test: Done
+apps/web test$ vitest run
+apps/web test: (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+apps/web test:   - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+apps/web test: Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+apps/web test: 
+apps/web test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/apps/web
+apps/web test: 
+apps/web test: 
+apps/web test:  Test Files  21 passed (21)
+apps/web test:       Tests  181 passed (181)
+apps/web test:    Start at  15:38:30
+apps/web test:    Duration  4.60s (tests 50%, environment 32%, setup 8%, import 5%, transform 5%)
+apps/web test: 
+apps/web test: Environment  jsdom was created 21 times · 10.21s total, 32% of tracked time
+apps/web test:              create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+apps/web test:              learn more: https://vitest.dev/guide/improving-performance#test-environments
+apps/web test: 
+apps/web test: Done
