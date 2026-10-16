@@ -1,0 +1,113 @@
+land_template.txt	1296-1898	1191 linhas	template (SVG e estilos longos resumidos)
+land_template_textos.tsv	-	615 linhas	textos visíveis e atributos do template
+land_01901_data.txt	1901-1902	2 linhas	data
+land_01903_official-identity-layer-internal-ids-sta.txt	1903-1904	2 linhas	official identity layer (internal ids stay the same): name · short role
+land_01905_role.txt	1905-1905	1 linhas	ROLE
+land_01906_nr.txt	1906-1906	1 linhas	NR
+land_01907_art.txt	1907-1907	1 linhas	ART
+land_01908_memory-panel-what-the-visitor-gave-you-w.txt	1908-1909	2 linhas	memory panel: what the visitor gave (you), what was confirmed (ok) and what the squad picked up on its own (auto)
+land_01910_memrow.txt	1910-1921	12 linhas	memRow
+land_01922_color.txt	1922-1922	1 linhas	COLOR
+land_01923_persona.txt	1923-1929	7 linhas	PERSONA
+land_01930_hero-r5.txt	1930-1943	14 linhas	hero R5
+land_01944_r4-composition-1920x1200-frame-x-y-scale.txt	1944-1945	2 linhas	R4 composition (1920x1200 frame): x, y, scale, outer rotation, inner transform. Drawing order = HORDER.
+land_01946_hpos.txt	1946-1949	4 linhas	HPOS
+land_01950_hbottom.txt	1950-1950	1 linhas	HBOTTOM
+land_01951_hrest.txt	1951-1951	1 linhas	HREST
+land_01952_easing-curves-ds-saída-2-8-2-1-mola-34-1.txt	1952-1965	14 linhas	easing curves (DS: saída .2,.8,.2,1 · mola .34,1.56,.64,1 · precisa .65,0,.35,1) plus rise/fall for jumps
+(omitido)	1966-1966	1 linhas	HEASE
+land_01967_motion-repertoire-each-move-is-one-or-mo.txt	1967-1974	8 linhas	motion repertoire. Each move is one or more tracks of keys [ms, values, easing into this key]; tracks add up.
+land_01975_a6-motion-07-approved-each-specialist-s-.txt	1975-2032	63 linhas	A6 · Motion 07 (approved): each specialist's individual animation, ported 1:1 from the board's loops (25 fps).
+land_02033_hero-a-called-specialist-answers-with-a-.txt	2033-2043	11 linhas	hero · a called specialist answers with a jump of its own: height (frame px at k = 1), anticipation, rise, hang, fall,
+land_02044_hoptracks.txt	2044-2069	26 linhas	hopTracks
+land_02070_each-specialist-s-signature-its-a6-motio.txt	2070-2079	10 linhas	each specialist's signature = its A6 · Motion 07 animation; eye beats [ms, expression, blink]
+land_02080_face-turn-travel-in-local-units-left-rig.txt	2080-2081	2 linhas	face turn travel in local units: [left, right, up, down] from the eyes to the silhouette's edge
+land_02082_coordination-calls-the-specialists-first.txt	2082-2083	2 linhas	Coordination calls the specialists: first call after HCALL0 ms, then one every HCALL ms
+land_02084_hkeys.txt	2084-2091	8 linhas	HKEYS
+land_02092_inferagents.txt	2092-2102	11 linhas	inferAgents
+land_02103_hnames.txt	2103-2107	5 linhas	hNames
+land_02108_hero-default.txt	2108-2110	3 linhas	HERO_DEFAULT
+land_02111_demo-conversations.txt	2111-2112	2 linhas	demo conversations
+land_02113_approvals.txt	2113-2117	8 linhas	APPROVALS
+land_02118_st.txt	2118-2119	2 linhas	ST
+land_02120_convs.txt	2120-2265	165 linhas	CONVS
+land_02266_conv-order.txt	2266-2267	2 linhas	CONV_ORDER
+land_02268_card.txt	2268-2295	29 linhas	CARD
+land_02296_memória-do-squad-r17-r19.txt	2296-2301	6 linhas	memória do squad (R17 → R19)
+land_02302_m3-role.txt	2302-2302	2 linhas	M3_ROLE
+land_02303_pieces-of-context-kind-value-the-kind-sh.txt	2303-2314	12 linhas	pieces of context: [kind, value] (the kind shows on the nearer pieces)
+land_02315_m3-sw.txt	2315-2315	1 linhas	M3_SW
+land_02316_what-each-specialist-draws-from-the-memo.txt	2316-2321	6 linhas	what each specialist draws from the memory (some pieces are shared between specialists)
+land_02322_the-memory-already-knows-a-few-things-wh.txt	2322-2323	2 linhas	the memory already knows a few things when the visitor arrives (it is not empty), and keeps growing
+land_02324_m3-base.txt	2324-2324	1 linhas	M3_BASE
+land_02325_stage-geometry-svg-units-640-×-520-every.txt	2325-2327	3 linhas	stage geometry (SVG units, 640 × 520): every specialist sits at the same place, ~40% hidden by the bottom edge;
+land_02328_m3-head.txt	2328-2328	1 linhas	M3_HEAD
+land_02329_the-flow-of-context-a-piece-every-gap-0-.txt	2329-2332	4 linhas	the flow of context: a piece every gap[0..1] ms, at three depths (near pieces show their kind; far ones are small and faint),
+land_02333_a9-the-turn-between-each-specialist-and-.txt	2333-2336	4 linhas	A9 · the turn between each specialist and the next (backwards, the same turn mirrored):
+land_02337_r23-rede-de-memória-viva-six-pieces-of-m.txt	2337-2340	4 linhas	R23 · REDE DE MEMÓRIA VIVA. Six pieces of Miolo's context around the specialist, linked to its head by thin curved lines;
+land_02341_where-the-lines-reach-the-silhouette-ray.txt	2341-2343	3 linhas	where the lines reach the silhouette: rays from a point inside every head (svg units), angles in degrees
+land_02344_route-i-slot-junction-0-left-1-right-1-n.txt	2344-2346	3 linhas	route i = [slot, junction (0 left · 1 right · −1 none), anchor]: the two upper-left pieces meet and reach the head together,
+land_02347_what-sits-in-each-slot-for-each-speciali.txt	2347-2357	11 linhas	what sits in each slot for each specialist, and which of them it is using most (its colour; the others stay as shared,
+land_02358_what-the-shared-memory-holds-fixed-the-m.txt	2358-2359	2 linhas	what the shared memory holds (fixed: the motion never changes the count)
+land_02360_deeper-shades-of-the-light-colours-for-l.txt	2360-2361	2 linhas	deeper shades of the light colours, for lines and trails on the light surface
+land_02362_r23b-more-intense-and-constant-a-light-k.txt	2362-2367	6 linhas	R23b · more intense and constant: a light keeps running along every wire (CSS dash flow), and pulses leave one after the
+land_02368_memory-itself-the-suggestion-stays-apart.txt	2368-2375	8 linhas	memory itself; the suggestion stays apart, dashed, until the visitor confirms or corrects it
+land_02376_m3-hypo.txt	2376-2377	2 linhas	M3_HYPO
+land_02378_resultados-r21-one-story-dashboard-and-c.txt	2378-2384	7 linhas	resultados (R21 · one story, dashboard and conversation in step)
+land_02385_wd.txt	2385-2385	1 linhas	WD
+land_02386_res-n0.txt	2386-2386	1 linhas	RES_N0
+land_02387_res-v.txt	2387-2387	1 linhas	RES_V
+land_02388_res-after.txt	2388-2388	1 linhas	RES_AFTER
+land_02389_res-max.txt	2389-2389	1 linhas	RES_MAX
+land_02390_the-conversation-sets-the-pace-stage-mov.txt	2390-2420	31 linhas	the conversation sets the pace; `stage` moves the dashboard with it
+land_02421_res-typing.txt	2421-2422	2 linhas	RES_TYPING
+land_02423_modo-autônomo-r18-one-routine-four-steps.txt	2423-2431	9 linhas	modo autônomo (R18 · one routine, four steps)
+land_02432_sx-r.txt	2432-2510	79 linhas	SX_R
+land_02511_sx-rm.txt	2511-2512	2 linhas	SX_RM
+land_02513_step-2-the-specialists-spread-under-nexo.txt	2513-2514	2 linhas	step 2: the specialists spread under Nexo; steps 3–4: everyone in one row (11% apart)
+land_02515_who-finds-what-at-concorrência-public-mo.txt	2515-2516	2 linhas	who finds what at Concorrência (public moves only, fictional): Íris a promotion, Bia a campaign and a change of tone
+land_02517_scroll-one-step-every-sx-step-px-while-t.txt	2517-2518	2 linhas	scroll: one step every --sx-step px while the scene is pinned; steps 2, 3, 4 start at these progressions; a click goes to SX_GO
+land_02519_sx-go.txt	2519-2519	1 linhas	SX_GO
+land_02520_sx-pin.txt	2520-2520	1 linhas	SX_PIN
+land_02521_c5-autonomous-mode-ds-institutional-piec.txt	2521-2523	3 linhas	C5 · Autonomous Mode (DS, institutional piece): the knob turns, one by one, into the seven agents until it becomes
+land_02524_c5-t.txt	2524-2525	2 linhas	C5_T
+land_02526_hero-intro-each-agent-s-motion-07-trimme.txt	2526-2527	2 linhas	hero intro: each agent's Motion 07, trimmed to its main beat
+land_02528_hintro-order.txt	2528-2528	1 linhas	HINTRO_ORDER
+land_02529_hidle.txt	2529-2536	8 linhas	hIdle
+land_02537_hcut.txt	2537-2545	9 linhas	hCut
+land_02546_demo-guided-playback.txt	2546-2548	3 linhas	demo · guided playback
+land_02549_the-cursor-sets-off-this-long-before-a-d.txt	2549-2550	2 linhas	the cursor sets off this long before a decision's reading time ends (glide + a short hover)
+land_02551_when-a-conversation-s-story-is-over-it-s.txt	2551-2552	2 linhas	when a conversation's story is over, it starts again after this pause (plus the reading time of the last message)
+land_02553_dscript.txt	2553-2562	10 linhas	DSCRIPT
+land_02563_dwords.txt	2563-2563	1 linhas	dWords
+land_02564_dread.txt	2564-2569	6 linhas	dRead
+land_02570_r22-perguntas-frequentes-faq.txt	2570-2584	24 linhas	R22 · perguntas frequentes (#faq)
+land_02585_encerramento-r25-the-a9-signature-typing.txt	2585-2589	5 linhas	encerramento (R25) · the A9 signature, typing only
+land_02590_layout-em-of-the-line-cursor-width-gap-f.txt	2590-2592	3 linhas	layout (em of the line): cursor width; gap from the baseline to the button
+land_02593_helpers.txt	2593-2594	2 linhas	helpers
+land_02595_r-grp.txt	2595-2595	1 linhas	R_GRP
+land_02596_steps0.txt	2596-2603	8 linhas	STEPS0
+land_02604_rnd.txt	2604-2604	1 linhas	rnd
+land_02605_hhmm.txt	2605-2606	2 linhas	hhmm
+land_02607_class-component.txt	2607-2633	27 linhas	class-Component
+land_02634_timers.txt	2634-2638	5 linhas	timers
+land_02639_demo-engine.txt	2639-2740	102 linhas	demo engine
+land_02741_demo-guided-playback.txt	2741-2877	137 linhas	demo · guided playback
+land_02878_navigation-signup.txt	2878-2896	19 linhas	navigation & signup
+land_02897_hero-fluid-layout.txt	2897-2954	58 linhas	hero · fluid layout
+land_02955_hero-suggestion-band-ds-suggestionband-b.txt	2955-3071	117 linhas	hero · suggestion band (DS SuggestionBand behaviour, squad chips, drag)
+land_03072_hero-agent-motion.txt	3072-3225	154 linhas	hero · agent motion
+land_03226_hero-choreography.txt	3226-3473	249 linhas	hero · choreography
+land_03474_conheça.txt	3474-3532	59 linhas	conheça
+land_03533_autonomy-r18.txt	3533-3566	34 linhas	autonomy (R18)
+land_03567_modo-autônomo-scrollytelling-r16-r18-r31.txt	3567-3770	206 linhas	modo autônomo · scrollytelling (R16 → R18 → R31)
+land_03771_c5-autonomous-mode-ds-institutional-piec.txt	3771-3870	103 linhas	C5 · Autonomous Mode (DS institutional piece) on the switch
+land_03871_resultados-one-story-two-views-r12-r21.txt	3871-3962	92 linhas	resultados · one story, two views (R12 → R21)
+land_03963_memória-do-squad-r17-r19.txt	3963-4124	163 linhas	memória do squad (R17 → R19)
+land_04125_r23-rede-de-memória-viva.txt	4125-4462	338 linhas	R23 · rede de memória viva
+land_04463_encerramento-r25-the-a9-signature-typing.txt	4463-4575	113 linhas	encerramento (R25) · the A9 signature, typing only
+land_04576_perguntas-frequentes-r22.txt	4576-4608	33 linhas	perguntas frequentes (R22)
+land_04609_gaze-engine-c1-rules-on-the-approved-dra.txt	4609-4855	248 linhas	gaze engine (C1 rules on the approved drawings)
+land_04856_lifecycle.txt	4856-5061	207 linhas	lifecycle
+land_05062_view-model.txt	5062-5385	331 linhas	view model
+land_strings.tsv	-	276 linhas	literais de texto em português do script

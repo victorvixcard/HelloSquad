@@ -1,0 +1,13 @@
+{
+  "arquivo": "design/handoff-v4.6/product-ui/ProductUIV4.dc.html",
+  "linhas": 13966,
+  "template": [
+    4533,
+    5615
+  ],
+  "script": [
+    5618,
+    13962
+  ],
+  "props_cenario": "<script type=\"text/x-dc\" data-dc-script data-props='{\"cenario\":{\"editor\":\"enum\",\"options\":[\"uso\",\"primeiro\"],\"default\":\"uso\",\"section\":\"Cenário\"},\"$preview\":{\"width\":1440,\"height\":900}}'>"
+}

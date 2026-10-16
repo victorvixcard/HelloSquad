@@ -1,0 +1,329 @@
+pui_template.txt	4533-5615	1942 linhas	template (SVG e estilos longos resumidos)
+pui_template_textos.tsv	-	808 linhas	textos visíveis e atributos do template
+pui_05618_hellosquad-product-ui-v4-rodada-01-base-.txt	5618-5626	9 linhas	HelloSquad · Product UI V4 · Rodada 01 (base V3 · Rodada 3, Início aprovado e congelado).
+pui_05627_ag.txt	5627-5684	58 linhas	AG
+pui_05685_nr.txt	5685-5685	1 linhas	NR
+pui_05686_da.txt	5686-5686	1 linhas	DA
+pui_05687_dac.txt	5687-5687	1 linhas	DAC
+pui_05688_com.txt	5688-5688	1 linhas	COM
+pui_05689_para.txt	5689-5689	1 linhas	PARA
+pui_05690_ea.txt	5690-5691	2 linhas	EA
+pui_05692_ícones-traço-1-9-grade-18.txt	5692-5770	79 linhas	ícones (traço 1,9, grade 18)
+pui_05771_peças-da-miolo-marca-fictícia.txt	5771-5781	11 linhas	peças da Miolo (marca fictícia)
+pui_05782_ajustes-que-a-kaia-sabe-aplicar-na-peça-.txt	5782-5788	7 linhas	ajustes que a Kaia sabe aplicar na peça (o resto fica igual)
+pui_05789_adj-order.txt	5789-5789	1 linhas	ADJ_ORDER
+pui_05790_chg-pos.txt	5790-5791	2 linhas	CHG_POS
+pui_05792_dia-de-entrega-do-plano-semanal.txt	5792-5797	6 linhas	dia de entrega do plano semanal
+pui_05798_rd.txt	5798-5799	2 linhas	RD
+pui_05800_j1-prompt.txt	5800-5800	1 linhas	J1_PROMPT
+pui_05801_j2-prompt.txt	5801-5801	1 linhas	J2_PROMPT
+pui_05802_j3-prompt.txt	5802-5803	2 linhas	J3_PROMPT
+pui_05804_sugestões-de-pedido-faixa-do-início.txt	5804-5816	13 linhas	sugestões de pedido (faixa do Início)
+pui_05817_início-v3-r1-1-conta-sugestões-e-quem-pa.txt	5817-5819	3 linhas	Início V3 · R1.1: conta, sugestões e quem participa
+pui_05820_cada-sugestão-só-preenche-o-campo-e-esco.txt	5820-5830	11 linhas	cada sugestão só preenche o campo e escolhe quem participa; nada é enviado sem o usuário
+pui_05831_home-sug-first.txt	5831-5838	8 linhas	HOME_SUG_FIRST
+pui_05839_numw.txt	5839-5839	1 linhas	NUMW
+pui_05840_r1-2-íris-no-início-três-indicadores-que.txt	5840-5845	6 linhas	R1.2 · Íris no Início: três indicadores que já existem em Resultados (semana de 05 a 11/10), um por vez, com a leitura dela
+pui_05846_a-leitura-da-íris-curta-pessoal-sem-repe.txt	5846-5851	6 linhas	a leitura da Íris: curta, pessoal, sem repetir os números do gráfico; tendência, não prova
+pui_05852_linha-suave-sem-exageros-monotônica-a-cu.txt	5852-5871	20 linhas	linha suave sem exageros (monotônica: a curva nunca passa do valor real entre duas semanas)
+(omitido)	5872-5872	1 linhas	hmArea
+pui_05873_queda-ao-recolher-os-resumos-quanto-cada.txt	5873-5874	2 linhas	queda ao recolher os resumos: quanto cada um demora a perceber que o chão desceu (personalidade; o Max, que cochila, é o último)
+pui_05875_conversa-em-grupo-demonstrativa-quem-res.txt	5875-5885	11 linhas	conversa em grupo (demonstrativa): quem responde é o especialista mais ligado ao pedido; um por vez
+pui_05886_início-palco-do-squad.txt	5886-5889	4 linhas	Início · palco do squad
+(omitido)	5890-5890	1 linhas	SQ_LOCK
+(omitido)	5891-5891	1 linhas	SQ_ROW
+pui_05892_expressões-do-agrupamento-oficial-o-max-.txt	5892-5893	2 linhas	expressões do agrupamento oficial; o Max descansa de olhos fechados e acorda quando alguém se aproxima (ou quando só ele é chamado)
+pui_05894_silhueta-em-unidades-locais-base-altura-.txt	5894-5895	2 linhas	silhueta em unidades locais: base, altura, largura; olhos (fração da caixa de 340) e rotação/escala internas
+(omitido)	5896-5896	1 linhas	SQ_LH
+(omitido)	5897-5897	1 linhas	SQ_LW
+(omitido)	5898-5898	1 linhas	SQ_EC
+pui_05899_escala-dos-agentes-no-hero-da-landing-os.txt	5899-5900	2 linhas	escala dos agentes no hero da Landing: os movimentos aprovados foram medidos nela
+(omitido)	5901-5901	1 linhas	SQ_UP
+(omitido)	5902-5907	6 linhas	SQ_PERSONA
+pui_05908_giro-do-rosto-a6-motion-07-percurso-dos-.txt	5908-5909	2 linhas	giro do rosto (A6 · Motion 07): percurso dos olhos até a borda da silhueta [esq, dir, cima, baixo]
+(omitido)	5910-5910	1 linhas	sqRnd
+pui_05911_curvas-do-ds-saída-mola-precisa-e-as-de-.txt	5911-5924	14 linhas	curvas do DS (saída, mola, precisa) e as de subida e queda dos saltos
+(omitido)	5925-5925	1 linhas	HEASE
+pui_05926_repertório-o-mesmo-da-landing-trilhas-de.txt	5926-5985	65 linhas	repertório (o mesmo da Landing): trilhas de chaves [ms, valores, curva]. tx/ty em px do hero da Landing; r inclina pela base;
+pui_05986_a-assinatura-de-cada-especialista-o-seu-.txt	5986-5991	6 linhas	a assinatura de cada especialista: o seu Motion 07 com as batidas de expressão [ms, expressão, piscar]
+(omitido)	5992-5992	1 linhas	SQ_INTRO_CUT
+(omitido)	5993-5993	1 linhas	SQ_INTRO_ORDER
+(omitido)	5994-6001	8 linhas	sqIdle
+(omitido)	6002-6009	8 linhas	sqCut
+pui_06010_composição-para-a-seleção-os-sete-formam.txt	6010-6025	16 linhas	composição para a seleção: os sete formam o agrupamento oficial; um grupo menor fica lado a lado, sobre a mesma linha de base,
+pui_06026_resultados-dados-ilustrativos.txt	6026-6028	3 linhas	resultados (dados ilustrativos)
+pui_06029_week-mark.txt	6029-6029	1 linhas	WEEK_MARK
+pui_06030_kpis.txt	6030-6035	6 linhas	KPIS
+pui_06036_res.txt	6036-6061	26 linhas	RES
+pui_06062_ações-recomendadas-resultados.txt	6062-6068	7 linhas	ações recomendadas (Resultados)
+pui_06069_notificações-sino.txt	6069-6076	8 linhas	notificações (sino)
+pui_06077_modo-autônomo-responsabilidades-que-dá-p.txt	6077-6139	63 linhas	Modo Autônomo: responsabilidades que dá para delegar
+pui_06140_tpl-order.txt	6140-6140	1 linhas	TPL_ORDER
+pui_06141_quando-começa-o-primeiro-ciclo-pelo-ritm.txt	6141-6142	3 linhas	quando começa o primeiro ciclo, pelo ritmo escolhido
+pui_06143_tplfirst.txt	6143-6143	1 linhas	tplFirst
+pui_06144_tplsentence.txt	6144-6144	1 linhas	tplSentence
+pui_06145_tplfreq.txt	6145-6146	2 linhas	tplFreq
+pui_06147_memória-do-squad.txt	6147-6182	42 linhas	memória do squad
+pui_06183_o-que-a-leitura-do-site-encontra-primeir.txt	6183-6190	8 linhas	o que a leitura do site encontra (primeiro acesso): vira sugestão até você confirmar
+pui_06191_ig-finds.txt	6191-6193	3 linhas	IG_FINDS
+pui_06194_obj-find.txt	6194-6195	2 linhas	OBJ_FIND
+pui_06196_connitems.txt	6196-6207	15 linhas	connItems
+pui_06208_outros-trabalhos-da-conta-em-uso.txt	6208-6246	45 linhas	outros trabalhos da conta em uso
+pui_06247_gen-order.txt	6247-6248	2 linhas	GEN_ORDER
+pui_06249_conversas-títulos.txt	6249-6261	13 linhas	conversas (títulos)
+pui_06262_mensagens.txt	6262-6263	2 linhas	mensagens
+pui_06264_mid.txt	6264-6264	1 linhas	mid
+pui_06265_m.txt	6265-6272	8 linhas	M
+pui_06273_threadsfor.txt	6273-6329	67 linhas	threadsFor
+pui_06330_initstate.txt	6330-6372	45 linhas	initState
+pui_06373_r3-trabalhos-calendário-do-protótipo-e-s.txt	6373-6375	3 linhas	R3 · Trabalhos: calendário do protótipo e sinais de situação
+(omitido)	6376-6376	1 linhas	wkD
+pui_06377_wk-today.txt	6377-6377	1 linhas	WK_TODAY
+(omitido)	6378-6378	1 linhas	wkP
+(omitido)	6379-6379	1 linhas	wkDate
+pui_06380_wk-wd.txt	6380-6380	1 linhas	WK_WD
+pui_06381_wk-mo.txt	6381-6381	1 linhas	WK_MO
+(omitido)	6382-6382	1 linhas	wk2
+(omitido)	6383-6383	1 linhas	wkWd
+(omitido)	6384-6384	1 linhas	wkDM
+(omitido)	6385-6385	1 linhas	wkF
+(omitido)	6386-6386	1 linhas	wkRel
+(omitido)	6387-6390	4 linhas	wkRange
+(omitido)	6391-6391	1 linhas	wkWeek
+(omitido)	6392-6392	1 linhas	wkAddMonth
+pui_06393_sinal-de-situação-forma-não-cor-anel-pon.txt	6393-6400	8 linhas	sinal de situação: forma, não cor (anel, ponto, relógio, check, pausa); coral só para o que precisa de você
+(omitido)	6401-6402	2 linhas	wkSG
+pui_06403_relógio-fictício-do-protótipo-manhã-de-s.txt	6403-6404	2 linhas	relógio fictício do protótipo (manhã de segunda, 12/10)
+pui_06405_now.txt	6405-6406	2 linhas	now
+pui_06407_componente.txt	6407-6415	9 linhas	componente
+pui_06416_ciclo-de-vida.txt	6416-6494	79 linhas	ciclo de vida
+pui_06495_navegação.txt	6495-6516	22 linhas	navegação
+pui_06517_conversas.txt	6517-6547	31 linhas	conversas
+pui_06548_motor-da-conversa.txt	6548-6730	206 linhas	motor da conversa
+pui_06731_jornada-1-post-entrega-pontual.txt	6731-6817	87 linhas	Jornada 1 · post (entrega pontual)
+pui_06818_jornada-2-campanha-projeto-coordenado.txt	6818-6880	64 linhas	Jornada 2 · campanha (projeto coordenado)
+pui_06881_jornada-3-rotina-modo-autônomo.txt	6881-6924	46 linhas	Jornada 3 · rotina (Modo Autônomo)
+pui_06925_modo-autônomo.txt	6925-6995	73 linhas	Modo Autônomo
+pui_06996_insights-e-recomendações.txt	6996-7023	32 linhas	insights e recomendações
+pui_07024_cartões-da-conversa.txt	7024-7049	26 linhas	cartões da conversa
+pui_07050_anexos-simulados.txt	7050-7056	7 linhas	anexos (simulados)
+pui_07057_início.txt	7057-7057	1 linhas	Início
+pui_07058_início-pedido-e-quem-participa-r1-1.txt	7058-7126	69 linhas	Início · pedido e quem participa (R1.1)
+pui_07127_conversa-em-grupo-demonstrativa-sem-back.txt	7127-7161	35 linhas	conversa em grupo (demonstrativa, sem backend)
+pui_07162_início-composição-r1-2.txt	7162-7226	65 linhas	Início · composição (R1.2)
+pui_07227_início-íris-um-indicador-por-vez-o-mesmo.txt	7227-7284	58 linhas	Início · Íris: um indicador por vez (o mesmo de Resultados)
+pui_07285_início-faixa-de-sugestões-r1-2.txt	7285-7459	175 linhas	Início · faixa de sugestões (R1.2)
+pui_07460_início-memória-da-marca-aceitar-ou-recus.txt	7460-7463	4 linhas	Início · Memória da Marca: aceitar ou recusar no próprio cartão
+pui_07464_início-palco-do-squad.txt	7464-7896	433 linhas	Início · palco do squad
+pui_07897_primeiro-acesso.txt	7897-7933	40 linhas	primeiro acesso
+pui_07934_memória.txt	7934-7963	34 linhas	memória
+pui_07964_cenário-e-jornadas-guia-do-protótipo.txt	7964-8003	41 linhas	cenário e jornadas (guia do protótipo)
+pui_08004_derivados-do-estado.txt	8004-8093	106 linhas	derivados do estado
+pui_08094_rendervals.txt	8094-8140	49 linhas	renderVals
+pui_08141_barra-lateral-v3-r1-2.txt	8141-8244	107 linhas	barra lateral (V3 · R1.2)
+pui_08245_início-v3-r1-2.txt	8245-8498	259 linhas	Início (V3 · R1.2)
+pui_08499_conversa-principal-e-contextual.txt	8499-8656	176 linhas	conversa (principal e contextual)
+pui_08657_trabalhos-v3-r3.txt	8657-9130	486 linhas	Trabalhos (V3 · R3)
+pui_09131_detalhe-do-trabalho.txt	9131-9250	131 linhas	detalhe do trabalho
+pui_09251_modo-autônomo.txt	9251-9389	152 linhas	Modo Autônomo
+pui_09390_minha-equipe.txt	9390-9426	38 linhas	Minha Equipe
+pui_09427_memória-da-marca.txt	9427-9497	75 linhas	Memória da Marca
+pui_09498_resultados.txt	9498-9567	74 linhas	Resultados
+pui_09568_histórico-de-conversas.txt	9568-9588	23 linhas	histórico de conversas
+pui_09589_hellosquad-product-ui-v4-rodada-01-nova-.txt	9589-9609	21 linhas	HelloSquad · Product UI V4 · Rodada 01 · nova arquitetura por agentes
+pui_09610_env-squad.txt	9610-9610	1 linhas	ENV_SQUAD
+pui_09611_env-prov.txt	9611-9611	1 linhas	ENV_PROV
+pui_09612_env-of-ag.txt	9612-9612	1 linhas	ENV_OF_AG
+pui_09613_envn.txt	9613-9613	1 linhas	ENVN
+pui_09614_capf.txt	9614-9614	1 linhas	capF
+pui_09615_el.txt	9615-9615	1 linhas	EL
+pui_09616_pilots.txt	9616-9616	1 linhas	PILOTS
+pui_09617_cada-especialista-passa-a-ser-apresentad.txt	9617-9619	3 linhas	cada especialista passa a ser apresentado pela especialidade do seu ambiente (Nexo · Projetos, Kaia · Marca & Criação, Íris · Resultados)
+pui_09620_ícones-dos-ambientes-grade-18-traço-arre.txt	9620-9631	12 linhas	ícones dos ambientes (grade 18, traço arredondado), em partes para a microinteração de cada destino
+pui_09632_conteúdo-calendário-editorial-dados-ilus.txt	9632-9646	16 linhas	Conteúdo · calendário editorial (dados ilustrativos)
+pui_09647_caps.txt	9647-9654	8 linhas	CAPS
+pui_09655_duas-versões-de-legenda-que-o-otto-propõ.txt	9655-9663	10 linhas	duas versões de legenda que o Otto propõe para cada post (no tom da Miolo)
+pui_09664_temas-que-o-otto-sugere-nessa-linha-por-.txt	9664-9672	9 linhas	temas que o Otto sugere "nessa linha" (por post)
+pui_09673_cal-plans.txt	9673-9674	2 linhas	CAL_PLANS
+pui_09675_projetos-roadmap-janela-de-21-09-a-27-12.txt	9675-9677	3 linhas	Projetos · roadmap (janela de 21/09 a 27/12)
+pui_09678_resultados-leituras-da-íris.txt	9678-9683	6 linhas	Resultados · leituras da Íris
+pui_09684_faixa-de-comparação-no-gráfico-semanas-d.txt	9684-9685	2 linhas	faixa de comparação no gráfico (semanas da série); o trimestre anterior não está na série
+pui_09686_rs-per.txt	9686-9686	2 linhas	RS_PER
+pui_09687_leitura-curta-da-íris-por-indicador-e-pe.txt	9687-9704	18 linhas	leitura curta da Íris por indicador e período (tendência, não prova)
+pui_09705_rs-sayn.txt	9705-9705	2 linhas	RS_SAYN
+pui_09706_rs-an.txt	9706-9711	6 linhas	RS_AN
+pui_09712_métodos-v4-sobre-a-base-v3.txt	9712-9719	8 linhas	métodos V4 (sobre a base V3)
+pui_09720_bloco.txt	9720-9720	1 linhas	bloco
+pui_09721_navegação.txt	9721-9761	43 linhas	navegação
+pui_09762_conversa-contextual-um-componente-para-t.txt	9762-9869	123 linhas	conversa contextual (um componente para todos os ambientes)
+pui_09870_roteador-da-conversa-contextual.txt	9870-10001	139 linhas	roteador da conversa contextual
+pui_10002_v4-dados-compartilhados-e-roteiros-de-re.txt	10002-10010	9 linhas	V4 · dados compartilhados e roteiros de resposta por objeto
+pui_10011_story-txt.txt	10011-10018	8 linhas	STORY_TXT
+pui_10019_rs-why.txt	10019-10035	20 linhas	RS_WHY
+pui_10036_rs-imp.txt	10036-10041	7 linhas	RS_IMP
+pui_10042_dias-de-entrega-do-plano-semanal-no-dia-.txt	10042-10056	15 linhas	dias de entrega do plano semanal (no dia combinado no Modo Autônomo) e semanas que ele cobre
+pui_10057_calendário-editorial-conteúdo.txt	10057-10104	50 linhas	calendário editorial (Conteúdo)
+pui_10105_projetos-roadmap-o-mesmo-estado-da-campa.txt	10105-10173	77 linhas	projetos (roadmap): o mesmo estado da campanha, da rotina e das entregas
+pui_10174_oportunidades-resultados-e-conteúdo.txt	10174-10193	26 linhas	oportunidades (Resultados e Conteúdo)
+pui_10194_primeiras-mensagens-o-especialista-abre-.txt	10194-10248	64 linhas	primeiras mensagens (o especialista abre já com o contexto)
+pui_10249_marcos-dos-próximos-dias-projetos-e-nexo.txt	10249-10255	8 linhas	marcos dos próximos dias (Projetos e Nexo)
+pui_10256_respostas-projetos-nexo.txt	10256-10299	57 linhas	respostas · Projetos (Nexo)
+pui_10300_respostas-conteúdo-otto-com-a-kaia-quand.txt	10300-10392	109 linhas	respostas · Conteúdo (Otto, com a Kaia quando precisa)
+pui_10393_respostas-resultados-íris-com-o-kiwi-qua.txt	10393-10427	39 linhas	respostas · Resultados (Íris, com o Kiwi quando o assunto é mídia)
+pui_10428_v4-telas.txt	10428-10429	2 linhas	V4 · telas
+pui_10430_mo-l.txt	10430-10430	1 linhas	MO_L
+pui_10431_wd-l.txt	10431-10431	1 linhas	WD_L
+pui_10432_shortt.txt	10432-10432	1 linhas	shortT
+(omitido)	10433-10434	2 linhas	f2
+pui_10435_bloco.txt	10435-10435	1 linhas	bloco
+pui_10436_rendervals-v3-painel-por-cima-no-noteboo.txt	10436-10500	67 linhas	renderVals (V3 + painel por cima no notebook)
+pui_10501_barra-lateral-v4.txt	10501-10567	71 linhas	barra lateral · V4
+pui_10568_camada-de-identidade-todos-os-ambientes-.txt	10568-10575	9 linhas	camada de identidade (todos os ambientes do squad)
+pui_10576_projetos-nexo.txt	10576-10687	125 linhas	Projetos · Nexo
+pui_10688_conteúdo-otto.txt	10688-10788	116 linhas	Conteúdo · Otto
+pui_10789_resultados-íris.txt	10789-10854	74 linhas	Resultados · Íris
+pui_10855_ambientes-ainda-não-refinados-estratégia.txt	10855-10889	37 linhas	ambientes ainda não refinados (Estratégia, Marca & Criação, Mídia, CRM)
+pui_10890_conversa-o-mesmo-componente-com-o-contex.txt	10890-10963	83 linhas	conversa: o mesmo componente, com o contexto do objeto
+pui_10964_hellosquad-product-ui-v4-1-refinamento-g.txt	10964-10973	10 linhas	HelloSquad · Product UI V4.1 · refinamento global de UX e direção de arte
+pui_10974_faixa-de-cada-projeto-no-tom-do-especial.txt	10974-10975	3 linhas	faixa de cada projeto no tom do especialista que conduz (só a faixa; a cor do estado fica com marcos e decisões)
+(omitido)	10976-10976	1 linhas	BAR_E
+(omitido)	10977-10980	4 linhas	MK_G
+pui_10981_o-que-acontece-ao-escolher-cada-sugestão.txt	10981-10991	11 linhas	o que acontece ao escolher cada sugestão (descreve o roteiro da conversa, sem prometer o que não existe)
+(omitido)	10992-10993	2 linhas	MK_SZ
+pui_10994_bloco.txt	10994-10994	1 linhas	bloco
+pui_10995_raiz-classe-do-ambiente-os-ajustes-sistê.txt	10995-11008	14 linhas	raiz: classe do ambiente (os ajustes sistêmicos nunca tocam o Início aprovado)
+pui_11009_projetos-nexo.txt	11009-11143	146 linhas	Projetos · Nexo
+pui_11144_bloco.txt	11144-11144	1 linhas	bloco
+pui_11145_conteúdo-otto.txt	11145-11195	51 linhas	Conteúdo · Otto
+pui_11196_bloco.txt	11196-11196	1 linhas	bloco
+pui_11197_resultados-íris.txt	11197-11265	70 linhas	Resultados · Íris
+pui_11266_bloco.txt	11266-11266	1 linhas	bloco
+pui_11267_conversa-contextual-assunto-numa-linha-a.txt	11267-11286	20 linhas	conversa contextual: assunto numa linha, a conversa em primeiro plano
+pui_11287_bloco.txt	11287-11287	1 linhas	bloco
+pui_11288_ambientes-provisórios-o-especialista-em-.txt	11288-11309	22 linhas	ambientes provisórios: o especialista em destaque, entregas com prévia, pedidos como conversa
+pui_11310_hellosquad-product-ui-v4-2-capacidades-d.txt	11310-11327	18 linhas	HelloSquad · Product UI V4.2 · capacidades dos agentes + Kiwi em Growth Marketing
+pui_11328_ícone-do-ambiente-a-curva-de-crescimento.txt	11328-11345	18 linhas	ícone do ambiente: a curva de crescimento (em partes, para a microinteração do item)
+pui_11346_capx-l.txt	11346-11346	1 linhas	CAPX_L
+pui_11347_nexo-projetos.txt	11347-11371	28 linhas	Nexo · Projetos
+pui_11372_bia-estratégia.txt	11372-11403	33 linhas	Bia · Estratégia
+pui_11404_kaia-marca-criação.txt	11404-11439	37 linhas	Kaia · Marca & Criação
+pui_11440_otto-conteúdo.txt	11440-11474	35 linhas	Otto · Conteúdo
+pui_11475_kiwi-growth.txt	11475-11519	48 linhas	Kiwi · Growth
+pui_11520_max-crm.txt	11520-11556	39 linhas	Max · CRM
+pui_11557_íris-resultados.txt	11557-11587	37 linhas	Íris · Resultados
+pui_11588_capx.txt	11588-11589	2 linhas	CAPX
+pui_11590_cap-of.txt	11590-11590	1 linhas	CAP_OF
+pui_11591_bloco.txt	11591-11591	1 linhas	bloco
+pui_11592_ambientes-em-que-a-descoberta-de-capacid.txt	11592-11593	2 linhas	ambientes em que a descoberta de capacidades começa aberta (provisórios: ganham mais protagonismo)
+pui_11594_cap-keep.txt	11594-11594	1 linhas	CAP_KEEP
+pui_11595_caplo.txt	11595-11595	1 linhas	capLo
+pui_11596_capfill.txt	11596-11596	1 linhas	capFill
+pui_11597_capdue.txt	11597-11598	2 linhas	capDue
+pui_11599_v41p.txt	11599-11600	3 linhas	V41P
+pui_11601_bloco.txt	11601-11601	1 linhas	bloco
+pui_11602_o-que-você-quer-fazer-com-agente-um-comp.txt	11602-11650	50 linhas	"O que você quer fazer com [agente]?" (um componente, sete ambientes)
+pui_11651_contexto-da-conversa-a-intenção-escolhid.txt	11651-11683	35 linhas	contexto da conversa: a intenção escolhida
+pui_11684_o-briefing-pela-conversa.txt	11684-11770	91 linhas	o briefing pela conversa
+pui_11771_hellosquad-product-ui-v4-3-ambientes-def.txt	11771-11783	13 linhas	HelloSquad · Product UI V4.3 · ambientes definitivos de Kaia (Marca & Criação) e Kiwi (Growth Marketing)
+pui_11784_catálogo-ajustes-de-linguagem-e-busca.txt	11784-11785	2 linhas	catálogo: ajustes de linguagem e busca
+pui_11786_assign-capx-g-aud.txt	11786-11786	1 linhas	assign-CAPX['g-aud']
+pui_11787_assign-capx-g-test.txt	11787-11787	1 linhas	assign-CAPX['g-test']
+pui_11788_cap-kw.txt	11788-11794	7 linhas	CAP_KW
+pui_11795_cap-again.txt	11795-11795	2 linhas	CAP_AGAIN
+pui_11796_capnorm.txt	11796-11797	2 linhas	capNorm
+pui_11798_conversas-sobre-objetos-do-kiwi-mesmo-mo.txt	11798-11846	60 linhas	conversas sobre objetos do Kiwi (mesmo motor dos pedidos; não entram no catálogo)
+pui_11847_cap-nx.txt	11847-11850	6 linhas	CAP_NX
+pui_11851_criações-da-kaia-já-entregues-os-mesmos-.txt	11851-11862	18 linhas	criações da Kaia já entregues (os mesmos objetos da Biblioteca e de Trabalhos)
+pui_11863_ka-car.txt	11863-11867	5 linhas	KA_CAR
+pui_11868_ka-img.txt	11868-11868	2 linhas	KA_IMG
+pui_11869_ka-cov.txt	11869-11869	1 linhas	KA_COV
+pui_11870_ka-cats.txt	11870-11870	1 linhas	KA_CATS
+pui_11871_ka-cap.txt	11871-11871	1 linhas	KA_CAP
+pui_11872_ka-of-cap.txt	11872-11872	1 linhas	KA_OF_CAP
+pui_11873_ka-new.txt	11873-11874	2 linhas	KA_NEW
+pui_11875_v42p.txt	11875-11877	3 linhas	V42P
+pui_11878_bloco.txt	11878-11878	1 linhas	bloco
+pui_11879_catálogo-compacto-o-mesmo-no-cabeçalho-e.txt	11879-11930	55 linhas	catálogo compacto (o mesmo no cabeçalho e dentro da conversa)
+pui_11931_pedidos-cada-pedido-é-uma-conversa-e-pod.txt	11931-12044	124 linhas	pedidos: cada pedido é uma conversa e pode virar um trabalho próprio
+pui_12045_o-trabalho-no-resto-do-produto-quadro-li.txt	12045-12095	55 linhas	o trabalho no resto do produto: Quadro, Lista, roadmap e detalhe
+pui_12096_kaia-marca-criação-estúdio.txt	12096-12143	57 linhas	Kaia · Marca & Criação (estúdio)
+pui_12144_kiwi-growth-marketing-oportunidades-vira.txt	12144-12197	66 linhas	Kiwi · Growth Marketing (oportunidades viram iniciativas)
+pui_12198_raiz.txt	12198-12217	21 linhas	raiz
+pui_12218_hellosquad-product-ui-v4-4-ambientes-def.txt	12218-12237	21 linhas	HelloSquad · Product UI V4.4 · ambientes definitivos de Bia (Estratégia) e Max (CRM)
+pui_12238_m-reat.txt	12238-12249	14 linhas	M_REAT
+pui_12250_conversas-sobre-objetos-da-bia.txt	12250-12297	60 linhas	conversas sobre objetos da Bia
+pui_12298_conversas-sobre-objetos-do-max.txt	12298-12305	11 linhas	conversas sobre objetos do Max
+pui_12306_mx.txt	12306-12340	39 linhas	MX
+pui_12341_mensagens-da-reativação-texto-do-otto-o-.txt	12341-12348	8 linhas	mensagens da reativação (texto do Otto; o tom muda a primeira)
+pui_12349_documentos-da-bia-o-mesmo-trabalho-de-pr.txt	12349-12355	11 linhas	documentos da Bia (o mesmo trabalho de Projetos, lido como documento)
+pui_12356_documentos-da-bia-abertos-pela-estante-d.txt	12356-12367	13 linhas	documentos da Bia: abertos pela estante dela, sem entrar na contagem de trabalhos da Home (que não muda nesta rodada)
+pui_12368_dx-oct.txt	12368-12379	14 linhas	DX_OCT
+pui_12380_plan.txt	12380-12394	16 linhas	PLAN
+pui_12395_v43p.txt	12395-12397	3 linhas	V43P
+pui_12398_abre-um-pedido-ou-conversa-já-com-a-prim.txt	12398-12505	112 linhas	abre um pedido ou conversa já com a primeira resposta escolhida (ou com a pergunta do usuário)
+pui_12506_cartões-na-conversa-documento-mensagens-.txt	12506-12526	24 linhas	cartões na conversa: documento, mensagens e autorização de envio
+pui_12527_bia-estratégia-espaço-de-inteligência-es.txt	12527-12613	104 linhas	Bia · Estratégia (espaço de inteligência estratégica)
+pui_12614_max-crm-central-de-relacionamento.txt	12614-12680	79 linhas	Max · CRM (central de relacionamento)
+pui_12681_o-status-do-max-acompanha-a-campanha-de-.txt	12681-12694	14 linhas	o status do Max acompanha a campanha de reativação (nada é apresentado como enviado)
+pui_12695_v4-5-memória-da-marca-modo-autônomo.txt	12695-12703	9 linhas	V4.5 · Memória da Marca + Modo Autônomo
+pui_12704_area5.txt	12704-12710	7 linhas	AREA5
+pui_12711_topic5.txt	12711-12716	6 linhas	TOPIC5
+pui_12717_tipo-de-fonte-de-cada-conhecimento.txt	12717-12721	5 linhas	tipo de fonte de cada conhecimento
+pui_12722_metadados-da-v4-5-por-conhecimento-área-.txt	12722-12757	39 linhas	metadados da V4.5 por conhecimento: área, assunto, fonte, quando e como cada especialista usa
+pui_12758_conhecimentos-novos-da-v4-5-nenhum-é-sug.txt	12758-12768	15 linhas	conhecimentos novos da V4.5 (nenhum é sugestão: o que o Início mostra não muda)
+pui_12769_a-mesma-informação-vinda-de-duas-fontes-.txt	12769-12773	5 linhas	a mesma informação vinda de duas fontes: nenhuma é usada até você decidir
+pui_12774_preco5.txt	12774-12774	2 linhas	PRECO5
+pui_12775_alternativas-oferecidas-quando-você-quer.txt	12775-12781	7 linhas	alternativas oferecidas quando você quer mudar um conhecimento pela conversa
+pui_12782_fontes-de-conhecimento-dados-ilustrativo.txt	12782-12803	24 linhas	fontes de conhecimento (dados ilustrativos)
+pui_12804_srcst5.txt	12804-12805	2 linhas	SRCST5
+pui_12806_modo-autônomo.txt	12806-12820	15 linhas	Modo Autônomo
+pui_12821_níveis-de-autonomia-de-cada-responsabili.txt	12821-12840	22 linhas	níveis de autonomia de cada responsabilidade: analisar, preparar, executar (cada ação externa tem a sua autorização)
+pui_12841_perguntas-da-delegação-conduzidas-pelo-e.txt	12841-12858	18 linhas	perguntas da delegação, conduzidas pelo especialista responsável
+pui_12859_dlv5.txt	12859-12859	3 linhas	DLV5
+pui_12860_freq5.txt	12860-12864	5 linhas	freq5
+pui_12865_histórico-de-execuções-dados-ilustrativo.txt	12865-12875	13 linhas	histórico de execuções (dados ilustrativos): cada execução tem identificação própria
+pui_12876_exst5.txt	12876-12876	1 linhas	EXST5
+pui_12877_estados-das-responsabilidades-sempre-íco.txt	12877-12878	3 linhas	estados das responsabilidades: sempre ícone e texto, nunca só cor
+pui_12879_ric5.txt	12879-12890	12 linhas	RIC5
+pui_12891_estados-do-conhecimento.txt	12891-12895	5 linhas	estados do conhecimento
+pui_12896_kic5.txt	12896-12900	5 linhas	KIC5
+pui_12901_a-memória-da-conta-em-uso-ganha-os-conhe.txt	12901-12908	8 linhas	a memória da conta em uso ganha os conhecimentos da V4.5; horário em conflito e mais vendidos desatualizado
+pui_12909_o-que-mudou-na-memória-dados-ilustrativo.txt	12909-12917	9 linhas	o que mudou na memória (dados ilustrativos), do mais recente para o mais antigo
+pui_12918_agb5.txt	12918-12918	2 linhas	AGB5
+pui_12919_key5.txt	12919-12919	1 linhas	KEY5
+pui_12920_sum5.txt	12920-12920	2 linhas	SUM5
+pui_12921_as-orientações-que-o-planejamento-semana.txt	12921-12922	2 linhas	as orientações que o planejamento semanal consulta (só entra o que está confirmado)
+pui_12923_short5.txt	12923-12923	1 linhas	SHORT5
+pui_12924_cad5.txt	12924-12925	2 linhas	CAD5
+pui_12926_v44p.txt	12926-12931	7 linhas	V44P
+pui_12932_bloco.txt	12932-12932	1 linhas	bloco
+pui_12933_estado-criado-na-primeira-vez-que-é-usad.txt	12933-12939	8 linhas	estado (criado na primeira vez que é usado)
+pui_12940_memória-um-conhecimento-com-tudo-o-que-o.txt	12940-13043	109 linhas	memória: um conhecimento com tudo o que o squad sabe dele
+pui_13044_ciclo-de-aprendizado-um-ajuste-pedido-à-.txt	13044-13055	13 linhas	ciclo de aprendizado: um ajuste pedido à Kaia vira sugestão (nunca regra)
+pui_13056_modo-autônomo-responsabilidades-as-da-co.txt	13056-13137	89 linhas	Modo Autônomo: responsabilidades (as da conta + as que a V4.5 demonstra)
+pui_13138_delegar-uma-conversa-não-um-formulário.txt	13138-13272	147 linhas	delegar: uma conversa, não um formulário
+pui_13273_o-planejamento-semanal-jornada-3-início-.txt	13273-13293	22 linhas	o planejamento semanal (jornada 3, Início e a página) passa pela delegação conversacional
+pui_13294_contexto-da-conversa-um-conhecimento-ou-.txt	13294-13392	113 linhas	contexto da conversa: um conhecimento ou uma responsabilidade
+pui_13393_roteador-ajuste-pedido-à-kaia-e-resposta.txt	13393-13457	68 linhas	roteador: ajuste pedido à Kaia e respostas livres durante a delegação
+pui_13458_orientações-da-memória-que-cada-responsa.txt	13458-13459	3 linhas	orientações da memória que cada responsabilidade consulta
+pui_13460_appr5.txt	13460-13460	3 linhas	APPR5
+pui_13461_lv5b.txt	13461-13465	5 linhas	LV5B
+pui_13466_pcs5.txt	13466-13473	9 linhas	pcs5
+pui_13474_bloco.txt	13474-13474	1 linhas	bloco
+pui_13475_uma-responsabilidade-pronta-para-a-tela.txt	13475-13509	39 linhas	uma responsabilidade, pronta para a tela
+pui_13510_modo-autônomo-página.txt	13510-13609	125 linhas	Modo Autônomo · página
+pui_13610_memória-da-marca-página.txt	13610-13707	128 linhas	Memória da Marca · página
+pui_13708_cartões-na-conversa.txt	13708-13759	61 linhas	cartões na conversa
+pui_13760_v4-5-ajuste-precisa-de-você-em-faixa.txt	13760-13764	5 linhas	V4.5 · ajuste: "Precisa de você" em faixa
+pui_13765_ndk5.txt	13765-13765	2 linhas	NDK5
+pui_13766_v45p.txt	13766-13767	2 linhas	V45P
+pui_13768_pendências-globais-as-mesmas-do-início-e.txt	13768-13840	84 linhas	pendências globais (as mesmas do Início e de Projetos), em texto de faixa
+pui_13841_v4-6-consolidação-visual-padronização-ux.txt	13841-13846	6 linhas	V4.6 · consolidação visual + padronização UX
+pui_13847_fontes-das-oportunidades-que-já-existiam.txt	13847-13855	9 linhas	fontes das oportunidades que já existiam (mesmos dados da V4.5; só passam a aparecer junto da leitura)
+pui_13856_o-texto-de-status-que-já-existia-a-famíl.txt	13856-13858	4 linhas	o texto de status que já existia → a família visual única (Aguardando você, Em andamento, Programado, Concluído, Pausado, Bloqueado, Erro)
+pui_13859_stk6.txt	13859-13859	2 linhas	stk6
+pui_13860_v46p.txt	13860-13861	2 linhas	V46P
+pui_13862_bloco.txt	13862-13862	1 linhas	bloco
+pui_13863_precisa-de-você-o-especialista-aparece-r.txt	13863-13873	11 linhas	Precisa de você: o especialista aparece (rosto + nome), não só a cor
+pui_13874_status-o-mesmo-desenho-para-o-mesmo-esta.txt	13874-13962	90 linhas	status: o mesmo desenho para o mesmo estado
+pui_strings.tsv	-	3063 linhas	literais de texto em português do script
