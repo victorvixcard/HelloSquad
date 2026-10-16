@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
 import { siteUrl } from "@/lib/env";
 import { OPEN_GRAPH_BASE, SITE } from "@/lib/site";
 import { gabarito, jetbrainsMono } from "./fonts";
@@ -19,14 +21,17 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
   return (
-    <html lang="pt-BR" className={`${gabarito.variable} ${jetbrainsMono.variable}`}>
-      <body>{children}</body>
+    <html lang={locale} className={`${gabarito.variable} ${jetbrainsMono.variable}`}>
+      <body>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      </body>
     </html>
   );
 }

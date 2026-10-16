@@ -1,6 +1,7 @@
 import path from "node:path";
 import { loadEnvConfig } from "@next/env";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 import { webEnvProblems } from "./lib/env";
 import { contentSecurityPolicy, SECURITY_HEADERS } from "./lib/security-headers";
 
@@ -42,4 +43,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Catálogo de mensagens (ADR-0010): next-intl lê o idioma e as mensagens de i18n/request.ts.
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
+export default withNextIntl(nextConfig);
