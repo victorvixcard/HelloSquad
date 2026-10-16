@@ -11,6 +11,7 @@ from psycopg.types.json import Jsonb
 
 from hellosquad.api.deps import CurrentPrincipal, DatabaseDep, ensure_workspace
 from hellosquad.api.errors import ApiError, error_responses
+from hellosquad.i18n import t
 from hellosquad.work.schemas import (
     MilestoneCreate,
     MilestonePage,
@@ -18,6 +19,7 @@ from hellosquad.work.schemas import (
     ProjectCreate,
     ProjectDetail,
     ProjectMilestone,
+    ProjectOwner,
     ProjectParticipant,
     ProjectParticipantsSet,
     ProjectUpdate,
@@ -44,7 +46,7 @@ order by pp.agent_id = p.owner_agent_id desc, pp.created_at, pp.agent_id
 MILESTONE_COLUMNS = """
 m.id, m.project_id, m.title, m.summary, m.agent_id::text, m.kind, m.due_at, m.needs_you,
 m.planned, m.done_at is not null as done, m.done_at, m.work_item_id, m.approval_id, m.created_at,
-m.updated_at
+m.updated_at, m.step_id
 """
 
 MILESTONES = f"""
@@ -77,6 +79,16 @@ SET_PARTICIPANTS = "select project_id from app.set_project_participants(%s, %s) 
 ADD_MILESTONE = "select id from app.add_project_milestone(%s, %s, %s, %s, %s, %s, %s, %s)"
 UPDATE_MILESTONE = "select id from app.update_project_milestone(%s, %s)"
 
+OWNER = """
+select m.user_id, s.locale
+from public.projects p
+join public.workspaces s on s.id = p.workspace_id
+join public.memberships m on m.workspace_id = p.workspace_id and m.role = 'owner'
+where p.id = %s
+order by m.created_at, m.user_id
+limit 1
+"""
+
 REQUIRED_PROJECT_FIELDS = ("name", "status", "owner_agent_id")
 
 
@@ -86,10 +98,17 @@ async def load_project(conn: AsyncConnection[DictRow], project_id: UUID) -> Proj
         raise ApiError(404, "not_found", "Projeto não encontrado.")
     participants = await (await conn.execute(PARTICIPANTS, (project_id,))).fetchall()
     milestones = await (await conn.execute(MILESTONES, (project_id,))).fetchall()
+    owner = await (await conn.execute(OWNER, (project_id,))).fetchone()
     return ProjectDetail(
         **row,
         participants=[ProjectParticipant(**p) for p in participants],
         milestones=[ProjectMilestone(**m) for m in milestones],
+        owner=ProjectOwner(
+            user_id=owner["user_id"],
+            responsibility=t(owner["locale"], "project.owner_responsibility"),
+        )
+        if owner
+        else None,
     )
 
 

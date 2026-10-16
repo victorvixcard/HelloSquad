@@ -15,7 +15,7 @@ from hellosquad.approvals.routes import APPROVAL_SELECT, approval_from_row
 from hellosquad.autonomy.schemas import RunSummary
 from hellosquad.domain import WorkItemStatus
 from hellosquad.i18n import t
-from hellosquad.work.live import history_text, live_fields
+from hellosquad.work.live import history_text, live_fields, step_reason
 from hellosquad.work.schemas import (
     Delivery,
     DeliveryFile,
@@ -65,7 +65,8 @@ select w.id, w.workspace_id, w.project_id, w.conversation_id, w.origin_message_i
        op.name as origin_project_name,
        pa.id as pending_approval_id, pa.kind as pending_kind, pa.version_no as pending_version_no,
        pa.due_at as pending_due_at, pa.agent_id as pending_agent_id,
-       pa.deferred as pending_deferred, dv.approved_version_no
+       pa.deferred as pending_deferred, dv.approved_version_no,
+       st.step_total, coalesce(st.step_active, st.step_next) as step_current
 from public.work_items w
 join public.workspaces s on s.id = w.workspace_id
 left join public.messages om on om.id = w.origin_message_id
@@ -91,6 +92,13 @@ left join lateral (
   join public.deliveries d on d.id = v.delivery_id
   where d.work_item_id = w.id
 ) dv on true
+left join lateral (
+  select count(*) as step_total,
+         min(s.seq) filter (where s.status in ('in_progress', 'needs_you')) as step_active,
+         min(s.seq) filter (where s.status = 'pending') as step_next
+  from public.work_item_steps s
+  where s.work_item_id = w.id and s.delivery_type is not null
+) st on true
 """
 
 LIST_WORK_ITEMS = f"""
@@ -169,7 +177,19 @@ def work_item_fields(row: dict) -> dict:
         "origin": origin_of(row),
         "awaiting_you": pending is not None and not pending.deferred,
         "pending_approval": pending,
+        "step_label": t(
+            row["locale"], "work.step_label", seq=row["step_current"], total=row["step_total"]
+        )
+        if row.get("step_total") and row.get("step_current")
+        else None,
     }
+
+
+def work_step(locale: str, row: dict) -> WorkItemStep:
+    params = row.pop("status_params") or {}
+    return WorkItemStep(
+        **row, status_reason_label=step_reason(locale, row["status_reason"], params)
+    )
 
 
 def history_entry(locale: str, row: dict, origin: WorkItemOrigin | None) -> WorkItemHistoryEntry:
@@ -182,14 +202,18 @@ def history_entry(locale: str, row: dict, origin: WorkItemOrigin | None) -> Work
 
 
 STEPS = """
-select s.id, s.seq, s.title, s.agent_id::text, s.status::text, s.started_at, s.finished_at
+select s.id, s.seq, s.title, s.agent_id::text, s.status::text, s.started_at, s.finished_at,
+       s.delivery_type, s.depends_on, s.input ->> 'responsabilidade' as responsibility,
+       s.input ->> 'instrucao' as instruction, s.status_reason, s.status_params,
+       (s.output ->> 'delivery_version_id')::uuid as delivery_version_id,
+       (s.output ->> 'version_no')::integer as version_no
 from public.work_item_steps s
 where s.work_item_id = %s
 order by s.seq
 """
 
 DELIVERIES = """
-select d.id, d.kind, d.current_version_id, d.created_at, d.updated_at
+select d.id, d.kind, d.current_version_id, d.step_id, d.created_at, d.updated_at
 from public.deliveries d
 where d.work_item_id = %s
 order by d.created_at, d.id
@@ -370,7 +394,7 @@ async def get_work_item(
         **fields,
         briefing=briefing["briefing"],
         history=[history_entry(item["locale"], row, fields["origin"]) for row in history],
-        steps=[WorkItemStep(**step) for step in steps],
+        steps=[work_step(item["locale"], step) for step in steps],
         deliveries=[
             Delivery(**delivery, versions=versions_by_delivery[delivery["id"]])
             for delivery in deliveries

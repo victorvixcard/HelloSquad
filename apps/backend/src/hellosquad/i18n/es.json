@@ -25,5 +25,6 @@
   "history.step.blocked": "Etapa {seq} · {title} bloqueada: {reason}",
   "history.step.done": "Etapa {seq} · {title} terminada",
   "history.step.failed": "Etapa {seq} · {title} falló; las anteriores siguen",
-  "project.owner_responsibility": "decide cada entrega"
+  "project.owner_responsibility": "decide cada entrega",
+  "list.last_separator": " y "
 }

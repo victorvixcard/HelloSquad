@@ -21,13 +21,13 @@ from psycopg.rows import dict_row
 from psycopg_pool import AsyncConnectionPool
 
 from hellosquad.config import Settings, get_settings
+from hellosquad.creative.image_engine import build_image_engine
 from hellosquad.i18n import DEFAULT_LOCALE, catalog, t
 from hellosquad.llm.base import LLMClient, LLMError
 from hellosquad.llm.factory import build_llm_client
 from hellosquad.memory.embeddings import build_embeddings
 from hellosquad.research.websearch import WebSearch, build_web_search
 from hellosquad.runtime import configure_logging
-from hellosquad.creative.image_engine import build_image_engine
 from hellosquad.squad.flow import FlowError, Squad, run_flow, run_reply
 from hellosquad.squad.loader import SquadLoader
 from hellosquad.squad.reflect import PromotionRules, ReflectionStore, run_reflection
@@ -430,6 +430,10 @@ def summary(result: dict[str, Any]) -> str:
     if result["outcome"] == "asked":
         missing = ", ".join(result["missing"])
         return f"briefing incompleto ({missing}); pergunta enviada, trabalho em needs_you; {cost}"
+    if result["outcome"] == "planned":
+        return f"equipe com {result['steps']} etapas; primeira: {result['advanced']}; {cost}"
+    if result["outcome"] == "waiting_engine":
+        return f"etapa aguarda o motor de imagem; seguinte: {result['advanced']}; {cost}"
     revised = ", revisada uma vez na autoverificação" if result.get("revisions") else ""
     return (
         f"entrega v{result['version_no']}{revised}; revisão pedida, trabalho em needs_you; "

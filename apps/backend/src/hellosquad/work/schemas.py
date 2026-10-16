@@ -59,10 +59,20 @@ class ProjectMilestone(BaseModel):
     approval_id: UUID | None = Field(description="Pendência em que o marco virou decisão.")
     created_at: datetime
     updated_at: datetime
+    step_id: UUID | None = Field(default=None, description="Etapa do trabalho coordenado.")
+
+
+class ProjectOwner(BaseModel):
+    user_id: UUID
+    role: Literal["owner"] = "owner"
+    responsibility: str = Field(examples=["decide cada entrega"])
 
 
 class ProjectDetail(Project):
     participants: list[ProjectParticipant] = Field(description="Quem conduz primeiro.")
+    owner: ProjectOwner | None = Field(
+        default=None, description="O dono da conta: participa do projeto e decide cada entrega."
+    )
     milestones: list[ProjectMilestone] = Field(description="Por data; sem data por último.")
     work_item_count: int = Field(description='"Trabalhos pedidos neste projeto · N".')
 
@@ -284,6 +294,11 @@ class WorkItem(BaseModel):
     pending_approval: PendingApprovalSummary | None = Field(
         default=None, description="A pendência aberta (a que depende de você primeiro)."
     )
+    step_label: str | None = Field(
+        default=None,
+        description='Trabalho coordenado: a etapa em que está ("etapa 1 de 3").',
+        examples=["etapa 1 de 3"],
+    )
 
 
 class WorkItemHistoryEntry(BaseModel):
@@ -291,7 +306,7 @@ class WorkItemHistoryEntry(BaseModel):
     actor_type: MessageAuthorType
     actor_user_id: UUID | None
     agent_id: AgentId | None
-    kind: Literal["requested", "delivered", "decided"]
+    kind: Literal["requested", "delivered", "decided", "team", "step"]
     text: str = Field(examples=["Você aprovou a v2"])
     mark: Literal["automatic", "approved_by_you"] | None = Field(
         description='"automático" ou "aprovado por você".'
@@ -319,10 +334,35 @@ class WorkItemStep(BaseModel):
     id: UUID
     seq: int
     title: str
-    agent_id: AgentId | None
+    agent_id: AgentId | None = Field(description="Responsável pela etapa.")
     status: WorkItemStepStatus
     started_at: datetime | None
     finished_at: datetime | None
+    delivery_type: str | None = Field(
+        default=None,
+        description="Etapa planejada pelo Nexo (01.02): a delivery da etapa. Nulo = fase do run.",
+        examples=["02.04"],
+    )
+    depends_on: list[int] = Field(
+        default_factory=list, description="Etapas (seq) cuja saída esta etapa lê antes de começar."
+    )
+    responsibility: str | None = Field(
+        default=None, description="Como aparece na equipe.", examples=["estratégia e conceito"]
+    )
+    instruction: str | None = Field(default=None, description="O recorte do pedido para a etapa.")
+    status_reason: str | None = Field(
+        default=None,
+        description="Código do motivo (image_engine_pending, depends_on_step, work_cancelled).",
+    )
+    status_reason_label: str | None = Field(
+        default=None,
+        description="O motivo no idioma do workspace.",
+        examples=["Aguardando o motor de imagem"],
+    )
+    delivery_version_id: UUID | None = Field(
+        default=None, description="A versão que a etapa entregou ou que a fechou (saída)."
+    )
+    version_no: int | None = None
 
 
 class DeliveryFile(BaseModel):
@@ -352,6 +392,7 @@ class Delivery(BaseModel):
     id: UUID
     kind: str = Field(examples=["caption"])
     current_version_id: UUID | None
+    step_id: UUID | None = Field(default=None, description="Etapa do trabalho coordenado.")
     created_at: datetime
     updated_at: datetime
     versions: list[DeliveryVersion] = Field(description="Da primeira à mais recente.")

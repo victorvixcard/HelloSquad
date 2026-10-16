@@ -89,7 +89,52 @@ def history_text(locale: str, entry: dict[str, Any], origin: dict[str, Any]) -> 
         return requested_text(locale, entry, origin)
     if kind == "delivered":
         return t(locale, "history.delivered", version=params.get("version_no"))
+    if kind == "team":
+        return t(
+            locale,
+            "history.team",
+            agent=agent_name(locale, entry.get("agent_id") or entry.get("actor_agent_id")),
+            agents=names(locale, params.get("agents") or []),
+        )
+    if kind == "step":
+        return step_text(locale, entry, params)
     return decided_text(locale, params)
+
+
+def names(locale: str, agent_ids: list[str]) -> str:
+    """ "Bia, Kaia e Otto" no idioma do workspace."""
+    found = [agent_name(locale, a) for a in agent_ids]
+    if len(found) < 2:
+        return "".join(found)
+    return ", ".join(found[:-1]) + t(locale, "list.last_separator") + found[-1]
+
+
+def step_reason(locale: str, reason: str | None, params: dict[str, Any]) -> str | None:
+    """Motivo do estado da etapa ("Aguardando o motor de imagem"), pelo catálogo."""
+    if reason is None:
+        return None
+    if reason == "depends_on_step":
+        return t(
+            locale,
+            f"work_item_step.reason.depends_on_step.{params.get('status')}",
+            seq=params.get("seq"),
+            title=params.get("title"),
+        )
+    return t(locale, f"work_item_step.reason.{reason}")
+
+
+def step_text(locale: str, entry: dict[str, Any], params: dict[str, Any]) -> str:
+    status = params.get("status")
+    fields = {
+        "agent": agent_name(locale, entry.get("agent_id") or entry.get("actor_agent_id")),
+        "seq": params.get("seq"),
+        "title": params.get("title"),
+    }
+    if status == "blocked":
+        fields["reason"] = step_reason(
+            locale, params.get("reason"), params.get("reason_params") or {}
+        )
+    return t(locale, f"history.step.{status}", **fields)
 
 
 def requested_text(locale: str, entry: dict[str, Any], origin: dict[str, Any]) -> str:

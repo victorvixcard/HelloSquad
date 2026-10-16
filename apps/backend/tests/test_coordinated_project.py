@@ -186,7 +186,12 @@ async def test_coordinated_campaign_closes_with_one_owner_per_step(
     )
     needs = await api.get(f"/workspaces/{miolo}/needs", headers=headers)
     assert needs.status_code == 200, needs.text
-    assert needs.json()["count"] == 1
+    ours = [
+        n["approval"]
+        for n in needs.json()["items"]
+        if n.get("approval") and n["approval"]["id"] == str(strategy["id"])
+    ]
+    assert [(a["kind"], a["requested_by_agent_id"]) for a in ours] == [("review", "bia")]
 
     detail = await api.get(f"/work-items/{work_id}", headers=headers)
     assert detail.status_code == 200, detail.text
@@ -245,9 +250,9 @@ async def test_coordinated_campaign_closes_with_one_owner_per_step(
         "'squad.delegar'",
         otto_run,
     )
-    assert [(d["payload"]["agent_id"], d["payload"]["to"], d["payload"]["step"]) for d in delegated] == [
-        ("nexo", "otto", 3)
-    ]
+    assert [
+        (d["payload"]["agent_id"], d["payload"]["to"], d["payload"]["step"]) for d in delegated
+    ] == [("nexo", "otto", 3)]
     texts_version = await scalar(
         admin_db,
         "select v.content from public.delivery_versions v join public.deliveries d "
@@ -326,7 +331,8 @@ async def test_step_that_depends_on_the_image_is_blocked_with_the_reason(
     assert await drain() == ["planned", "delivered"]
     # Os textos passam a precisar da peça: dependem da etapa 2 (a da Kaia).
     await admin_db.execute(
-        "update public.work_item_steps set depends_on = '{1,2}' where work_item_id = %s and seq = 3",
+        "update public.work_item_steps set depends_on = '{1,2}' "
+        "where work_item_id = %s and seq = 3",
         (work_id,),
     )
     await approve(api, access_token, (await pending(admin_db, work_id))["id"])
@@ -338,7 +344,9 @@ async def test_step_that_depends_on_the_image_is_blocked_with_the_reason(
     assert blocked[3]["status_reason"] == "depends_on_step"
     assert blocked[3]["status_params"]["seq"] == 2
     assert blocked[3]["status_params"]["status"] == "waiting_engine"
-    status = await scalar(admin_db, "select status::text from public.work_items where id = %s", work_id)
+    status = await scalar(
+        admin_db, "select status::text from public.work_items where id = %s", work_id
+    )
     assert status == "blocked"
     assert [r["seq"] for r in await step_runs(admin_db, work_id)] == [None, 1, 2]
 
@@ -359,7 +367,9 @@ async def test_failed_step_keeps_the_earlier_ones(api, access_token, admin_db) -
     assert failed[1]["status"] == "done"
     assert failed[2]["status"] == "waiting_engine"
     assert failed[3]["status"] == "failed"
-    status = await scalar(admin_db, "select status::text from public.work_items where id = %s", work_id)
+    status = await scalar(
+        admin_db, "select status::text from public.work_items where id = %s", work_id
+    )
     assert status == "failed"
     approved = await scalar(
         admin_db,
@@ -390,4 +400,8 @@ async def test_vague_campaign_gets_a_question_before_the_team(api, access_token,
     work_id = work.json()["id"]
     assert await steps(admin_db, work_id) == []
     question = await pending(admin_db, work_id)
-    assert (question["kind"], question["agent_id"], question["step_id"]) == ("respond", "nexo", None)
+    assert (question["kind"], question["agent_id"], question["step_id"]) == (
+        "respond",
+        "nexo",
+        None,
+    )

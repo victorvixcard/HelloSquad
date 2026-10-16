@@ -25,5 +25,6 @@
   "history.step.blocked": "Step {seq} · {title} blocked: {reason}",
   "history.step.done": "Step {seq} · {title} done",
   "history.step.failed": "Step {seq} · {title} failed; the earlier ones stay",
-  "project.owner_responsibility": "decides on every delivery"
+  "project.owner_responsibility": "decides on every delivery",
+  "list.last_separator": " and "
 }

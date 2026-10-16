@@ -234,5 +234,6 @@
   "history.step.blocked": "Etapa {seq} · {title} bloqueada: {reason}",
   "history.step.done": "Etapa {seq} · {title} concluída",
   "history.step.failed": "Etapa {seq} · {title} falhou; as anteriores continuam",
-  "project.owner_responsibility": "decide cada entrega"
+  "project.owner_responsibility": "decide cada entrega",
+  "list.last_separator": " e "
 }
