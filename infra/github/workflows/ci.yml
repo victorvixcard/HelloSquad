@@ -49,6 +49,11 @@ jobs:
     timeout-minutes: 15
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      # O next.config.ts valida estas variáveis no build. Valores públicos e fictícios: o build não
+      # chama a Auth nem a API.
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:56321
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_ficticia
+      API_URL: http://127.0.0.1:8100
     steps:
       - uses: actions/checkout@v7
         with:

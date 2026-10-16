@@ -1,0 +1,20 @@
+# A0b, H0-05 — validação do env no boot (next.config.ts). Valores fictícios; a chave nunca aparece no log.
+
+$ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_secret_<ficticia> pnpm --filter web build   -> exit 1
+ ⨯ Failed to load next.config.ts, see more info here https://nextjs.org/docs/messages/next-config-error
+Error: Configuração do web inválida no .env da raiz (docs/SETUP_LOCAL.md):
+  - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY recebeu a chave secreta (sb_secret_…), que ignora a RLS e nunca pode ir para o browser. Use a publicável (sb_publishable_…).
+
+$ NEXT_PUBLIC_SUPABASE_URL=ftp://… API_URL=nao-e-url NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=chave-qualquer pnpm --filter web build   -> exit 1
+Error: Configuração do web inválida no .env da raiz (docs/SETUP_LOCAL.md):
+  - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY não começa com sb_publishable_. Use a chave publicável.
+  - NEXT_PUBLIC_SUPABASE_URL ausente ou inválida: esperado um endereço http(s)://…
+  - API_URL ausente ou inválida: esperado um endereço http(s)://…
+
+$ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_secret_<ficticia> next start --port 3101   -> exit 1, porta 3101 nunca escutou
+ ⨯ Failed to load next.config.ts, see more info here https://nextjs.org/docs/messages/next-config-error
+Error: Configuração do web inválida no .env da raiz (docs/SETUP_LOCAL.md):
+  - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY recebeu a chave secreta (sb_secret_…), que ignora a RLS e nunca pode ir para o browser. Use a publicável (sb_publishable_…).
+
+$ (sem .env, env do CI) pnpm --filter web build   -> exit 0
+$ pnpm --filter web build   -> exit 0

@@ -1,6 +1,7 @@
 import path from "node:path";
 import { loadEnvConfig } from "@next/env";
 import type { NextConfig } from "next";
+import { webEnvProblems } from "./lib/env";
 import { contentSecurityPolicy, SECURITY_HEADERS } from "./lib/security-headers";
 
 // O .env do HelloSquad fica na raiz do monorepo (um só arquivo para API, banco e web).
@@ -9,6 +10,14 @@ import { contentSecurityPolicy, SECURITY_HEADERS } from "./lib/security-headers"
 const repoRoot = path.resolve(__dirname, "../..");
 const dev = process.env.NODE_ENV !== "production";
 loadEnvConfig(repoRoot, dev, { info: () => {}, error: console.error }, true);
+
+// Falha cedo (H0-05): env inválido derruba o build e o start, em vez de virar 500 por requisição.
+const envProblems = webEnvProblems(process.env);
+if (envProblems.length > 0) {
+  throw new Error(
+    `Configuração do web inválida no .env da raiz (docs/SETUP_LOCAL.md):\n  - ${envProblems.join("\n  - ")}`,
+  );
+}
 
 // CSP das páginas estáticas (sem nonce). Nas rotas do middleware ele a troca pela versão com nonce.
 const staticCsp = contentSecurityPolicy({ supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL, dev });
