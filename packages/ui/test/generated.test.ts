@@ -54,3 +54,16 @@ describe("identidade extraída do handoff V4.6", () => {
     }
   });
 });
+
+describe("CSS da Product UI V4.6", () => {
+  it("src/generated/product-ui.css está em dia com o <style> do protótipo (rode pnpm --filter @hellosquad/ui extract:css)", async () => {
+    const { buildProductUiCss, OUT_CSS, PRODUCT_UI } = await import("../scripts/extract-product-ui-css");
+    expect(readFileSync(OUT_CSS, "utf8")).toBe(buildProductUiCss(readFileSync(PRODUCT_UI, "utf8")));
+  });
+
+  it("usa as fontes locais do DS, nunca o nome da família do Google Fonts", () => {
+    const css = readFileSync(path.join(OUT_DIR, "product-ui.css"), "utf8");
+    expect(css).not.toMatch(/'(Gabarito|JetBrains Mono)'/);
+    expect(css).not.toContain("fonts.googleapis");
+  });
+});

@@ -12,14 +12,16 @@
     ".": "./src/index.ts",
     "./styles.css": "./src/styles.css",
     "./tokens.css": "./src/tokens.css",
-    "./fonts/*": "./src/fonts/*"
+    "./fonts/*": "./src/fonts/*",
+    "./product-ui.css": "./src/generated/product-ui.css"
   },
   "scripts": {
     "build:tokens": "node scripts/build-tokens.ts",
     "extract:ds": "node scripts/extract-ds.ts",
-    "generate": "node scripts/build-tokens.ts && node scripts/extract-ds.ts",
+    "generate": "node scripts/build-tokens.ts && node scripts/extract-ds.ts && node scripts/extract-product-ui-css.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "extract:css": "node scripts/extract-product-ui-css.ts"
   },
   "peerDependencies": {
     "react": "^19.1.0",
