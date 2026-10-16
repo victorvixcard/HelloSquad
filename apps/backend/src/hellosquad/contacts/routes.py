@@ -7,6 +7,10 @@ e-mail só no domínio reservado `.example`); as linhas válidas entram por `app
 que confere de novo o papel e o consentimento e marca como duplicata quem já está na base. Linha
 sem consentimento é recusada. O relatório traz número da linha e motivo, sem o dado da linha
 recusada. Nada aqui envia mensagem.
+
+S2g (H2-17, H2-18): consentimento se revoga pela rota (owner ou admin, com auditoria) ou
+reimportando o contato que já está na base com "não" explícito e nenhum "sim"; texto livre que
+começa como fórmula de planilha (`=`, `+`, `-`, `@`) é gravado com um apóstrofo na frente.
 """
 
 import csv
@@ -19,7 +23,7 @@ from typing import Any, Literal
 from uuid import UUID
 
 from fastapi import APIRouter, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from hellosquad.api.deps import CurrentPrincipal, DatabaseDep, ensure_workspace
 from hellosquad.api.errors import ApiError, error_responses
@@ -50,6 +54,7 @@ HEADER_ALIASES = {
     "compras": "compras",
 }
 REQUIRED_HEADERS = {"nome", "consentimento_email", "consentimento_whatsapp", "data_consentimento"}
+FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
 
 RefusalReason = Literal[
     "missing_name",
@@ -69,9 +74,16 @@ RefusalReason = Literal[
 ]
 
 IMPORT = """
-select id, file_name, source, total_rows, accepted_rows, refused_rows, refused, created_at
+select id, file_name, source, total_rows, accepted_rows, refused_rows, revoked_rows, refused,
+       created_at
 from app.import_contacts(%s, %s, %s, %s, %s::jsonb, %s::jsonb)
 """
+
+REVOKE = """
+select app.revoke_consent(%s, %s, %s, %s::public.consent_channel, %s) as result
+"""
+
+Channel = Literal["email", "whatsapp"]
 
 SUMMARY = """
 with state as (
@@ -131,8 +143,47 @@ class ContactImport(BaseModel):
     total_rows: int
     accepted_rows: int
     refused_rows: int
+    revoked_rows: int = Field(
+        default=0,
+        description=(
+            'Linhas de contatos que já estavam na base e revogaram o consentimento ("não" '
+            'explícito, nenhum "sim").'
+        ),
+    )
     refused: list[RefusedLine] = Field(description="Linhas recusadas: número e motivo, sem o dado.")
     created_at: datetime
+
+
+class ConsentRevocationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    email: str | None = Field(
+        default=None, max_length=254, description="E-mail do contato (este ou o telefone)."
+    )
+    phone: str | None = Field(
+        default=None, max_length=40, description="Telefone do contato, com DDD (este ou o e-mail)."
+    )
+    channel: Channel | None = Field(default=None, description="Canal revogado; sem ele, todos.")
+    source: str = Field(
+        min_length=1,
+        max_length=120,
+        description="Origem do pedido de revogação, registrada com ela.",
+        examples=["Pedido da cliente no balcão"],
+    )
+
+
+class ConsentState(BaseModel):
+    channel: Channel
+    status: Literal["granted", "revoked"]
+    given_at: date = Field(description="Data do consentimento ou da revogação vigente.")
+
+
+class ConsentRevocation(BaseModel):
+    contact_id: UUID
+    revoked: list[Channel] = Field(
+        description="Canais revogados agora (vazio quando já não havia consentimento vigente)."
+    )
+    consents: list[ConsentState] = Field(description="Consentimento vigente do contato por canal.")
 
 
 class ConsentCounts(BaseModel):
@@ -170,6 +221,11 @@ def _date(value: str) -> date | None:
         except ValueError:
             continue
     return None
+
+
+def neutralize_formula(value: str) -> str:
+    """Aberto numa planilha, texto que começa como fórmula vira texto (apóstrofo na frente)."""
+    return f"'{value}" if value.startswith(FORMULA_PREFIXES) else value
 
 
 def _phone(value: str) -> str | None:
@@ -240,7 +296,20 @@ def validate_row(row: dict[str, str], *, today: date, local: bool) -> tuple[str 
         return "invalid_consent", {}
     channels = [ch for ch, a in answers.items() if a in YES]
     if not channels:
-        return "no_consent", {}
+        # "Não" explícito: se o contato já está na base, o banco revoga o canal; senão, no_consent.
+        revoke = [ch for ch, a in answers.items() if a and a in NO]
+        if not revoke:
+            return "no_consent", {}
+        raw_date = row.get("data_consentimento") or ""
+        revoked_on = _date(raw_date) if raw_date else today
+        if revoked_on is None or revoked_on > today:
+            return "invalid_consent_date", {}
+        return None, {
+            "email": email,
+            "phone": phone,
+            "revoke": revoke,
+            "revoked_on": revoked_on.isoformat(),
+        }
     if ("email" in channels and email is None) or ("whatsapp" in channels and phone is None):
         return "consent_without_address", {}
     raw_date = row.get("data_consentimento") or ""
@@ -261,7 +330,7 @@ def validate_row(row: dict[str, str], *, today: date, local: bool) -> tuple[str 
             return "invalid_purchases_count", {}
         purchases = int(row["compras"])
     return None, {
-        "name": name[:120],
+        "name": neutralize_formula(name)[:120],
         "email": email,
         "phone": phone,
         "last_purchase_on": last_purchase.isoformat() if last_purchase else None,
@@ -294,7 +363,7 @@ async def import_contacts(
                 (
                     workspace_id,
                     payload.file_name,
-                    payload.source,
+                    neutralize_formula(payload.source),
                     total,
                     json.dumps(accepted),
                     json.dumps(refused),
@@ -326,3 +395,31 @@ async def contact_summary(
         sources=[ContactSource(**s) for s in row["sources"]],
         last_import_at=row["last_import_at"],
     )
+
+
+@router.post(
+    "/workspaces/{workspace_id}/contacts/consents/revocations",
+    summary="Revoga o consentimento de um contato (owner ou admin; vira histórico e auditoria)",
+    responses=error_responses(401, 403, 404, 422, 503),
+)
+async def revoke_consent(
+    workspace_id: UUID,
+    payload: ConsentRevocationRequest,
+    principal: CurrentPrincipal,
+    db: DatabaseDep,
+) -> ConsentRevocation:
+    email = (payload.email or "").strip().lower() or None
+    phone = _phone(payload.phone) if payload.phone else None
+    if payload.phone and phone is None:
+        raise ApiError(422, "invalid_phone", "Telefone inválido.")
+    if email is None and phone is None:
+        raise ApiError(422, "missing_address", "Informe o e-mail ou o telefone do contato.")
+    async with db.transaction_as(principal) as conn:
+        await ensure_workspace(conn, workspace_id)
+        row = await (
+            await conn.execute(
+                REVOKE,
+                (workspace_id, email, phone, payload.channel, neutralize_formula(payload.source)),
+            )
+        ).fetchone()
+    return ConsentRevocation(**row["result"])

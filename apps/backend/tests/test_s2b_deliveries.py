@@ -695,7 +695,7 @@ async def test_csv_import_refuses_without_consent_duplicates_and_real_emails(
         "and entity_id = %s",
         body["id"],
     )
-    assert audit["payload"] == {"total": 8, "accepted": 2, "refused": 6}
+    assert audit["payload"] == {"total": 8, "accepted": 2, "refused": 6, "revoked": 0}
 
 
 async def test_csv_import_permissions_and_invalid_files(api, access_token, admin_db, miolo):
