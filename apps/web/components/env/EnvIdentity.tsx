@@ -54,7 +54,12 @@ export function EnvIdentity({ agent, business }: { agent: AgentId; business: str
           shell.openConversation({
             conversationId: shell.conversationIds.direct[agent] ?? null,
             agent,
-            context: { kind: "env", label: area, href: `/app/${shell.workspace.slug}/squad/${agent}` },
+            context: {
+              kind: "env",
+              label: area,
+              href: `/app/${shell.workspace.slug}/squad/${agent}`,
+              meta: `${member.name} ${t(`describe.${agent}`, { business })}`,
+            },
           })
         }
       >

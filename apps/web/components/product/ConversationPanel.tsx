@@ -3,6 +3,7 @@
 import { Agent, CommandField, getAgent, Icon, PRODUCT_ICONS, SQUAD, type AgentId } from "@hellosquad/ui";
 import type { components } from "@hellosquad/contracts";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import {
@@ -79,6 +80,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const locale = useLocale();
   const shell = useShell();
   const live = useLive();
+  const router = useRouter();
   const squadEffect = useSquadEffect(actions);
   const { mode, target } = shell.conversation;
   const open = mode !== "off" && !!target;
@@ -88,6 +90,8 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState(false);
   const [threadsOpen, setThreadsOpen] = useState(false);
+  // Coluna "Contexto da conversa" (V4.6 `cv.rail`, ligada por padrão): só em tela cheia a partir de 940 px.
+  const [railOn, setRailOn] = useState(true);
   const opener = useRef<HTMLElement | null>(null);
   const section = useRef<HTMLElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -373,7 +377,24 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     if (adjust) shell.openConversation({ ...target, adjust: undefined, draft: undefined }, sameMode);
   }
 
-  const cls = baseCls + (suggestions.length ? " has-sug" : "");
+  // Cartão de contexto da V4.6 (`_vRail`, L10916): Ambiente, Tipo, Período (quando há), Negócio e Origem (quando há);
+  // quem responde; "Voltar para <Ambiente>". O que o cartão sabe vem de quem abriu a conversa.
+  const ctx = target.context;
+  const wide = mode === "full" && shell.layout.convW >= 940;
+  const envOf = agent ? tc(`areas.${agent.id}`) : "";
+  const envHref = ctx?.href ?? (agent ? `/app/${shell.workspace.slug}/squad/${agent.id}` : null);
+  const railFacts: Array<{ k: string; v: string }> = ctx
+    ? [
+        { k: t("rail.env"), v: envOf },
+        ...(ctx.kind === "env" ? [{ k: t("rail.type"), v: t("rail.typeEnv") }] : []),
+        ...(ctx.period ? [{ k: t("rail.period"), v: ctx.period }] : []),
+        { k: t("rail.business"), v: shell.workspace.name },
+        ...(ctx.origin ? [{ k: t("rail.origin"), v: ctx.origin }] : []),
+      ]
+    : [];
+  const showRail = wide && railOn && !!ctx && !!agent;
+
+  const cls = baseCls + (suggestions.length ? " has-sug" : "") + (showRail ? " has-rail" : "");
   let lastDay = "";
 
   return (
@@ -478,6 +499,20 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
             </div>
           </div>
           <div className="ps-cvh-a">
+            {wide && ctx && agent ? (
+              <button
+                type="button"
+                className={"ps-iconbtn" + (railOn ? " is-on" : "")}
+                aria-pressed={railOn}
+                aria-label={t("rail.toggle")}
+                title={t("rail.tip")}
+                onClick={() => setRailOn((v) => !v)}
+              >
+                <svg className="ps-ic" viewBox="0 0 18 18" aria-hidden="true">
+                  <path d={PRODUCT_ICONS.panel} />
+                </svg>
+              </button>
+            ) : null}
             {mode === "panel" ? (
               <button
                 type="button"
@@ -631,6 +666,44 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
               ) : null}
             </div>
           </div>
+          {showRail && ctx && agent ? (
+            <aside className="ps-rail" aria-label={t("rail.label")}>
+              <span className="ps-k">{t("rail.label")}</span>
+              <b className="ps-rail-t">{ctx.label}</b>
+              {ctx.meta ? <small className="ps-rail-s">{ctx.meta}</small> : null}
+              <dl className="ps-facts is-s">
+                {railFacts.map((f) => (
+                  <div key={f.k}>
+                    <dt>{f.k}</dt>
+                    <dd>{f.v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="ps-rail-pp">
+                <div className="ps-lr is-static">
+                  <Agent agent={agent.id} size={24} />
+                  <span className="ps-lr-t">
+                    <b>{agent.name}</b>
+                    <small>{t("rail.responds", { env: envOf })}</small>
+                  </span>
+                </div>
+              </div>
+              {envHref ? (
+                <div className="ps-rail-a">
+                  <button
+                    type="button"
+                    className="ps-mini"
+                    onClick={() => {
+                      shell.openConversation(target, "panel");
+                      router.push(envHref);
+                    }}
+                  >
+                    {t("rail.back", { env: envOf })}
+                  </button>
+                </div>
+              ) : null}
+            </aside>
+          ) : null}
         </div>
         <footer className="ps-cv-comp">
           <div className="ps-cfield">

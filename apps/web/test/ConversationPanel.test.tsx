@@ -233,6 +233,54 @@ describe("painel de conversa universal", () => {
     expect(screen.queryByRole("button", { name: "Pedir ajuste" })).toBeNull();
   });
 
+  it("tela cheia a partir de 940 px mostra o Contexto da conversa (V4.6 _vRail): fatos, quem responde e Voltar para", async () => {
+    const user = userEvent.setup();
+    const target = {
+      conversationId: "otto-1",
+      agent: "otto" as const,
+      context: {
+        kind: "work_item" as const,
+        label: "Legenda do sábado",
+        origin: "pedido na conversa com o Otto · 16/10",
+      },
+    };
+    const full = makeShell({
+      layout: productLayout({ vw: 1440, vh: 900, sideMin: null, mode: "full", pilot: false, pop: false }),
+      conversation: { mode: "full", target },
+    });
+    renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, full);
+    const rail = screen.getByRole("complementary", { name: "Contexto da conversa" });
+    expect(within(rail).getByText("Legenda do sábado")).toBeInTheDocument();
+    const facts = [...rail.querySelectorAll("dt")].map((dt) => `${dt.textContent}: ${dt.nextElementSibling?.textContent}`);
+    expect(facts).toEqual(["Ambiente: Conteúdo", "Negócio: Miolo", "Origem: pedido na conversa com o Otto · 16/10"]);
+    expect(within(rail).getByText("responde · Conteúdo")).toBeInTheDocument();
+    expect(within(rail).getByRole("button", { name: "Voltar para Conteúdo" })).toBeInTheDocument();
+    const toggle = screen.getByRole("button", { name: "Mostrar o contexto" });
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await user.click(toggle);
+    expect(screen.queryByRole("complementary", { name: "Contexto da conversa" })).toBeNull();
+  });
+
+  it("ambiente: Tipo Ambiente e a linha de apoio; no painel ao lado não há coluna de contexto", () => {
+    const target = {
+      conversationId: "otto-1",
+      agent: "otto" as const,
+      context: { kind: "env" as const, label: "Conteúdo", href: "/app/miolo/squad/otto", meta: "Otto cuida do conteúdo." },
+    };
+    const full = makeShell({
+      layout: productLayout({ vw: 1440, vh: 900, sideMin: null, mode: "full", pilot: false, pop: false }),
+      conversation: { mode: "full", target },
+    });
+    const { unmount } = renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, full);
+    const rail = screen.getByRole("complementary", { name: "Contexto da conversa" });
+    expect(within(rail).getByText("Otto cuida do conteúdo.")).toBeInTheDocument();
+    expect([...rail.querySelectorAll("dt")].map((dt) => dt.textContent)).toEqual(["Ambiente", "Tipo", "Negócio"]);
+    unmount();
+    renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, openShell());
+    expect(screen.queryByRole("complementary", { name: "Contexto da conversa" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Mostrar o contexto" })).toBeNull();
+  });
+
   it("Esc fecha e devolve o foco a quem abriu", async () => {
     const opener = document.createElement("button");
     opener.textContent = "Conversar com Otto";

@@ -60,7 +60,7 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
       shell.openConversation({
         conversationId: data.conversationId,
         agent: data.agent,
-        context: { kind: "work_item", label: data.title },
+        context: { kind: "work_item", label: data.title, origin: data.origin },
         draft: t("adjustDraft"),
         adjust: { approvalId: data.approval.id, workItemId: data.workItemId, version: v },
       });
@@ -109,7 +109,7 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
             variant="soft"
             size="s"
             icon={null}
-            onClick={() => shell.openConversation({ conversationId: data.conversationId, agent: data.agent, context: { kind: "work_item", label: data.title } })}
+            onClick={() => shell.openConversation({ conversationId: data.conversationId, agent: data.agent, context: { kind: "work_item", label: data.title, origin: data.origin } })}
           >
             {t("talk", { name: `${member.article === "a" ? "a" : "o"} ${member.name}` })}
           </Button>

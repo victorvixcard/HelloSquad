@@ -55,5 +55,18 @@
       "superseded": "Substituída pela v{next}"
     },
     "error": "Não deu para registrar agora. Tente de novo."
+  },
+  "rail": {
+    "label": "Contexto da conversa",
+    "toggle": "Mostrar o contexto",
+    "tip": "Contexto",
+    "env": "Ambiente",
+    "type": "Tipo",
+    "period": "Período",
+    "business": "Negócio",
+    "origin": "Origem",
+    "typeEnv": "Ambiente",
+    "responds": "responde · {env}",
+    "back": "Voltar para {env}"
   }
 }

@@ -9,6 +9,12 @@ export type ConversationContextRef = {
   kind: "env" | "work_item";
   label: string;
   href?: string;
+  /** Linha de apoio do cartão de contexto (V4.6 `cx.meta`, ex.: "Otto cuida do calendário…"). */
+  meta?: string;
+  /** Período do objeto, quando há (indicadores e canais, V4.6 `cx.period`). */
+  period?: string;
+  /** De onde a conversa veio (V4.6 `cx.filters`, ex.: "Calendário · semana"; trabalho: "pedido na conversa com o Otto · 16/10"). */
+  origin?: string;
 };
 
 export type ConversationTarget = {
