@@ -1,0 +1,23 @@
+== curl -I /
+HTTP/1.1 200 OK
+X-Frame-Options: DENY
+Referrer-Policy: strict-origin-when-cross-origin
+X-Content-Type-Options: nosniff
+Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' http://127.0.0.1:56321 http://localhost:56321
+== curl -I /entrar
+HTTP/1.1 200 OK
+X-Frame-Options: DENY
+Referrer-Policy: strict-origin-when-cross-origin
+X-Content-Type-Options: nosniff
+Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+content-security-policy: default-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self' 'nonce-eIhaxD6ErVVnyXXrqcsqtg==' 'strict-dynamic'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' http://127.0.0.1:56321 http://localhost:56321
+== curl -I /app
+HTTP/1.1 307 Temporary Redirect
+X-Frame-Options: DENY
+Referrer-Policy: strict-origin-when-cross-origin
+X-Content-Type-Options: nosniff
+Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+content-security-policy: default-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self' 'nonce-wKt2c35X0XUqY6g/0wliTQ==' 'strict-dynamic'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' http://127.0.0.1:56321 http://localhost:56321
+X-Robots-Tag: noindex, nofollow
+location: /entrar?next=%2Fapp

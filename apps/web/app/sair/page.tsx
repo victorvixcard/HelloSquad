@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// Dinâmica: o middleware manda o nonce da CSP a cada requisição (lib/security-headers.ts).
+export const dynamic = "force-dynamic";
+
 // Sair é sempre um POST (formulário): um link ou prefetch nunca encerra a sessão por engano.
 export default function SairPage() {
   return (

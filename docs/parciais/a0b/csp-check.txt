@@ -1,0 +1,10 @@
+OK   / status=200 csp=estática violações=0 console_csp=0 erros=0 hidratada=true scripts=23 com_nonce=0
+      controle XSS: <script> RODOU, onerror= RODOU
+OK   /entrar status=200 csp=nonce violações=0 console_csp=0 erros=0 hidratada=true scripts=18 com_nonce=18
+      controle XSS: <script> barrado, onerror= barrado
+OK   /criar-conta status=200 csp=nonce violações=0 console_csp=0 erros=0 hidratada=true scripts=17 com_nonce=17
+      controle XSS: <script> barrado, onerror= barrado
+OK   /sair status=200 csp=nonce violações=0 console_csp=0 erros=0 hidratada=true scripts=17 com_nonce=17
+      controle XSS: <script> barrado, onerror= barrado
+controle: iframe de /entrar recusado; Framing 'http://127.0.0.1:3101/' violates the following Content Security Policy directive: "frame-ancestors 'none'". The
+csp-check: 0 violação, todas hidratadas

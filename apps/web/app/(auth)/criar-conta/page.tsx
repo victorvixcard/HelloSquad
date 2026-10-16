@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/criar-conta" },
 };
 
+// Dinâmica: o middleware manda o nonce da CSP a cada requisição (lib/security-headers.ts).
+export const dynamic = "force-dynamic";
+
 export default function CriarContaPage() {
   return (
     <section className="hs-sheet" aria-labelledby="criar-titulo">
