@@ -29,7 +29,7 @@ export function Inline({ text }: { text: string }) {
 
 /**
  * Blocos do conteúdo: parágrafo, listas, tabela (em `<table>`, que os assistentes de IA citam) e pergunta com resposta.
- * `label` nomeia a área rolável da tabela no celular (teclado e leitor de tela).
+ * `label` vira a legenda da tabela (o título da seção), lida pelo leitor de tela e escondida na tela.
  */
 export function Blocks({ blocks, label }: { blocks: SiteBlock[]; label?: string }) {
   return blocks.map((block, i) => {
@@ -55,8 +55,10 @@ export function Blocks({ blocks, label }: { blocks: SiteBlock[]; label?: string 
       }
       case "table":
         return (
-          <div key={i} className="st-table" role="region" aria-label={label} tabIndex={0}>
+          // Foco de teclado para rolar a tabela no celular; o nome vem da seção (o <section> com o título já é a região).
+          <div key={i} className="st-table" tabIndex={0}>
             <table>
+              {label ? <caption className="sr-only">{label}</caption> : null}
               <thead>
                 <tr>
                   {block.head.map((cell, j) => (

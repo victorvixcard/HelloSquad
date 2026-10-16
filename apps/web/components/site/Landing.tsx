@@ -137,8 +137,8 @@ export async function Landing({ locale }: { locale: Locale }) {
             <br />
             {tl("compareTitleLine2")}
           </h2>
-          <div className="st-table lp-compare" role="region" aria-labelledby="lp-comparativo" tabIndex={0}>
-            <table>
+          <div className="st-table lp-compare" tabIndex={0}>
+            <table aria-labelledby="lp-comparativo">
               <thead>
                 <tr>
                   <th scope="col">{tl("compareWhat")}</th>
