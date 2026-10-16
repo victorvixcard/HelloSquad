@@ -89,6 +89,9 @@ class WorkItemStatus(StrEnum):
 class WorkItemStepStatus(StrEnum):
     pending = "pending"
     in_progress = "in_progress"
+    needs_you = "needs_you"
+    waiting_engine = "waiting_engine"
+    blocked = "blocked"
     done = "done"
     failed = "failed"
     skipped = "skipped"
@@ -211,6 +214,7 @@ class RunContextKind(StrEnum):
     fact = "fact"
     suggestion = "suggestion"
     learning = "learning"
+    step = "step"
 
 
 class ReflectionOutcome(StrEnum):
