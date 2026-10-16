@@ -3,8 +3,9 @@
 Pedido na conversa direta → trabalho → worker (fixtures) → entrega revisável com cartão, status por
 etapa e crédito capturado uma vez → aprovação da dona da conta. Mais: os números das entregas
 saem da base de contatos e de `metrics_daily`, nunca do modelo; nada é investido nem enviado;
-estado vazio pede importação ou conexão sem cobrar; a Íris não afirma causa sem evidência (fixtures e fluxo); a
-importação de CSV recusa linha sem consentimento, duplicata e e-mail fora de `.example` no local.
+estado vazio pede importação ou conexão sem cobrar; a Íris não afirma causa sem evidência
+(fixtures e fluxo); a importação de CSV recusa linha sem consentimento, duplicata e e-mail fora de
+`.example` no local.
 Cada teste termina reaplicando o seed.
 """
 
