@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "title": "HelloSquad: your AI squad takes over the marketing",
+    "description": "HelloSquad is an AI marketing team for small and medium-sized businesses: seven specialists who share your brand’s memory and work together. You make the decisions."
+  },
+  "definition": "HelloSquad works like an AI marketing team for small and medium-sized businesses. Seven specialists share the same brand memory and work in coordination. You ask, the squad organizes and executes. The decisions stay yours: approve, authorize, confirm.",
+  "responsibilities": {
+    "nexo": "Coordination: routes requests and tracks projects and work.",
+    "bia": "Assessment, marketing plan, and opportunities.",
+    "kaia": "Identity and visual pieces.",
+    "otto": "Editorial calendar, copy, and posts.",
+    "kiwi": "Paid media, SEO and organic acquisition, conversion, and testing.",
+    "max": "Customer relationships, journeys, and reactivation.",
+    "iris": "Metrics, analyses, and performance readouts."
+  },
+  "home": {
+    "skipToContent": "Skip to content",
+    "homeLink": "HelloSquad, home page",
+    "accountNav": "Account",
+    "signIn": "Sign in",
+    "heroLine1": "You run your business.",
+    "heroLine2": "Your AI squad takes over the marketing.",
+    "signUp": "Create a free account",
+    "squadRow": "The seven specialists",
+    "squadTitleLine1": "Seven specialists available",
+    "squadTitleLine2": "24 hours a day, 7 days a week.",
+    "note": "You make the decisions. They do the work.",
+    "footerNav": "Footer",
+    "copyright": "© 2026 HelloSquad"
+  },
+  "notFound": {
+    "metaTitle": "Page not found",
+    "title": "We couldn’t find that address.",
+    "lead": "It doesn’t exist or isn’t part of your businesses.",
+    "next": "<squad>Go to your squad</squad> or <home>go back home</home>."
+  }
+}

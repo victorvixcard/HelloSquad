@@ -1,0 +1,26 @@
+{
+  "metaTitle": "Add a business",
+  "skipToContent": "Skip to content",
+  "signOut": "Sign out",
+  "titleFirst": "Start with your business.",
+  "titleAnother": "Add a business.",
+  "lead": "The squad works for one brand at a time. Enter the name and choose the address.",
+  "backTo": "Back to {name}",
+  "form": {
+    "name": "Business name",
+    "slug": "Your squad’s address",
+    "slugHint": "Lowercase letters, numbers, and hyphens, 3 to 48 characters. It looks like this: <code>/app/{slug}</code>",
+    "slugExample": "your-business",
+    "submit": "Create and open",
+    "submitting": "Creating"
+  },
+  "errors": {
+    "nameRequired": "Enter the business name.",
+    "nameTooLong": "Use up to 120 characters.",
+    "slugRequired": "Choose an address.",
+    "slugLength": "The address needs to be 3 to 48 characters.",
+    "slugPattern": "Use only lowercase letters, numbers, and hyphens.",
+    "slugReserved": "That address is reserved. Choose another one.",
+    "slugTaken": "That address is already taken. Choose another one."
+  }
+}
