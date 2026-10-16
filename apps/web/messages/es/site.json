@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "title": "HelloSquad: tu squad de IA se hace cargo del marketing",
+    "description": "HelloSquad es un equipo de marketing con IA para pequeños y medianos negocios: siete especialistas que comparten la memoria de tu marca y trabajan juntos. Tú tomas las decisiones."
+  },
+  "definition": "HelloSquad funciona como un equipo de marketing con IA para pequeños y medianos negocios. Son siete especialistas que comparten la misma memoria de marca y trabajan de forma coordinada. Tú pides, el squad organiza y ejecuta. Las decisiones siguen siendo tuyas: aprobar, autorizar, confirmar.",
+  "responsibilities": {
+    "nexo": "Coordinación: distribuye pedidos y da seguimiento a proyectos y trabajos.",
+    "bia": "Diagnóstico, plan de marketing y oportunidades.",
+    "kaia": "Identidad y piezas visuales.",
+    "otto": "Calendario editorial, textos y publicaciones.",
+    "kiwi": "Publicidad pagada, SEO y adquisición orgánica, conversión y pruebas.",
+    "max": "Relación con clientes, recorridos y reactivación.",
+    "iris": "Métricas, análisis y lecturas de desempeño."
+  },
+  "home": {
+    "skipToContent": "Saltar al contenido",
+    "homeLink": "HelloSquad, página de inicio",
+    "accountNav": "Cuenta",
+    "signIn": "Iniciar sesión",
+    "heroLine1": "Tú te ocupas de tu negocio.",
+    "heroLine2": "Tu squad de IA se hace cargo del marketing.",
+    "signUp": "Crear cuenta gratis",
+    "squadRow": "Los siete especialistas",
+    "squadTitleLine1": "Siete especialistas disponibles",
+    "squadTitleLine2": "24 horas al día, 7 días a la semana.",
+    "note": "Tú tomas las decisiones. Ellos hacen el trabajo.",
+    "footerNav": "Pie de página",
+    "copyright": "© 2026 HelloSquad"
+  },
+  "notFound": {
+    "metaTitle": "Página no encontrada",
+    "title": "No encontramos esa dirección.",
+    "lead": "No existe o no forma parte de tus negocios.",
+    "next": "<squad>Ir a tu squad</squad> o <home>volver al inicio</home>."
+  }
+}

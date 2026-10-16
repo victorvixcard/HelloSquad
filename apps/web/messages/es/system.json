@@ -1,0 +1,12 @@
+{
+  "appTitle": "Tu squad",
+  "apiUnavailable": {
+    "title": "No se pudo cargar tu squad en este momento.",
+    "retry": "Intentar de nuevo"
+  },
+  "workspaceNotFound": {
+    "label": "Dirección no encontrada",
+    "title": "Esta página no existe.",
+    "lead": "Revisa la dirección o vuelve al <link>inicio de tu squad</link>."
+  }
+}
