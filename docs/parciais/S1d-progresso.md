@@ -7,7 +7,7 @@ conflitos, contexto de cada run, API, runtime usando a memória, seed da Miolo.
 | Hora | Item | Estado | Commit |
 |---|---|---|---|
 | 09:16 | PASSO 0 lido (diretrizes, FLUXOS §2, §4.7, §6, §8, §9, §10.3, §11, Arquitetura §5, ADR-0009, dados fictícios, plano, S1c §1 e `prompt.py`) | ✅ | este |
-| — | 1. Migrations: `brand_facts`, `fact_sources`, `memory_suggestions`, `memory_conflicts`, `run_context_items`, funções `app.*`, Realtime | ⏳ | — |
+| 09:31 | 1. Migration `20261016122000_brand_memory.sql`: 5 tabelas, 9 enums, funções do owner e `app.suggest_memory`, Realtime de `memory_suggestions` — `make migrate` ok, pgTAP existente 270 verde, smoke SQL (sugerir, confirmar, idempotência, corrigir cria v2, Carla não vê) | ✅ | este |
 | — | 2. API da memória + contrato | ⚪ | — |
 | — | 3. Runtime usa a memória (orçamento, `run_context_items`, `observacoes` → sugestão) | ⚪ | — |
 | — | 4. Seed da Miolo | ⚪ | — |
