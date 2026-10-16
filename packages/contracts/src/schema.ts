@@ -491,6 +491,80 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/memory/facts/{fact_id}/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Não usar mais, voltar a usar, confirmar ou "continua valendo" (só o owner)
+         * @description Muda o estado sem criar versão: `stop_using` guarda o estado de antes e põe Não usado; `resume_using` devolve esse estado; `confirm` vale para Da fonte e Observado; `keep` devolve o Desatualizado a Da fonte. Repetir responde 200 com o mesmo estado; ação que não cabe no estado atual responde 409. Só o owner decide.
+         */
+        post: operations["change_fact_state_memory_facts__fact_id__state_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/memory/facts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Adicionar conhecimento: declarado por você, já confirmado (só o owner)
+         * @description Entra como Confirmado na fonte "Declarado por você" e todo o squad passa a usar. Sem assunto, vai para o primeiro assunto da área; sem chave, "Contado por você" (no idioma do workspace).
+         */
+        post: operations["add_fact_workspaces__workspace_id__memory_facts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/memory/suggestions/{suggestion_id}/seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Marca "<Agente> percebeu" como visto (aberto → visto; só o owner) */
+        post: operations["mark_suggestion_seen_memory_suggestions__suggestion_id__seen_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/memory/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Descrição do negócio no dossiê (só o owner); a síntese é do squad */
+        put: operations["update_profile_workspaces__workspace_id__memory_profile_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/credits/estimate": {
         parameters: {
             query?: never;
@@ -755,6 +829,8 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /** @description Estado antes de "Não usar mais" ("Voltar a usar" volta para ele). */
+            unused_from?: components["schemas"]["BrandFactState"] | null;
         };
         /**
          * BrandFactCorrection
@@ -768,6 +844,31 @@ export interface components {
              * @description O valor certo. Vira uma versão nova, Confirmado.
              */
             content: string;
+        };
+        /**
+         * BrandFactCreate
+         * @example {
+         *       "area": "business",
+         *       "content": "Aos domingos a loja fecha às 13h"
+         *     }
+         */
+        BrandFactCreate: {
+            area: components["schemas"]["MemoryArea"];
+            /**
+             * Content
+             * @description "O que o squad precisa saber?"
+             */
+            content: string;
+            /**
+             * Topic
+             * @description Assunto; sem ele, o primeiro assunto da área.
+             */
+            topic?: string | null;
+            /**
+             * Key
+             * @description Chave; sem ela, "Contado por você".
+             */
+            key?: string | null;
         };
         /** BrandFactHistory */
         BrandFactHistory: {
@@ -792,6 +893,44 @@ export interface components {
          * @enum {string}
          */
         BrandFactState: "confirmed" | "decision" | "from_source" | "observed" | "suggested" | "outdated" | "discarded" | "conflicting" | "unused";
+        /**
+         * BrandFactStateChange
+         * @example {
+         *       "action": "stop_using"
+         *     }
+         */
+        BrandFactStateChange: {
+            /**
+             * Action
+             * @description `stop_using` "Não usar mais" (Confirmado, Decisão sua, Da fonte, Observado, Desatualizado → Não usado); `resume_using` "Voltar a usar" (Não usado → o estado de antes); `confirm` "Confirmar" (Da fonte ou Observado → Confirmado); `keep` "Continua valendo" (Desatualizado → Da fonte). Repetir devolve o mesmo estado.
+             * @enum {string}
+             */
+            action: "stop_using" | "resume_using" | "confirm" | "keep";
+        };
+        /** BrandProfile */
+        BrandProfile: {
+            /**
+             * Description
+             * @description Descrição do negócio, escrita pelo dono.
+             */
+            description: string | null;
+            /**
+             * Squad Summary
+             * @description "O que o squad sabe": síntese do squad.
+             */
+            squad_summary: string | null;
+            summary_agent_id: components["schemas"]["AgentId"] | null;
+            /** Summary Updated At */
+            summary_updated_at: string | null;
+        };
+        /** BrandProfileUpdate */
+        BrandProfileUpdate: {
+            /**
+             * Description
+             * @description Vazio ou nulo apaga.
+             */
+            description: string | null;
+        };
         /** CardAction */
         CardAction: {
             /**
@@ -1522,6 +1661,8 @@ export interface components {
              * @example Miolo
              */
             brand_name: string;
+            /** @description Descrição do negócio e síntese do squad (nulo: ainda não há). */
+            profile?: components["schemas"]["BrandProfile"] | null;
             /**
              * Confirmed Count
              * @description Conhecimentos Confirmado e Decisão sua (base da síntese do squad).
@@ -1646,6 +1787,8 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /** @description Estado antes de "Não usar mais" ("Voltar a usar" volta para ele). */
+            unused_from?: components["schemas"]["BrandFactState"] | null;
             /**
              * Rank
              * @description Relevância da busca textual (maior primeiro).
@@ -4424,6 +4567,295 @@ export interface operations {
             };
             /** @description Conflito com o estado atual do registro. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    change_fact_state_memory_facts__fact_id__state_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandFactStateChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandFact"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    add_fact_workspaces__workspace_id__memory_facts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandFactCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandFact"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    mark_suggestion_seen_memory_suggestions__suggestion_id__seen_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suggestion_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemorySuggestion"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_profile_workspaces__workspace_id__memory_profile_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandProfileUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandProfile"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

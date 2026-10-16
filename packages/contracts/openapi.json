@@ -2893,6 +2893,400 @@
         }
       }
     },
+    "/memory/facts/{fact_id}/state": {
+      "post": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Não usar mais, voltar a usar, confirmar ou \"continua valendo\" (só o owner)",
+        "description": "Muda o estado sem criar versão: `stop_using` guarda o estado de antes e põe Não usado; `resume_using` devolve esse estado; `confirm` vale para Da fonte e Observado; `keep` devolve o Desatualizado a Da fonte. Repetir responde 200 com o mesmo estado; ação que não cabe no estado atual responde 409. Só o owner decide.",
+        "operationId": "change_fact_state_memory_facts__fact_id__state_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Fact Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrandFactStateChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandFact"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/memory/facts": {
+      "post": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Adicionar conhecimento: declarado por você, já confirmado (só o owner)",
+        "description": "Entra como Confirmado na fonte \"Declarado por você\" e todo o squad passa a usar. Sem assunto, vai para o primeiro assunto da área; sem chave, \"Contado por você\" (no idioma do workspace).",
+        "operationId": "add_fact_workspaces__workspace_id__memory_facts_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrandFactCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandFact"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memory/suggestions/{suggestion_id}/seen": {
+      "post": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Marca \"<Agente> percebeu\" como visto (aberto → visto; só o owner)",
+        "operationId": "mark_suggestion_seen_memory_suggestions__suggestion_id__seen_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "suggestion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Suggestion Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemorySuggestion"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/memory/profile": {
+      "put": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Descrição do negócio no dossiê (só o owner); a síntese é do squad",
+        "operationId": "update_profile_workspaces__workspace_id__memory_profile_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrandProfileUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandProfile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/credits/estimate": {
       "post": {
         "tags": [
@@ -3551,6 +3945,17 @@
             "type": "string",
             "format": "date-time",
             "title": "Updated At"
+          },
+          "unused_from": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BrandFactState"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Estado antes de \"Não usar mais\" (\"Voltar a usar\" volta para ele)."
           }
         },
         "type": "object",
@@ -3603,6 +4008,61 @@
           }
         ]
       },
+      "BrandFactCreate": {
+        "properties": {
+          "area": {
+            "$ref": "#/components/schemas/MemoryArea"
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Content",
+            "description": "\"O que o squad precisa saber?\""
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic",
+            "description": "Assunto; sem ele, o primeiro assunto da área."
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key",
+            "description": "Chave; sem ela, \"Contado por você\"."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "area",
+          "content"
+        ],
+        "title": "BrandFactCreate",
+        "examples": [
+          {
+            "area": "business",
+            "content": "Aos domingos a loja fecha às 13h"
+          }
+        ]
+      },
       "BrandFactHistory": {
         "properties": {
           "fact_id": {
@@ -3649,6 +4109,113 @@
           "unused"
         ],
         "title": "BrandFactState"
+      },
+      "BrandFactStateChange": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "stop_using",
+              "resume_using",
+              "confirm",
+              "keep"
+            ],
+            "title": "Action",
+            "description": "`stop_using` \"Não usar mais\" (Confirmado, Decisão sua, Da fonte, Observado, Desatualizado → Não usado); `resume_using` \"Voltar a usar\" (Não usado → o estado de antes); `confirm` \"Confirmar\" (Da fonte ou Observado → Confirmado); `keep` \"Continua valendo\" (Desatualizado → Da fonte). Repetir devolve o mesmo estado."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "BrandFactStateChange",
+        "examples": [
+          {
+            "action": "stop_using"
+          }
+        ]
+      },
+      "BrandProfile": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Descrição do negócio, escrita pelo dono."
+          },
+          "squad_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Squad Summary",
+            "description": "\"O que o squad sabe\": síntese do squad."
+          },
+          "summary_agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary_updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "description",
+          "squad_summary",
+          "summary_agent_id",
+          "summary_updated_at"
+        ],
+        "title": "BrandProfile"
+      },
+      "BrandProfileUpdate": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 600
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Vazio ou nulo apaga."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "description"
+        ],
+        "title": "BrandProfileUpdate"
       },
       "CardAction": {
         "properties": {
@@ -5336,6 +5903,17 @@
               "Miolo"
             ]
           },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BrandProfile"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Descrição do negócio e síntese do squad (nulo: ainda não há)."
+          },
           "confirmed_count": {
             "type": "integer",
             "title": "Confirmed Count",
@@ -5597,6 +6175,17 @@
             "type": "string",
             "format": "date-time",
             "title": "Updated At"
+          },
+          "unused_from": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BrandFactState"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Estado antes de \"Não usar mais\" (\"Voltar a usar\" volta para ele)."
           },
           "rank": {
             "type": "number",
