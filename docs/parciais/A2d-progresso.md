@@ -42,3 +42,12 @@ Falta, na ordem: prova do H2-04 e do H2-08 no build final; lado a lado do docume
 | 20:46 | O revert do H2-08 não mudou nada (3 de 4 falhas); bisect: **sem `app/app/loading.tsx` (H2-22), 4 de 4** com H2-04 e H2-08 no lugar. H2-08 restaurado; `loading.tsx` e a chave `system.loading` saem | f0850c1, 56777d7 | feito |
 | 20:47 | `make e2e` no worktree (`56777d7`, build exit 0, 3199): **28 passed (58,5 s)**; repetição `onboarding.spec.ts:132` + `a2d-idioma.spec.ts` ×4: **12 passed (14,3 s)** | este | feito |
 | 20:49 | `make test-web` de novo depois da retirada do `loading.tsx`: exit 0 (contracts 9, ui 49, web 406). Lado a lado do documento (H2-12/H2-32): `a2d/nosso-doc-decisao.png` (captura do e2e `a2b-bia`, build final) × `a2d/proto-doc-decisao.png`. H2-24/H2-26 no build final: `/icon.svg` 200 `image/svg+xml`, `/favicon.ico` 308 para o ícone; 404 com **uma** meta robots (`noindex`); `/squad/bia` sem `@id` citado e não definido na página | este | feito |
+| 20:51 | Relatório completo (`A2d-relatorio.md`) e "→ corrigido em A2d (<hash>)" nas linhas corrigidas da H2 (tabela (a) e notas H2-22/24/26/30/31/32) | 7226545, 3784f8c | feito |
+| 20:52 | Fechamento: banco no seed (os três negócios em pt-BR, nenhuma pessoa com `locale`), nada meu na 3198/3199, nenhum worker; web 3100 e API 8100 do dono no ar (200); worktrees `/tmp/hs-a2d` e `/tmp/hs-a2d-base` removidos | este | feito |
+
+### Lista de conferência (fechamento, 20:52)
+
+Feitos: H2-01, H2-04, H2-06, H2-08, H2-10, H2-11, H2-12, H2-24, H2-26, H2-30, H2-31 e H2-32, com os hashes da lista
+de 20:30 (H2-08 em `c617590`, revertido por engano em `10a82c7` e restaurado em `f0850c1`). H2-22: as páginas de erro
+ficam (`992509c`) e o `loading.tsx` saiu (`56777d7`, regressão da troca de idioma). H2-09: o web está feito
+(`75fa1db`); o P-02 depende do backend. **Progresso fechado.**

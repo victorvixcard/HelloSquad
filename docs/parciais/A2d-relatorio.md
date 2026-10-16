@@ -1,6 +1,6 @@
 # A2d — Relatório (Aranha)
 
-**Fatia:** correções da H2 no web. **Data:** 16/10/2026, 19:45 → 20:52. Área: `apps/web`, `packages/ui` e os
+**Fatia:** correções da H2 no web. **Data:** 16/10/2026, 19:45 → 20:52 (fechado). Área: `apps/web`, `packages/ui` e os
 documentos da fatia; o Stark esteve em paralelo na S2g (`apps/backend`, `supabase/`, `squad/`). Até 20:15, três
 sub-agentes do Aranha com arquivos exclusivos: (a) H2-04/06/08/22/24/26; (b1) P-01/03/04/05/07/08; (b2) P-09 a P-13. O
 H2-01 foi meu. Às 20:27 o gateway abortou a sessão (ela ficou parada esperando os sub-agentes). Retomei às 20:30 a
