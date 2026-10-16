@@ -850,6 +850,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/email-preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Avisos por e-mail que a pessoa recebe (os opcionais; sem escolha gravada, recebe) */
+        get: operations["list_email_preferences_me_email_preferences_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/email-preferences/{template}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Liga ou desliga um aviso opcional por e-mail da própria pessoa */
+        put: operations["set_email_preference_me_email_preferences__template__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/billing/webhooks/{provider}": {
         parameters: {
             query?: never;
@@ -2091,6 +2125,26 @@ export interface components {
          * @enum {string}
          */
         DeliveryVersionStatus: "draft" | "approved" | "superseded";
+        /** EmailPreference */
+        EmailPreference: {
+            /**
+             * Template
+             * @enum {string}
+             */
+            template: "approval_pending" | "delivery_ready" | "payment_confirmed" | "payment_problem";
+            /** Enabled */
+            enabled: boolean;
+        };
+        /** EmailPreferenceList */
+        EmailPreferenceList: {
+            /** Items */
+            items: components["schemas"]["EmailPreference"][];
+        };
+        /** EmailPreferenceUpdate */
+        EmailPreferenceUpdate: {
+            /** Enabled */
+            enabled: boolean;
+        };
         /** ErrorBody */
         ErrorBody: {
             /**
@@ -7566,6 +7620,97 @@ export interface operations {
             };
             /** @description Recurso não encontrado (ou fora do seu acesso). */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_email_preferences_me_email_preferences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmailPreferenceList"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    set_email_preference_me_email_preferences__template__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template: "approval_pending" | "delivery_ready" | "payment_confirmed" | "payment_problem";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailPreferenceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmailPreference"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

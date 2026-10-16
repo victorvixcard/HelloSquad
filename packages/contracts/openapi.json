@@ -5103,6 +5103,135 @@
         }
       }
     },
+    "/me/email-preferences": {
+      "get": {
+        "tags": [
+          "email"
+        ],
+        "summary": "Avisos por e-mail que a pessoa recebe (os opcionais; sem escolha gravada, recebe)",
+        "operationId": "list_email_preferences_me_email_preferences_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailPreferenceList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/me/email-preferences/{template}": {
+      "put": {
+        "tags": [
+          "email"
+        ],
+        "summary": "Liga ou desliga um aviso opcional por e-mail da própria pessoa",
+        "operationId": "set_email_preference_me_email_preferences__template__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "template",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "approval_pending",
+                "delivery_ready",
+                "payment_confirmed",
+                "payment_problem"
+              ],
+              "type": "string",
+              "title": "Template"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailPreferenceUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailPreference"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/billing/webhooks/{provider}": {
       "post": {
         "tags": [
@@ -8225,6 +8354,59 @@
           "superseded"
         ],
         "title": "DeliveryVersionStatus"
+      },
+      "EmailPreference": {
+        "properties": {
+          "template": {
+            "type": "string",
+            "enum": [
+              "approval_pending",
+              "delivery_ready",
+              "payment_confirmed",
+              "payment_problem"
+            ],
+            "title": "Template"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          }
+        },
+        "type": "object",
+        "required": [
+          "template",
+          "enabled"
+        ],
+        "title": "EmailPreference"
+      },
+      "EmailPreferenceList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EmailPreference"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "EmailPreferenceList"
+      },
+      "EmailPreferenceUpdate": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          }
+        },
+        "type": "object",
+        "required": [
+          "enabled"
+        ],
+        "title": "EmailPreferenceUpdate"
       },
       "ErrorBody": {
         "properties": {
