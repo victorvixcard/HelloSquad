@@ -173,7 +173,9 @@ test.describe("Idioma por pessoa (A2a, ADR-0010)", () => {
         .locator('link[rel="alternate"][hreflang]')
         .evaluateAll((els) => els.map((e) => `${e.getAttribute("hreflang")} ${new URL(e.getAttribute("href") ?? "").pathname}`));
       expect(alternates.sort()).toEqual(["en /en", "es /es", "pt-BR /", "x-default /"]);
-      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", new RegExp(`${path === "/" ? "/$" : `${path}$`}`));
+      // O Next grava o canônico da raiz sem a barra final ("http://127.0.0.1:3100").
+      const canonical = new URL((await page.locator('link[rel="canonical"]').getAttribute("href")) ?? "");
+      expect(canonical.pathname).toBe(path);
     }
   });
 });
