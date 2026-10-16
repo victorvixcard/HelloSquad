@@ -22,7 +22,7 @@ language plpgsql as $$
 begin
   perform set_config('request.jwt.claims', json_build_object('sub', p_user, 'role', 'authenticated')::text, true);
   perform set_config('request.jwt.claim.sub', coalesce(p_user::text, ''), true);
-  perform set_config('role', 'authenticated', true);
+  set local role authenticated;
 end;
 $$;
 
