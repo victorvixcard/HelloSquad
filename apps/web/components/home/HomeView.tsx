@@ -8,6 +8,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createDirectConversationAction, sendMessageAction } from "@/app/app/[workspace]/actions";
 import { SQUAD_EFFECT_ACTIONS, useSquadEffect, type SquadEffectActions } from "@/components/product/use-squad-effect";
 import { useShell } from "@/components/product/shell-context";
+import type { Onboarding } from "@/lib/onboarding";
 import { SquadStage } from "./SquadStage";
 import { SuggestionBand, type Suggestion } from "./SuggestionBand";
 
@@ -28,6 +29,8 @@ export type HomeViewProps = {
   business: string;
   needs: HomeNeed[];
   inProgress: HomeWork[];
+  /** Primeiro acesso (V4.6 `_vOnb`): o cartão "Para o squad conhecer…" com o progresso real; sem ele, Resultados. */
+  onboarding?: Onboarding | null;
   actions?: { send: typeof sendMessageAction; create: typeof createDirectConversationAction } & Partial<SquadEffectActions>;
 };
 
@@ -36,7 +39,7 @@ const ORDER: AgentId[] = SQUAD.map((m) => m.id);
 type CardKey = "work" | "mem" | "auto";
 
 /** Início V3 congelado: o squad, a saudação, a pergunta, o pedido, quem participa, as sugestões e os resumos. */
-export function HomeView({ firstName, business, needs, inProgress, actions }: HomeViewProps) {
+export function HomeView({ firstName, business, needs, inProgress, onboarding = null, actions }: HomeViewProps) {
   const t = useTranslations("home");
   const tc = useTranslations("common");
   const shell = useShell();
@@ -320,69 +323,7 @@ export function HomeView({ firstName, business, needs, inProgress, actions }: Ho
       <section className={`hm-now${min ? " is-min" : ""}`} id="hm-now" aria-label={t("summaries", { business })}>
         <div className="hm-now-in">
           <div className="hm-grid">
-            <article className="hm-onb" id="h-onb" aria-labelledby="hm-onb-t">
-              <header className="hm-onb-h">
-                <span className="hm-ring" style={{ ["--p" as string]: 0 }} aria-hidden="true" />
-                <h3 id="hm-onb-t">{t("onb.title", { business })}</h3>
-                <small>{t("onb.done", { done: 0, total: 3 })}</small>
-              </header>
-              <div className="hm-ob">
-                <span className="hm-ob-n" aria-hidden="true">
-                  <svg className="sb-ic" viewBox="0 0 18 18">
-                    <path d={PRODUCT_ICONS.globe} />
-                  </svg>
-                </span>
-                <div className="hm-ob-b">
-                  <b>{t("onb.site")}</b>
-                  <small>{t("onb.siteSub")}</small>
-                  <div className="hm-ob-a">
-                    <label className="ps-srl" htmlFor="hm-site">
-                      {t("onb.siteLabel")}
-                    </label>
-                    <input id="hm-site" className="ps-in" type="url" placeholder={t("onb.sitePlaceholder")} />
-                    <button type="button" className="hm-btn is-dark is-s" onClick={() => shell.toast(tc("unavailable"))}>
-                      {t("onb.siteRead")}
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="hm-ob is-inline">
-                <span className="hm-ob-n" aria-hidden="true">
-                  <svg className="sb-ic" viewBox="0 0 18 18">
-                    <path d={PRODUCT_ICONS.insta} />
-                  </svg>
-                </span>
-                <div className="hm-ob-b">
-                  <b>{t("onb.insta")}</b>
-                  <small>{t("onb.instaSub")}</small>
-                  <div className="hm-ob-a">
-                    <button type="button" className="hm-btn is-soft is-s" onClick={() => shell.toast(tc("unavailable"), "iris")}>
-                      {t("onb.instaConnect")}
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="hm-ob is-inline">
-                <span className="hm-ob-n" aria-hidden="true">
-                  <svg className="sb-ic" viewBox="0 0 18 18">
-                    <path d={NAV_ICONS.chat[0]} />
-                  </svg>
-                </span>
-                <div className="hm-ob-b">
-                  <b>{t("onb.talk")}</b>
-                  <small>{t("onb.talkSub")}</small>
-                  <div className="hm-ob-a">
-                    <button
-                      type="button"
-                      className="hm-btn is-soft is-s"
-                      onClick={() => shell.openConversation({ conversationId: shell.conversationIds.direct.nexo ?? null, agent: "nexo" })}
-                    >
-                      {t("onb.talkGo")}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </article>
+            {onboarding?.show ? <OnboardingCard business={business} onb={onboarding} /> : <ResultsCard />}
 
             <div className="hm-side">
               <div className={cardCls("work")} data-k="work">
@@ -560,5 +501,136 @@ export function HomeView({ firstName, business, needs, inProgress, actions }: Ho
         </div>
       </section>
     </div>
+  );
+}
+
+/** Ícone do passo: o check quando feito (V4.6 `HelloSquad.Icon name="check"`), o desenho do passo antes. */
+function StepIcon({ done, path }: { done: boolean; path: string }) {
+  return (
+    <span className="hm-ob-n" aria-hidden="true">
+      {done ? (
+        <Icon name="check" size={16} strokeWidth={2.4} />
+      ) : (
+        <svg className="sb-ic" viewBox="0 0 18 18">
+          <path d={path} />
+        </svg>
+      )}
+    </span>
+  );
+}
+
+/**
+ * "Para o squad conhecer…" do primeiro acesso (V4.6 L4642–4662, `_vOnb` L8480): três passos com o progresso real.
+ * Site e Instagram ainda não têm rota (o aviso padrão, sem simular leitura nem conexão); "Conversar" abre o Nexo em
+ * tela cheia com as escolhas de objetivo, e o objetivo escolhido vai para a Memória da Marca.
+ */
+function OnboardingCard({ business, onb }: { business: string; onb: Onboarding }) {
+  const t = useTranslations("home");
+  const tc = useTranslations("common");
+  const shell = useShell();
+  const pct = Math.round((onb.done / onb.total) * 100);
+  return (
+    <article className="hm-onb" id="h-onb" aria-labelledby="hm-onb-t">
+      <header className="hm-onb-h">
+        <span className="hm-ring" style={{ ["--p" as string]: `${pct}%` }} aria-hidden="true" />
+        <h3 id="hm-onb-t">{t("onb.title", { business })}</h3>
+        <small>{t("onb.done", { done: onb.done, total: onb.total })}</small>
+      </header>
+      <div className={`hm-ob${onb.site ? " is-done" : ""}`}>
+        <StepIcon done={onb.site} path={PRODUCT_ICONS.globe} />
+        <div className="hm-ob-b">
+          <b>{t("onb.site")}</b>
+          <small>{t("onb.siteSub")}</small>
+          {onb.site ? null : (
+            <div className="hm-ob-a">
+              <label className="ps-srl" htmlFor="hm-site">
+                {t("onb.siteLabel")}
+              </label>
+              <input id="hm-site" className="ps-in" type="url" placeholder={t("onb.sitePlaceholder")} />
+              <button type="button" className="hm-btn is-dark is-s" onClick={() => shell.toast(tc("unavailable"))}>
+                {t("onb.siteRead")}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className={`hm-ob${onb.instagram ? " is-done" : " is-inline"}`}>
+        <StepIcon done={onb.instagram} path={PRODUCT_ICONS.insta} />
+        <div className="hm-ob-b">
+          <b>{t("onb.insta")}</b>
+          <small>{t("onb.instaSub")}</small>
+          {onb.instagram ? null : (
+            <div className="hm-ob-a">
+              <button type="button" className="hm-btn is-soft is-s" onClick={() => shell.toast(tc("unavailable"), "iris")}>
+                {t("onb.instaConnect")}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className={`hm-ob${onb.objective ? " is-done" : " is-inline"}`}>
+        <StepIcon done={!!onb.objective} path={NAV_ICONS.chat[0]} />
+        <div className="hm-ob-b">
+          <b>{t("onb.talk")}</b>
+          <small>{t("onb.talkSub")}</small>
+          <div className="hm-ob-a">
+            {onb.objective ? (
+              <span className="ps-ok">
+                <span>{t("onb.objective", { objective: onb.objective })}</span>
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="hm-btn is-soft is-s"
+                onClick={() =>
+                  shell.openConversation({ conversationId: shell.conversationIds.direct.nexo ?? null, agent: "nexo", objective: true }, "full")
+                }
+              >
+                {t("onb.talkGo")}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/**
+ * Resultados da conta já configurada (V4.6 `home.res`, L4614): sem números no banco, o vazio honesto da própria tela
+ * de Resultados ("A Íris ainda não tem números para ler"), com "Abrir Resultados" e "Conversar com a Íris".
+ */
+function ResultsCard() {
+  const t = useTranslations("home.res");
+  const te = useTranslations("envs.iris");
+  const shell = useShell();
+  return (
+    <article className="hm-res" aria-labelledby="hm-res-t">
+      <header className="hm-res-h">
+        <h3 id="hm-res-t">{t("title")}</h3>
+      </header>
+      <div className="hm-say is-empty">
+        <span className="hm-say-av" aria-hidden="true">
+          <Agent agent="iris" size={32} expression="oval" />
+        </span>
+        <p className="hm-say-t">
+          <span className="ps-srl">{t("irisSays")}</span>
+          <b>{te("emptyTitle")}</b> {te("emptyText")}
+        </p>
+      </div>
+      <footer className="hm-res-f">
+        <Link className="hm-btn is-dark is-s" href={`/app/${shell.workspace.slug}/squad/iris`}>
+          <span>{t("open")}</span>
+          <Icon name="arrow" size={16} strokeWidth={2} />
+        </Link>
+        <button
+          type="button"
+          className="hm-link is-soft"
+          onClick={() => shell.openConversation({ conversationId: shell.conversationIds.direct.iris ?? null, agent: "iris" })}
+        >
+          <span>{t("talk")}</span>
+        </button>
+      </footer>
+    </article>
   );
 }

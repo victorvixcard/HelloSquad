@@ -3,6 +3,7 @@
 import { isApiError, unwrap } from "@hellosquad/contracts";
 import { serverApi } from "@/lib/api";
 import type { BrandFact, BrandFactHistory, MemoryConflict } from "@/lib/memory";
+import { OBJECTIVE_FACT } from "@/lib/onboarding";
 import type { ActionResult } from "./actions";
 
 type SuggestionDecision = "confirm" | "correct" | "discard";
@@ -73,6 +74,25 @@ export async function factHistoryAction(factId: string): Promise<ActionResult<Br
     const api = await serverApi();
     const history = await unwrap(api.GET("/memory/facts/{fact_id}/history", { params: { path: { fact_id: factId } } }));
     return { ok: true, data: history };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+/**
+ * Objetivo contado ao Nexo no primeiro acesso (V4.6 `_setObjective`, L7928): entra na Memória como declarado por você,
+ * já confirmado, pela rota de "Adicionar conhecimento" (S1f; só o owner). Todo o squad passa a usar.
+ */
+export async function addObjectiveAction(workspaceId: string, content: string): Promise<ActionResult<BrandFact>> {
+  try {
+    const api = await serverApi();
+    const fact = await unwrap(
+      api.POST("/workspaces/{workspace_id}/memory/facts", {
+        params: { path: { workspace_id: workspaceId } },
+        body: { ...OBJECTIVE_FACT, content },
+      }),
+    );
+    return { ok: true, data: fact };
   } catch (error) {
     return fail(error);
   }

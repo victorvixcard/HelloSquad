@@ -34,14 +34,59 @@
   "chipOnly": "só {article, select, a {a} other {o}} {name} participa",
   "chipMany": "{who} participam",
   "suggestions": [
-    { "t": "Planejar meus próximos conteúdos", "ags": ["otto", "kaia"] },
-    { "t": "Analisar os resultados da semana", "ags": ["iris"] },
-    { "t": "Criar uma promoção para esta semana", "ags": ["bia", "kaia"] },
-    { "t": "Revisar minha identidade visual", "ags": ["kaia"] },
-    { "t": "Entender melhor meus clientes", "ags": ["bia", "max"] },
-    { "t": "Preparar um lançamento", "ags": ["nexo", "bia", "kaia"] },
-    { "t": "Reativar clientes que sumiram", "ags": ["max"] },
-    { "t": "Quero melhorar meu Instagram", "ags": ["otto"] }
+    {
+      "t": "Planejar meus próximos conteúdos",
+      "ags": [
+        "otto",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Analisar os resultados da semana",
+      "ags": [
+        "iris"
+      ]
+    },
+    {
+      "t": "Criar uma promoção para esta semana",
+      "ags": [
+        "bia",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Revisar minha identidade visual",
+      "ags": [
+        "kaia"
+      ]
+    },
+    {
+      "t": "Entender melhor meus clientes",
+      "ags": [
+        "bia",
+        "max"
+      ]
+    },
+    {
+      "t": "Preparar um lançamento",
+      "ags": [
+        "nexo",
+        "bia",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Reativar clientes que sumiram",
+      "ags": [
+        "max"
+      ]
+    },
+    {
+      "t": "Quero melhorar meu Instagram",
+      "ags": [
+        "otto"
+      ]
+    }
   ],
   "fold": {
     "show": "Mostrar resumos",
@@ -63,7 +108,14 @@
     "instaConnect": "Conectar",
     "talk": "Conte o resto ao Nexo",
     "talkSub": "Objetivo, público, o que vende mais.",
-    "talkGo": "Conversar"
+    "talkGo": "Conversar",
+    "objective": "Objetivo: {objective}"
+  },
+  "res": {
+    "title": "Resultados",
+    "irisSays": "Íris: ",
+    "open": "Abrir Resultados",
+    "talk": "Conversar com a Íris"
   },
   "open": ". Recolher detalhes",
   "closed": ". Ver detalhes",

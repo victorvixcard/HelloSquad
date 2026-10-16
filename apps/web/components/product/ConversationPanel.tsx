@@ -14,6 +14,7 @@ import {
   loadOlderMessagesAction,
   sendMessageAction,
 } from "@/app/app/[workspace]/actions";
+import { addObjectiveAction } from "@/app/app/[workspace]/memory-actions";
 import { conversationLive, shortNowKey } from "@/lib/live/live-state";
 import { dayKey, dayLabel, shortTime, threadAt, threadTitleFrom } from "./conversation-format";
 import { useLive } from "./live";
@@ -34,6 +35,8 @@ export type ConversationActions = {
   decide: typeof decideApprovalAction;
   /** Cartão "Material · vN" das mensagens com entrega (padrão: as Server Actions). */
   card?: MaterialCardActions;
+  /** Objetivo do primeiro acesso guardado na Memória da Marca (padrão: `addObjectiveAction`). */
+  addObjective?: typeof addObjectiveAction;
 };
 
 /** Anexo que o worker põe na mensagem do agente quando entrega uma versão (S1c, `store.py`). */
@@ -242,10 +245,17 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   // V4.6 `hasSug: !userAfter && !o.typing` (L10898, L10912): as sugestões somem na primeira mensagem da pessoa. Com
   // páginas anteriores ainda não carregadas, a conversa já teve mensagem da pessoa.
   const userWrote = messages.some((m) => m.author_type === "user") || !!(loaded?.key === key && loaded.older);
-  const suggestions: string[] =
-    !room && target.agent && !userWrote && !typingAgent && ["nexo", "otto", "iris"].includes(target.agent)
+  const objectiveMode = !!target.objective && target.agent === "nexo" && !userWrote && !typingAgent;
+  const suggestions: string[] = objectiveMode
+    ? (t.raw("objective.options") as string[])
+    : !room && target.agent && !userWrote && !typingAgent && ["nexo", "otto", "iris"].includes(target.agent)
       ? (t.raw(`suggestions.${target.agent as "nexo" | "otto" | "iris"}`) as string[])
       : [];
+  const suggestionsLabel = objectiveMode
+    ? t("objective.ask", { business: shell.workspace.name })
+    : agent
+      ? t("ask", { article: agent.article, name: agent.name })
+      : "";
   const placeholder = room
     ? t("placeholderRoom")
     : t("placeholder", { to: tc("agentTo", { article: agent?.article ?? "o", name: agent?.name ?? "" }) });
@@ -327,8 +337,8 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   }
 
   /** Envio (A1a): a mensagem da pessoa aparece na hora; se a API recusar, ela sai e o texto volta ao campo. */
-  async function send(body: string) {
-    if (!target || sending) return;
+  async function send(body: string): Promise<boolean> {
+    if (!target || sending) return false;
     setSending(true);
     setSendError(false);
     const tempId = `${TEMP}${Date.now()}`;
@@ -351,6 +361,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
       setInput(body);
       setSending(false);
       setSendError(true);
+      return false;
     };
 
     let conversationId = target.conversationId;
@@ -375,11 +386,27 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
       shell.rememberThread(target.agent, { id: created, title: threadTitleFrom(body), at: posted.created_at });
       setLoaded({ key: targetKey(next), messages: [...messages.filter((m) => m.id !== tempId), posted], older: null, error: false });
       shell.openConversation(next, sameMode);
-      return;
+      return true;
     }
     setLoaded((prev) => (prev ? { ...prev, messages: prev.messages.map((m) => (m.id === tempId ? posted : m)) } : prev));
     // O pedido de ajuste foi enviado: a conversa segue sem o modo de ajuste (o próximo envio é mensagem comum).
     if (adjust) shell.openConversation({ ...target, adjust: undefined, draft: undefined }, sameMode);
+    return true;
+  }
+
+  /**
+   * "Conte o resto ao Nexo" (V4.6 `obj:`, L7040): a escolha vira a mensagem da pessoa ("<objetivo>.") e o objetivo
+   * entra na Memória da Marca, confirmado. A resposta do Nexo é a do squad de verdade, não um roteiro.
+   */
+  async function pickObjective(objective: string) {
+    if (!(await send(`${objective}.`))) return;
+    const saved = await (actions.addObjective ?? addObjectiveAction)(shell.workspace.id, objective);
+    if (!saved.ok) {
+      shell.toast(saved.message || t("objective.error"));
+      return;
+    }
+    shell.toast(t("objective.saved", { objective }));
+    router.refresh();
   }
 
   // Cartão de contexto da V4.6 (`_vRail`, L10916): Ambiente, Tipo, Período (quando há), Negócio e Origem (quando há);
@@ -642,10 +669,16 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                 ];
               })}
               {suggestions.length && agent ? (
-                <div className="cx-sug" role="group" aria-label={t("ask", { article: agent.article, name: agent.name })}>
-                  <span className="cx-sug-k">{t("ask", { article: agent.article, name: agent.name })}</span>
+                <div className="cx-sug" role="group" aria-label={suggestionsLabel}>
+                  <span className="cx-sug-k">{suggestionsLabel}</span>
                   {suggestions.map((q) => (
-                    <button key={q} type="button" className="cx-sg" onClick={() => setInput(q)}>
+                    <button
+                      key={q}
+                      type="button"
+                      className="cx-sg"
+                      disabled={objectiveMode && sending}
+                      onClick={() => (objectiveMode ? void pickObjective(q) : setInput(q))}
+                    >
                       <svg className="sb-ic" viewBox="0 0 18 18" aria-hidden="true">
                         <path d={PRODUCT_ICONS.ask} />
                       </svg>

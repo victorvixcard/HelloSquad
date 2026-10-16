@@ -69,5 +69,15 @@
     "typeMemory": "Conhecimento",
     "responds": "responde · {env}",
     "back": "Voltar para {env}"
+  },
+  "objective": {
+    "ask": "Para começar: qual é o objetivo mais importante de {business} agora?",
+    "options": [
+      "Vender mais encomendas",
+      "Trazer gente nova para a loja",
+      "Fortalecer a marca"
+    ],
+    "saved": "Anotado na Memória da Marca: “{objective}”.",
+    "error": "O objetivo não foi guardado. Tente de novo."
   }
 }

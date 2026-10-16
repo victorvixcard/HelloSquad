@@ -31,6 +31,8 @@ export type ConversationTarget = {
   draft?: string;
   /** "Pedir ajuste" (dono, 16/10 10:20): o envio desta conversa registra `changes_requested` com a nota = texto. */
   adjust?: { approvalId: string; workItemId: string; version: number };
+  /** Primeiro acesso, "Conte o resto ao Nexo" (V4.6 L4659): as escolhas de objetivo; a escolhida vai para a Memória. */
+  objective?: boolean;
 };
 
 /** Conversa direta anterior com um especialista (seletor "Conversas com…" do cabeçalho, V4.6). */
