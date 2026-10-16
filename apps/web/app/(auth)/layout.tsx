@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import { clientMessages } from "@/i18n/client-messages";
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("auth");
@@ -16,8 +14,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         </Link>
       </header>
       <main id="conteudo" className="flex flex-1 items-start justify-center px-4 pb-16 pt-6 sm:items-center sm:pt-0">
-        {/* Os formulários de entrar e criar conta levam ao browser só o catálogo deles (H2-08). */}
-        <NextIntlClientProvider messages={await clientMessages("auth")}>{children}</NextIntlClientProvider>
+        {children}
       </main>
     </div>
   );
