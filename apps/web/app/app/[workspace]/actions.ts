@@ -241,10 +241,14 @@ export async function deliveryCardAction(runId: string, versionId: string): Prom
  * Token de acesso para o Realtime no browser (H0-03, decisão da A1a): o cookie da sessão é httpOnly, então o browser
  * pede ao servidor só o access token (vale cerca de 1 h) e a hora em que vence; o refresh token nunca sai do servidor.
  * Se a sessão venceu, o cliente do servidor renova e grava os cookies (Server Action pode gravar cookie).
- * Só responde chamada feita na área logada (`/app…`): o caminho vem do middleware, não do browser (H1-10).
+ * Só responde chamada feita numa página da área logada (H1-10): o caminho vem do middleware, não do browser, e a
+ * chamada feita numa rota sem esta ação (`/`, `/sair`) chega encaminhada pelo Next (`x-action-forwarded`) e é recusada.
  */
 export async function realtimeTokenAction(): Promise<ActionResult<{ token: string; expiresAt: number }>> {
-  if (!isAppPath((await headers()).get(ACTION_PATH_HEADER) ?? "")) return { ok: false, code: "not_found", message: "" };
+  const request = await headers();
+  if (request.has("x-action-forwarded") || !isAppPath(request.get(ACTION_PATH_HEADER) ?? "")) {
+    return { ok: false, code: "not_found", message: "" };
+  }
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getSession();
   const session = data.session;

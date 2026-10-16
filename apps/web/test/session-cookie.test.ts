@@ -1,9 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ACTION_PATH_HEADER, isLocalHttp, SESSION_MAX_AGE_S, sessionCookieOptions } from "@/lib/supabase/session-cookie";
 
-const state = vi.hoisted(() => ({ path: null as string | null }));
+const state = vi.hoisted(() => ({ path: null as string | null, forwarded: false }));
 vi.mock("next/headers", () => ({
-  headers: async () => new Headers(state.path === null ? {} : { "x-hellosquad-action-path": state.path }),
+  headers: async () =>
+    new Headers({
+      ...(state.path === null ? {} : { "x-hellosquad-action-path": state.path }),
+      ...(state.forwarded ? { "x-action-forwarded": "1" } : {}),
+    }),
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: async () => ({
@@ -35,6 +39,7 @@ describe("cookie da sessão (H1-10)", () => {
 describe("ação do token do Realtime só na área logada (H1-10)", () => {
   beforeEach(() => {
     state.path = null;
+    state.forwarded = false;
   });
 
   async function action() {
@@ -53,5 +58,12 @@ describe("ação do token do Realtime só na área logada (H1-10)", () => {
       expect(await action()).toEqual({ ok: false, code: "not_found", message: "" });
     }
     expect(ACTION_PATH_HEADER).toBe("x-hellosquad-action-path");
+  });
+
+  it("chamada numa rota sem a ação chega encaminhada pelo Next a uma página do app e é recusada", async () => {
+    // POST em / com o id da ação: o Next encaminha para app/app/[workspace]/page e o middleware vê /app/[workspace].
+    state.path = "/app/[workspace]";
+    state.forwarded = true;
+    expect(await action()).toEqual({ ok: false, code: "not_found", message: "" });
   });
 });
