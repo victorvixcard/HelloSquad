@@ -3,9 +3,15 @@
   "step": "bia.reflect",
   "cases": [
     {
-      "name": "nada_a_aprender",
+      "name": "aprovada_sem_correcao",
+      "when": {"matches": "desfecho=\"approved\""},
       "usage": {"input_tokens": 900, "output_tokens": 60, "cache_write_tokens": 1800},
       "output": {"aprendizados": [], "resumo": "Aprovada sem correção da pessoa: nada novo a aprender com esta etapa."}
+    },
+    {
+      "name": "nada_a_aprender",
+      "usage": {"input_tokens": 900, "output_tokens": 60, "cache_write_tokens": 1800},
+      "output": {"aprendizados": [], "resumo": "Nada novo a aprender com este trabalho."}
     }
   ]
 }
