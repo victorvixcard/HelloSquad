@@ -2,6 +2,13 @@
 
 Handoff versionado. Quem retoma (Thor ou humano) lê este arquivo primeiro, depois `git log --oneline -20`, depois `docs/parciais/`.
 
+## Onde estamos (16/10/2026 20:55 — Fase 2 FECHADA, trilha SA aberta)
+
+- **Fase 2 fechada às 20:55.** Bia, Otto, Kiwi, Max e Íris completos em modo simulado (16 deliveries); Kaia atrás de `ImageEngine` com stub honesto (motor é do Vic); memória camada 3 (a correção da Marina entra na entrega seguinte); projeto coordenado Bia → Kaia → Otto com responsável por etapa, na API e no web; onboarding progressivo; pt-BR/en/es no app, na API, nos e-mails e no site; site público com SEO/GEO (Lighthouse 98–100); cobrança atrás de `PaymentProvider` (Asaas, Mercado Pago) contra mocks; e-mail transacional via Mailpit. QA H2 e correções S2g/A2d: ver `docs/PLANO_DE_ACAO_FASE2.md`.
+- **Trilha SA aberta** por `docs/PLANO_DE_ACAO_SA.md`: SA1 (schema + API `/admin/*` de leitura) → SA2 ‖ SA3a → SA3b ‖ SA4a → SA4b → SA6 → H-SA; SA5 aguarda o motor.
+- Orquestração: sessão main do Thor; check silencioso a cada 10 min; resumo ao Vic a cada 2 h. Handoff vivo em `memory/caixinhas/hellosquad.md` (workspace do OpenClaw) e aqui.
+- Pendências do Vic (não bloqueiam): contas sandbox Asaas/Mercado Pago + endereço HTTPS público para webhook; motor de imagem; chave da Anthropic; escopo `workflow` no token; perguntas por fatia nos relatórios (`S2a..S2g`, `A2a..A2d`, `N2a`, `H2` §e; P1 "Criar conta grátis").
+
 ## Onde estamos (16/10/2026 14:50 — Fase 1 FECHADA, Fase 2 aberta)
 
 - **Fase 1 fechada às 14:40.** S1a–S1h, A1f, A1a, A1b, A1c, SA0 e H1 ✅ em `docs/PLANO_DE_ACAO_FASE1.md`. QA H1: 0 bloqueante, 4 atenção (corrigidas em S1h/A1c, exceto H1-01 parcial → checklist da Fase 5 e H1-04 → S2a), 7 notas. Bateria: pytest, pgTAP, Vitest e e2e verdes; clone limpo verde.
