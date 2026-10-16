@@ -12,7 +12,7 @@ protótipo (`h2/prototipo/`), clone limpo (`h2/clone/`) e varredura estática + 
 **Veredito em uma linha:** pela API, o critério da Fase 2 **passa** (seis personas entregam, o projeto Bia →
 Kaia(stub) → Otto fecha com responsável por etapa, a correção da Marina entra na entrega seguinte do Otto), e
 isolamento, créditos, cobrança, e-mail e worker **resistiram a todos os ataques**. Pela tela, **não passa**: o projeto
-coordenado não tem caminho nem tela no web (**H2-01 🔴**). Encontrei também **11 🟡** e **16 ℹ️**.
+coordenado não tem caminho nem tela no web (**H2-01 🔴**). Encontrei também **11 🟡** e **20 ℹ️**.
 
 ## (a) Tabela-resumo
 
@@ -27,9 +27,9 @@ coordenado não tem caminho nem tela no web (**H2-01 🔴**). Encontrei também 
 | H2-07 | A guarda do autosave não reconhece chave do Asaas, do Mercado Pago nem segredo de webhook (o autosave faz push no repositório público) | 🟡 | `infra/git-autosave.sh:32` | Não hoje (0 segredo no repo e no histórico); risco quando as contas sandbox chegarem |
 | H2-08 | O catálogo inteiro (inclusive o da área logada) vai serializado no HTML de cada página pública: 190 KB em `/sobre`, com nomes de plataformas no código-fonte | 🟡 | `apps/web/app/layout.tsx:36` (`NextIntlClientProvider` sem `messages`) | Regra da N2a "nenhum fornecedor citado" vale para o texto visível; o HTML bruto os leva |
 | H2-09 a H2-12 | Diferenças visíveis da A2b contra a V4.6 não registradas (§b) | 🟡 | `apps/web/components/env/**` | Diverge do protótipo (não registrado) |
-| H2-13 a H2-28 | Notas (§b) | ℹ️ | vários | Não |
+| H2-13 a H2-32 | Notas (§b) | ℹ️ | vários | Não |
 
-Contagem: 🔴 1 · 🟡 11 · ℹ️ 16 (números finais no §(b); os da comparação com o protótipo conferidos por mim).
+Contagem: 🔴 1 · 🟡 11 · ℹ️ 20. Os 9 🟡 da comparação com o protótipo estão agrupados em H2-09 a H2-12.
 
 ## (b) Achados
 
@@ -171,10 +171,11 @@ só o que nenhum relatório registrou (A2b §4, A2a §4). Conferi cada 🟡 no c
 - **H2-12 — Documento revisável (P-11, P-12).** No diagnóstico, no plano e nos relatórios, o cartão da decisão não
   traz a regra da V4.4 ("Aprovar o diagnóstico não cria trabalhos…", FLUXOS §5) e mostra o texto da legenda do
   Otto: "O ajuste abre a conversa com a Bia ao lado, com a legenda à vista." (`docs/DocumentDetail.tsx:197` usa
-  `content.adjustNote`); a migalha leva o título do pedido ("Quero analisar meu negócio") e o h1 o do documento (na
-  V4.6 são o mesmo), e o botão é "Conversar com a Bia" em vez de "Conversar sobre o diagnóstico".
+  `content.adjustNote`; depois de aprovado, "Aprovar não publica…"). No card "Versões", número e data saem colados
+  ("v116/10") e a versão aberta não se destaca: o botão usa a classe `is-on`, que não existe no CSS portado (só
+  `.bd-v.is-cur`, L3499 da V4.6) (`docs/DocumentDetail.tsx:208-217`; `h2/prototipo/nosso-pauta-doc.png`).
 
-### H2-13 a H2-28 (ℹ️)
+### H2-13 a H2-32 (ℹ️)
 
 | # | Nota | Onde | Prova |
 |---|---|---|---|
@@ -194,6 +195,10 @@ só o que nenhum relatório registrou (A2b §4, A2a §4). Conferi cada 🟡 no c
 | H2-26 | JSON-LD das páginas internas aponta para `@id` que só existe no grafo da home; meta robots duplicada nos 404 | `lib/site-seo.ts:84,169` | E-15 |
 | H2-27 | `make seed` não apaga convites e convite que sobra quebra o pgTAP (`02_workspace_isolation` #16, `04_invitations` #11); "Problemas comuns" manda rodar `make seed`. Nenhum caminho do produto cria convite hoje (sem rota; só SQL ou Data API), por isso nota | `supabase/seed.sql`, `SETUP_LOCAL.md:146,597` | `h2/clone/achados.md` C-04 |
 | H2-28 | Higiene do clone: `make test` solta a trava entre pytest e pgTAP (outra sessão entra no meio); segundo checkout com a senha nova do guia falha no `make up` (o guia manda copiar a do primeiro); `make seed` aplica e só depois recusa a senha; portas do segundo checkout | `Makefile`, `SETUP_LOCAL.md:26,68` | `h2/clone/achados.md` C-01, C-02, C-03, C-05 |
+| H2-29 | Sugestões da conversa do ambiente de Bia, Kaia, Kiwi e Max vêm de `pedidos_sugeridos` do `agent.yaml`, não dos `asks` da V4.6 ("Analisar os concorrentes do bairro" × "Analisar as padarias do bairro") | `conversations/opening.py:81` | `h2/prototipo/achados.md` P-06 |
+| H2-30 | CRM: "Nada é enviado sem consentimento…" colada na borda e no pé do cartão dos números | `components/env/crm/` | P-07, `nosso-max.png` |
+| H2-31 | O objeto da conversa do ambiente da Kiwi se chama "Growth Marketing"; na V4.6 o objeto é "Growth" (`ENVS.media.l`) | `components/env/EnvIdentity.tsx:33,42` | P-08 |
+| H2-32 | Documento: a migalha leva o título do pedido e o h1 o do documento (na V4.6 são o mesmo); "Conversar com a Bia" em vez de "Conversar sobre o diagnóstico" | `components/env/docs/DocumentDetail.tsx` | P-12 |
 
 ## (c) O que tentei e NÃO quebrou
 
@@ -295,7 +300,7 @@ motor chegar (não existe) e o Lighthouse das telas logadas.
 | S2e cobrança | ✅ (ℹ️ H2-15, H2-16) | webhooks paralelos e forjados, dois schedulers |
 | S2f e-mail | ✅ (ℹ️ H2-13) | idioma, preferência, recusa, retry, HTML escapado |
 | A2a onboarding e idiomas | ✅ com 🟡 H2-04, H2-06 | idioma da pessoa certo; o do negócio não entra |
-| A2b telas das deliveries | ✅ com 🟡 H2-09 a H2-12 | quatro personas aprovadas pela tela |
+| A2b telas das deliveries | ✅ com 🟡 H2-09 a H2-12 (ℹ️ H2-29 a H2-32) | quatro personas aprovadas pela tela; 9 diferenças da V4.6 não registradas |
 | A2c site público | ✅ com 🟡 H2-08 | 37 URLs, hreflang, JSON-LD, Lighthouse |
 | N2a conteúdo | ✅ (ℹ️ H2-19) | nenhum fornecedor no texto visível |
 | **Fase 2** | 🔴 **não fecha pela tela** | critério atendido pela API; o projeto coordenado (e, com ele, a entrega própria do Nexo) não existe no web |
