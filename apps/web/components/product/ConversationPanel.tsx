@@ -81,7 +81,8 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   }, [open, key, actions]);
 
   useEffect(() => {
-    scroller.current?.scrollTo({ top: scroller.current.scrollHeight });
+    const el = scroller.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [loaded]);
 
   useEffect(() => {
