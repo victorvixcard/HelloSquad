@@ -1,0 +1,50 @@
+# Plano de ação — Fase 2 (Squad completo, sem integração externa)
+
+Escrito por Thor (main) em 16/10/2026 14:35, com a Fase 1 em fechamento (H1: 0 bloqueante; S1h e A1c corrigindo os 🟡). Abre quando S1h e A1c fecharem. Autorização do dono (16/10 11:35): tocar a fila inteira sem novo OK; perguntar só o que nem o protótipo nem as diretrizes respondem.
+
+Ao retomar uma sessão: ler este arquivo → `git log` → `docs/parciais/` → sessões vivas → seguir do disco. Nunca re-disparar do zero. Fonte das regras: `docs/DIRETRIZES_DO_DONO.md` (PASSO 0 de todo briefing). Escopo e critério da fase: `docs/PLANO_DE_DESENVOLVIMENTO.md` §4 "Fase 2". Catálogo: `design/handoff-v4.6/documentacao/catalogo_46_deliveries_23_integracoes.csv` e Documento Mestre Anexo A.
+
+## Restrições do dono que moldam a fase
+
+- **Motor de imagem é do Vic** (chega depois, com chaves): Kaia 03.01–03.03 **não** são implementadas; nasce só o adaptador `ImageEngine` com um stub "aguardando motor" para o projeto coordenado não travar. Visão entra só quando o motor chegar (bancada de homologação).
+- **Pagamento = Asaas e Mercado Pago** atrás de `PaymentProvider` (ADR-0008); Stripe saiu. Contas sandbox ainda não existem: adaptadores contra mocks fiéis às APIs; sandbox real quando o Vic criar as contas. **Nenhuma tela de preço, paywall ou cobrança real** (preço por último).
+- **Idiomas pt-BR/en/es** (ADR-0010): catálogo en/es, idioma por workspace e por usuário, agentes respondem no idioma do cliente.
+- **Super Admin só depois** do planejado (ordem do Vic 09:30): as telas do SA entram ao fim da Fase 2, como trilha SA1+.
+- **Data API desligada em produção** (ADR-0011): nada novo depende dela.
+- Modo simulado até a chave da Anthropic chegar: toda delivery nova tem fixture simulada e teste; o adaptador real já existe (S1c).
+- **Um par por vez** (áreas disjuntas), commit ≤ 5 min, relatório em arquivo, `make test` verde antes de ✅, check silencioso a cada 10 min, resumo ao Vic a cada 2 h.
+
+## Fila (pares só quando as áreas não se tocam)
+
+| # | Fatia | Agente | Estado | Depende de | Critério de pronto |
+|---|---|---|---|---|---|
+| S2a | **Bia e Otto completos**: skills e fluxos de Bia 02.01 (diagnóstico), 02.02 (posicionamento, público e objetivos), 02.03 (plano com prioridades), 02.04 (estratégia de campanhas integradas), 02.07 (pesquisa de concorrentes e tendências, busca web atrás de `WebSearch` com mock e fontes datadas) e de Otto 04.02 (calendário editorial persistente: tabela `calendar_posts` já prevista como contexto) e 04.03 (posts e roteiros multicanal); fixtures simuladas por delivery; preços provisórios; cartões na conversa (S1f) | Stark | ⚪ pendente | S1h ✅ | cada delivery roda ponta a ponta no modo simulado pelo pedido → trabalho → entrega → aprovação; pytest + pgTAP; 02.07 distingue pesquisa real de sugestão; relatório `S2a-relatorio.md` |
+| A2a | **Onboarding progressivo + idiomas**: primeiro acesso guiado como a V4.6 (criar negócio → fatos essenciais da Memória → primeiro pedido ao Nexo), idioma por usuário e por workspace (seletor, `locale` no banco, `hreflang`), catálogo **en** e **es** completos (tradução revisada, não máquina crua), datas/números por idioma | Aranha | ⚪ pendente | A1c ✅ | Pedro faz o onboarding inteiro em pt-BR e Marina troca o idioma para en e vê a casca traduzida; Vitest + e2e; relatório `A2a-relatorio.md` |
+| S2b | **Kiwi, Max e Íris completos**: Kiwi 05.01 (plano de mídia e orçamento, sem conta conectada) e 05.02 (públicos e testes de anúncios); Max 06.01 (campanha de reativação), 06.02 (sequências de e-mail e mensagens, só texto) e 06.03 (segmentação com origem e consentimento) sobre **importação de CSV fictício** (`contacts`, `consents`, `DADOS_FICTICIOS.md`); Íris 07.02 (análise qualitativa), 07.03 (comparação entre períodos) e 07.04 (recomendações) sobre **métricas fictícias** (`metrics_daily` por canal no seed); fixtures e testes | Stark | ⚪ pendente | S2a ✅ | idem S2a para cada delivery; importação recusa contato sem consentimento; Íris nunca afirma causalidade sem evidência (teste de fixture); relatório `S2b-relatorio.md` |
+| N2a | **Conteúdo SEO/GEO e revisão de domínio**: textos do site público (`/`, `/como-funciona`, `/squad`, `/squad/[agente]` ×7, `/faq`, `/sobre`), `llms.txt`, FAQ como as pessoas perguntam à IA, consistência de entidade; revisão de domínio das 7 `SOUL.md` e das skills novas (S2a/S2b) com sugestões em arquivo, **sem editar `squad/`** (mudança de SOUL gera versão e passa pelo Thor) | Nick Fury | ⚪ pendente | S2a ✅ | arquivos em `docs/conteudo/site/*.md` (pt-BR, com en/es) e `docs/conteudo/revisao_squad.md`; relatório `N2a-relatorio.md` |
+| S2c | **Memória camada 3**: fila `memory.reflect` ao fechar trabalho (aprovado, com edições, recusado, cancelado), `agent_learnings` (workspace, agente, delivery, aprendizado, evidências, confiança, status), promoção ao contexto com orçamento (§5.3–5.4), `run_context_items` registra o que entrou; prova: a correção da Marina na v1 aparece aplicada na entrega seguinte do Otto (critério da fase) | Stark | ⚪ pendente | S2b ✅ | pgTAP + pytest; teste do critério da fase no modo simulado; relatório `S2c-relatorio.md` |
+| A2b | **Telas das deliveries novas**: ambientes de Bia, Kiwi, Max e Íris com entregas reais (documentos revisáveis), calendário editorial do Otto (04.02) como na V4.6, importação de CSV do Max com consentimento, relatórios da Íris, Kaia com "aguardando motor" honesto; cartões de contexto novos (calendário, métrica, segmento, documento) | Aranha | ⚪ pendente | S2b ✅, A2a ✅ | cada entrega nova abre, revisa e aprova pela tela; e2e por ambiente; comparação lado a lado com a V4.6; relatório `A2b-relatorio.md` |
+| S2d | **Colaboração entre agentes + projeto coordenado**: trabalho com etapas por agente (Bia → Kaia(stub) → Otto), responsável por etapa, handoff com contexto, `project_milestones` ligados; adaptador `ImageEngine` (interface + stub) e `squad/kaia` preparada sem delivery visual; Nexo delega por etapa | Stark | ⚪ pendente | S2c ✅ | um projeto coordenado fecha com um responsável por etapa (critério da fase) no modo simulado; relatório `S2d-relatorio.md` |
+| A2c | **Site público completo com SEO/GEO**: rotas do §7 da arquitetura com o conteúdo do N2a, JSON-LD (Organization, SoftwareApplication, FAQPage, BreadcrumbList, Service por agente), sitemap, robots, `llms.txt`, `hreflang` pt-BR/en/es, Core Web Vitals; **sem `/precos`** (preço por último) | Aranha | ⚪ pendente | N2a ✅, A2a ✅ | Lighthouse local verde no mobile; `make test-web` + e2e; relatório `A2c-relatorio.md` |
+| S2e | **Cobrança atrás de `PaymentProvider`**: interface única, adaptadores **Asaas** e **Mercado Pago** contra mocks fiéis (assinatura recorrente + recarga SPOT + Pix), webhooks idempotentes (`event_id` único), renovação mensal do plano (scheduler) ligada aos `credit_grants`; nenhuma tela de preço; chaves só por `.env` | Stark | ⚪ pendente | S2d ✅ | pytest com os dois adaptadores e webhooks repetidos; `make test` verde; relatório `S2e-relatorio.md` com o que falta para o sandbox real |
+| S2f | **E-mail transacional** atrás de `EmailProvider` com o **Mailpit local** (porta 56324) como sandbox: convite, aprovação pendente, entrega pronta, troca de senha; templates no catálogo (pt-BR/en/es) | Stark | ⚪ pendente | S2e ✅ | e-mails aparecem no Mailpit nos 3 idiomas; teste de integração; relatório `S2f-relatorio.md` |
+| H2 | **QA da Fase 2** (sozinho): critério da fase (sete personas com delivery real, salvo Kaia por decisão do dono; projeto coordenado; correção da Marina aplicada na entrega seguinte), isolamento das tabelas novas, consentimento do CSV, webhooks idempotentes, i18n sem texto fixo, SEO/GEO, clone limpo | Hulk | ⚪ pendente | S2f ✅, A2c ✅ | `H2-relatorio.md` no formato da H0/H1 |
+| SA1+ | Telas do Super Admin (`docs/SUPER_ADMIN.md`) sobre o protótipo SA0 | Aranha + Stark | ⚪ depois da H2 (ordem do Vic 09:30) | H2 ✅ | plano próprio ao abrir |
+
+## Ordem de disparo
+
+1. S2a ‖ A2a (após S1h e A1c) → 2. S2b ‖ N2a → 3. S2c ‖ A2b → 4. S2d ‖ A2c → 5. S2e → 6. S2f → 7. H2 (sozinho) → SA1+.
+
+## Decisões tomadas pelo Thor (não contrariam o combinado)
+
+- Kaia fica atrás de adaptador com stub honesto; o critério "sete personas com delivery real" vale para seis até o motor do Vic chegar. Registrado como dependência, não como atraso.
+- E-mail: provedor de produção não decidido; local usa o Mailpit do Supabase CLI atrás de `EmailProvider`. Pergunta ao Vic abaixo.
+- Jarvis não entra na Fase 2 (mocks ficam com o Stark dentro de cada fatia); volta na Fase 5 e para o CI.
+
+## Pendências e perguntas para o Vic (não bloqueiam)
+
+1. Criar contas **sandbox** no Asaas e no Mercado Pago quando quiser testar cobrança real (S2e roda contra mocks até lá).
+2. **Motor de imagem**: quando chegar, Visão monta a bancada e a Kaia ganha 03.01–03.03.
+3. **Provedor de e-mail** para produção (Resend, Postmark, SES…): decisão para a Fase 5; local usa Mailpit.
+4. Chave da Anthropic (modo real), escopo `workflow` no token do GitHub (CI), assets oficiais, acesso do Diogo.
+5. Perguntas herdadas da Fase 1: `S1e-relatorio.md` §4 (preços e sem saldo), `S1f-relatorio.md` §5 (conversa), `A1b-relatorio.md` §4 (interface, com o Diogo).
