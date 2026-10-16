@@ -93,5 +93,5 @@ dev-web: ## Web Next.js em http://127.0.0.1:3100
 worker: ## Worker do squad: consome a fila runs_interactive (LLM simulado sem ANTHROPIC_API_KEY; Ctrl+C encerra)
 	cd $(BACKEND_DIR) && uv run hellosquad-worker
 
-scheduler: ## Scheduler (placeholder até as rotinas existirem)
+scheduler: ## Scheduler: renovação mensal das assinaturas (concilia com o provedor; sem pagamento confirmado, past_due)
 	cd $(BACKEND_DIR) && uv run hellosquad-scheduler
