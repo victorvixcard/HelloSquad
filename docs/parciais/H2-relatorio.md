@@ -1,6 +1,6 @@
 # H2 — Relatório de QA adversária da Fase 2 (Hulk)
 
-**Fatia:** H2, QA adversária da Fase 2. **Data:** 16/10/2026, 18:55 → 19:40. **Método:** tentar refutar S2a–S2f,
+**Fatia:** H2, QA adversária da Fase 2. **Data:** 16/10/2026, 18:55 → 19:40 (fechado às 19:40). **Método:** tentar refutar S2a–S2f,
 A2a–A2c e N2a lendo o código real e atacando o ambiente local (API 8100, web 3100, Supabase `hellosquad`, worker do
 produto em modo simulado, Mailpit 56324). Nenhum código de produto foi alterado. Roteiros e provas em
 `docs/parciais/h2/`; saídas longas em `/tmp/h2_*`. Toda operação que muda o banco rodou dentro da trava
@@ -317,4 +317,18 @@ pergunta só quando o envio entrar (Fase 3/4).
 
 ## (f) Estado em que deixei a máquina
 
-(preenchido ao fechar)
+- Banco no estado do seed: `make seed` às 19:38 (com a trava do Makefile) e conferido: saldos Miolo 36, Vitta 20,
+  Trilha 19,20; 0 bônus `H2 QA`; 0 convites; 0 preferências de e-mail; 0 aprendizados e 0 reflexões; só os três
+  negócios do seed (os dois que o Pedro criou nos testes de e-mail foram apagados); idioma pt-BR nos três e nenhum
+  `locale` nos metadados das cinco pessoas; filas `runs_interactive`, `email_outbox` e `memory_reflect` vazias. Os 2
+  convites de teste que eu tinha deixado na Vitta (o auxiliar do clone avisou: quebram o pgTAP) foram apagados às
+  19:20, antes do seed.
+- API (8100) e web (3100) do dono **no ar o tempo todo**, nunca parados nem reiniciados (`/health` ok e web 200 às
+  19:38). Nenhum `next build` nem `make e2e` dentro de `apps/web`: o build de produção rodou num worktree em
+  `/tmp/h2_web` (porta 3198), já removido; o clone limpo em `/tmp/h2_clone` (portas 8199/3199) também, com o `.env`.
+- Nenhum worker, scheduler, servidor ou browser meu no ar. Só os 11 containers `supabase_*_hellosquad` foram usados.
+- O Mailpit guarda os e-mails dos testes (fictícios, `.example`); não apaguei.
+- Lição de método (fica para a próxima QA): o clone limpo reaplicou o seed entre dois blocos meus às 19:01 e às
+  19:15 e apagou a primeira rodada antes da conferência no banco. Todas as provas deste relatório foram medidas
+  **dentro** da trava do bloco que criou os dados; e meus bônus entre o pytest e o pgTAP do clone derrubaram duas
+  rodadas dele (C-03): QA e clone na mesma máquina devem segurar a trava do seed até o fim do `make test`.
