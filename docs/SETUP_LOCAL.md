@@ -518,6 +518,32 @@ curl -s "http://127.0.0.1:8100/workspaces/$WS/billing/payments?limit=5" -H "$AUT
 - **Leitura** (só o owner; admin e editor recebem 403): `GET /workspaces/{id}/billing/subscription` (estado, plano, próximo ciclo) e `GET /workspaces/{id}/billing/payments` (créditos e estado de cada cobrança). Nenhum valor em dinheiro sai da API.
 - **Provedor real** (quando o dono criar as contas sandbox): preencha `ASAAS_API_KEY` e `ASAAS_WEBHOOK_TOKEN` ou `MERCADOPAGO_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET`, troque `PAYMENT_PROVIDER` e reinicie a API e o scheduler. O que falta para o sandbox está em `docs/parciais/S2e-relatorio.md`.
 
+### E-mail transacional e o Mailpit (S2f)
+
+Todo e-mail que o HelloSquad manda sai por uma interface única (`EmailProvider`) e, no ambiente local, cai no **Mailpit** do Supabase CLI: nada sai da máquina. A caixa de entrada fica em **http://127.0.0.1:56324** (interface web; a API HTTP do Mailpit responde no mesmo endereço, por exemplo `GET /api/v1/messages`). O SMTP do Mailpit fica exposto em `127.0.0.1:56325` (`[local_smtp] smtp_port` no `supabase/config.toml`; se o seu stack subiu antes dessa linha, rode `make down && make up` uma vez). Os e-mails da própria Auth (recuperação de senha, troca de e-mail) já caíam lá e continuam iguais.
+
+| E-mail | Quando | Quem recebe |
+|---|---|---|
+| Convite | convite criado (`invitations`) | o e-mail convidado |
+| Precisa de você | aprovação pendente | owners do negócio (só o owner decide) |
+| Entrega pronta | versão de entrega feita por agente | membros que não são owner (o owner já recebe o "Precisa de você" da mesma entrega) |
+| Pagamento confirmado / com problema | cobrança confirmada; vencida, recusada ou contestada (S2e) | owners |
+| Senha alterada | a Auth trocou a senha (recuperação ou troca pela pessoa) | a própria pessoa |
+
+- **Idioma:** o da pessoa (`user_metadata.locale`) → o do negócio → pt-BR. Os textos ficam no catálogo do backend (`apps/backend/src/hellosquad/i18n/<idioma>.json`, chaves `email.*`), em pt-BR, en e es. Valor em dinheiro e créditos não aparecem no e-mail (preço ainda provisório).
+- **Fila:** o gatilho grava o e-mail em `email_messages` e manda para a fila pgmq `email_outbox`; o worker (`make worker`, ou `cd apps/backend && uv run hellosquad-worker --drain` para esvaziar as filas uma vez) envia, grava o id do Mailpit em `provider_message_id` e tenta de novo com espera crescente se o SMTP falhar (`EMAIL_MAX_ATTEMPTS`). Em local/test, destinatário fora do TLD `.example` é recusado sem envio (`status = refused`).
+- **Preferência:** `GET /me/email-preferences` e `PUT /me/email-preferences/{template}` com `{"enabled": false}` desligam um aviso opcional (`approval_pending`, `delivery_ready`, `payment_confirmed`, `payment_problem`); convite e aviso de senha não são opcionais.
+
+```bash
+# Um convite na Miolo (como a Marina, owner) e o worker esvaziando as filas uma vez
+psql "$DATABASE_URL" -c "insert into public.invitations (workspace_id, email, role, token_hash, expires_at, invited_by)
+  select w.id, 'nova.pessoa@miolo.example', 'editor', md5(random()::text) || md5(random()::text), now() + interval '7 days', u.id
+  from public.workspaces w, auth.users u where w.slug = 'miolo' and u.email = 'marina@miolo.example'"
+(cd apps/backend && uv run hellosquad-worker --drain)
+curl -s 'http://127.0.0.1:56324/api/v1/messages?limit=5' | python3 -m json.tool | grep -E '"(Subject|Address)"'
+psql "$DATABASE_URL" -c "select template, locale, status, attempts, provider_message_id from public.email_messages order by created_at desc limit 5"
+```
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
