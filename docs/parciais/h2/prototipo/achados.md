@@ -27,14 +27,14 @@ Realtime, eventos do run).
 | P-02 | Conversa do ambiente da Íris · primeira fala | Sempre "Ainda não tenho números da Miolo para ler…", mesmo com as séries que a página ao lado mostra; na V4.6 (conta em uso) a fala lê a última semana | 🟡 |
 | P-03 | Resultados · "Desempenho por canal" | Variação e valor se sobrepõem ("-13,9%" em cima de "3.694 sessões"), rótulos cortados ("Seguidores no Inst…"); a V4.6 tem nome, barra e valor em colunas | 🟡 |
 | P-04 | Resultados · gráfico de 12 semanas | As duas faixas do período não têm rótulo ("SETEMBRO" e "AGOSTO" na V4.6) | 🟡 |
-| P-12 | Resultados · cards "Análises recentes" e "Desempenho por canal" | Sem o botão de conversa no cabeçalho do card ("Conversar com Íris sobre as análises", "Analisar os canais com Íris"); as chaves existem no catálogo e não são usadas | 🟡 |
-| P-05 | Conversa do ambiente · sugestões de Bia, Kaia, Kiwi e Max | Vêm de `pedidos_sugeridos` do `agent.yaml`, não dos `asks` da V4.6 (ex.: "Analisar os concorrentes do bairro" × "Analisar as padarias do bairro") | ℹ️ |
-| P-06 | CRM · frase "Nada é enviado sem consentimento…" | Colada na borda esquerda e no pé do cartão dos números, fora do respiro dos outros blocos | ℹ️ |
-| P-07 | Growth · objeto da conversa do ambiente | Nome "Growth Marketing" no nome acessível do botão e no cartão; na V4.6 o objeto se chama "Growth" (`ENVS.media.l`) | ℹ️ |
-| P-08 | Conversas de objeto novas (Indicador na tela; Publicação e Oportunidade pelo código) | Abrem mudas: sem "Hoje", sem a primeira fala do agente, sem o cartão do objeto no histórico e sem "Pergunte à <Nome>"; a V4.6 abre cada uma com fala, cartão e três sugestões do tipo | 🟡 |
-| P-09 | Conversa do indicador · coluna "Contexto da conversa" | Sem o número, a variação e a curva do indicador e sem a linha "setembro · comparado com agosto" abaixo do título; "Voltar para Resultados" vai para o pé da coluna | 🟡 |
-| P-10 | Documento (Bia, Íris, Kiwi, Max) · cartão da decisão | Falta a regra da V4.4 "Aprovar o diagnóstico não cria trabalhos…" / "Aprovar o plano define a direção…"; no lugar, textos da legenda do Otto: "…com a legenda à vista." e, aprovado, "Aprovar não publica: a publicação pede autorização própria." | 🟡 |
-| P-11 | Documento · migalha, botão de conversa e cartão extra | Migalha com o título do trabalho ("Quero analisar meu negócio") e o h1 com o do documento (na V4.6 os dois são `bd.title`); "Conversar com a Bia" no lugar de "Conversar sobre o diagnóstico"/"…as prioridades"; cartão com o rosto "Bia" que a V4.6 não tem | ℹ️ |
+| P-05 | Resultados · cards "Análises recentes" e "Desempenho por canal" | Sem o botão de conversa no cabeçalho do card ("Conversar com Íris sobre as análises", "Analisar os canais com Íris"); as chaves existem no catálogo e não são usadas | 🟡 |
+| P-06 | Conversa do ambiente · sugestões de Bia, Kaia, Kiwi e Max | Vêm de `pedidos_sugeridos` do `agent.yaml`, não dos `asks` da V4.6 (ex.: "Analisar os concorrentes do bairro" × "Analisar as padarias do bairro") | ℹ️ |
+| P-07 | CRM · frase "Nada é enviado sem consentimento…" | Colada na borda esquerda e no pé do cartão dos números, fora do respiro dos outros blocos | ℹ️ |
+| P-08 | Growth · objeto da conversa do ambiente | Nome "Growth Marketing" no nome acessível do botão e no cartão; na V4.6 o objeto se chama "Growth" (`ENVS.media.l`) | ℹ️ |
+| P-09 | Conversas de objeto novas (Indicador na tela; Publicação e Oportunidade pelo código) | Abrem mudas: sem "Hoje", sem a primeira fala do agente, sem o cartão do objeto no histórico e sem "Pergunte à <Nome>"; a V4.6 abre cada uma com fala, cartão e três sugestões do tipo | 🟡 |
+| P-10 | Conversa do indicador · coluna "Contexto da conversa" | Sem o número, a variação e a curva do indicador e sem a linha "setembro · comparado com agosto" abaixo do título; "Voltar para Resultados" vai para o pé da coluna | 🟡 |
+| P-11 | Documento (Bia, Íris, Kiwi, Max) · cartão da decisão | Falta a regra da V4.4 "Aprovar o diagnóstico não cria trabalhos…" / "Aprovar o plano define a direção…"; no lugar, textos da legenda do Otto: "…com a legenda à vista." e, aprovado, "Aprovar não publica: a publicação pede autorização própria." | 🟡 |
+| P-12 | Documento · migalha, botão de conversa e cartão extra | Migalha com o título do trabalho ("Quero analisar meu negócio") e o h1 com o do documento (na V4.6 os dois são `bd.title`); "Conversar com a Bia" no lugar de "Conversar sobre o diagnóstico"/"…as prioridades"; cartão com o rosto "Bia" que a V4.6 não tem | ℹ️ |
 
 ## Achados
 
@@ -103,7 +103,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 6. **Severidade:** 🟡. **Conferido:** A2b §4 item 29 registra só as linhas de média e as marcas "1" e "2"; item 27, o
    texto do período. O rótulo das faixas não está registrado.
 
-### P-12 · "Análises recentes" e "Desempenho por canal" sem o botão de conversa do card · 🟡
+### P-05 · "Análises recentes" e "Desempenho por canal" sem o botão de conversa do card · 🟡
 
 1. **Tela e rota:** Resultados, `/app/miolo/squad/iris`, os dois cards abaixo do gráfico.
 2. **Protótipo:** cada card tem, no cabeçalho, o botão redondo de conversa: "Análises recentes" com
@@ -117,7 +117,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 6. **Severidade:** 🟡 (falta um caminho de conversa que a V4.6 desenha; as linhas de canal continuam clicáveis). A2b §4
    item 30 registra só "Íris percebeu", "Oportunidades" e a barra por canal.
 
-### P-05 · Sugestões da conversa do ambiente não são as da V4.6 (Bia, Kaia, Kiwi, Max) · ℹ️
+### P-06 · Sugestões da conversa do ambiente não são as da V4.6 (Bia, Kaia, Kiwi, Max) · ℹ️
 
 1. **Tela e rota:** qualquer ambiente desses quatro → "Conversar com <Nome>", bloco "Pergunte à <Nome>".
 2. **Protótipo:** `sug: … : AG[ag].asks.slice(0, 3)` (L9778). Bia (L5642): "Onde a Miolo pode crescer até o Natal?",
@@ -135,7 +135,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 5. **Prova:** `proto-conversa-bia.png` × `nosso-conversa-bia.png` (terceira sugestão).
 6. **Severidade:** ℹ️ (texto; a versão do `agent.yaml` é genérica de propósito, mas não está registrada como divergência).
 
-### P-06 · Frase do consentimento fora do respiro do cartão do CRM · ℹ️
+### P-07 · Frase do consentimento fora do respiro do cartão do CRM · ℹ️
 
 1. **Tela e rota:** CRM, `/app/miolo/squad/max` (com contatos), cartão dos números.
 2. **Protótipo:** na conta em uso, o cartão termina em "Aceitam receber mensagens: 123 de 439 contatos" com a barra
@@ -148,7 +148,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    (mesmo desalinhamento, com o vão entre os números e a barra) × `proto-max.png`.
 5. **Severidade:** ℹ️. A frase sempre visível está declarada na A2b §1 item 3; o desalinhamento não.
 
-### P-07 · O objeto "ambiente" da Kiwi se chama "Growth Marketing", não "Growth" · ℹ️
+### P-08 · O objeto "ambiente" da Kiwi se chama "Growth Marketing", não "Growth" · ℹ️
 
 1. **Tela e rota:** Growth, `/app/miolo/squad/kiwi`, botão "Conversar com Kiwi" e o cartão da conversa.
 2. **Protótipo:** `talkAria: 'Conversar com ' + AG[ag].n + ' sobre ' + E.l + ', ao lado'` (L10572) e o objeto
@@ -162,7 +162,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 5. **Severidade:** ℹ️. **Conferido:** A1a item 11 (barra "Growth", identidade "Growth Marketing") e a decisão do dono
    falam da barra e do título; o nome do objeto da conversa não está registrado.
 
-### P-08 · Conversas de objeto da A2b abrem sem fala, sem cartão e sem sugestões · 🟡
+### P-09 · Conversas de objeto da A2b abrem sem fala, sem cartão e sem sugestões · 🟡
 
 1. **Tela e rota:** Resultados, `/app/miolo/squad/iris` → "Analisar com Íris" no indicador "Pedidos" (conversa
    `metric`); o mesmo caminho serve "Conversar com Otto sobre este conteúdo" (`calendar_post`) e "Conversar sobre isso"
@@ -188,7 +188,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    hora da primeira fala do **ambiente**; item 6 é a faixa de período. A1b §4 item 9 cobre a conversa do conhecimento
    da Memória. Nenhum registra que as conversas de indicador, publicação e oportunidade abrem vazias.
 
-### P-09 · Coluna "Contexto da conversa" do indicador sem o número · 🟡
+### P-10 · Coluna "Contexto da conversa" do indicador sem o número · 🟡
 
 1. **Tela e rota:** Resultados → conversa do indicador "Pedidos" → "Expandir a conversa" (coluna aberta como vem).
 2. **Protótipo:** a coluna do objeto Indicador abre com o cartão do número (`hasBig: !cx.p && !!cx.big`, `big`,
@@ -206,7 +206,7 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    devolve"; a §4 só registra os rótulos novos "Segmento" e "Documento" (item 8) e o rótulo do período (item 27). O
    número do indicador fora da coluna não está registrado.
 
-### P-10 · Cartão da decisão do documento sem a regra "aprovar não cria trabalhos" e com texto da legenda · 🟡
+### P-11 · Cartão da decisão do documento sem a regra "aprovar não cria trabalhos" e com texto da legenda · 🟡
 
 1. **Tela e rota:** detalhe de qualquer entrega em documento, `/app/miolo/squad/<bia|iris|kiwi|max>/trabalho/<id>`,
    primeiro cartão da coluna da direita.
@@ -228,9 +228,9 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 **Conferido:** A2b §4 item 9 registra só os botões extras ("Pedir nova proposta", "Cancelar trabalho") e o item 10 o
 "Baixar PDF"; os textos do cartão não estão registrados.
 
-### P-11 · Documento: migalha, rótulo da conversa e cartão de equipe diferentes · ℹ️
+### P-12 · Documento: migalha, rótulo da conversa e cartão de equipe diferentes · ℹ️
 
-1. **Tela e rota:** a mesma do P-10.
+1. **Tela e rota:** a mesma do P-11.
 2. **Protótipo:** a migalha e o h1 mostram o mesmo `{{bd.title}}` (L5072–L5073); o botão é "Conversar sobre o
    diagnóstico" ou "Conversar sobre as prioridades" (`talkL`, L12608); a coluna tem estado, Versões, ações e Histórico
    (L5077); "Especialistas envolvidos" é seção do corpo do plano (L5075).
