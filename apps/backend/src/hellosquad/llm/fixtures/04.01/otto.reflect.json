@@ -1,0 +1,96 @@
+{
+  "delivery_type": "04.01",
+  "step": "otto.reflect",
+  "cases": [
+    {
+      "name": "correcao_explicita",
+      "when": {
+        "matches": "(?s)<correcao [^>]*>[^<]*promo[çc][ãa]o imperd[íi]vel"
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 320
+      },
+      "output": {
+        "aprendizados": [
+          {
+            "assunto": "Vocabulário",
+            "aprendizado": "Nunca usar a expressão “promoção imperdível” nas legendas.",
+            "evidencias": [
+              "C1",
+              "V2"
+            ],
+            "confianca": 0.95,
+            "origem": "correcao_explicita"
+          },
+          {
+            "assunto": "Tratamento",
+            "aprendizado": "Chamar o cliente de “você”, no singular, nunca de “vocês”.",
+            "evidencias": [
+              "C1"
+            ],
+            "confianca": 0.9,
+            "origem": "correcao_explicita"
+          },
+          {
+            "assunto": "Abertura",
+            "aprendizado": "Abrir a legenda pelo produto, não pela oferta.",
+            "evidencias": [
+              "V1",
+              "V2",
+              "X9"
+            ],
+            "confianca": 0.4,
+            "origem": "observacao"
+          },
+          {
+            "assunto": "Emojis",
+            "aprendizado": "Usar emojis no fim das legendas.",
+            "evidencias": [
+              "X1"
+            ],
+            "confianca": 0.8,
+            "origem": "correcao_explicita"
+          }
+        ],
+        "resumo": "A pessoa corrigiu o vocabulário e o tratamento; a versão aprovada abre pelo produto."
+      }
+    },
+    {
+      "name": "aprovado_sem_ajuste_abobora",
+      "when": {
+        "matches": "(?s)(?=.*desfecho=\"approved\")(?=.*<pedido>[^<]*ab[óo]bora)"
+      },
+      "usage": {
+        "input_tokens": 1900,
+        "output_tokens": 140
+      },
+      "output": {
+        "aprendizados": [
+          {
+            "assunto": "Abertura",
+            "aprendizado": "Abrir a legenda pelo produto, não pela oferta.",
+            "evidencias": [
+              "V1",
+              "D"
+            ],
+            "confianca": 0.5,
+            "origem": "correcao_explicita"
+          }
+        ],
+        "resumo": "Aprovada sem ajuste; a abertura pelo produto se repetiu."
+      }
+    },
+    {
+      "name": "nada_a_aprender",
+      "usage": {
+        "input_tokens": 1500,
+        "output_tokens": 40
+      },
+      "output": {
+        "aprendizados": [],
+        "resumo": "Nada novo a aprender com este trabalho."
+      }
+    }
+  ]
+}

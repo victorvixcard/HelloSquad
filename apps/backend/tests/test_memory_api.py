@@ -82,6 +82,9 @@ async def test_memory_enums_match_the_database(admin_db) -> None:
         "memory_conflict_state": domain.MemoryConflictState,
         "memory_conflict_resolution": domain.MemoryConflictResolution,
         "run_context_kind": domain.RunContextKind,
+        "reflection_outcome": domain.ReflectionOutcome,
+        "reflection_status": domain.ReflectionStatus,
+        "agent_learning_status": domain.AgentLearningStatus,
     }
     for name, enum in enums.items():
         values = await scalar(admin_db, f"select enum_range(null::public.{name})::text[]")

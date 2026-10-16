@@ -4,8 +4,13 @@
   "cases": [
     {
       "name": "briefing_sem_canal",
-      "when": {"not_matches": "\\b(instagram|facebook|linkedin|tiktok|whatsapp|e-?mail|site|blog)\\b"},
-      "usage": {"input_tokens": 1480, "output_tokens": 160},
+      "when": {
+        "not_matches": "\\b(instagram|facebook|linkedin|tiktok|whatsapp|e-?mail|site|blog)\\b"
+      },
+      "usage": {
+        "input_tokens": 1480,
+        "output_tokens": 160
+      },
       "output": {
         "delivery_type": "04.01",
         "briefing": {
@@ -17,14 +22,48 @@
           "cta": null,
           "data": null
         },
-        "faltam": ["canal", "objetivo"],
+        "faltam": [
+          "canal",
+          "objetivo"
+        ],
         "pergunta": "Para o Otto começar: em qual canal o texto vai sair (Instagram, WhatsApp ou site) e o que você quer que a pessoa faça depois de ler?",
         "resumo": "Pedido de texto de divulgação sem canal e sem objetivo definidos."
       }
     },
     {
+      "name": "briefing_abobora",
+      "when": {
+        "tag": "pedido",
+        "matches": "ab[óo]bora"
+      },
+      "usage": {
+        "input_tokens": 1850,
+        "output_tokens": 210
+      },
+      "output": {
+        "delivery_type": "04.01",
+        "briefing": {
+          "canal": "instagram",
+          "objetivo": "Vender o pão de abóbora na loja",
+          "tema": "Pão de abóbora saindo do forno",
+          "tom": "acolhedor, direto, sem gíria",
+          "restricoes": [
+            "não usar a palavra \"artesanal\""
+          ],
+          "cta": "Passar na loja",
+          "data": null
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Legenda de Instagram sobre o pão de abóbora; objetivo: vender na loja; sem a palavra \"artesanal\"."
+      }
+    },
+    {
       "name": "briefing_completo",
-      "usage": {"input_tokens": 1850, "output_tokens": 210},
+      "usage": {
+        "input_tokens": 1850,
+        "output_tokens": 210
+      },
       "output": {
         "delivery_type": "04.01",
         "briefing": {
@@ -32,7 +71,9 @@
           "objetivo": "Levar clientes à loja no sábado de manhã",
           "tema": "Pão de fermentação longa no sábado",
           "tom": "acolhedor, direto, sem gíria",
-          "restricoes": ["não usar a palavra \"artesanal\""],
+          "restricoes": [
+            "não usar a palavra \"artesanal\""
+          ],
           "cta": "Passar na loja no sábado de manhã",
           "data": "sábado"
         },

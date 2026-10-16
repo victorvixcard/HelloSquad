@@ -3,6 +3,97 @@
   "step": "otto.produce",
   "cases": [
     {
+      "name": "abobora_com_aprendizado",
+      "when": {
+        "matches": "(?s)(?=.*<aprendizados>.*promo[çc][ãa]o imperd[íi]vel.*</aprendizados>)(?=.*<pedido>[^<]*ab[óo]bora)"
+      },
+      "usage": {
+        "input_tokens": 1320,
+        "output_tokens": 530,
+        "cache_read_tokens": 2900
+      },
+      "output": {
+        "entrega": {
+          "canal": "instagram",
+          "objetivo": "Vender o pão de abóbora na loja",
+          "versoes": [
+            {
+              "texto": "Sexta tem pão de abóbora quentinho saindo do forno.\nVocê vai sentir a casca dourada e o miolo macio.\nPasse na Miolo e leve o seu.",
+              "hashtags": [
+                "#paodeabobora",
+                "#fermentacaonatural",
+                "#pinheiros"
+              ],
+              "cta": "Passe na loja e leve o seu."
+            }
+          ],
+          "notas": "Segui o que aprendi com você: sem “promoção imperdível” e falando com você, no singular."
+        },
+        "mensagem": "Escrevi a legenda do pão de abóbora já do jeito que você corrigiu da outra vez: sem “promoção imperdível” e falando com você. Agora é com você: aprove ou peça ajuste."
+      }
+    },
+    {
+      "name": "abobora_com_retorno",
+      "when": {
+        "matches": "(?s)(?=.*<retorno_da_pessoa decisao=\"(changes_requested|rejected)\")(?=.*<pedido>[^<]*ab[óo]bora)"
+      },
+      "usage": {
+        "input_tokens": 1320,
+        "output_tokens": 530,
+        "cache_read_tokens": 2900
+      },
+      "output": {
+        "entrega": {
+          "canal": "instagram",
+          "objetivo": "Vender o pão de abóbora na loja",
+          "versoes": [
+            {
+              "texto": "Pão de abóbora saindo do forno, com casca dourada e miolo macio.\nVocê sente o perfume da fermentação natural já na porta.\nPasse na Miolo e leve o seu.",
+              "hashtags": [
+                "#paodeabobora",
+                "#fermentacaonatural",
+                "#pinheiros"
+              ],
+              "cta": "Passe na loja e leve o seu."
+            }
+          ],
+          "notas": "Nova versão a partir do seu retorno: saiu “promoção imperdível” e o texto fala com você."
+        },
+        "mensagem": "Fiz a nova versão da legenda com o que você pediu e mantive o resto. Agora é com você: aprove ou peça outro ajuste."
+      }
+    },
+    {
+      "name": "abobora_primeira_versao",
+      "when": {
+        "tag": "pedido",
+        "matches": "ab[óo]bora"
+      },
+      "usage": {
+        "input_tokens": 1320,
+        "output_tokens": 530,
+        "cache_read_tokens": 2900
+      },
+      "output": {
+        "entrega": {
+          "canal": "instagram",
+          "objetivo": "Vender o pão de abóbora na loja",
+          "versoes": [
+            {
+              "texto": "Promoção imperdível: pão de abóbora saindo do forno.\nVocês vão adorar a casca dourada e o miolo macio.\nPassem na Miolo e garantam o de vocês.",
+              "hashtags": [
+                "#paodeabobora",
+                "#fermentacaonatural",
+                "#pinheiros"
+              ],
+              "cta": "Passem na loja e garantam o de vocês."
+            }
+          ],
+          "notas": "Chama para a loja com o pão de abóbora em destaque."
+        },
+        "mensagem": "Escrevi a legenda do pão de abóbora para o Instagram. Agora é com você: aprove ou peça ajuste."
+      }
+    },
+    {
       "name": "nova_versao_com_retorno",
       "usage": {
         "input_tokens": 1320,

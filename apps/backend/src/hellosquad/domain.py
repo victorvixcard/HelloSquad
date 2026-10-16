@@ -210,6 +210,28 @@ class MemoryConflictResolution(StrEnum):
 class RunContextKind(StrEnum):
     fact = "fact"
     suggestion = "suggestion"
+    learning = "learning"
+
+
+class ReflectionOutcome(StrEnum):
+    approved = "approved"
+    approved_with_edits = "approved_with_edits"
+    rejected_revise = "rejected_revise"
+    rejected_cancel = "rejected_cancel"
+    cancelled = "cancelled"
+
+
+class ReflectionStatus(StrEnum):
+    queued = "queued"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
+
+
+class AgentLearningStatus(StrEnum):
+    candidate = "candidate"
+    promoted = "promoted"
+    discarded = "discarded"
 
 
 class DeliveryDepth(StrEnum):
