@@ -4,8 +4,10 @@ from pathlib import Path
 
 import psycopg
 import pytest
+from psycopg.conninfo import conninfo_to_dict, make_conninfo
 
 from hellosquad import local_db
+from hellosquad.config import get_settings
 
 ADMIN_URL = "postgresql://postgres:postgres@127.0.0.1:56322/postgres"
 
@@ -58,3 +60,38 @@ def test_explicit_commands_require_api_url_before_connecting(
 
     assert local_db.main(command) == 1
     assert capsys.readouterr().err.startswith("erro: API_DATABASE_URL vazio no .env")
+
+
+def api_role_verifier() -> str:
+    """Hash SCRAM da senha: regravar muda o sal, então hash igual quer dizer nada gravado."""
+    settings = get_settings()
+    assert settings.database_url is not None
+    with psycopg.connect(settings.database_url.get_secret_value()) as conn:
+        row = conn.execute(
+            "select rolpassword from pg_authid where rolname = %s", (local_db.API_ROLE,)
+        ).fetchone()
+    assert row is not None
+    return row[0]
+
+
+@pytest.mark.integration
+def test_roles_keeps_the_password_that_already_works(capsys):
+    before = api_role_verifier()
+
+    assert local_db.main(["roles"]) == 0
+    assert "já confere com API_DATABASE_URL; nada gravado" in capsys.readouterr().out
+    assert api_role_verifier() == before
+
+
+@pytest.mark.integration
+def test_roles_refuses_to_rotate_the_password_another_checkout_uses(monkeypatch, capsys):
+    api_url = get_settings().api_database_url
+    assert api_url is not None
+    params = conninfo_to_dict(api_url.get_secret_value())
+    monkeypatch.setenv("API_DATABASE_URL", make_conninfo(**{**params, "password": "outra-senha"}))
+    get_settings.cache_clear()
+    before = api_role_verifier()
+
+    assert local_db.main(["roles"]) == 1
+    assert "já tem outra senha (outro checkout nesta máquina?)" in capsys.readouterr().err
+    assert api_role_verifier() == before

@@ -59,6 +59,41 @@ def api_role_credentials(settings: Settings) -> tuple[str, str]:
     return user, password
 
 
+ROTATION_REFUSED = (
+    "o papel {role} já tem outra senha (outro checkout nesta máquina?). Trocar derruba a API "
+    "de quem usa a senha atual. Copie o API_DATABASE_URL do .env do outro checkout para este, "
+    "ou troque de propósito com: cd apps/backend && uv run hellosquad-local-db roles --rotate"
+)
+
+
+def password_works(api_conninfo: str) -> bool:
+    try:
+        with psycopg.connect(api_conninfo, connect_timeout=5):
+            return True
+    except psycopg.OperationalError:
+        return False
+
+
+def has_password(conn: psycopg.Connection, user: str) -> bool:
+    row = conn.execute(
+        "select rolpassword is not null from pg_authid where rolname = %s", (user,)
+    ).fetchone()
+    return bool(row and row[0])
+
+
+def sync_api_role_password(
+    conn: psycopg.Connection, settings: Settings, *, rotate: bool = False
+) -> str:
+    """Grava a senha só quando falta: a que já vale fica; trocar outra exige --rotate."""
+    user, password = api_role_credentials(settings)
+    if password_works(secret_value(settings.api_database_url)):
+        return f"senha do papel {API_ROLE} já confere com API_DATABASE_URL; nada gravado"
+    if has_password(conn, user) and not rotate:
+        raise LocalDbError(ROTATION_REFUSED.format(role=API_ROLE))
+    set_api_role_password(conn, user, password)
+    return f"senha do papel {API_ROLE} definida a partir de API_DATABASE_URL"
+
+
 def set_api_role_password(conn: psycopg.Connection, user: str, password: str) -> None:
     """Grava a senha de API_DATABASE_URL no papel hellosquad_api, com o hash SCRAM feito aqui."""
     verifier = conn.pgconn.encrypt_password(password.encode(), user.encode(), b"scram-sha-256")
@@ -95,6 +130,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="para o make up: sem .env ou com as URLs vazias, só avisa e sai 0",
     )
+    roles_cmd.add_argument(
+        "--rotate",
+        action="store_true",
+        help=f"troca a senha do {API_ROLE} mesmo que outra já valha (derruba a API que a usa)",
+    )
     seed_cmd = commands.add_parser("seed", help=f"aplica o seed e grava a senha do {API_ROLE}")
     seed_cmd.add_argument("seed_file", type=Path)
     args = parser.parse_args(argv)
@@ -110,14 +150,13 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     try:
         conninfo = admin_conninfo(settings)
-        user, password = api_role_credentials(settings)
+        api_role_credentials(settings)
         with psycopg.connect(conninfo, autocommit=True) as conn:
             if args.command == "seed":
                 for email, slug, role in seed(conn, args.seed_file):
                     print(f"  {slug:<8} {role:<15} {email}")
                 print(f"seed aplicado: {args.seed_file}")
-            set_api_role_password(conn, user, password)
-            print(f"senha do papel {API_ROLE} definida a partir de API_DATABASE_URL")
+            print(sync_api_role_password(conn, settings, rotate=getattr(args, "rotate", False)))
     except (LocalDbError, psycopg.Error, OSError) as exc:
         print(f"erro: {exc}", file=sys.stderr)
         return 1
