@@ -468,6 +468,179 @@
         }
       }
     },
+    "/workspaces/{workspace_id}/conversations/unread": {
+      "get": {
+        "tags": [
+          "conversations"
+        ],
+        "summary": "Não lidas da pessoa logada: total, Sala do Squad e por especialista (ambiente)",
+        "operationId": "unread_summary_workspaces__workspace_id__conversations_unread_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnreadSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversation_id}/read": {
+      "post": {
+        "tags": [
+          "conversations"
+        ],
+        "summary": "Marca a conversa como lida pela pessoa logada (qualquer membro, até viewer)",
+        "operationId": "mark_read_conversations__conversation_id__read_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ReadCreate"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/conversations/{conversation_id}": {
       "get": {
         "tags": [
@@ -717,6 +890,115 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messages/{message_id}/reply": {
+      "post": {
+        "tags": [
+          "conversations"
+        ],
+        "summary": "Pede a resposta do squad a uma mensagem da pessoa (um especialista por vez)",
+        "description": "Põe na fila o run de resposta (sem trabalho) de quem responde: `@Nome` de um participante direciona; na conversa em grupo, sem menção, o especialista mais ligado ao pedido (palavras do protótipo) e, sem nenhuma, o Nexo se participa, senão o primeiro; na Sala do Squad, o Nexo; nas outras, quem está à frente. 201 quando cria; 200 com o mesmo run ao repetir. Mensagem que virou trabalho responde 409. Exige papel editor ou acima.",
+        "operationId": "request_reply_messages__message_id__reply_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "message_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Message Id"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplyRequest"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Mesmo run, já pedido antes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplyRequest"
                 }
               }
             }
@@ -2725,6 +3007,28 @@
         ],
         "title": "AgentId"
       },
+      "AgentUnread": {
+        "properties": {
+          "conversations": {
+            "type": "integer",
+            "title": "Conversations"
+          },
+          "messages": {
+            "type": "integer",
+            "title": "Messages"
+          },
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          }
+        },
+        "type": "object",
+        "required": [
+          "conversations",
+          "messages",
+          "agent_id"
+        ],
+        "title": "AgentUnread"
+      },
       "Approval": {
         "properties": {
           "id": {
@@ -3353,17 +3657,114 @@
             "description": "Tipo do objeto de onde a conversa foi aberta."
           },
           "id": {
-            "type": "string",
-            "format": "uuid",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Id",
-            "description": "Id do objeto, no mesmo workspace."
+            "description": "Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact` e `insight` (\"<Agente> percebeu\")."
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key",
+            "description": "Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, `opportunity`, `responsibility`, `segment`, `document` e `capability` (o código da delivery, ex.: `04.01`). Exclusiva com `id`.",
+            "examples": [
+              "04.01"
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Título no cartão. Obrigatório para objeto que vem pela chave."
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 60,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status",
+            "description": "Estado do objeto que vem pela chave."
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "period": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period",
+            "description": "Período da página de onde a conversa abriu.",
+            "examples": [
+              "Semana 42"
+            ]
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin",
+            "description": "De onde a pessoa abriu.",
+            "examples": [
+              "Calendário · semana"
+            ]
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "type",
-          "id"
+          "type"
         ],
         "title": "ContextRef"
       },
@@ -3372,7 +3773,16 @@
         "enum": [
           "project",
           "work_item",
-          "delivery"
+          "delivery",
+          "memory_fact",
+          "insight",
+          "calendar_post",
+          "metric",
+          "opportunity",
+          "responsibility",
+          "segment",
+          "document",
+          "capability"
         ],
         "title": "ContextType"
       },
@@ -3424,6 +3834,17 @@
             ],
             "title": "Context Id"
           },
+          "context_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Context Key"
+          },
           "title": {
             "anyOf": [
               {
@@ -3436,6 +3857,35 @@
             "title": "Title",
             "examples": [
               "Conversa com o Otto"
+            ]
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic",
+            "description": "Tópico da Sala do Squad; nulo = \"Pedidos grandes\".",
+            "examples": [
+              "Campanha de Natal"
+            ]
+          },
+          "agent_ids": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Agent Ids",
+            "description": "Especialistas que participam, na ordem do squad.",
+            "examples": [
+              [
+                "bia",
+                "kaia"
+              ]
             ]
           },
           "created_by": {
@@ -3483,6 +3933,25 @@
             "type": "string",
             "format": "date-time",
             "title": "Updated At"
+          },
+          "last_read_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Read At",
+            "description": "Até onde a pessoa logada leu."
+          },
+          "unread_count": {
+            "type": "integer",
+            "title": "Unread Count",
+            "description": "Mensagens de outros (agentes, sistema, outras pessoas) depois de `last_read_at`.",
+            "default": 0
           }
         },
         "type": "object",
@@ -3512,9 +3981,29 @@
             ]
           },
           "id": {
-            "type": "string",
-            "format": "uuid",
-            "title": "Id"
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id",
+            "description": "Id do objeto que mora no banco."
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key",
+            "description": "Chave do objeto que ainda não mora no banco."
           },
           "title": {
             "anyOf": [
@@ -3542,6 +4031,47 @@
             ],
             "title": "Status",
             "description": "Estado do objeto, quando ele tem estado."
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period",
+            "description": "Período, quando há.",
+            "examples": [
+              "Semana 42"
+            ]
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin",
+            "description": "De onde a pessoa abriu.",
+            "examples": [
+              "Calendário · semana"
+            ]
           }
         },
         "type": "object",
@@ -3557,7 +4087,7 @@
         "properties": {
           "kind": {
             "$ref": "#/components/schemas/ConversationKind",
-            "description": "`squad_room`: Sala do Squad (uma por workspace, reutilizada). `agent_direct`: conversa direta com um agente (sempre nova). `object`: conversa de um objeto (uma por objeto, reutilizada)."
+            "description": "`squad_room`: Sala do Squad (uma por workspace, reutilizada). `agent_direct`: conversa direta com um agente (sempre nova). `object`: conversa de um objeto (uma por objeto, reutilizada; `capability` abre uma por pedido). `group`: conversa em grupo com 2 a 6 especialistas (uma por conjunto, reutilizada; responde um especialista por vez)."
           },
           "primary_agent_id": {
             "anyOf": [
@@ -3580,6 +4110,23 @@
               }
             ],
             "description": "Só em `kind = object`."
+          },
+          "agent_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AgentId"
+                },
+                "type": "array",
+                "maxItems": 6,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Ids",
+            "description": "Só em `kind = group`: os especialistas escolhidos no Início, de 2 a 6."
           },
           "title": {
             "anyOf": [
@@ -3609,11 +4156,30 @@
             "kind": "squad_room"
           },
           {
+            "agent_ids": [
+              "bia",
+              "kaia",
+              "otto"
+            ],
+            "kind": "group"
+          },
+          {
             "context": {
               "id": "5eed0000-0000-4000-8000-000000000301",
               "type": "work_item"
             },
             "kind": "object"
+          },
+          {
+            "context": {
+              "key": "alcance:semana",
+              "origin": "Resultados · semana",
+              "period": "Semana 42",
+              "title": "Alcance da semana",
+              "type": "metric"
+            },
+            "kind": "object",
+            "primary_agent_id": "iris"
           }
         ]
       },
@@ -3665,6 +4231,17 @@
             ],
             "title": "Context Id"
           },
+          "context_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Context Key"
+          },
           "title": {
             "anyOf": [
               {
@@ -3677,6 +4254,35 @@
             "title": "Title",
             "examples": [
               "Conversa com o Otto"
+            ]
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic",
+            "description": "Tópico da Sala do Squad; nulo = \"Pedidos grandes\".",
+            "examples": [
+              "Campanha de Natal"
+            ]
+          },
+          "agent_ids": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Agent Ids",
+            "description": "Especialistas que participam, na ordem do squad.",
+            "examples": [
+              [
+                "bia",
+                "kaia"
+              ]
             ]
           },
           "created_by": {
@@ -3725,6 +4331,25 @@
             "format": "date-time",
             "title": "Updated At"
           },
+          "last_read_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Read At",
+            "description": "Até onde a pessoa logada leu."
+          },
+          "unread_count": {
+            "type": "integer",
+            "title": "Unread Count",
+            "description": "Mensagens de outros (agentes, sistema, outras pessoas) depois de `last_read_at`.",
+            "default": 0
+          },
           "participants": {
             "items": {
               "$ref": "#/components/schemas/Participant"
@@ -3768,7 +4393,8 @@
         "enum": [
           "squad_room",
           "agent_direct",
-          "object"
+          "object",
+          "group"
         ],
         "title": "ConversationKind"
       },
@@ -3800,6 +4426,31 @@
           "next_cursor"
         ],
         "title": "ConversationPage"
+      },
+      "ConversationRead": {
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Conversation Id"
+          },
+          "last_read_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Read At"
+          },
+          "unread_count": {
+            "type": "integer",
+            "title": "Unread Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "conversation_id",
+          "last_read_at",
+          "unread_count"
+        ],
+        "title": "ConversationRead"
       },
       "CreditBalance": {
         "properties": {
@@ -5763,6 +6414,65 @@
         ],
         "title": "ProjectStatus"
       },
+      "ReadCreate": {
+        "properties": {
+          "read_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Read At",
+            "description": "Hora da última mensagem que a pessoa viu (padrão: agora). Nunca volta para trás."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ReadCreate"
+      },
+      "ReplyRequest": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Run Id"
+          },
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Conversation Id"
+          },
+          "message_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Message Id"
+          },
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId",
+            "description": "Quem vai responder: um especialista por vez."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "examples": [
+              "queued"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "conversation_id",
+          "message_id",
+          "agent_id",
+          "status"
+        ],
+        "title": "ReplyRequest"
+      },
       "Run": {
         "properties": {
           "id": {
@@ -6052,6 +6762,58 @@
           "finished_at"
         ],
         "title": "RunSummary"
+      },
+      "UnreadCount": {
+        "properties": {
+          "conversations": {
+            "type": "integer",
+            "title": "Conversations"
+          },
+          "messages": {
+            "type": "integer",
+            "title": "Messages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "conversations",
+          "messages"
+        ],
+        "title": "UnreadCount"
+      },
+      "UnreadSummary": {
+        "properties": {
+          "conversations": {
+            "type": "integer",
+            "title": "Conversations",
+            "description": "Conversas com mensagem não lida."
+          },
+          "messages": {
+            "type": "integer",
+            "title": "Messages",
+            "description": "Mensagens não lidas, somadas."
+          },
+          "squad_room": {
+            "$ref": "#/components/schemas/UnreadCount",
+            "description": "Sala do Squad."
+          },
+          "by_agent": {
+            "items": {
+              "$ref": "#/components/schemas/AgentUnread"
+            },
+            "type": "array",
+            "title": "By Agent",
+            "description": "Pelo especialista à frente da conversa (o ambiente dele), fora a Sala do Squad; só os que têm não lida."
+          }
+        },
+        "type": "object",
+        "required": [
+          "conversations",
+          "messages",
+          "squad_room",
+          "by_agent"
+        ],
+        "title": "UnreadSummary"
       },
       "User": {
         "properties": {

@@ -12,7 +12,6 @@ from hellosquad.domain import (
     PrincipalType,
 )
 
-
 ContextText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
@@ -24,19 +23,19 @@ class ContextRef(BaseModel):
         default=None,
         description=(
             "Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact` e "
-            "`insight` (\"<Agente> percebeu\")."
+            '`insight` ("<Agente> percebeu").'
         ),
     )
-    key: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$")] | None = (
-        Field(
-            default=None,
-            description=(
-                "Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, "
-                "`opportunity`, `responsibility`, `segment`, `document` e `capability` (o código da "
-                "delivery, ex.: `04.01`). Exclusiva com `id`."
-            ),
-            examples=["04.01"],
-        )
+    key: (
+        Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$")] | None
+    ) = Field(
+        default=None,
+        description=(
+            "Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, "
+            "`opportunity`, `responsibility`, `segment`, `document` e `capability` (o código da "
+            "delivery, ex.: `04.01`). Exclusiva com `id`."
+        ),
+        examples=["04.01"],
     )
     title: Annotated[ContextText, StringConstraints(max_length=200)] | None = Field(
         default=None, description="Título no cartão. Obrigatório para objeto que vem pela chave."
@@ -46,7 +45,9 @@ class ContextRef(BaseModel):
     )
     summary: Annotated[ContextText, StringConstraints(max_length=500)] | None = None
     period: Annotated[ContextText, StringConstraints(max_length=80)] | None = Field(
-        default=None, description="Período da página de onde a conversa abriu.", examples=["Semana 42"]
+        default=None,
+        description="Período da página de onde a conversa abriu.",
+        examples=["Semana 42"],
     )
     origin: Annotated[ContextText, StringConstraints(max_length=120)] | None = Field(
         default=None, description="De onde a pessoa abriu.", examples=["Calendário · semana"]
@@ -120,15 +121,21 @@ class Participant(BaseModel):
 class ConversationContext(BaseModel):
     type: str = Field(examples=["work_item"])
     id: UUID | None = Field(description="Id do objeto que mora no banco.")
-    key: str | None = Field(description="Chave do objeto que ainda não mora no banco.")
+    key: str | None = Field(
+        default=None, description="Chave do objeto que ainda não mora no banco."
+    )
     title: str | None = Field(
         description="Título do objeto (nulo se o objeto não existe mais).",
         examples=["Legenda do post de sábado: pão de fermentação longa"],
     )
     status: str | None = Field(description="Estado do objeto, quando ele tem estado.")
     summary: str | None = None
-    period: str | None = Field(description="Período, quando há.", examples=["Semana 42"])
-    origin: str | None = Field(description="De onde a pessoa abriu.", examples=["Calendário · semana"])
+    period: str | None = Field(
+        default=None, description="Período, quando há.", examples=["Semana 42"]
+    )
+    origin: str | None = Field(
+        default=None, description="De onde a pessoa abriu.", examples=["Calendário · semana"]
+    )
 
 
 class Conversation(BaseModel):
@@ -138,22 +145,29 @@ class Conversation(BaseModel):
     primary_agent_id: AgentId | None
     context_type: str | None
     context_id: UUID | None
-    context_key: str | None
+    context_key: str | None = None
     title: str | None = Field(examples=["Conversa com o Otto"])
     topic: str | None = Field(
-        description="Tópico da Sala do Squad; nulo = \"Pedidos grandes\".", examples=["Campanha de Natal"]
+        default=None,
+        description='Tópico da Sala do Squad; nulo = "Pedidos grandes".',
+        examples=["Campanha de Natal"],
     )
     agent_ids: list[AgentId] = Field(
-        description="Especialistas que participam, na ordem do squad.", examples=[["bia", "kaia"]]
+        default_factory=list,
+        description="Especialistas que participam, na ordem do squad.",
+        examples=[["bia", "kaia"]],
     )
     created_by: UUID | None
     last_message_at: datetime | None
     archived_at: datetime | None
     created_at: datetime
     updated_at: datetime
-    last_read_at: datetime | None = Field(description="Até onde a pessoa logada leu.")
+    last_read_at: datetime | None = Field(default=None, description="Até onde a pessoa logada leu.")
     unread_count: int = Field(
-        description="Mensagens de outros (agentes, sistema, outras pessoas) depois de `last_read_at`."
+        default=0,
+        description=(
+            "Mensagens de outros (agentes, sistema, outras pessoas) depois de `last_read_at`."
+        ),
     )
 
 
@@ -195,7 +209,9 @@ class ReadCreate(BaseModel):
 
     read_at: datetime | None = Field(
         default=None,
-        description="Hora da última mensagem que a pessoa viu (padrão: agora). Nunca volta para trás.",
+        description=(
+            "Hora da última mensagem que a pessoa viu (padrão: agora). Nunca volta para trás."
+        ),
     )
 
 

@@ -75,6 +75,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workspaces/{workspace_id}/conversations/unread": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Não lidas da pessoa logada: total, Sala do Squad e por especialista (ambiente) */
+        get: operations["unread_summary_workspaces__workspace_id__conversations_unread_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/conversations/{conversation_id}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Marca a conversa como lida pela pessoa logada (qualquer membro, até viewer) */
+        post: operations["mark_read_conversations__conversation_id__read_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/conversations/{conversation_id}": {
         parameters: {
             query?: never;
@@ -107,6 +141,26 @@ export interface paths {
         put?: never;
         /** Envia uma mensagem na conversa (editor ou acima) */
         post: operations["post_message_conversations__conversation_id__messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/messages/{message_id}/reply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Pede a resposta do squad a uma mensagem da pessoa (um especialista por vez)
+         * @description Põe na fila o run de resposta (sem trabalho) de quem responde: `@Nome` de um participante direciona; na conversa em grupo, sem menção, o especialista mais ligado ao pedido (palavras do protótipo) e, sem nenhuma, o Nexo se participa, senão o primeiro; na Sala do Squad, o Nexo; nas outras, quem está à frente. 201 quando cria; 200 com o mesmo run ao repetir. Mensagem que virou trabalho responde 409. Exige papel editor ou acima.
+         */
+        post: operations["request_reply_messages__message_id__reply_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -483,6 +537,14 @@ export interface components {
          * @enum {string}
          */
         AgentId: "nexo" | "bia" | "kaia" | "otto" | "kiwi" | "max" | "iris";
+        /** AgentUnread */
+        AgentUnread: {
+            /** Conversations */
+            conversations: number;
+            /** Messages */
+            messages: number;
+            agent_id: components["schemas"]["AgentId"];
+        };
         /** Approval */
         Approval: {
             /**
@@ -736,16 +798,45 @@ export interface components {
             type: components["schemas"]["ContextType"];
             /**
              * Id
-             * Format: uuid
-             * @description Id do objeto, no mesmo workspace.
+             * @description Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact` e `insight` ("<Agente> percebeu").
              */
-            id: string;
+            id?: string | null;
+            /**
+             * Key
+             * @description Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, `opportunity`, `responsibility`, `segment`, `document` e `capability` (o código da delivery, ex.: `04.01`). Exclusiva com `id`.
+             * @example 04.01
+             */
+            key?: string | null;
+            /**
+             * Title
+             * @description Título no cartão. Obrigatório para objeto que vem pela chave.
+             */
+            title?: string | null;
+            /**
+             * Status
+             * @description Estado do objeto que vem pela chave.
+             */
+            status?: string | null;
+            /** Summary */
+            summary?: string | null;
+            /**
+             * Period
+             * @description Período da página de onde a conversa abriu.
+             * @example Semana 42
+             */
+            period?: string | null;
+            /**
+             * Origin
+             * @description De onde a pessoa abriu.
+             * @example Calendário · semana
+             */
+            origin?: string | null;
         };
         /**
          * ContextType
          * @enum {string}
          */
-        ContextType: "project" | "work_item" | "delivery";
+        ContextType: "project" | "work_item" | "delivery" | "memory_fact" | "insight" | "calendar_post" | "metric" | "opportunity" | "responsibility" | "segment" | "document" | "capability";
         /** Conversation */
         Conversation: {
             /**
@@ -764,11 +855,28 @@ export interface components {
             context_type: string | null;
             /** Context Id */
             context_id: string | null;
+            /** Context Key */
+            context_key?: string | null;
             /**
              * Title
              * @example Conversa com o Otto
              */
             title: string | null;
+            /**
+             * Topic
+             * @description Tópico da Sala do Squad; nulo = "Pedidos grandes".
+             * @example Campanha de Natal
+             */
+            topic?: string | null;
+            /**
+             * Agent Ids
+             * @description Especialistas que participam, na ordem do squad.
+             * @example [
+             *       "bia",
+             *       "kaia"
+             *     ]
+             */
+            agent_ids?: components["schemas"]["AgentId"][];
             /** Created By */
             created_by: string | null;
             /** Last Message At */
@@ -785,6 +893,17 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /**
+             * Last Read At
+             * @description Até onde a pessoa logada leu.
+             */
+            last_read_at?: string | null;
+            /**
+             * Unread Count
+             * @description Mensagens de outros (agentes, sistema, outras pessoas) depois de `last_read_at`.
+             * @default 0
+             */
+            unread_count: number;
         };
         /** ConversationContext */
         ConversationContext: {
@@ -795,9 +914,14 @@ export interface components {
             type: string;
             /**
              * Id
-             * Format: uuid
+             * @description Id do objeto que mora no banco.
              */
-            id: string;
+            id: string | null;
+            /**
+             * Key
+             * @description Chave do objeto que ainda não mora no banco.
+             */
+            key?: string | null;
             /**
              * Title
              * @description Título do objeto (nulo se o objeto não existe mais).
@@ -809,6 +933,20 @@ export interface components {
              * @description Estado do objeto, quando ele tem estado.
              */
             status: string | null;
+            /** Summary */
+            summary?: string | null;
+            /**
+             * Period
+             * @description Período, quando há.
+             * @example Semana 42
+             */
+            period?: string | null;
+            /**
+             * Origin
+             * @description De onde a pessoa abriu.
+             * @example Calendário · semana
+             */
+            origin?: string | null;
         };
         /**
          * ConversationCreate
@@ -820,20 +958,44 @@ export interface components {
          *       "kind": "squad_room"
          *     }
          * @example {
+         *       "agent_ids": [
+         *         "bia",
+         *         "kaia",
+         *         "otto"
+         *       ],
+         *       "kind": "group"
+         *     }
+         * @example {
          *       "context": {
          *         "id": "5eed0000-0000-4000-8000-000000000301",
          *         "type": "work_item"
          *       },
          *       "kind": "object"
          *     }
+         * @example {
+         *       "context": {
+         *         "key": "alcance:semana",
+         *         "origin": "Resultados · semana",
+         *         "period": "Semana 42",
+         *         "title": "Alcance da semana",
+         *         "type": "metric"
+         *       },
+         *       "kind": "object",
+         *       "primary_agent_id": "iris"
+         *     }
          */
         ConversationCreate: {
-            /** @description `squad_room`: Sala do Squad (uma por workspace, reutilizada). `agent_direct`: conversa direta com um agente (sempre nova). `object`: conversa de um objeto (uma por objeto, reutilizada). */
+            /** @description `squad_room`: Sala do Squad (uma por workspace, reutilizada). `agent_direct`: conversa direta com um agente (sempre nova). `object`: conversa de um objeto (uma por objeto, reutilizada; `capability` abre uma por pedido). `group`: conversa em grupo com 2 a 6 especialistas (uma por conjunto, reutilizada; responde um especialista por vez). */
             kind: components["schemas"]["ConversationKind"];
             /** @description Agente à frente. Obrigatório em `agent_direct`; na Sala do Squad o padrão é o Nexo; na conversa de objeto, o responsável pelo objeto. */
             primary_agent_id?: components["schemas"]["AgentId"] | null;
             /** @description Só em `kind = object`. */
             context?: components["schemas"]["ContextRef"] | null;
+            /**
+             * Agent Ids
+             * @description Só em `kind = group`: os especialistas escolhidos no Início, de 2 a 6.
+             */
+            agent_ids?: components["schemas"]["AgentId"][] | null;
             /** Title */
             title?: string | null;
         };
@@ -855,11 +1017,28 @@ export interface components {
             context_type: string | null;
             /** Context Id */
             context_id: string | null;
+            /** Context Key */
+            context_key?: string | null;
             /**
              * Title
              * @example Conversa com o Otto
              */
             title: string | null;
+            /**
+             * Topic
+             * @description Tópico da Sala do Squad; nulo = "Pedidos grandes".
+             * @example Campanha de Natal
+             */
+            topic?: string | null;
+            /**
+             * Agent Ids
+             * @description Especialistas que participam, na ordem do squad.
+             * @example [
+             *       "bia",
+             *       "kaia"
+             *     ]
+             */
+            agent_ids?: components["schemas"]["AgentId"][];
             /** Created By */
             created_by: string | null;
             /** Last Message At */
@@ -876,6 +1055,17 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /**
+             * Last Read At
+             * @description Até onde a pessoa logada leu.
+             */
+            last_read_at?: string | null;
+            /**
+             * Unread Count
+             * @description Mensagens de outros (agentes, sistema, outras pessoas) depois de `last_read_at`.
+             * @default 0
+             */
+            unread_count: number;
             /** Participants */
             participants: components["schemas"]["Participant"][];
             /** @description Cartão do objeto (só em `object`). */
@@ -885,7 +1075,7 @@ export interface components {
          * ConversationKind
          * @enum {string}
          */
-        ConversationKind: "squad_room" | "agent_direct" | "object";
+        ConversationKind: "squad_room" | "agent_direct" | "object" | "group";
         /** ConversationPage */
         ConversationPage: {
             /**
@@ -895,6 +1085,21 @@ export interface components {
             items: components["schemas"]["Conversation"][];
             /** Next Cursor */
             next_cursor: string | null;
+        };
+        /** ConversationRead */
+        ConversationRead: {
+            /**
+             * Conversation Id
+             * Format: uuid
+             */
+            conversation_id: string;
+            /**
+             * Last Read At
+             * Format: date-time
+             */
+            last_read_at: string;
+            /** Unread Count */
+            unread_count: number;
         };
         /** CreditBalance */
         CreditBalance: {
@@ -1751,6 +1956,39 @@ export interface components {
          * @enum {string}
          */
         ProjectStatus: "draft" | "active" | "paused" | "done" | "cancelled";
+        /** ReadCreate */
+        ReadCreate: {
+            /**
+             * Read At
+             * @description Hora da última mensagem que a pessoa viu (padrão: agora). Nunca volta para trás.
+             */
+            read_at?: string | null;
+        };
+        /** ReplyRequest */
+        ReplyRequest: {
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /**
+             * Conversation Id
+             * Format: uuid
+             */
+            conversation_id: string;
+            /**
+             * Message Id
+             * Format: uuid
+             */
+            message_id: string;
+            /** @description Quem vai responder: um especialista por vez. */
+            agent_id: components["schemas"]["AgentId"];
+            /**
+             * Status
+             * @example queued
+             */
+            status: string;
+        };
         /** Run */
         Run: {
             /**
@@ -1873,6 +2111,33 @@ export interface components {
             started_at: string | null;
             /** Finished At */
             finished_at: string | null;
+        };
+        /** UnreadCount */
+        UnreadCount: {
+            /** Conversations */
+            conversations: number;
+            /** Messages */
+            messages: number;
+        };
+        /** UnreadSummary */
+        UnreadSummary: {
+            /**
+             * Conversations
+             * @description Conversas com mensagem não lida.
+             */
+            conversations: number;
+            /**
+             * Messages
+             * @description Mensagens não lidas, somadas.
+             */
+            messages: number;
+            /** @description Sala do Squad. */
+            squad_room: components["schemas"]["UnreadCount"];
+            /**
+             * By Agent
+             * @description Pelo especialista à frente da conversa (o ambiente dele), fora a Sala do Squad; só os que têm não lida.
+             */
+            by_agent: components["schemas"]["AgentUnread"][];
         };
         /** User */
         User: {
@@ -2516,6 +2781,126 @@ export interface operations {
             };
         };
     };
+    unread_summary_workspaces__workspace_id__conversations_unread_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnreadSummary"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    mark_read_conversations__conversation_id__read_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ReadCreate"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationRead"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_conversation_conversations__conversation_id__get: {
         parameters: {
             query?: never;
@@ -2661,6 +3046,91 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Message"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    request_reply_messages__message_id__reply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Mesmo run, já pedido antes. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReplyRequest"];
+                };
+            };
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReplyRequest"];
                 };
             };
             /** @description Token ausente, inválido ou expirado. */

@@ -102,7 +102,7 @@ select throws_ok(
 );
 select throws_ok(
   $$select app.create_conversation((select miolo from fx), 'object', null, 'campaign', gen_random_uuid())$$,
-  '22023', 'Tipo de objeto não aceito (project, work_item ou delivery).', 'tipo de objeto desconhecido é recusado'
+  '22023', 'Tipo de objeto não aceito.', 'tipo de objeto desconhecido é recusado'
 );
 select throws_ok(
   $$select app.create_conversation((select miolo from fx), 'object', null, 'work_item', (select id from ids where name = 'vitta_work_item'))$$,

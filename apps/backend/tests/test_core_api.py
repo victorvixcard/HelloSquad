@@ -570,8 +570,12 @@ async def test_squad_room_and_object_conversation_are_reused(api, access_token, 
     assert opened.json()["context"] == {
         "type": "work_item",
         "id": SEED_WORK_ITEM,
+        "key": None,
         "title": "Legenda do post de sábado: pão de fermentação longa",
         "status": "needs_you",
+        "summary": None,
+        "period": None,
+        "origin": None,
     }
     assert [c["id"] for c in listed.json()["items"]] == [
         opened.json()["id"],

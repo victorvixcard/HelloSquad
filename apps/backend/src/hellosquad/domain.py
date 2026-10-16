@@ -29,8 +29,8 @@ class ConversationKind(StrEnum):
     group = "group"
 
 
-# Objeto de onde a conversa foi aberta (FLUXOS_DA_V46.md §4.1). Os cinco primeiros moram no banco e vêm
-# pelo id; os outros ainda não têm tabela e vêm por uma chave, com título e estado no cartão.
+# Objeto de onde a conversa foi aberta (FLUXOS_DA_V46.md §4.1). Os cinco primeiros moram no banco e
+# vêm pelo id; os outros ainda não têm tabela e vêm por uma chave, com título e estado no cartão.
 class ContextType(StrEnum):
     project = "project"
     work_item = "work_item"

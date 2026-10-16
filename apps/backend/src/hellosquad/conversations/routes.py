@@ -6,32 +6,62 @@ from uuid import UUID
 from fastapi import APIRouter, Query, Response, status
 from psycopg import AsyncConnection
 from psycopg.rows import DictRow
+from psycopg.types.json import Jsonb
 
 from hellosquad.api.deps import CurrentPrincipal, DatabaseDep, ensure_workspace
 from hellosquad.api.errors import ApiError, error_responses
 from hellosquad.api.pagination import CursorQuery, decode_cursor, limit_query, split_page
 from hellosquad.conversations.schemas import (
+    AgentUnread,
     Conversation,
     ConversationContext,
     ConversationCreate,
     ConversationDetail,
     ConversationPage,
+    ConversationRead,
     Message,
     MessageCreate,
     MessagePage,
     Participant,
+    ReadCreate,
+    ReplyRequest,
+    UnreadCount,
+    UnreadSummary,
 )
+from hellosquad.domain import AgentId
 
 router = APIRouter(tags=["conversations"])
 
-CONVERSATION_COLUMNS = """
-c.id, c.workspace_id, c.kind::text, c.primary_agent_id::text, c.context_type, c.context_id, c.title,
-c.created_by, c.last_message_at, c.archived_at, c.created_at, c.updated_at
+SQUAD_ORDER = "array['nexo', 'bia', 'kaia', 'otto', 'kiwi', 'max', 'iris']"
+
+# Leitura da pessoa logada e não lidas: mensagens de outros (agente, sistema, outra pessoa)
+# depois dela.
+CONVERSATION_COLUMNS = f"""
+c.id, c.workspace_id, c.kind::text, c.primary_agent_id::text, c.context_type, c.context_id,
+c.context_key, c.context_meta, c.title, c.topic, c.created_by, c.last_message_at, c.archived_at,
+c.created_at, c.updated_at, r.last_read_at,
+array(
+  select p.agent_id::text from public.conversation_participants p
+  where p.conversation_id = c.id and p.participant_type = 'agent'
+  order by array_position({SQUAD_ORDER}, p.agent_id::text)
+) as agent_ids,
+(
+  select count(*) from public.messages m
+  where m.conversation_id = c.id
+    and m.created_at > coalesce(r.last_read_at, '-infinity'::timestamptz)
+    and m.author_user_id is distinct from (select auth.uid())
+)::int as unread_count
+"""
+
+CONVERSATION_FROM = """
+from public.conversations c
+left join public.conversation_reads r
+  on r.conversation_id = c.id and r.user_id = (select auth.uid())
 """
 
 LIST_CONVERSATIONS = f"""
 select {CONVERSATION_COLUMNS}, coalesce(c.last_message_at, c.created_at) as activity_at
-from public.conversations c
+{CONVERSATION_FROM}
 where c.workspace_id = %(workspace_id)s
   and c.archived_at is null
   and (%(cursor_at)s::timestamptz is null
@@ -42,13 +72,43 @@ limit %(limit)s
 
 GET_CONVERSATION = f"""
 select {CONVERSATION_COLUMNS}
-from public.conversations c
+{CONVERSATION_FROM}
 where c.id = %s and c.workspace_id in (select app.current_user_workspace_ids())
 """
 
 CREATE_CONVERSATION = """
 select c.id, c.created_at = now() as created
-from app.create_conversation(%s, %s::public.conversation_kind, %s, %s, %s, %s) c
+from app.create_conversation(
+  %(workspace_id)s, %(kind)s::public.conversation_kind, %(primary_agent_id)s, %(context_type)s,
+  %(context_id)s, %(title)s, %(agent_ids)s::public.agent_id[], %(context_key)s, %(context_meta)s
+) c
+"""
+
+UNREAD_BY_AGENT = """
+select case when c.kind = 'squad_room' then null else c.primary_agent_id::text end as agent_id,
+       count(*)::int as conversations, sum(u.unread)::int as messages
+from public.conversations c
+left join public.conversation_reads r
+  on r.conversation_id = c.id and r.user_id = (select auth.uid())
+cross join lateral (
+  select count(*) as unread from public.messages m
+  where m.conversation_id = c.id
+    and m.created_at > coalesce(r.last_read_at, '-infinity'::timestamptz)
+    and m.author_user_id is distinct from (select auth.uid())
+) u
+where c.workspace_id = %s and c.archived_at is null and u.unread > 0
+group by 1
+"""
+
+MARK_READ = """
+select r.conversation_id, r.last_read_at
+from app.mark_conversation_read(%s, %s) r
+"""
+
+REQUEST_REPLY = """
+select r.id as run_id, r.conversation_id, r.message_id, r.agent_id::text, r.status::text,
+       r.created_at = now() as created
+from app.request_reply(%s) r
 """
 
 PARTICIPANTS = """
@@ -58,7 +118,8 @@ where p.conversation_id = %s
 order by p.participant_type, p.created_at, p.agent_id
 """
 
-# Cartão do objeto da conversa: título e estado, lidos com a RLS do usuário.
+# Cartão do objeto que mora no banco: título e estado, lidos com a RLS do usuário. Os outros
+# tipos trazem título e estado em context_meta.
 CONTEXT_QUERIES = {
     "project": (
         "select p.name as title, p.status::text as status from public.projects p where p.id = %s"
@@ -69,6 +130,13 @@ CONTEXT_QUERIES = {
     "delivery": (
         "select w.title, w.status::text as status from public.deliveries d "
         "join public.work_items w on w.id = d.work_item_id where d.id = %s"
+    ),
+    "memory_fact": (
+        "select f.key || ': ' || f.content as title, f.state::text as status "
+        "from public.brand_facts f where f.id = %s"
+    ),
+    "insight": (
+        "select s.title, s.state::text as status from public.memory_suggestions s where s.id = %s"
     ),
 }
 
@@ -124,25 +192,40 @@ async def load_conversation(conn: AsyncConnection[DictRow], conversation_id: UUI
     return row
 
 
+async def conversation_context(
+    conn: AsyncConnection[DictRow], row: dict
+) -> ConversationContext | None:
+    if row["context_type"] is None:
+        return None
+    meta = row["context_meta"] or {}
+    query = CONTEXT_QUERIES.get(row["context_type"])
+    found = (
+        await (await conn.execute(query, (row["context_id"],))).fetchone()
+        if query and row["context_id"]
+        else None
+    )
+    source = found if query else meta
+    return ConversationContext(
+        type=row["context_type"],
+        id=row["context_id"],
+        key=row["context_key"],
+        title=source.get("title") if source else None,
+        status=source.get("status") if source else None,
+        summary=meta.get("summary"),
+        period=meta.get("period"),
+        origin=meta.get("origin"),
+    )
+
+
 async def conversation_detail(
     conn: AsyncConnection[DictRow], conversation_id: UUID
 ) -> ConversationDetail:
     row = await load_conversation(conn, conversation_id)
     participants = await (await conn.execute(PARTICIPANTS, (conversation_id,))).fetchall()
-    context = None
-    if row["context_type"] is not None:
-        query = CONTEXT_QUERIES.get(row["context_type"])
-        found = (
-            await (await conn.execute(query, (row["context_id"],))).fetchone() if query else None
-        )
-        context = ConversationContext(
-            type=row["context_type"],
-            id=row["context_id"],
-            title=found["title"] if found else None,
-            status=found["status"] if found else None,
-        )
     return ConversationDetail(
-        **row, participants=[Participant(**p) for p in participants], context=context
+        **row,
+        participants=[Participant(**p) for p in participants],
+        context=await conversation_context(conn, row),
     )
 
 
@@ -172,6 +255,56 @@ async def list_conversations(
     return ConversationPage(items=[Conversation(**row) for row in page], next_cursor=next_cursor)
 
 
+@router.get(
+    "/workspaces/{workspace_id}/conversations/unread",
+    summary="Não lidas da pessoa logada: total, Sala do Squad e por especialista (ambiente)",
+    responses=error_responses(401, 404, 422, 503),
+)
+async def unread_summary(
+    workspace_id: UUID, principal: CurrentPrincipal, db: DatabaseDep
+) -> UnreadSummary:
+    async with db.transaction_as(principal) as conn:
+        await ensure_workspace(conn, workspace_id)
+        rows = await (await conn.execute(UNREAD_BY_AGENT, (workspace_id,))).fetchall()
+    room = next((r for r in rows if r["agent_id"] is None), None)
+    by_agent = sorted(
+        (AgentUnread(**r) for r in rows if r["agent_id"] is not None),
+        key=lambda a: list(AgentId).index(a.agent_id),
+    )
+    return UnreadSummary(
+        conversations=sum(r["conversations"] for r in rows),
+        messages=sum(r["messages"] for r in rows),
+        squad_room=UnreadCount(
+            conversations=room["conversations"] if room else 0,
+            messages=room["messages"] if room else 0,
+        ),
+        by_agent=by_agent,
+    )
+
+
+@router.post(
+    "/conversations/{conversation_id}/read",
+    summary="Marca a conversa como lida pela pessoa logada (qualquer membro, até viewer)",
+    responses=error_responses(401, 404, 422, 503),
+)
+async def mark_read(
+    conversation_id: UUID,
+    principal: CurrentPrincipal,
+    db: DatabaseDep,
+    payload: ReadCreate | None = None,
+) -> ConversationRead:
+    async with db.transaction_as(principal) as conn:
+        read = await (
+            await conn.execute(MARK_READ, (conversation_id, payload.read_at if payload else None))
+        ).fetchone()
+        row = await load_conversation(conn, conversation_id)
+    return ConversationRead(
+        conversation_id=read["conversation_id"],
+        last_read_at=read["last_read_at"],
+        unread_count=row["unread_count"],
+    )
+
+
 @router.post(
     "/workspaces/{workspace_id}/conversations",
     status_code=status.HTTP_201_CREATED,
@@ -193,21 +326,20 @@ async def create_conversation(
     response: Response,
 ) -> ConversationDetail:
     context = payload.context
+    params = {
+        "workspace_id": workspace_id,
+        "kind": payload.kind,
+        "primary_agent_id": payload.primary_agent_id,
+        "context_type": context.type if context else None,
+        "context_id": context.id if context else None,
+        "title": payload.title,
+        "agent_ids": [str(a) for a in payload.agent_ids] if payload.agent_ids else None,
+        "context_key": context.key if context else None,
+        "context_meta": Jsonb(meta) if context and (meta := context.meta()) else None,
+    }
     async with db.transaction_as(principal) as conn:
         await ensure_workspace(conn, workspace_id)
-        created = await (
-            await conn.execute(
-                CREATE_CONVERSATION,
-                (
-                    workspace_id,
-                    payload.kind,
-                    payload.primary_agent_id,
-                    context.type if context else None,
-                    context.id if context else None,
-                    payload.title,
-                ),
-            )
-        ).fetchone()
+        created = await (await conn.execute(CREATE_CONVERSATION, params)).fetchone()
         detail = await conversation_detail(conn, created["id"])
     if not created["created"]:
         response.status_code = status.HTTP_200_OK
@@ -280,3 +412,30 @@ async def post_message(
     async with db.transaction_as(principal) as conn:
         row = await (await conn.execute(POST_MESSAGE, (conversation_id, payload.body))).fetchone()
     return Message(**row)
+
+
+@router.post(
+    "/messages/{message_id}/reply",
+    status_code=status.HTTP_201_CREATED,
+    summary="Pede a resposta do squad a uma mensagem da pessoa (um especialista por vez)",
+    description=(
+        "Põe na fila o run de resposta (sem trabalho) de quem responde: `@Nome` de um participante "
+        "direciona; na conversa em grupo, sem menção, o especialista mais ligado ao pedido "
+        "(palavras do protótipo) e, sem nenhuma, o Nexo se participa, senão o primeiro; na Sala "
+        "do Squad, o Nexo; nas outras, quem está à frente. 201 quando cria; 200 com o mesmo run "
+        "ao repetir. "
+        "Mensagem que virou trabalho responde 409. Exige papel editor ou acima."
+    ),
+    responses={
+        200: {"model": ReplyRequest, "description": "Mesmo run, já pedido antes."},
+        **error_responses(401, 403, 404, 409, 422, 503),
+    },
+)
+async def request_reply(
+    message_id: UUID, principal: CurrentPrincipal, db: DatabaseDep, response: Response
+) -> ReplyRequest:
+    async with db.transaction_as(principal) as conn:
+        row = await (await conn.execute(REQUEST_REPLY, (message_id,))).fetchone()
+    if not row["created"]:
+        response.status_code = status.HTTP_200_OK
+    return ReplyRequest(**row)
