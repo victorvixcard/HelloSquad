@@ -13,7 +13,8 @@
 | 08:55 | 6. `make worker` contra a fila local, `.env.example`, `SETUP_LOCAL.md` | ✅ | `da0f8eb` |
 | 08:58 | Limite de tentativas em crash, ficha de tentativa, custo da recusa — pytest 88 | ✅ | `9f84b92` |
 | 09:04 | 7. Diretriz do dono 08:55: owner decide; rejeição com `cancel`/`revise`; run novo no ajuste, na nova proposta e na resposta — pytest 90, pgTAP 270 | ✅ | `194f820` |
-| 09:10 | Relatório; `make up && make migrate && make seed && make test` verde | ✅ | este |
+| 09:10 | Relatório; `make up && make migrate && make seed && make test` verde | ✅ | `3c26827` |
+| 09:16 | 8. Mensagem do Thor de 08:58, item 3: `before=` em `GET /conversations/{id}/messages` (cursor para trás; sem `before`, contrato igual) — pytest 91, pgTAP 270 | ✅ | `810d11e` |
 
 ## Notas do levantamento
 

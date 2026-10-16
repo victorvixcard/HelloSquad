@@ -218,3 +218,71 @@ Fonte: skill `claude-api` (16/10) e Arquitetura §4.2.
 - Worker parado. A porta 8100 que eu usei ficou livre ao fim da demonstração; às 08:58 outra sessão subiu um
   `hellosquad-api` na 8100 e um `next dev` na 3100 (A1f em execução) e eu não os encerrei.
 - `docker ps`: os 11 containers `*_hellosquad`.
+
+## 9. Adendo (09:17): mensagem do Thor de 08:58
+
+A mensagem pedia três itens a mais, cada um com commit próprio. Ela chegou enquanto eu fechava a fatia.
+
+| Item da mensagem | Situação | Commit |
+|---|---|---|
+| 1. Só o owner decide | Já estava feito: entrou pelo "Impacto imediato" do plano antes da mensagem chegar (§1, item 7) | `194f820` |
+| 2. Rejeição com `cancel` ou `revise` | Mesma situação do item 1 | `194f820` |
+| 3. `before=` nas mensagens da conversa | Feito agora | `810d11e` |
+
+**Onde não segui a mensagem ao pé da letra**
+
+1. Os itens 1 e 2 ficaram num commit só (`194f820`). Já estavam em `origin/main`, com commits de outras fatias
+   por cima. Separar exigiria reescrever o histórico de `main` com force push, e não fiz isso.
+2. A mensagem diz "sem `follow_up` em `rejected` → 22023". A diretriz diz "Rejeitar uma **entrega** tem duas
+   saídas", e o banco segue a diretriz. O `follow_up` é obrigatório só ao rejeitar uma entrega (`review`, `approve`).
+   Em `authorize`, `confirm` e `reconnect`, `rejected` continua sem `follow_up`, e mandar um ali dá 422 (pergunta 8).
+3. Além da mensagem, pedir ajuste e responder à pergunta do agente também põem um run novo na fila (§5, decisão 14).
+   O motivo: o protótipo devolve "Pedir ajuste" à produção e, sem run, o trabalho ficaria parado em `in_progress`.
+
+**Item 3: contrato do `before=`** (só acrescenta, nada muda para quem não usa)
+
+- `GET /conversations/{id}/messages?before=latest&limit=N` devolve as N mensagens mais recentes.
+  `?before=<next_cursor>` devolve as N anteriores a essas.
+- A página continua em ordem cronológica, como hoje. `next_cursor` segue a leitura no mesmo sentido: sem `before`,
+  vai para as mais novas e entra em `cursor`; com `before`, vai para as mais antigas e entra em `before`. Fica nulo
+  quando acaba. O formato da resposta (`items`, `next_cursor`) não mudou.
+- `cursor` e `before` juntos dão 422 `invalid_cursor`. `before` inválido também dá 422 `invalid_cursor`, e
+  `before` vazio dá 422 `validation_error`.
+- Conversa de outro workspace dá 404, igual ao sentido para frente. A consulta usa o índice
+  `messages_conversation_created_idx` (conversation_id, created_at desc, id desc) na ordem dele, sem ordenação extra
+  (`EXPLAIN`: `Index Only Scan` + `Limit`).
+- `make openapi` e `pnpm --filter contracts generate`: o parâmetro `before` foi acrescentado e as descrições
+  mudaram. `MessagePage` não mudou de forma.
+
+**Como foi verificado**
+
+- `test_messages_open_at_the_latest_and_page_backwards` (novo) cobre os casos acima. Também prova que um
+  `next_cursor` do sentido para frente funciona em `before`. O teste do sentido para frente da S1b continua igual
+  e verde.
+- `make test` terminou às 09:15 com exit 0: ruff ok, pytest **91 passed** (eram 90), contracts 9, ui 49, web 28 e
+  pgTAP `Files=16, Tests=270`, `Result: PASS`.
+- HTTP de verdade: subi uma instância da API na porta 8111 e encerrei no fim. Usei o JWT da Marina e a conversa
+  com o Otto do seed:
+
+```
+sem before           200 [user 'Otto, preciso de uma legenda…', user 'Tom acolhedor e direto…'] | next_cursor: null
+before=latest l=1    200 [user 'Tom acolhedor e direto…']                                        | next_cursor: sim
+before=<next> l=1    200 [user 'Otto, preciso de uma legenda…']                                  | next_cursor: null
+before + cursor      422 invalid_cursor - Use cursor ou before, não os dois.
+before inválido      422 invalid_cursor - Cursor de paginação inválido.
+Rafael (outra emp.)  404 not_found - Conversa não encontrada.
+sem JWT              401 not_authenticated
+```
+
+**Interferência no banco local:** o primeiro `make test` teve 5 falhas em `test_worker.py`. O run sumiu no
+meio do fluxo (`run_steps_run_fk`: "Key … is not present in table runs"), sinal de que outra execução reaplicou o
+seed ao mesmo tempo. Na hora, um `tsc --noEmit` do `apps/web` rodava em paralelo. Rodei `test_worker.py` isolado
+(11 passed) e depois o `make test` completo (exit 0). Com a S1d usando o mesmo banco agora, dois `make test` ao
+mesmo tempo voltam a se atrapalhar. Melhor rodar um de cada vez.
+
+**Para o Thor atualizar** (não mexi, os arquivos não são meus): o plano (`de1b996`) lista `before=` na S1f, mas ele
+foi entregue aqui. Em `FLUXOS_DA_V46.md` §10.1, "A conversa abre nas mensagens mais recentes" pode passar de
+**parcial** para **temos**.
+
+**Pergunta 8:** rejeitar uma autorização (publicar, enviar, investir), uma confirmação ou uma reconexão também deve
+oferecer "cancelar o trabalho" ou "pedir nova proposta"? Hoje só a rejeição de entrega pede a saída.
