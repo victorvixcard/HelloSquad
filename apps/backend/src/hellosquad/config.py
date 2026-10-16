@@ -116,7 +116,8 @@ class Settings(BaseSettings):
     billing_recheck_minutes: int = Field(default=60, ge=1)
 
     # E-mail transacional (S2f): mailpit = SMTP do Mailpit do Supabase local (sem autenticação);
-    # mock = em memória. Os dois só em local/test; o provedor de produção é decisão do dono (Fase 5).
+    # mock = em memória. Os dois só em local/test; o provedor de produção é decisão do dono
+    # (Fase 5).
     # Em local/test o worker recusa destinatário fora do TLD reservado .example.
     email_provider: Literal["mailpit", "mock"] = "mailpit"
     email_from: str = "nao-responda@hellosquad.example"

@@ -1,8 +1,8 @@
 """Interface única do e-mail transacional (S2f).
 
-Quem envia pede pelo modelo, pelas variáveis, pelo idioma e pelo destinatário; o texto sai do catálogo
-do backend (`email/templates.py`) e o adaptador só transporta. Trocar de provedor (Mailpit local hoje;
-Resend, Postmark, SES… na Fase 5) é escrever outro `deliver`, sem tocar em quem envia.
+Quem envia pede pelo modelo, pelas variáveis, pelo idioma e pelo destinatário; o texto sai do
+catálogo do backend (`email/templates.py`) e o adaptador só transporta. Trocar de provedor (Mailpit
+local hoje; Resend, Postmark, SES… na Fase 5) é escrever outro `deliver`, sem tocar em quem envia.
 """
 
 from abc import ABC, abstractmethod

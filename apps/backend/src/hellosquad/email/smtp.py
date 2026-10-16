@@ -1,14 +1,13 @@
-"""Adaptador SMTP. Local: o Mailpit do Supabase CLI (`[local_smtp] smtp_port`, 127.0.0.1:56325, sem
-autenticação); a interface web e a API HTTP do Mailpit ficam em 127.0.0.1:56324.
+"""Adaptador SMTP. Local: o Mailpit do Supabase CLI (`[local_smtp] smtp_port`, 127.0.0.1:56325,
+sem autenticação); a interface web e a API HTTP do Mailpit ficam em 127.0.0.1:56324.
 
-O id do provedor é o da resposta ao DATA (`250 2.0.0 Ok: queued as <id>`): no Mailpit é o mesmo id de
-`GET /api/v1/message/{id}`. Sem esse trecho na resposta, vale o Message-ID que nós mesmos gravamos.
+O id do provedor é o da resposta ao DATA (`250 2.0.0 Ok: queued as <id>`): no Mailpit é o mesmo id
+de `GET /api/v1/message/{id}`. Sem esse trecho na resposta, vale o Message-ID que nós gravamos.
 """
 
 import asyncio
 import re
 import smtplib
-import socket
 from email.message import EmailMessage
 from email.utils import formataddr, formatdate
 
@@ -63,7 +62,7 @@ class SmtpEmailProvider(EmailProvider):
                 self._check(code, reply, "data")
         except EmailSendError:
             raise
-        except (OSError, socket.timeout, smtplib.SMTPException) as exc:
+        except (OSError, smtplib.SMTPException) as exc:
             raise EmailSendError(
                 "smtp_unavailable", transient=True, details={"error_type": type(exc).__name__}
             ) from exc

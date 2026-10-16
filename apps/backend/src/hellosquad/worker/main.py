@@ -1,5 +1,6 @@
 """Entrypoint `hellosquad-worker`: consome `runs_interactive` (pgmq) e executa o fluxo do squad; com
-vaga sobrando, consome `memory_reflect` (reflexão do trabalho fechado, S2c).
+vaga sobrando, consome `memory_reflect` (reflexão do trabalho fechado, S2c) e `email_outbox` (e-mail
+transacional pelo EmailProvider, S2f).
 
 Cada mensagem fica invisível por WORKER_VISIBILITY_TIMEOUT_SECONDS; o batimento estende o prazo
 enquanto o run roda. Concluído: `delete`. Falha passageira: o run volta para queued e a mensagem
@@ -22,6 +23,9 @@ from psycopg_pool import AsyncConnectionPool
 
 from hellosquad.config import Settings, get_settings
 from hellosquad.creative.image_engine import build_image_engine
+from hellosquad.email.factory import build_email_provider
+from hellosquad.email.outbox import EmailOutbox
+from hellosquad.email.provider import EmailProvider
 from hellosquad.i18n import DEFAULT_LOCALE, catalog, t
 from hellosquad.llm.base import LLMClient, LLMError
 from hellosquad.llm.factory import build_llm_client
@@ -94,6 +98,7 @@ class Worker:
         llm: LLMClient | None = None,
         loader: SquadLoader | None = None,
         web_search: WebSearch | None = None,
+        email_provider: EmailProvider | None = None,
     ) -> None:
         self.settings = settings
         api_key = settings.web_search_api_key
@@ -122,6 +127,19 @@ class Worker:
             kwargs={"autocommit": True, "prepare_threshold": None, "row_factory": dict_row},
             check=AsyncConnectionPool.check_connection,
             name="hellosquad-worker",
+        )
+        provider = email_provider or build_email_provider(settings)
+        self.outbox = (
+            EmailOutbox(
+                self.pool,
+                provider,
+                app_env=settings.app_env,
+                max_attempts=settings.email_max_attempts,
+                retry_base_seconds=settings.email_retry_base_seconds,
+                visibility_timeout_seconds=settings.email_visibility_timeout_seconds,
+            )
+            if provider is not None
+            else None
         )
         self.stopping = asyncio.Event()
         self.inflight: set[asyncio.Task[str]] = set()
@@ -289,6 +307,10 @@ class Worker:
             outcomes += await asyncio.gather(*(self.handle_reflection(m) for m in batch))
         return outcomes
 
+    async def drain_emails(self, max_rounds: int = 100) -> list[str]:
+        """Processa a fila email_outbox até não ter mensagem visível (testes e `--drain`)."""
+        return await self.outbox.drain(max_rounds) if self.outbox is not None else []
+
     async def heartbeat(self, store: RunStore, msg_id: int) -> None:
         timeout = self.settings.worker_visibility_timeout_seconds
         while True:
@@ -379,15 +401,19 @@ class Worker:
                 reflections = (
                     await self.read(free - len(batch), REFLECT_QUEUE) if len(batch) < free else []
                 )
+                left = free - len(batch) - len(reflections)
+                emails = await self.outbox.read(left) if self.outbox is not None else []
             except psycopg.OperationalError:
                 log.warning("banco indisponível ao ler a fila; nova leitura em instantes")
-                batch, reflections = [], []
-            if not batch and not reflections:
+                batch, reflections, emails = [], [], []
+            if not batch and not reflections and not emails:
                 await self.pause(self.settings.worker_poll_seconds)
                 continue
             jobs = [self.handle(m) for m in batch] + [
                 self.handle_reflection(m) for m in reflections
             ]
+            if self.outbox is not None:
+                jobs += [self.outbox.handle(m) for m in emails]
             for job in jobs:
                 task = asyncio.create_task(job)
                 self.inflight.add(task)
@@ -448,6 +474,8 @@ async def main(settings: Settings, *, drain: bool) -> None:
             log.info("fila esvaziada: %s mensagem(ns) tratada(s) %s", len(outcomes), outcomes)
             reflections = await worker.drain_reflections()
             log.info("reflexões: %s mensagem(ns) tratada(s) %s", len(reflections), reflections)
+            emails = await worker.drain_emails()
+            log.info("e-mails: %s mensagem(ns) tratada(s) %s", len(emails), emails)
         else:
             await worker.serve()
 

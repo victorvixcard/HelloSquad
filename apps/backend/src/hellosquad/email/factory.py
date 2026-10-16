@@ -1,5 +1,5 @@
-"""Escolha do provedor por `EMAIL_PROVIDER` (mailpit | mock). Os dois são só do ambiente local e de
-teste: o provedor de produção (Resend, Postmark, SES…) é decisão do dono para a Fase 5. Fora de
+"""Escolha do provedor por `EMAIL_PROVIDER` (mailpit | mock). Os dois são só do ambiente local e
+de teste: o provedor de produção (Resend, Postmark, SES…) é decisão do dono para a Fase 5. Fora de
 local/test não há provedor e o worker deixa a fila email_outbox parada (nada se perde)."""
 
 import logging
@@ -22,8 +22,8 @@ def build_renderer(settings: Settings) -> EmailRenderer:
 def build_email_provider(settings: Settings) -> EmailProvider | None:
     if settings.app_env not in LOCAL_ENVS:
         log.warning(
-            "EMAIL_PROVIDER=%s só vale em local/test; sem provedor de produção, a fila email_outbox "
-            "fica parada",
+            "EMAIL_PROVIDER=%s só vale em local/test; sem provedor de produção, a fila "
+            "email_outbox fica parada",
             settings.email_provider,
         )
         return None

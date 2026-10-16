@@ -2,8 +2,9 @@
 `EmailProvider` e grava o resultado em `email_messages`.
 
 Falha passageira: o e-mail volta a `queued` e a mensagem reaparece depois do backoff, até
-EMAIL_MAX_ATTEMPTS; esgotou ou falha definitiva: `failed` e `archive`. Em local/test, destinatário fora
-do TLD reservado `.example` é recusado sem tentativa (`refused`): nenhum endereço real recebe nada.
+EMAIL_MAX_ATTEMPTS; esgotou ou falha definitiva: `failed` e `archive`. Em local/test, destinatário
+fora do TLD reservado `.example` é recusado sem tentativa (`refused`): nenhum endereço real recebe
+nada.
 """
 
 import json

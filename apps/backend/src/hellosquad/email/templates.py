@@ -1,8 +1,9 @@
 """Modelos do e-mail transacional: texto e HTML simples com a marca, no idioma gravado no e-mail.
 
-Todo texto vem do catálogo do backend (`i18n/<idioma>.json`, chaves `email.*`). As variáveis já chegam
-resolvidas no workspace do evento (gatilhos de `20261016220000_transactional_email.sql`); aqui só se
-escolhe a frase, formata a data e escapa o HTML. Sem imagem externa: a marca é texto e cor.
+Todo texto vem do catálogo do backend (`i18n/<idioma>.json`, chaves `email.*`). As variáveis já
+chegam resolvidas no workspace do evento (gatilhos de `20261016220000_transactional_email.sql`);
+aqui só se escolhe a frase, formata a data e escapa o HTML. Sem imagem externa: a marca é texto e
+cor.
 """
 
 import html
@@ -74,7 +75,8 @@ class EmailRenderer:
             greeting=t(locale, "email.greeting_anonymous"),
             paragraphs=paragraphs,
             cta_label=t(
-                locale, "email.invitation.cta_sign_in" if has_account else "email.invitation.cta_sign_up"
+                locale,
+                "email.invitation.cta_sign_in" if has_account else "email.invitation.cta_sign_up",
             ),
             cta_url=f"{self.app_url}/{'entrar' if has_account else 'criar-conta'}",
             footer=[t(locale, "email.invitation.footer")],
@@ -86,12 +88,20 @@ class EmailRenderer:
         action = t(locale, f"email.approval_kind.{v.get('kind', 'review')}")
         title = v.get("work_item_title")
         paragraphs = [
-            t(locale, "email.approval_pending.intro", agent=agent, workspace=workspace, action=action)
+            t(
+                locale,
+                "email.approval_pending.intro",
+                agent=agent,
+                workspace=workspace,
+                action=action,
+            )
         ]
         if title:
             paragraphs.append(t(locale, "email.approval_pending.work_item", title=title))
         paragraphs.append(t(locale, "email.approval_pending.owner_only"))
-        subject_key = "email.approval_pending.subject" if title else "email.approval_pending.subject_plain"
+        subject_key = (
+            "email.approval_pending.subject" if title else "email.approval_pending.subject_plain"
+        )
         return _Parts(
             subject=t(locale, subject_key, title=title or "", workspace=workspace),
             greeting=self._greeting(locale, v),
@@ -174,7 +184,12 @@ class EmailRenderer:
             subject=t(locale, "email.password_changed.subject"),
             greeting=self._greeting(locale, v),
             paragraphs=[
-                t(locale, "email.password_changed.intro", email=v.get("recipient_email", ""), when=when),
+                t(
+                    locale,
+                    "email.password_changed.intro",
+                    email=v.get("recipient_email", ""),
+                    when=when,
+                ),
                 t(locale, "email.password_changed.detail"),
             ],
             cta_label=t(locale, "email.password_changed.cta"),
@@ -223,7 +238,13 @@ class EmailRenderer:
         )
 
     def _text(self, locale: str, parts: _Parts) -> str:
-        lines = [parts.greeting, "", *_join(parts.paragraphs), "", f"{parts.cta_label}: {parts.cta_url}"]
+        lines = [
+            parts.greeting,
+            "",
+            *_join(parts.paragraphs),
+            "",
+            f"{parts.cta_label}: {parts.cta_url}",
+        ]
         lines += ["", "—", *parts.footer, t(locale, "email.automatic"), "HelloSquad"]
         return "\n".join(lines) + "\n"
 
@@ -250,7 +271,8 @@ class EmailRenderer:
             f'<p style="margin:24px 0 8px"><a href="{e(parts.cta_url)}" '
             f'style="display:inline-block;background:{INK};color:#FFFFFF;text-decoration:none;'
             f'padding:12px 20px;border-radius:999px;font-weight:700">{e(parts.cta_label)}</a></p>'
-            f'</td></tr><tr><td style="padding-top:24px;font-size:13px;line-height:1.5;color:{INK_SOFT}">'
+            "</td></tr>"
+            f'<tr><td style="padding-top:24px;font-size:13px;line-height:1.5;color:{INK_SOFT}">'
             f"{footer}"
             f'<p style="margin:12px 0 0;color:{LABEL}">{e(t(locale, "email.automatic"))}</p>'
             "</td></tr></table></td></tr></table></body></html>"
