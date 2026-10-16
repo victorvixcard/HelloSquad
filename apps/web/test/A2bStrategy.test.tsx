@@ -228,7 +228,7 @@ describe("Estratégia · Bia com documentos", () => {
         conversationId: null,
         agent: "bia",
         context: expect.objectContaining({
-          kind: "document",
+          kind: "opportunity",
           label: "Encomenda antecipada de Natal",
           href: "/app/miolo/squad/bia/trabalho/dx-1",
           ref: expect.objectContaining({ type: "opportunity", key: "dx-1:o1", title: "Encomenda antecipada de Natal" }),
