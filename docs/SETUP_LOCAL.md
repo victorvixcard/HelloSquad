@@ -24,12 +24,14 @@ corepack enable pnpm
 
 make up                              # instala dependências (pnpm + uv), sobe o Supabase local e aplica as migrations
 cp .env.example .env                 # o .env nunca é commitado
-pnpm exec supabase status -o env     # copie PUBLISHABLE_KEY e SECRET_KEY para o .env (ver "Chaves locais")
+pnpm exec supabase status -o env     # copie PUBLISHABLE_KEY e SECRET_KEY para o .env (ver "Chaves locais");
+                                     # a PUBLISHABLE_KEY vai também em NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (web)
 openssl rand -hex 24                 # senha local do papel da API: monte API_DATABASE_URL no .env (ver abaixo)
 make migrate                         # grava a senha do hellosquad_api no banco
 make seed                            # tenants e usuários fictícios de docs/DADOS_FICTICIOS.md
-make test                            # backend (ruff + pytest), web (lint + tipos) e banco (pgTAP)
+make test                            # backend (ruff + pytest), web e pacotes (lint, tipos, Vitest) e banco (pgTAP)
 make dev                             # API em http://127.0.0.1:8100 e web em http://127.0.0.1:3100
+make e2e                             # opcional: fluxos ponta a ponta no navegador (Playwright); ver "Web"
 ```
 
 O primeiro `make up` baixa as imagens Docker do Supabase (alguns GB) e leva alguns minutos. Os seguintes sobem em segundos.
@@ -46,6 +48,12 @@ Conferir: `make status` mostra o Supabase, a API (`/health`) e a web. `curl http
 | `SECRET_KEY` (`sb_secret_…`) | `SUPABASE_SECRET_KEY` | Só backend, para administração da Auth. Nunca no browser, nunca em log. |
 | `DB_URL` | `DATABASE_URL` | Usuário `postgres` (ignora a RLS): só ferramentas locais (seed, testes). A API não usa. Já vem preenchido. |
 | — | `API_DATABASE_URL` | A API. Papel `hellosquad_api`, sem `BYPASSRLS`. A senha você gera (abaixo). |
+| `API_URL` | `NEXT_PUBLIC_SUPABASE_URL` | Web (browser e servidor do Next). Local: `http://127.0.0.1:56321`. |
+| `PUBLISHABLE_KEY` (de novo) | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Web. O mesmo valor de `SUPABASE_PUBLISHABLE_KEY`. O web se recusa a subir se receber a `sb_secret_…`. |
+| — | `NEXT_PUBLIC_SITE_URL` | Web: canonical, sitemap, robots e Open Graph. Local: `http://127.0.0.1:3100`. |
+| — | `API_URL` | Web: a API vista pelo servidor do Next (`http://127.0.0.1:8100`). O browser não chama a API direto. |
+
+O web lê este mesmo `.env` da raiz (`apps/web/next.config.ts`); não existe `.env` dentro de `apps/web`. Variáveis `NEXT_PUBLIC_*` entram no build: depois de mudar uma delas, rode o build de novo (`make build`) ou reinicie o `make dev-web`. Só valores públicos ganham o prefixo `NEXT_PUBLIC_`; a `SUPABASE_SECRET_KEY` nunca.
 
 As chaves legadas `ANON_KEY` e `SERVICE_ROLE_KEY` (JWT) não são usadas pelo código. A chave da Anthropic (`ANTHROPIC_API_KEY`) fica vazia até a Fase 1; o dono fornece.
 
@@ -89,6 +97,8 @@ As portas do Supabase ficam em `supabase/config.toml`; os alvos `make dev-api` e
 | `make migrate` | Aplica migrations pendentes de `supabase/migrations/` e grava a senha do `hellosquad_api` (de `API_DATABASE_URL`). |
 | `make seed` | Tenants e usuários fictícios de `docs/DADOS_FICTICIOS.md` (idempotente). |
 | `make test` | `test-backend` + `test-web` + `test-db`. O backend inclui testes de integração (marcados `integration`) que exigem Supabase no ar e seed aplicado. Só os unitários: `cd apps/backend && uv run pytest -m "not integration"`. |
+| `make test-web` | ESLint do web, `tsc` do web e dos pacotes (`@hellosquad/ui`, `@hellosquad/contracts`) e os testes Vitest dos pacotes. Não precisa de Supabase. |
+| `make e2e` | Build do web e Playwright (Chromium) contra o ambiente local: Marina entra e vê a casca da Miolo; Pedro cria um workspace de teste. No fim reaplica o seed. Exige `make up` e `make seed`. |
 | `make openapi` | Exporta o contrato da API para `packages/contracts/openapi.json`. |
 | `make build` | Build de produção do web (o mesmo do CI). |
 | `make dev` | API e web juntas; Ctrl+C encerra as duas. Separadas: `make dev-api`, `make dev-web`. |
@@ -100,6 +110,31 @@ Banco:
 - Testes do banco: arquivos pgTAP em `supabase/tests/database/*.test.sql`, rodados por `make test-db`. Usam os usuários do seed: rode `make seed` antes.
 - Recriar o banco local do zero (apaga os dados locais e reaplica migrations e seed): `pnpm exec supabase db reset`, depois `make seed` (o reset recria o `hellosquad_api` sem senha).
 - Contrato da API: `make openapi` regrava `packages/contracts/openapi.json`. O teste `test_openapi.py` falha se o arquivo commitado ficar defasado.
+
+## Web (Next.js)
+
+`make dev-web` sobe o web em http://127.0.0.1:3100 (`make dev` sobe API e web juntas). A área logada chama a API, então a API precisa estar no ar.
+
+| Rota | O que é |
+|---|---|
+| `/` | Página pública (SEO: Metadata API, JSON-LD, `sitemap.xml`, `robots.txt`, `llms.txt`). |
+| `/entrar`, `/criar-conta`, `/sair` | Login, cadastro (grava o nome em `user_metadata.full_name`) e saída (sempre por POST). Confirmação de e-mail desligada no local (`supabase/config.toml`). |
+| `/app` | Depois do login: lê `GET /me` e vai para o primeiro workspace ou para `/app/novo-workspace`. |
+| `/app/<slug>` | Casca do app: barra lateral da V4.6 (Principal, Seu squad, Gestão), negócio e menu da pessoa no cabeçalho. Todo `/app/*` é `noindex`. |
+
+Use sempre o mesmo host no navegador (`127.0.0.1:3100` ou `localhost:3100`): os cookies da sessão são por host.
+
+Design System e contrato:
+
+- Tokens, agentes e ícones vêm do handoff (`design/handoff-v4.6/`) por script: `pnpm --filter @hellosquad/ui generate`. Detalhes em `packages/ui/README.md`.
+- Tipos da API vêm do `packages/contracts/openapi.json`: depois de `make openapi`, rode `pnpm --filter contracts generate` e commite os dois.
+
+Testes ponta a ponta (`make e2e`):
+
+1. Uma vez por máquina, o navegador do Playwright (só Chromium, uns 120 MB em `~/.cache/ms-playwright`): `pnpm --filter web exec playwright install chromium`.
+2. `make up && make seed`, depois `make e2e`. O Playwright sobe a API (`make dev-api`) e o `next start` se eles não estiverem no ar, e reaproveita os que estiverem.
+3. O fluxo do Pedro cria `pedro-teste-<timestamp>`; o teardown roda `make seed` e o Pedro volta a "sem membership", que o pgTAP e a integração esperam.
+4. Capturas de tela para relatório: `E2E_SCREENSHOTS=$PWD/docs/parciais/a0 pnpm --filter web e2e` (depois de um `make build`).
 
 ## Seed e usuários de teste
 
@@ -142,7 +177,7 @@ Rotas da S0: `GET /health`, `GET /me`, `GET /workspaces`, `POST /workspaces`, `G
 
 ## CI
 
-O workflow está pronto em `infra/github/workflows/ci.yml`: em push na `main` e em PR, roda `ruff` + `pytest -m "not integration"` no backend (o runner não tem Supabase; integração e pgTAP rodam no `make test`) e `lint` + `typecheck` + `build` no web. Sem deploy, sem segredo, sem passo de nuvem.
+O workflow está pronto em `infra/github/workflows/ci.yml`: em push na `main` e em PR, roda `ruff` + `pytest -m "not integration"` no backend (o runner não tem Supabase; integração e pgTAP rodam no `make test`) e, no web, `lint`, `tsc` do web e dos pacotes, os testes Vitest dos pacotes e o `build`. O Playwright (`make e2e`) fica fora do CI porque precisa do Supabase local. Sem deploy, sem segredo, sem passo de nuvem.
 
 Ele ainda não está em `.github/workflows/` porque o token de push desta máquina não tem o escopo `workflow` (o GitHub recusa o arquivo sem ele). Para ativar, alguém com esse escopo roda `git mv infra/github/workflows/ci.yml .github/workflows/ci.yml`, commita e faz push, ou cria o arquivo pela interface do GitHub.
 
@@ -162,3 +197,8 @@ O mesmo conjunto de verificações roda local com `make test` e `make build`.
 | Login de teste responde 429 | Limite de login da Auth local (300 a cada 5 min por IP) | Esperar alguns minutos. |
 | `Seed fictício recusado` | Há usuário com e-mail fora de `.example` no banco local | Remover esse usuário (dados de teste são só fictícios) ou `pnpm exec supabase db reset`. |
 | Página em branco ou erro estranho no `make dev` depois de `make build` | `next build` e `next dev` dividem a pasta `.next` | Pare o `make dev`, rode o build, suba de novo. |
+| Web responde 500 com "Faltam NEXT_PUBLIC_SUPABASE_URL…" | Variáveis do web ausentes no `.env` da raiz | Preencha `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (ver "Chaves locais") e reinicie o web. |
+| Login volta sempre para `/entrar` | Navegador alternando entre `127.0.0.1` e `localhost` (cookies por host) | Use um host só. |
+| Área logada mostra "Não deu para carregar o seu squad agora." | API fora do ar | `make dev-api` e "Tentar de novo". |
+| `make e2e` falha com "Executable doesn't exist" | Chromium do Playwright não instalado | `pnpm --filter web exec playwright install chromium`. |
+| `make test-db` falha em "Pedro sem membership" depois de testar o cadastro de workspace à mão | Workspace de teste do Pedro | `make seed`. |
