@@ -33,6 +33,10 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // Mantém o host dos redirecionamentos do middleware (127.0.0.1 não vira localhost).
   skipMiddlewareUrlNormalize: true,
+  // Metadados sempre no <head> do HTML inicial (A2c). Sem isto, o Next 15 manda o <title>, a description e o hreflang
+  // das rotas dinâmicas (o site em en e es) no fim do <body>, por streaming, para qualquer robô fora da lista dele,
+  // inclusive os assistentes de IA, que não executam JavaScript.
+  htmlLimitedBots: /.*/,
   async headers() {
     return [
       {
