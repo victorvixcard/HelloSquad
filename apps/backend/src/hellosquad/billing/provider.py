@@ -53,10 +53,12 @@ class CustomerData:
 
 @dataclass(frozen=True)
 class CardToken:
-    """Token do cartão gerado pelo provedor no cliente. brand: payment_method_id do Mercado Pago."""
+    """Token do cartão gerado pelo provedor. brand: payment_method_id do Mercado Pago; remote_ip: IP
+    de quem paga (o Asaas exige em cobrança e assinatura por cartão)."""
 
     token: str
     brand: str | None = None
+    remote_ip: str | None = None
 
 
 @dataclass(frozen=True)
@@ -80,6 +82,7 @@ class ProviderPayment:
     method: PaymentMethod | None = None
     amount: Decimal | None = None
     provider_subscription_id: str | None = None
+    due_date: date | None = None
     pix_payload: str | None = None
     pix_expires_at: datetime | None = None
 
@@ -91,6 +94,7 @@ class ProviderPayment:
             "status_detail": self.status_detail,
             "method": self.method,
             "amount": str(self.amount) if self.amount is not None else None,
+            "due_date": self.due_date.isoformat() if self.due_date else None,
         }
 
 

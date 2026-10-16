@@ -307,6 +307,7 @@ class AsaasProvider:
         if event == "PAYMENT_PARTIALLY_REFUNDED":
             raw = PARTIAL_REFUND
         value = data.get("value")
+        due = data.get("dueDate")
         return ProviderPayment(
             provider_payment_id=data["id"],
             status=status,
@@ -314,4 +315,5 @@ class AsaasProvider:
             method=METHOD.get(data.get("billingType")),
             amount=Decimal(str(value)) if value is not None else None,
             provider_subscription_id=data.get("subscription"),
+            due_date=date.fromisoformat(due) if due else None,
         )
