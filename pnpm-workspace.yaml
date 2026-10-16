@@ -1,3 +1,9 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# Scripts de instalação de dependências ficam bloqueados por padrão (pnpm >= 10).
+# unrs-resolver (via eslint-config-next) traz o binário pré-compilado em dependência
+# opcional; o script dele só confere esse binário, então fica negado.
+allowBuilds:
+  unrs-resolver: false
