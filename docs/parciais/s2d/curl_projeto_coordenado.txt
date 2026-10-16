@@ -21,9 +21,9 @@
   etapa 1 · Estratégia · bia (02.04) · done
   etapa 2 · Peças · kaia (03.01) · waiting_engine · Aguardando o motor de imagem
   etapa 3 · Textos · otto (04.03) · needs_you
-  handoff no contexto do Otto (run_context_items kind = step):
-    step · handoff · etapa 1 (bia) · versão 1
-    step · handoff · etapa 1 (bia) · versão 1
+  handoff no contexto de cada etapa seguinte (run_context_items kind = step):
+    run da kaia recebeu step · handoff · etapa 1 (bia) · versão 1
+    run da otto recebeu step · handoff · etapa 1 (bia) · versão 1
   mensagem da Kaia:
     A etapa Peças fica aguardando o motor de imagem, que ainda não está ligado. Nada é gerado nem cobrado até ele chegar; as etapas que não dependem da peça seguem.
 3. Marina aprova os textos do Otto
@@ -33,8 +33,8 @@
   etapa 2 · Peças · kaia (03.01) · waiting_engine · Aguardando o motor de imagem
   etapa 3 · Textos · otto (04.03) · done
   projeto: Campanha de Natal | done | dono: decide cada entrega
-    marco: Peças · kaia · aberto
     marco: Estratégia · bia · concluído
+    marco: Peças · kaia · aberto
     marco: Textos · otto · concluído
   créditos por etapa (reserva da delivery de cada uma):
     nexo 01.02 released 0
@@ -47,11 +47,13 @@
     - Bia começou a etapa 1 · Estratégia
     - v1 entregue
     - Você aprovou a v1
+    - Etapa 1 · Estratégia concluída
     - Kaia começou a etapa 2 · Peças
     - Etapa 2 · Peças: aguardando o motor de imagem
     - Otto começou a etapa 3 · Textos
     - v1 entregue
     - Você aprovou a v1
+    - Etapa 3 · Textos concluída
 4. Isolamento: o Rafael (Vitta) pede o trabalho e o projeto da Miolo
   trabalho: 404
   projeto: 404

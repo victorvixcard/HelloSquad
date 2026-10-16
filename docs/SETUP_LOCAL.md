@@ -465,6 +465,29 @@ curl -s -X POST $API/workspaces/$WS/memory/facts -H "$AUTH" -H "$JSON" \
 - A fala de boas-vindas (pt-BR, en, es) vem do catálogo do backend (`apps/backend/src/hellosquad/i18n/`) e só nasce na mesma transação que cria o negócio: depois disso ninguém escreve como o Nexo.
 - Modo simulado: as fixtures da 04.01 com o pão de abóbora (`otto.produce.json`, `otto.reflect.json`) reproduzem o ciclo; o pytest `test_learnings` prova o critério da fase.
 
+### Projeto coordenado e etapas por agente (S2d)
+
+**Coordenação (01.02).** Pedido de campanha vira um trabalho do Nexo com `delivery_type = "01.02"`. O run do Nexo qualifica o pedido (falta tema ou objetivo → pergunta, sem montar nada), monta a equipe e grava, numa transação: o projeto (se o trabalho ainda não tem), os participantes com a responsabilidade de cada um, as etapas em `work_item_steps` (ordem, agente responsável, `delivery_type`, `depends_on`, entrada com a instrução e o recorte do briefing), um marco por etapa em `project_milestones` (`step_id`), o histórico "Nexo montou a equipe: Bia, Kaia e Otto" e a mensagem do Nexo com o cartão `team` (`agent_ids`, `members` com a responsabilidade, `project_id`). O plano é conferido no backend contra o `agent.yaml` e as skills de `squad/` (agente, delivery e dependências só para trás). A coordenação não entrega versão: a reserva dela é liberada.
+
+**Um especialista por vez.** Só a primeira etapa vai para a fila. Cada etapa é um run próprio (`runs.step_id`), sem nova triagem: o Nexo delega (`squad.delegar` com a etapa) e o especialista recebe a instrução da etapa e a saída das etapas de que depende (handoff: a versão que fechou a etapa entra como `<documento_aprovado>`, a frente da estratégia dele como `<sua_frente>`, e o registro fica em `run_context_items` com `kind = step`, motivo `handoff`). A reserva e a captura usam o preço da delivery da etapa. A entrega e a pendência levam `step_id`; "Precisa de você" só aparece quando a etapa espera a decisão do dono. Aprovar fecha a etapa e o marco e põe a próxima na fila; ajuste ou nova proposta roda a mesma etapa de novo com o mesmo agente; cancelar cancela o trabalho (as etapas concluídas ficam; as abertas viram `skipped`). Falha numa etapa marca só ela e o trabalho como `failed`; as anteriores e as versões aprovadas continuam. Quando a última etapa fecha, o trabalho fica `done` e o projeto `done`.
+
+**Kaia sem motor.** O motor de imagem é do dono (`IMAGE_ENGINE_PROVIDER=pending`, o único valor aceito). A etapa 03.01 chama o adaptador `ImageEngine` (`apps/backend/src/hellosquad/creative/image_engine.py`); o stub responde "aguardando o motor": a etapa fica `waiting_engine` (motivo `image_engine_pending`), a Kaia avisa na conversa, nada é cobrado e a próxima etapa que não depende da peça segue. A que depende fica `blocked` com o motivo ("Depende da etapa 2 · Peças, que aguarda o motor de imagem"); sem mais nada para rodar, o trabalho fica `blocked`. O contrato que o motor precisa cumprir está em `squad/kaia/skills/03.01.md`.
+
+```bash
+# Campanha na Sala do Squad: o Nexo monta Bia (02.04) → Kaia (03.01) → Otto (04.03)
+ROOM=$(curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" -d '{"kind":"squad_room"}' | jq -r .id)
+MSG=$(curl -s -X POST $API/conversations/$ROOM/messages -H "$AUTH" -H "$JSON" \
+  -d '{"body":"Quero uma campanha de Natal para vender mais panetones."}' | jq -r .id)
+WORK=$(curl -s -X POST $API/messages/$MSG/work-items -H "$AUTH" -H "$JSON" \
+  -d '{"delivery_type":"01.02","title":"Campanha de Natal"}' | jq -r .id)
+make worker   # ou: cd apps/backend && uv run hellosquad-worker --drain
+curl -s $API/work-items/$WORK -H "$AUTH" | jq '{status, step_label, steps: [.steps[] | {seq, agent_id, delivery_type, status, status_reason_label}]}'
+curl -s $API/projects/$(curl -s $API/work-items/$WORK -H "$AUTH" | jq -r .project_id) -H "$AUTH" | jq '{status, owner, milestones: [.milestones[] | {title, agent_id, done}]}'
+```
+
+- Roteiro completo com a saída: `docs/parciais/s2d/curl_projeto_coordenado.sh` (`.txt` ao lado). pytest `test_coordinated_project` e pgTAP `24_coordinated_work` provam o critério da fase.
+- `GET /work-items/{id}` traz `step_label` ("etapa 1 de 3") e, em cada etapa, responsável, delivery, dependências, responsabilidade, instrução, motivo (`status_reason` e o texto no idioma do negócio) e a versão de saída; o histórico tem "Bia começou a etapa 1 · Estratégia", "Etapa 2 · Peças: aguardando o motor de imagem" e "Etapa 3 · Textos concluída". `GET /projects/{id}` traz `owner` (o dono da conta, que decide cada entrega) e os marcos com `step_id`, na ordem das etapas.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
