@@ -29,7 +29,12 @@ class ErrorDetail(BaseModel):
 
 class ErrorBody(BaseModel):
     code: str = Field(description="Identificador estável do erro, em inglês.")
-    message: str = Field(description="Explicação em português para quem usa.")
+    message: str = Field(
+        description=(
+            "Explicação para quem usa, no idioma da pessoa (sem idioma escolhido, no do negócio da "
+            "rota; sem negócio, pt-BR)."
+        )
+    )
     details: list[ErrorDetail] = Field(default_factory=list)
 
 

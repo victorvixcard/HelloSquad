@@ -4967,6 +4967,104 @@
         }
       }
     },
+    "/workspaces/{workspace_id}/contacts/consents/revocations": {
+      "post": {
+        "tags": [
+          "contacts"
+        ],
+        "summary": "Revoga o consentimento de um contato (owner ou admin; vira histórico e auditoria)",
+        "operationId": "revoke_consent_workspaces__workspace_id__contacts_consents_revocations_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentRevocationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentRevocation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/workspaces/{workspace_id}/metrics": {
       "get": {
         "tags": [
@@ -7004,6 +7102,137 @@
         ],
         "title": "ConsentCounts"
       },
+      "ConsentRevocation": {
+        "properties": {
+          "contact_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Contact Id"
+          },
+          "revoked": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "email",
+                "whatsapp"
+              ]
+            },
+            "type": "array",
+            "title": "Revoked",
+            "description": "Canais revogados agora (vazio quando já não havia consentimento vigente)."
+          },
+          "consents": {
+            "items": {
+              "$ref": "#/components/schemas/ConsentState"
+            },
+            "type": "array",
+            "title": "Consents",
+            "description": "Consentimento vigente do contato por canal."
+          }
+        },
+        "type": "object",
+        "required": [
+          "contact_id",
+          "revoked",
+          "consents"
+        ],
+        "title": "ConsentRevocation"
+      },
+      "ConsentRevocationRequest": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 254
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email",
+            "description": "E-mail do contato (este ou o telefone)."
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone",
+            "description": "Telefone do contato, com DDD (este ou o e-mail)."
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "email",
+                  "whatsapp"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel",
+            "description": "Canal revogado; sem ele, todos."
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source",
+            "description": "Origem do pedido de revogação, registrada com ela.",
+            "examples": [
+              "Pedido da cliente no balcão"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "title": "ConsentRevocationRequest"
+      },
+      "ConsentState": {
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "email",
+              "whatsapp"
+            ],
+            "title": "Channel"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "granted",
+              "revoked"
+            ],
+            "title": "Status"
+          },
+          "given_at": {
+            "type": "string",
+            "format": "date",
+            "title": "Given At",
+            "description": "Data do consentimento ou da revogação vigente."
+          }
+        },
+        "type": "object",
+        "required": [
+          "channel",
+          "status",
+          "given_at"
+        ],
+        "title": "ConsentState"
+      },
       "ContactImport": {
         "properties": {
           "id": {
@@ -7030,6 +7259,12 @@
           "refused_rows": {
             "type": "integer",
             "title": "Refused Rows"
+          },
+          "revoked_rows": {
+            "type": "integer",
+            "title": "Revoked Rows",
+            "description": "Linhas de contatos que já estavam na base e revogaram o consentimento (\"não\" explícito, nenhum \"sim\").",
+            "default": 0
           },
           "refused": {
             "items": {
@@ -8498,7 +8733,7 @@
           "message": {
             "type": "string",
             "title": "Message",
-            "description": "Explicação em português para quem usa."
+            "description": "Explicação para quem usa, no idioma da pessoa (sem idioma escolhido, no do negócio da rota; sem negócio, pt-BR)."
           },
           "details": {
             "items": {
@@ -13500,7 +13735,7 @@
             "maxLength": 120,
             "minLength": 1,
             "title": "Name",
-            "description": "Nome do negócio, como aparece para o time.",
+            "description": "Nome do negócio, como aparece para o time. Sem quebra de linha, caracteres de controle nem < > (422 validation_error).",
             "examples": [
               "Miolo"
             ]

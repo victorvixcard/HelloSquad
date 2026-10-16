@@ -249,7 +249,7 @@ def parse_rows(content: str, *, today: date, local: bool) -> tuple[int, list[dic
     columns = [HEADER_ALIASES.get(_key(h)) for h in header]
     missing = sorted(REQUIRED_HEADERS - set(columns))
     if missing or ("email" not in columns and "telefone" not in columns):
-        missing += [] if ("email" in columns or "telefone" in columns) else ["email ou telefone"]
+        missing += [] if ("email" in columns or "telefone" in columns) else ["email/telefone"]
         raise ApiError(422, "invalid_csv", "error.csv.missing_columns", columns=", ".join(missing))
 
     accepted: list[dict] = []

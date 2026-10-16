@@ -833,6 +833,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workspaces/{workspace_id}/contacts/consents/revocations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoga o consentimento de um contato (owner ou admin; vira histórico e auditoria) */
+        post: operations["revoke_consent_workspaces__workspace_id__contacts_consents_revocations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workspaces/{workspace_id}/metrics": {
         parameters: {
             query?: never;
@@ -1546,6 +1563,67 @@ export interface components {
              */
             any_channel: number;
         };
+        /** ConsentRevocation */
+        ConsentRevocation: {
+            /**
+             * Contact Id
+             * Format: uuid
+             */
+            contact_id: string;
+            /**
+             * Revoked
+             * @description Canais revogados agora (vazio quando já não havia consentimento vigente).
+             */
+            revoked: ("email" | "whatsapp")[];
+            /**
+             * Consents
+             * @description Consentimento vigente do contato por canal.
+             */
+            consents: components["schemas"]["ConsentState"][];
+        };
+        /** ConsentRevocationRequest */
+        ConsentRevocationRequest: {
+            /**
+             * Email
+             * @description E-mail do contato (este ou o telefone).
+             */
+            email?: string | null;
+            /**
+             * Phone
+             * @description Telefone do contato, com DDD (este ou o e-mail).
+             */
+            phone?: string | null;
+            /**
+             * Channel
+             * @description Canal revogado; sem ele, todos.
+             */
+            channel?: ("email" | "whatsapp") | null;
+            /**
+             * Source
+             * @description Origem do pedido de revogação, registrada com ela.
+             * @example Pedido da cliente no balcão
+             */
+            source: string;
+        };
+        /** ConsentState */
+        ConsentState: {
+            /**
+             * Channel
+             * @enum {string}
+             */
+            channel: "email" | "whatsapp";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "granted" | "revoked";
+            /**
+             * Given At
+             * Format: date
+             * @description Data do consentimento ou da revogação vigente.
+             */
+            given_at: string;
+        };
         /** ContactImport */
         ContactImport: {
             /**
@@ -1563,6 +1641,12 @@ export interface components {
             accepted_rows: number;
             /** Refused Rows */
             refused_rows: number;
+            /**
+             * Revoked Rows
+             * @description Linhas de contatos que já estavam na base e revogaram o consentimento ("não" explícito, nenhum "sim").
+             * @default 0
+             */
+            revoked_rows: number;
             /**
              * Refused
              * @description Linhas recusadas: número e motivo, sem o dado.
@@ -2188,7 +2272,7 @@ export interface components {
             code: string;
             /**
              * Message
-             * @description Explicação em português para quem usa.
+             * @description Explicação para quem usa, no idioma da pessoa (sem idioma escolhido, no do negócio da rota; sem negócio, pt-BR).
              */
             message: string;
             /** Details */
@@ -4160,7 +4244,7 @@ export interface components {
         WorkspaceCreate: {
             /**
              * Name
-             * @description Nome do negócio, como aparece para o time.
+             * @description Nome do negócio, como aparece para o time. Sem quebra de linha, caracteres de controle nem < > (422 validation_error).
              * @example Miolo
              */
             name: string;
@@ -7586,6 +7670,77 @@ export interface operations {
             };
             /** @description Token ausente, inválido ou expirado. */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    revoke_consent_workspaces__workspace_id__contacts_consents_revocations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConsentRevocationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsentRevocation"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
