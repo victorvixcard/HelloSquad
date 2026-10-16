@@ -147,7 +147,32 @@ Contagem: 🔴 1 · 🟡 11 · ℹ️ 16 (números finais no §(b); os da compar
 
 ### H2-09 a H2-12 — Diferenças da A2b contra a V4.6 não registradas (🟡)
 
-(preenchido ao fechar a comparação com o protótipo; ver `h2/prototipo/achados.md`)
+Comparação lado a lado (auxiliar, `h2/prototipo/achados.md`, capturas `proto-*.png` × `nosso-*.png` em 1440×900),
+só o que nenhum relatório registrou (A2b §4, A2a §4). Conferi cada 🟡 no código ou na captura antes de aceitar.
+
+- **H2-09 — "Sem números" com 90 dias de métricas no banco (P-01, P-02).** Em Conteúdo, o card "Desempenho
+  orgânico" mostra sempre "A Íris ainda não tem números do Instagram para ler." (renderizado sem consultar nada,
+  `components/env/ContentEnvironment.tsx:410`) e o "Otto percebeu" espera a Íris; e a primeira fala da conversa do
+  ambiente da Íris é sempre "Ainda não tenho números da Miolo para ler…" (`conversations/opening.py:154-155`, sem
+  ler `metrics_daily`), enquanto a página ao lado mostra "Alcance no Instagram 32.592" e as séries de 90 dias do seed
+  da S2b. É o estado vazio honesto ao contrário: diz que não há dado quando há. Correção: ler a série (a API
+  `GET /metrics` já existe) e cair no vazio só sem dado. Prova: código e `nosso-iris.png`, `nosso-otto.png`.
+- **H2-10 — Resultados (P-03, P-04, P-05).** "Desempenho por canal" sobrepõe variação e valor ("-13,9%" sob "3.694",
+  "+18,3%" sob "32.592") e corta os nomes ("Seguidores no Inst…"): a V4.6 tem nome, barra e valor em três colunas
+  (`ResultsEnvironment.tsx:231-240`, `results.css:2`; `nosso-iris-canais.png`); o gráfico de 12 semanas não rotula as
+  faixas do período ("AGOSTO"/"SETEMBRO" na V4.6) nem a média; "Análises recentes" e "Desempenho por canal" sem o
+  botão de conversa do cabeçalho do card.
+- **H2-11 — Conversas de objeto abrem mudas (P-09, P-10).** "Analisar com Íris" num indicador abre o painel vazio:
+  sem "Hoje", sem a primeira fala da Íris, sem o cartão do indicador e sem "Pergunte à Íris"; a V4.6 abre com a
+  leitura ("Encomendas pelo site, setembro: 128, 18% a mais…"), o cartão com a curva e três perguntas
+  (`proto-indicador-painel.png` × `nosso-indicador-painel.png`). O mesmo vale, pelo código, para publicação e
+  oportunidade. A coluna "Contexto da conversa" do indicador não traz número, variação nem curva
+  (`ConversationPanel.tsx:788-791`).
+- **H2-12 — Documento revisável (P-11, P-12).** No diagnóstico, no plano e nos relatórios, o cartão da decisão não
+  traz a regra da V4.4 ("Aprovar o diagnóstico não cria trabalhos…", FLUXOS §5) e mostra o texto da legenda do
+  Otto: "O ajuste abre a conversa com a Bia ao lado, com a legenda à vista." (`docs/DocumentDetail.tsx:197` usa
+  `content.adjustNote`); a migalha leva o título do pedido ("Quero analisar meu negócio") e o h1 o do documento (na
+  V4.6 são o mesmo), e o botão é "Conversar com a Bia" em vez de "Conversar sobre o diagnóstico".
 
 ### H2-13 a H2-28 (ℹ️)
 
