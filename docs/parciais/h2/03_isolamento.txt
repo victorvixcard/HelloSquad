@@ -1,0 +1,52 @@
+== preparo: dados novos na Miolo (contatos, calendário, aprendizados, etapas, e-mails, preferência)
+  importação: 201
+  preferência da Marina: 200
+  linhas da Miolo por tabela (postgres): {'calendar_posts': '3', 'contacts': '21', 'consents': '17', 'contact_imports': '1', 'contact_consent_state': '17', 'metrics_daily': '357', 'agent_learnings': '4', 'memory_reflections': '3', 'work_item_steps': '19', 'billing_customers': '1', 'subscriptions': '1', 'payments': '2', 'payment_events': '0', 'plan_prices': '1', 'topup_packs': '1', 'email_messages': '298', 'email_preferences': '1', 'project_milestones': '3', 'credit_holds': '13', 'run_context_items': '63'}
+== Data API: leitura (linhas da Miolo visíveis a quem não é da Miolo)
+  calendar_posts         marina=200/3(miolo 3) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  contacts               marina=200/21(miolo 21) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  consents               marina=200/17(miolo 17) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  contact_imports        marina=200/1(miolo 1) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  contact_consent_state  marina=200/17(miolo 17) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  metrics_daily          marina=200/357(miolo 357) rafael=200/360(miolo 0) carla=200/360(miolo 0) pedro=200/0(miolo 0) anon=401
+  agent_learnings        marina=200/4(miolo 4) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  memory_reflections     marina=200/3(miolo 3) rafael=200/5(miolo 0) carla=200/5(miolo 0) pedro=200/0(miolo 0) anon=401
+  work_item_steps        marina=200/19(miolo 19) rafael=200/11(miolo 0) carla=200/11(miolo 0) pedro=200/0(miolo 0) anon=401
+  billing_customers      marina=403 rafael=403 carla=403 pedro=403 anon=401
+  subscriptions          marina=200/1(miolo 1) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  payments               marina=200/2(miolo 2) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  payment_events         marina=403 rafael=403 carla=403 pedro=403 anon=401
+  plan_prices            marina=403 rafael=403 carla=403 pedro=403 anon=401
+  topup_packs            marina=403 rafael=403 carla=403 pedro=403 anon=401
+  email_messages         marina=200/298(miolo 298) rafael=200/81(miolo 0) carla=200/22(miolo 0) pedro=200/0(miolo 0) anon=401
+  email_preferences      marina=200/1(miolo 1) rafael=200/0(miolo 0) carla=200/0(miolo 0) pedro=200/0(miolo 0) anon=401
+  project_milestones     marina=200/3(miolo 3) rafael=200/3(miolo 0) carla=200/3(miolo 0) pedro=200/0(miolo 0) anon=401
+  credit_holds           marina=200/13(miolo 13) rafael=200/10(miolo 0) carla=200/10(miolo 0) pedro=200/0(miolo 0) anon=401
+  run_context_items      marina=200/63(miolo 63) rafael=200/2(miolo 0) carla=200/2(miolo 0) pedro=200/0(miolo 0) anon=401
+  VAZAMENTOS: nenhum
+== Data API: escrita direta (deve ser recusada)
+  calendar_posts     marina  POST -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT INSE
+  contacts           rafael  POST -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT INSE
+  contacts           marina  POST -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT INSE
+  agent_learnings    marina  POST -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT INSE
+  email_preferences  rafael  POST -> 403 {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for ta
+  payment_events     marina  POST -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT SELE
+  metrics_daily      marina  POST -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT INSE
+  consents           marina  PATCH -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT UPDA
+  agent_learnings    marina  PATCH -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT UPDA
+  email_messages     marina  PATCH -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT UPDA
+  subscriptions      marina  PATCH -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT UPDA
+  consents           marina  DELETE -> 403 {'code': '42501', 'details': None, 'hint': 'Grant the required privileges to the current role with: GRANT DELE
+== API: rotas novas com o id da Miolo
+  /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/calendar?fr marina=200 rafael=404 carla=404 pedro=404
+  /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/contacts/su marina=200 rafael=404 carla=404 pedro=404
+  /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/metrics?fro marina=200 rafael=404 carla=404 pedro=404
+  /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/memory/lear marina=200 rafael=404 carla=404 pedro=404
+  /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/billing/sub marina=200 rafael=404 carla=404 pedro=404
+  /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/billing/pay marina=200 rafael=404 carla=404 pedro=404
+  /work-items/1727af95-6898-4ff1-bc8d-acb5d141d319             marina=200 rafael=404 carla=404 pedro=404
+  /projects/f6563030-0b99-4713-a9f9-27ba5650d5b8               marina=200 rafael=404 carla=404 pedro=404
+  Rafael importa na Miolo: 404
+  Carla (editora) lê cobrança da Vitta: 403 403
+  sem token: 401
+  e-mails da Miolo para fora da Miolo: []
