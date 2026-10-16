@@ -154,11 +154,11 @@
   /* ---------------------------------------------------------------- saúde das APIs */
   var provedores = [
     { id: 'anthropic', nome: 'Anthropic', papel: 'Modelos de linguagem dos sete agentes', estado: 'funcionando', chave: 'configurada', chamadas24: 412, falhas24: 3, ultimaFalha: '2026-10-16T08:03', ultimaFalhaTxt: '529 sobrecarga (run_8f2805)', ultimaRecusaSaldo: null,
-      gasto: { h24: 3.86, d7: 24.10, inicio: 141.30 }, saldo: 38, alerta: 50, moeda: 'USD', hoje: 'Hoje, no repositório, o runtime está em modo simulado: a chave ainda não chegou.' },
+      gasto: { h24: 1.04, d7: 7.12, inicio: 61.80 }, saldo: 38, alerta: 50, moeda: 'USD', hoje: 'Hoje, no repositório, o runtime está em modo simulado: a chave ainda não chegou.' },
     { id: 'motor', nome: 'Motor de imagem', papel: 'Peças da Kaia (03.01 a 03.07)', estado: 'nao-integrado', chave: 'ausente', chamadas24: 0, falhas24: 0, gasto: null, saldo: null, alerta: null, moeda: 'USD', hoje: 'Motor do Vic, em integração. Nenhum fornecedor escolhido por aqui.' },
     { id: 'asaas', nome: 'Asaas', papel: 'Assinaturas e recargas (adaptador PaymentProvider)', estado: 'conta-nao-criada', chave: 'ausente', chamadas24: 0, falhas24: 0, gasto: null, saldo: null, alerta: null, moeda: 'BRL', hoje: 'Conta ainda não criada. Sandbox entra na Fase 2.' },
     { id: 'mercadopago', nome: 'Mercado Pago', papel: 'Assinaturas e recargas (adaptador PaymentProvider)', estado: 'conta-nao-criada', chave: 'ausente', chamadas24: 0, falhas24: 0, gasto: null, saldo: null, alerta: null, moeda: 'BRL', hoje: 'Conta ainda não criada. Sandbox entra na Fase 2.' },
-    { id: 'meta', nome: 'Meta', papel: 'Instagram, Facebook e Meta Ads: leitura e publicação autorizada', estado: 'falhando', chave: 'configurada', chamadas24: 96, falhas24: 7, ultimaFalha: '2026-10-16T07:00', ultimaFalhaTxt: 'Token expirado (190) em 2 contas: Miolo e Maresia Cozinha', ultimaRecusaSaldo: null,
+    { id: 'meta', nome: 'Meta', papel: 'Instagram, Facebook e Meta Ads: leitura e publicação autorizada', estado: 'falhando', chave: 'configurada', chamadas24: 96, falhas24: 7, ultimaFalha: '2026-10-16T07:00', ultimaFalhaTxt: 'Token expirado (190) no Instagram da Miolo; reconexão pendente', ultimaRecusaSaldo: null,
       gasto: { h24: 0, d7: 0, inicio: 0 }, saldo: null, alerta: null, moeda: 'USD', semCusto: 'A API não cobra; verba de anúncio é da conta do cliente.' },
     { id: 'google', nome: 'Google', papel: 'GA4, Search Console e Perfil da Empresa (leitura)', estado: 'funcionando', chave: 'configurada', chamadas24: 138, falhas24: 0, ultimaFalha: '2026-10-12T14:20', ultimaFalhaTxt: 'Cota por minuto do GA4 (429), resolvida na nova tentativa', ultimaRecusaSaldo: null,
       gasto: { h24: 0, d7: 0, inicio: 0 }, saldo: null, alerta: null, moeda: 'USD', semCusto: 'Dentro da cota gratuita.' }
@@ -223,7 +223,7 @@
     ]
   };
 
-  /* ---------------------------------------------------------------- qualidade das entregas (por tipo, 30 dias; por mês) */
+  /* ---------------------------------------------------------------- qualidade das entregas (por tipo, outubro até 16/10; por mês) */
   var qualidade = {
     porTipo: [
       { d: '04.01', entregas: 96, primeira: 0.71, ajustes: 0.41, naoAprovadas: 4, custoAprovada: 0.07, errosAgente: 2, falhas: 5 },
@@ -238,7 +238,7 @@
     porMes: [
       { mes: '2026-08', rotulo: 'ago/2026', entregas: 61, primeira: 0.54, ajustes: 0.88, naoAprovadas: 7, custoAprovada: 0.24, errosAgente: 9, falhas: 14, nota: 'piloto · Opus 5 e prompts v0' },
       { mes: '2026-09', rotulo: 'set/2026', entregas: 148, primeira: 0.63, ajustes: 0.61, naoAprovadas: 9, custoAprovada: 0.17, errosAgente: 6, falhas: 17, nota: 'Opus 5.5 como padrão desde 22/09' },
-      { mes: '2026-10', rotulo: 'out/2026 (até 16)', entregas: 229, primeira: 0.69, ajustes: 0.49, naoAprovadas: 12, custoAprovada: 0.13, errosAgente: 6, falhas: 16, nota: 'SOUL v1 e skills com autoverificação' }
+      { mes: '2026-10', rotulo: 'out/2026 (até 16)', entregas: 229, primeira: 0.69, ajustes: 0.47, naoAprovadas: 12, custoAprovada: 0.15, errosAgente: 6, falhas: 16, nota: 'SOUL v1 e skills com autoverificação' }
     ]
   };
 

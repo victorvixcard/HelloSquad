@@ -73,6 +73,37 @@ async function main() {
   await page.getByRole('button', { name: 'Publicar versão 2' }).click();
   ok('agente: publicar cria a versão 2 ativa', await page.getByText('Versão 2 · ativa').isVisible());
 
+  // Catálogo: "à venda" travado sem "preço aprovado"; mudança de crédito abre a barra de alterações
+  await page.goto(BASE + 'catalogo.html', { waitUntil: 'networkidle' });
+  const venda = page.getByRole('checkbox', { name: /À venda: 02\.03/ });
+  await venda.click();
+  ok('catálogo: à venda travado sem preço aprovado', (await venda.getAttribute('aria-checked')) === 'false');
+  await page.getByRole('checkbox', { name: /Preço aprovado comercialmente: 02\.03/ }).click();
+  await venda.click();
+  ok('catálogo: com preço aprovado, à venda liga', (await venda.getAttribute('aria-checked')) === 'true');
+  ok('catálogo: barra de alterações aparece', await page.getByRole('region', { name: 'Alterações não salvas' }).isVisible());
+
+  // Planos: "Salvar como versão nova" só com mudança
+  await page.goto(BASE + 'planos.html', { waitUntil: 'networkidle' });
+  const salvar = page.getByRole('button', { name: 'Salvar como versão nova' }).nth(1);
+  ok('planos: salvar desabilitado sem mudança', await salvar.isDisabled());
+  const preco = page.locator('.sa-card').nth(1).locator('input').first();
+  await preco.fill('159');
+  ok('planos: salvar habilitado com mudança', await salvar.isEnabled());
+
+  // Pagamentos: estado atual vazio; demonstração mostra assinaturas
+  await page.goto(BASE + 'pagamentos.html', { waitUntil: 'networkidle' });
+  ok('pagamentos: estado atual sem linhas', (await page.locator('.sa-tbl tbody tr').count()) === 0);
+  await page.getByRole('radio', { name: 'Demonstração' }).click();
+  ok('pagamentos: demonstração mostra as 7 assinaturas', (await page.locator('.sa-tbl tbody tr').count()) === 7, String(await page.locator('.sa-tbl tbody tr').count()));
+
+  // Auditoria: filtro "Super Admin"
+  await page.goto(BASE + 'auditoria.html', { waitUntil: 'networkidle' });
+  const antes = await page.locator('.sa-tbl tbody tr').count();
+  await page.getByRole('radio', { name: 'Super Admin' }).click();
+  const depois = await page.locator('.sa-tbl tbody tr').count();
+  ok('auditoria: filtro Super Admin reduz a lista', depois > 0 && depois < antes, antes + ' → ' + depois);
+
   // Movimento reduzido: transições zeradas
   const dur = await page.evaluate(() => getComputedStyle(document.querySelector('.sa-ni')).transitionDuration);
   ok('prefers-reduced-motion: transição da navegação zerada', /^0(\.0+1)?s|1e-05s/.test(dur), dur);
