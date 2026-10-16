@@ -1,0 +1,2 @@
+rafael@vitta.example envia broadcast privado na Miolo: HTTP 202 
+marina@miolo.example envia broadcast privado na Miolo: HTTP 202 

@@ -1,0 +1,5 @@
+REST rafael@vitta.example: HTTP 202
+websocket rafael@vitta.example: canal=timeout envio=não entrou
+REST marina@miolo.example: HTTP 202
+websocket marina@miolo.example: canal=SUBSCRIBED envio=ok
+Marina recebeu: []

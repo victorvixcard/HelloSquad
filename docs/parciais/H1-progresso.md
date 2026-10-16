@@ -11,8 +11,8 @@ mexe no banco roda sob a trava `flock /tmp/hellosquad-db.lock`, como o `Makefile
 |---|---|---|
 | 0 | PASSO 0: diretrizes, plano da Fase 1, FLUXOS §3/§5, relatórios das fatias, SETUP_LOCAL, Makefile | feito |
 | 1 | Aceite §16 pelo browser (Playwright) e idempotência (decidir 2x, run 2x, retry, reenfileirar) | feito: aceite passou (36 -> 26, uma captura); idempotência 12x em paralelo, run 3x, retry e reenfileirar resistiram |
-| 2 | Isolamento das tabelas novas (API e Data API) e Realtime entre tenants | pendente |
-| 3 | Owner-only (aprovações e memória), editor e viewer; memória respeita confirmação | pendente |
+| 2 | Isolamento das tabelas novas (API e Data API) e Realtime entre tenants | feito: 31 tabelas x Rafael/Pedro/anônimo pela Data API, 42 rotas da API, Realtime leitura e escrita; nada vazou |
+| 3 | Owner-only (aprovações e memória), editor e viewer; memória respeita confirmação | feito: editor/admin/viewer 403 em decidir e na memória; sugestão descartada fora do contexto e do prompt; correção vira versão nova |
 | 4 | Créditos (saldo, ledger imutável, falha libera, respond, estimativa, "Agora não") e worker | feito: 14 cenários, todos resistiram (rodada 1 tinha erro do meu harness; rodada 2 10/10) |
 | 5 | Web (CSP, cookie, `?next=`, noindex) e comparação com o protótipo | pendente |
 | 6 | Diretrizes (nuvem, segredos, dados fictícios, pt-BR sem emoji) e clone limpo | pendente |
@@ -33,3 +33,5 @@ mexe no banco roda sob a trava `flock /tmp/hellosquad-db.lock`, como o `Makefile
 - 13:48 harness `h1/02_idempotencia_creditos_worker.py`, rodada 2: 10/10 (`h1/02_rodada2.txt`); rodada 1 em
   `h1/02_rodada1.txt` (falhas de harness: `Settings` com lease < 10 s, origem `manual` inexistente, saldo
   esgotado entre cenários).
+- 13:51-13:55 `h1/03_isolamento_papeis_memoria.py` (resultado em `h1/03_resultado.txt`) e Realtime
+  (`h1/04_realtime_tenants.mjs`, `h1/04c_broadcast_injecao.mjs`): tudo resistiu.
