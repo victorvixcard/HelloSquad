@@ -150,11 +150,18 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     setLoaded((prev) => (prev?.key === key ? prev : null));
     actions.load(target.conversationId).then((result) => {
       if (!alive) return;
-      setLoaded(
-        result.ok
-          ? { key, messages: result.data.messages, older: result.data.older, error: false }
-          : { key, messages: [], older: null, error: true },
-      );
+      setLoaded((prev) => {
+        if (!result.ok) return { key, messages: [], older: null, error: true };
+        const fresh = result.data.messages;
+        // Mensagem enviada enquanto a conversa carregava (a leitura saiu antes do envio): não some da tela.
+        const seen = new Set(fresh.map((m) => m.id));
+        const last = Date.parse(fresh[fresh.length - 1]?.created_at ?? "") || 0;
+        const sent =
+          prev?.key === key
+            ? prev.messages.filter((m) => !seen.has(m.id) && (m.id.startsWith(TEMP) || Date.parse(m.created_at) >= last))
+            : [];
+        return { key, messages: [...fresh, ...sent], older: result.data.older, error: false };
+      });
     });
     return () => {
       alive = false;

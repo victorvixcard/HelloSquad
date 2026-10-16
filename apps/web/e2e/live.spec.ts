@@ -77,6 +77,7 @@ test.describe("Ao vivo (A1a), com o worker do squad em modo simulado", () => {
     await expect(panel.locator(".ps-cstat")).toContainText("aguarda sua aprovação");
     await expect(panel.locator(".ps-cvh-st")).toHaveText("aguarda sua aprovação");
     await expect(page.getByRole("region", { name: "Precisa de você: 2" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Projetos, com Nexo, 2 aguardam você" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Ver mais 1 pendência" })).toBeVisible();
 
     // Revisar: o cartão abre o trabalho com a legenda; aprovar chama a API da S1b (só o owner decide).
@@ -86,12 +87,12 @@ test.describe("Ao vivo (A1a), com o worker do squad em modo simulado", () => {
     await expect(work.getByRole("heading", { name: TITLE })).toBeVisible();
     await work.getByRole("button", { name: "Aprovar v1" }).click();
     await expect(work.getByText("Aprovada por você").first()).toBeVisible();
-    await expect(page.getByRole("region", { name: "Precisa de você: 1" })).toBeVisible();
+    // A pendência sai da contagem da barra ao vivo (fica só a revisão do seed).
+    await expect(nav.getByRole("link", { name: "Projetos, com Nexo, 1 aguarda você" })).toBeVisible();
 
-    // O cartão na conversa acompanha a decisão, e a conversa deixa de esperar.
+    // O cartão na conversa acompanha a decisão.
     await expect(card.getByText("Aprovada por você")).toBeVisible();
     await expect(card.getByRole("button", { name: "Aprovar v1" })).toHaveCount(0);
-    await expect(panel.locator(".ps-cstat")).toHaveCount(0);
 
     // Tudo isso sem recarregar a página.
     expect(await page.evaluate(() => (window as unknown as { __a1a?: number }).__a1a)).toBe(1);

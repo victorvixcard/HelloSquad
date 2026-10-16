@@ -39,6 +39,29 @@ describe("Precisa de você", () => {
     expect(screen.getByRole("button", { name: `Otto · Para você revisar: ${DATA.title}. Revisar a legenda` })).toBeInTheDocument();
   });
 
+  it("com mais de uma pendência, a primeira aparece e +N abre as outras no mesmo formato (V4.6 _vNd5)", async () => {
+    const user = userEvent.setup();
+    const { container } = renderWithShell(
+      <NeedsStrip
+        items={[
+          { approvalId: "ap-1", agent: "otto", kind: "Para você revisar", title: "Legenda do sábado", sub: "Legenda, versão 1, aguarda a sua revisão", cta: "Revisar a legenda", href: "/a" },
+          { approvalId: "ap-2", agent: "otto", kind: "Para você revisar", title: "Legenda de domingo", sub: "Legenda, versão 1, aguarda a sua revisão", cta: "Revisar a legenda", href: "/b" },
+        ]}
+      />,
+    );
+    expect(screen.getByRole("region", { name: "Precisa de você: 2" })).toBeInTheDocument();
+    const more = screen.getByRole("button", { name: "Ver mais 1 pendência" });
+    expect(more).toHaveTextContent("+1");
+    expect(more).toHaveAttribute("aria-expanded", "false");
+    expect(container.querySelector(".v41-more")).not.toHaveClass("is-open");
+    await user.click(more);
+    const less = screen.getByRole("button", { name: "Recolher as outras pendências" });
+    expect(less).toHaveTextContent("Fechar");
+    expect(less).toHaveAttribute("aria-expanded", "true");
+    expect(container.querySelector(".v41-more")).toHaveClass("is-open");
+    expect(screen.getByRole("button", { name: "Otto · Para você revisar: Legenda de domingo. Revisar a legenda" })).toBeInTheDocument();
+  });
+
   it("sem pendência, sem faixa", () => {
     const { container } = renderWithShell(<NeedsStrip items={[]} />);
     expect(container.querySelector(".nd")).toBeNull();

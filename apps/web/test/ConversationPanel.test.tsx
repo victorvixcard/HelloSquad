@@ -142,6 +142,97 @@ describe("painel de conversa universal", () => {
     expect(await screen.findByText("Pode deixar mais curta?")).toBeInTheDocument();
   });
 
+  it("mensagem enviada enquanto a conversa carrega não some quando a leitura chega", async () => {
+    // A leitura (before=latest) saiu antes do envio e volta sem a mensagem nova: a tela mantém o que a pessoa enviou.
+    let finish: (() => void) | null = null;
+    const acts = actions({
+      load: vi.fn(
+        () =>
+          new Promise((resolve) => {
+            finish = () =>
+              resolve({
+                ok: true as const,
+                data: { detail: {} as never, messages: [message("m1", "Mensagem antiga", "2026-10-15T10:12:00-03:00")], older: null },
+              });
+          }),
+      ) as ConversationActions["load"],
+    });
+    const user = userEvent.setup();
+    renderWithShell(<ConversationPanel actions={acts} now={NOW} />, openShell());
+    await user.type(screen.getByRole("textbox", { name: "Mensagem para o Otto…" }), "Uma legenda para o Instagram{Enter}");
+    await waitFor(() => expect(acts.send).toHaveBeenCalled());
+    await act(async () => finish?.());
+    expect(await screen.findByText("Mensagem antiga")).toBeInTheDocument();
+    expect(screen.getByText("Uma legenda para o Instagram")).toBeInTheDocument();
+  });
+
+  it("mensagem do agente com entrega mostra o cartão Material · v1; aprovar e pedir ajuste seguem o protótipo", async () => {
+    const delivered = {
+      ...message("m3", "Pronto, a primeira versão da legenda.", "2026-10-16T10:58:00-03:00", "agent"),
+      run_id: "run-9",
+      attachments: [{ type: "delivery_version", delivery_id: "d-9", delivery_version_id: "v-9", version_no: "1" }],
+    };
+    const card = vi.fn(async () => ({
+      ok: true as const,
+      data: {
+        workItemId: "wi-9",
+        title: "Legenda do sábado",
+        agentId: "otto",
+        versionNo: 1,
+        state: "review" as const,
+        approvalId: "ap-9",
+        excerpt: "Sábado é dia de pão quentinho.",
+      },
+    }));
+    const decide = vi.fn(async () => ({ ok: true as const, data: {} as never }));
+    const acts = actions({
+      load: vi.fn(async () => ({ ok: true as const, data: { detail: {} as never, messages: [delivered], older: null } })),
+      card: { card, decide },
+    });
+    const user = userEvent.setup();
+    const { shell } = renderWithShell(<ConversationPanel actions={acts} now={NOW} />, openShell());
+    expect(await screen.findByText("Material · v1")).toBeInTheDocument();
+    expect(card).toHaveBeenCalledWith("run-9", "v-9");
+    expect(screen.getByText("Legenda do sábado")).toBeInTheDocument();
+    expect(screen.getByText("Aguarda sua aprovação")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Abrir a v1: Legenda do sábado" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Pedir ajuste" }));
+    expect(shell.openConversation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conversationId: "otto-1",
+        draft: "Quero pedir um ajuste nesta versão.",
+        adjust: { approvalId: "ap-9", workItemId: "wi-9", version: 1 },
+      }),
+    );
+    expect(decide).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Aprovar v1" }));
+    expect(decide).toHaveBeenCalledWith("ap-9", "approved");
+    expect(await screen.findByText("Aprovada por você")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Aprovar v1" })).toBeNull();
+  });
+
+  it("quem não é owner vê o cartão da entrega sem os botões de decisão", async () => {
+    const delivered = {
+      ...message("m3", "Pronto.", "2026-10-16T10:58:00-03:00", "agent"),
+      run_id: "run-9",
+      attachments: [{ type: "delivery_version", delivery_id: "d-9", delivery_version_id: "v-9", version_no: "1" }],
+    };
+    const card = vi.fn(async () => ({
+      ok: true as const,
+      data: { workItemId: "wi-9", title: "Legenda", agentId: "otto", versionNo: 1, state: "review" as const, approvalId: "ap-9", excerpt: "" },
+    }));
+    const acts = actions({
+      load: vi.fn(async () => ({ ok: true as const, data: { detail: {} as never, messages: [delivered], older: null } })),
+      card: { card, decide: vi.fn() },
+    });
+    renderWithShell(<ConversationPanel actions={acts} now={NOW} />, { ...openShell(), canDecide: false });
+    expect(await screen.findByText("Aguarda sua aprovação")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Aprovar v1" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Pedir ajuste" })).toBeNull();
+  });
+
   it("Esc fecha e devolve o foco a quem abriu", async () => {
     const opener = document.createElement("button");
     opener.textContent = "Conversar com Otto";
