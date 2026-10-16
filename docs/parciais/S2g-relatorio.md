@@ -1,6 +1,6 @@
 # S2g — Relatório (correções da H2: servidor e infra)
 
-**Fatia:** S2g. **Data:** 16/10/2026, 19:45 → 20:12. **Quem:** Stark e cinco auxiliares (sub-agentes), cada um num
+**Fatia:** S2g. **Data:** 16/10/2026, 19:45 → 20:12; retomada 20:15 → 20:22 (só conferência e `make test`). **Quem:** Stark e cinco auxiliares (sub-agentes), cada um num
 worktree próprio em `/tmp/s2g-*` (nunca na árvore do dono, de onde rodam a API 8100 e a web 3100). Toda migration, seed,
 pytest e pgTAP rodou dentro de `flock -o /tmp/hellosquad-db.lock`; publicação direta em `main` com rebase. Progresso em
 `S2g-progresso.md`.
@@ -48,6 +48,27 @@ de campanha da Bia (02.04)": a A2d passou o pedido para o 01.02), `SitePage` (JS
 `catalog-parity` (apóstrofo reto no catálogo `en`). ESLint, tipos, `packages/contracts` (9) e `packages/ui` (49)
 passaram. Como o `test-web` para o `make`, rodei a parte de banco exatamente como o alvo `test` faz (acima).
 
+**Retomada, 20:16 → 20:18:** `make test` inteiro **verde** no worktree `/tmp/s2g-final`, em `83b1c82` (`main` com os
+consertos da A2d nos 3 testes acima). Antes, `make openapi` + `pnpm --filter contracts generate`: nenhuma diferença
+(59 operações; o `efe6e1f` segue valendo).
+
+```
+$ make test          (log: /tmp/s2g-final-test.log, 158 linhas)
+guarda do autosave: 21/21
+pnpm --filter web lint            $ eslint                 (sem problema)
+pnpm -r --if-present typecheck    contracts, ui, web: Done
+packages/contracts test:  Test Files  1 passed (1)   Tests  9 passed (9)
+packages/ui test:         Test Files  5 passed (5)   Tests  49 passed (49)
+apps/web test:            Test Files  35 passed (35) Tests  406 passed (406)
+flock -o -w 600 /tmp/hellosquad-db.lock env HELLOSQUAD_DB_LOCK_HELD=1 make --no-print-directory test-backend test-db
+All checks passed!
+124 files already formatted
+======================== 267 passed in 64.99s (0:01:04) ========================
+Files=28, Tests=712,  1 wallclock secs
+Result: PASS
+exit 0 20:18:31
+```
+
 ## 3. Decisões técnicas (nenhuma regra de produto)
 
 - **H2-03:** a busca continua ordenando os de outras deliveries; os que ela não acha entram depois, com motivo `agent`.
@@ -70,7 +91,8 @@ passaram. Como o `test-web` para o `make`, rodei a parte de banco exatamente com
 
 ## 5. O que ficou de fora
 
-- `test-web` vermelho (A2d, acima). O seed não apaga e-mails de convite já gravados em `email_messages` (histórico).
+- O `test-web` vermelho das 20:12 se resolveu com os commits da A2d; às 20:18 o `make test` inteiro passou (§2).
+  O seed não apaga e-mails de convite já gravados em `email_messages` (histórico).
   No modo simulado, temas de campanha além de Natal e fim de ano ainda caem no plano do Natal.
 
 ## 6. Estado da máquina
@@ -80,3 +102,6 @@ passaram. Como o `test-web` para o `make`, rodei a parte de banco exatamente com
 - Banco com as migrations `20261016230000` e `20261016230100` e no estado do seed (20 contatos na Miolo, 0 revogações,
   0 convites, 0 aprendizados, 0 reflexões, três negócios em pt-BR). Só containers `supabase_*_hellosquad`.
 - Worktrees `/tmp/s2g-*` (com as cópias do `.env`) removidos no fim; nenhum worker, scheduler ou servidor meu no ar.
+- Retomada (20:20): API 8100 e web 3100 em 200; 0 convites. O banco tem um negócio a mais ("Oficina do Pedro", 20:19:21)
+  e 5 reflexões `succeeded` (20:18:57 → 20:19:20), criados depois do fim do meu `make test` (20:18:31): atividade de
+  outra sessão, não da S2g. O worktree `/tmp/s2g-final` é removido no fim.
