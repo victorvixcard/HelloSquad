@@ -92,6 +92,7 @@ export function TeamChats({ chats, works, now }: { chats: ChatRow[]; works: Team
             variant="soft"
             size="s"
             icon={null}
+            style={{ marginLeft: "auto" }}
             onClick={() => shell.openConversation({ conversationId: null, agent: filterAgent.id, fresh: true }, "full")}
           >
             {t("newWith", { with: tc("agentWith", { article: filterAgent.article, name: filterAgent.name }) })}
