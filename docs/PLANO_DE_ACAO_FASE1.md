@@ -1,0 +1,33 @@
+# Plano de ação — Fase 1 (Núcleo vertical)
+
+Rascunho de Thor em 16/10/2026 03:05, escrito enquanto S0b e A0b fecham a Fase 0. Vale a mesma regra: ler este arquivo → `git log` → `docs/parciais/` → sub-agentes → seguir do disco.
+
+**Decisões do dono em vigor:** `docs/DIRETRIZES_DO_DONO.md` (PASSO 0 de todo briefing). **Critério da fase** (Documento Mestre §16, Plano §4): com a Miolo fictícia, pedido → trabalho → entrega → revisão → aprovação → histórico, crédito debitado uma vez só, tudo visível na conversa e em Projetos.
+
+## Restrição conhecida
+
+A chave da API da Anthropic ainda não foi fornecida. Todo o núcleo (schema, estados, API, Realtime, memória, créditos, UI) não depende dela. O runtime do squad nasce com **adaptador de LLM com modo simulado** (respostas determinísticas de fixtures quando `ANTHROPIC_API_KEY` está vazia), para os testes correrem sem chave e sem custo; a chave real só liga o modo real. Isso também é o que o teste automatizado usará sempre.
+
+## Fila (sequencial; pares só quando as áreas não se tocam)
+
+| # | Fatia | Agente | Estado | Depende de | Critério de pronto |
+|---|---|---|---|---|---|
+| S1a | **Schema do núcleo**: `conversations` (tipo, objeto de contexto: tipo + id, participantes), `messages` (author_type user/agent/system, agent_id, run_id, conteúdo, anexos), `projects`, `work_items` (estado, responsável principal, colaboradores, origem), `work_item_steps`, `deliveries`, `delivery_versions`, `delivery_files` (Storage), `approvals` (tipo: revisar/aprovar/autorizar/confirmar/reconectar/responder; decisão; prazo), `runs`, `run_steps`, `run_events`. Máquina de estados dos trabalhos em função SQL com transição atômica (`UPDATE … WHERE status = esperado`), estados do Documento Mestre §8. RLS forçada em tudo; pgTAP por tabela e por transição; `run_events` com trigger que publica em Realtime Broadcast no canal `workspace:<id>`. | Stark | ⚪ pendente | Fase 0 ✅ | `make test` verde; pgTAP cobre isolamento e transições inválidas; `supabase status` mostra Realtime; relatório `S1a-relatorio.md` |
+| S1b | **API do núcleo**: criar conversa a partir de um objeto, enviar mensagem, listar conversa com paginação por cursor, criar trabalho a partir de mensagem, listar trabalhos (quadro/lista), detalhe do trabalho com etapas e versões, decidir aprovação (idempotente). Fila pgmq `runs.interactive` enfileirada **na mesma transação** que cria o trabalho. OpenAPI atualizado. | Stark | ⚪ pendente | S1a | pytest de integração cobre o caminho pedido → trabalho → aprovação; `make openapi` em dia |
+| S1c | **Runtime do squad v0**: adaptador de LLM (SDK oficial `anthropic`, `claude-opus-5-5`, `thinking adaptive`, streaming, `fallbacks: "default"`, prompt caching no prefixo SOUL + skill) com **modo simulado** por fixtures; montagem do system prompt a partir de `squad/<id>/SOUL.md` + `skills/04.01.md` (criar a skill do Otto) + contexto; `agent_prompt_versions`; worker consumindo `runs.interactive` com `run_steps` por chamada e `run_events` de progresso; Nexo classifica a intenção (Haiku 4.5 ou simulado) e delega ao Otto; Otto produz a legenda (04.01) e cria `delivery_version`; passo de autoverificação (checklist do Documento Mestre §8); trabalho vai para "Precisa de você" com `approval` do tipo revisar. Custo (tokens) gravado em `run_steps`. | Stark | ⚪ pendente | S1b | teste ponta a ponta em modo simulado: mensagem da Marina → run → entrega → approval pendente, com eventos no Realtime; `make worker` processa a fila local |
+| S1d | **Memória camadas 1 e 2**: `brand_profiles`, `brand_facts` (versão, `supersedes_id`, status hypothesis/observed/confirmed/decision/discarded, origem, validade), `fact_sources`, `memory_suggestions` ("percebeu": confirmar/corrigir/descartar), `memory_conflicts`, `run_context_items`; busca por FTS em português (pgvector fica para a Fase 2, quando o fornecedor de embeddings for escolhido); API de leitura/confirmação; o runtime passa a recuperar fatos confirmados com orçamento de tokens; seed da memória fictícia da Miolo (`DADOS_FICTICIOS.md`). | Stark | ⚪ pendente | S1c | correção de uma preferência → próxima entrega usa a versão nova; sugestão descartada não volta; pgTAP de isolamento |
+| S1e | **Créditos**: `credit_accounts`, `credit_grants`, `credit_holds`, `credit_ledger` (append-only, `idempotency_key UNIQUE`), `delivery_prices` versionada com valores **provisórios marcados como provisórios**; reserva ao iniciar o run, captura ao concluir, liberação em falha; endpoint de estimativa; saldo em `GET /me`. Sem gateway de pagamento ainda (Fase 2). | Stark | ⚪ pendente | S1c | teste: run concluído debita uma vez mesmo com retry; falha libera; pgTAP impede UPDATE/DELETE no ledger |
+| A1a | **Conversa universal + Início + Sala do Squad**: painel lateral de conversa (380/364 px, sobreposição a 1280) com cartão de contexto do objeto, lista de mensagens com autor (pessoa/agente com `Agent` mini), `CommandField` ativo enviando para a API, assinatura do canal Realtime `workspace:<id>` pelo cliente de browser, progresso do run ("Otto está escrevendo…" com `StatePill` de presença), Início com pedidos recentes e pendências, Sala do Squad. | Aranha | ⚪ pendente | S1b (contrato) | Marina envia um pedido e vê a resposta simulada chegar sem recarregar; Playwright cobre |
+| A1b | **Conteúdo/Otto, Projetos e "Precisa de você"**: ambiente do Otto com a entrega em destaque (versões, revisar/aprovar), Projetos em Quadro e Lista com estados da V4.6, faixa "Precisa de você" com tipo de decisão, Memória da Marca (dossiê, sugestões com Confirmar/Corrigir/Descartar, histórico). | Aranha | ⚪ pendente | S1c, S1d, A1a | fluxo completo do critério da fase no Playwright, com dados fictícios |
+| H1 | **QA da Fase 1**: teste de aceite do Documento Mestre §16 em modo simulado; idempotência de aprovação e de crédito; isolamento das novas tabelas; Realtime não vaza canal entre tenants; memória respeita confirmação. | Hulk | ⚪ pendente | A1b | `H1-relatorio.md` |
+
+## Decisões que preciso tomar ou pedir ao Vic antes/durante a fase
+
+1. **Fornecedor de embeddings** (a Anthropic não oferece embeddings): Voyage AI (parceiro recomendado pela Anthropic) ou OpenAI. Fase 1 usa FTS; a decisão entra na Fase 2. Proposta: ADR-0009.
+2. **Chave da API da Anthropic** para ligar o modo real em S1c (o modo simulado não depende dela).
+3. **Cookie httpOnly** (H0-03): definido em A1a quando o Realtime no browser existir.
+4. **Preços provisórios** em `delivery_prices`: Thor define valores de desenvolvimento (por exemplo, 10 créditos por 04.01) marcados como provisórios; o Vic decide os reais.
+
+## Pendências herdadas da Fase 0
+
+Ver `PLANO_DE_ACAO_FASE0.md` → "Pendências para o Vic".
