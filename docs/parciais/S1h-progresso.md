@@ -7,8 +7,9 @@ Escopo de escrita: `supabase/`, `apps/backend`, `infra/`, `Makefile`, `docs/SETU
 |---|---|---|
 | 14:15 | PASSO 0 lido (diretrizes, H1 §b e §f, A1a §3, `config.toml [auth]`, autosave, `DB_LOCK`) | feito |
 | 14:20 | H1-02: guarda única para diff e arquivo novo (JWT, cookie de sessão com valor, `sb_secret_`/`sb_publishable_`, `ANTHROPIC_API_KEY=`); `make test-infra` 8/8 (o script antigo falha 7/8) | feito |
-| 14:27 | H1-07: fixtures `otto.produce` e `otto.revise` com uma versão e texto que diz isso; sábado só quando o pedido (ou o retorno) fala em sábado; 6 testes novos em `test_llm.py`; 62 testes de worker/LLM/créditos/memória/conversa verdes | feito |
-| 14:36 | H1-09 (parte): `hellosquad-local-db` não regrava a senha do `hellosquad_api` que já vale e recusa trocar outra sem `--rotate` (2 testes de integração: hash SCRAM igual antes e depois) | feito |
+| 14:25 | H1-07: fixtures `otto.produce` e `otto.revise` com uma versão e texto que diz isso; sábado só quando o pedido (ou o retorno) fala em sábado; 6 testes novos em `test_llm.py`; 62 testes de worker/LLM/créditos/memória/conversa verdes | feito |
+| 14:28 | H1-09 (parte): `hellosquad-local-db` não regrava a senha do `hellosquad_api` que já vale e recusa trocar outra sem `--rotate` (2 testes de integração: hash SCRAM igual antes e depois) | feito |
+| 14:31 | H1-08: `DB_LOCK := flock -o -w 600`; `make up` e `make migrate` sob a trava (o autosave das 14:30, `391fc2a`, levou o `Makefile` junto). H1-09: `make status`/`make up` com `infra/mask-keys.sed` (0 chave na saída), `.env` com `chmod 600` no `SETUP_LOCAL.md`, `make test-web` descrito como roda (Vitest do web incluso), segundo checkout em "Problemas comuns" | feito; prova do `make e2e` concorrente no fim |
 
 ## Notas
 

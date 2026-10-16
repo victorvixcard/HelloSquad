@@ -22,7 +22,7 @@ git clone https://github.com/victorvixcard/HelloSquad.git
 cd HelloSquad
 corepack enable pnpm
 
-cp .env.example .env                 # o .env nunca é commitado; o DATABASE_URL já vem preenchido
+cp .env.example .env && chmod 600 .env  # só você lê o .env; ele nunca é commitado; o DATABASE_URL já vem preenchido
 openssl rand -hex 24                 # senha local do papel da API: monte API_DATABASE_URL no .env (ver "Chaves locais")
 make up                              # instala dependências (pnpm + uv), sobe o Supabase local, aplica as migrations
                                      # e grava a senha do hellosquad_api
@@ -38,7 +38,7 @@ O primeiro `make up` baixa as imagens Docker do Supabase (alguns GB) e leva algu
 
 O `.env` nasce antes do `make up`, com o `API_DATABASE_URL`; as chaves do Supabase entram logo depois, porque só existem com ele no ar (o CLI vem no `pnpm install` do `make up`). Se o `make up` rodar sem `.env` ou com `DATABASE_URL`/`API_DATABASE_URL` vazios, ele avisa em uma linha e segue sem gravar a senha do papel; preencha o `.env` e rode `make migrate`. Chamados direto, `make migrate` e `make seed` exigem as duas URLs.
 
-Conferir: `make status` mostra o Supabase, a API (`/health`) e a web. `curl http://127.0.0.1:8100/health` responde `{"status":"ok","version":"0.1.0","environment":"local"}`.
+Conferir: `make status` mostra o Supabase (chaves e senhas mascaradas), a API (`/health`) e a web. `curl http://127.0.0.1:8100/health` responde `{"status":"ok","version":"0.1.0","environment":"local"}`.
 
 ## Chaves locais
 
@@ -65,7 +65,7 @@ As chaves legadas `ANON_KEY` e `SERVICE_ROLE_KEY` (JWT) não são usadas pelo c�
 API_DATABASE_URL=postgresql://hellosquad_api:<senha-gerada>@127.0.0.1:56322/postgres
 ```
 
-`make up`, `make migrate` e `make seed` gravam essa senha no banco com hash SCRAM calculado no cliente; o log do Postgres nunca vê a senha em claro. Ao subir, a API confere que o papel não é superusuário nem ignora a RLS e se recusa a rodar se for.
+`make up`, `make migrate` e `make seed` gravam essa senha no banco com hash SCRAM calculado no cliente; o log do Postgres nunca vê a senha em claro. Só gravam quando falta: se a senha do `.env` já vale, nada muda; se o papel já tem **outra** senha, recusam (um segundo checkout nesta máquina, clone ou worktree, usa o mesmo Supabase e o mesmo papel: copie o `API_DATABASE_URL` do `.env` do primeiro). Trocar de propósito, sabendo que derruba a API que usa a senha antiga: `cd apps/backend && uv run hellosquad-local-db roles --rotate`. Ao subir, a API confere que o papel não é superusuário nem ignora a RLS e se recusa a rodar se for.
 
 **Validação do JWT na API.** Padrão: chave pública do JWKS da Auth (`/auth/v1/.well-known/jwks.json`). A Auth local assina os tokens de usuário em **ES256**, então o padrão `AUTH_JWT_ALGORITHMS=ES256` é o caminho usado hoje. Fallback, só se a Auth assinar com segredo compartilhado: `AUTH_JWT_ALGORITHMS=HS256` e `SUPABASE_JWT_SECRET` com o `JWT_SECRET` do `status -o env`.
 
@@ -93,13 +93,13 @@ As portas do Supabase ficam em `supabase/config.toml`; os alvos `make dev-api` e
 
 | Comando | O que faz |
 |---|---|
-| `make up` | Instala dependências pelos lockfiles, sobe o Supabase local, aplica migrations pendentes e grava a senha do `hellosquad_api` (sem `.env`, só avisa). |
+| `make up` | Instala dependências pelos lockfiles, sobe o Supabase local, aplica migrations pendentes e grava a senha do `hellosquad_api` (sem `.env`, só avisa). Com a trava do banco; a saída esconde as chaves. |
 | `make down` | Para os containers do HelloSquad. Os dados ficam no volume Docker. |
-| `make status` | Estado do Supabase, da API e da web. |
-| `make migrate` | Aplica migrations pendentes de `supabase/migrations/` e grava a senha do `hellosquad_api` (de `API_DATABASE_URL`). |
+| `make status` | Estado do Supabase (chaves, segredo do S3 e senha da URL do banco mascarados; os valores, para o `.env`: `pnpm exec supabase status -o env`), da API e da web. |
+| `make migrate` | Aplica migrations pendentes de `supabase/migrations/` e grava a senha do `hellosquad_api` (de `API_DATABASE_URL`). Com a trava do banco. |
 | `make seed` | Tenants e usuários fictícios de `docs/DADOS_FICTICIOS.md` (idempotente). |
-| `make test` | `test-backend` + `test-web` + `test-db`. O backend inclui testes de integração (marcados `integration`) que exigem Supabase no ar e seed aplicado. Só os unitários: `cd apps/backend && uv run pytest -m "not integration"`. |
-| `make test-web` | ESLint do web, `tsc` do web e dos pacotes (`@hellosquad/ui`, `@hellosquad/contracts`) e os testes Vitest dos pacotes. Não precisa de Supabase. |
+| `make test` | `test-backend` + `test-web` + `test-db` + `test-infra` (guarda de segredo do autosave, num repositório temporário em `/tmp`). O backend inclui testes de integração (marcados `integration`) que exigem Supabase no ar e seed aplicado. Só os unitários: `cd apps/backend && uv run pytest -m "not integration"`. |
+| `make test-web` | ESLint do web, `tsc` do web e dos pacotes (`@hellosquad/ui`, `@hellosquad/contracts`) e os testes Vitest do web (componentes, `apps/web/test`) e dos pacotes. Não precisa de Supabase. |
 | `make e2e` | Build do web e Playwright (Chromium) contra o ambiente local: Marina entra e vê a casca da Miolo; Pedro cria um workspace de teste; ao vivo (A1a), com o worker do squad em modo simulado: Marina pede uma legenda, vê o Otto escrevendo, recebe a v1 sem recarregar, revisa e aprova, e pede ajuste até a v2. No fim para o worker e reaplica o seed (com a trava do banco). Exige `make up` e `make seed`. |
 | `make openapi` | Exporta o contrato da API para `packages/contracts/openapi.json`. |
 | `make build` | Build de produção do web (o mesmo do CI). |
@@ -137,8 +137,8 @@ Testes ponta a ponta (`make e2e`):
 1. Uma vez por máquina, o navegador do Playwright (só Chromium, uns 120 MB em `~/.cache/ms-playwright`): `pnpm --filter web exec playwright install chromium`.
 2. `make up && make seed`, depois `make e2e`. O Playwright sobe a API (`make dev-api`) e o `next start` se eles não estiverem no ar, e reaproveita os que estiverem. **Com `make dev-web` no ar na 3100, pare-o antes**: o Playwright reaproveitaria o `next dev`, e o `next build` do `make e2e` quebra o `next dev` (suba de novo depois).
 3. **Worker do squad (fluxos ao vivo, A1a):** o setup do Playwright (`apps/web/e2e/global-setup.ts`) sobe `uv run hellosquad-worker` com `LLM_PROVIDER=simulated` (fixtures, sem custo e sem chave), espera "worker no ar" e grava o log em `/tmp/hellosquad-e2e-worker.log`. Para usar um worker que já está rodando (`make worker`), `E2E_WORKER=off`. O worker simulado termina um run em menos de um segundo: o teste segura os eventos do Realtime depois de "Otto começou a escrever" para conferir "escrevendo…" e depois solta na mesma ordem (só o tempo de entrega muda; os eventos são os do worker).
-4. O fluxo do Pedro cria `pedro-teste-<timestamp>` e o ao vivo cria trabalhos, entregas e decisões; o teardown para o worker e reaplica o seed, e o Pedro volta a "sem membership", que o pgTAP e a integração esperam. Dentro do `make e2e` a trava do banco já está com o próprio `make e2e` (`HELLOSQUAD_DB_LOCK_HELD=1`): o teardown roda o seed direto, sem `make seed` (que esperaria pela própria trava por 30 min). Rodando o Playwright fora do make, o teardown usa `make seed`, que pega a trava.
-5. Só os fluxos ao vivo, contra o que já está no ar (API e web): `flock -w 1800 /tmp/hellosquad-db.lock env HELLOSQUAD_DB_LOCK_HELD=1 pnpm --filter web exec playwright test e2e/live.spec.ts`.
+4. O fluxo do Pedro cria `pedro-teste-<timestamp>` e o ao vivo cria trabalhos, entregas e decisões; o teardown para o worker e reaplica o seed, e o Pedro volta a "sem membership", que o pgTAP e a integração esperam. Dentro do `make e2e` a trava do banco já está com o próprio `make e2e` (`HELLOSQUAD_DB_LOCK_HELD=1`): o teardown roda o seed direto, sem `make seed` (que esperaria pela própria trava até o limite de 10 min e falharia). Rodando o Playwright fora do make, o teardown usa `make seed`, que pega a trava.
+5. Só os fluxos ao vivo, contra o que já está no ar (API e web): `flock -o -w 600 /tmp/hellosquad-db.lock env HELLOSQUAD_DB_LOCK_HELD=1 pnpm --filter web exec playwright test e2e/live.spec.ts`.
 6. Capturas de tela para relatório: `E2E_SCREENSHOTS=$PWD/docs/parciais/a0 pnpm --filter web e2e` (depois de um `make build`).
 
 ## Seed e usuários de teste
@@ -408,6 +408,8 @@ O mesmo conjunto de verificações roda local com `make test` e `make build`.
 | API não sobe: `API_DATABASE_URL vazio` | Falta a URL do papel da API no `.env` | Gere a senha e preencha (seção "Chaves locais"), depois `make migrate`. |
 | `make up` termina com `aviso: .env ausente ou sem …` | `.env` criado depois do `make up` ou com as URLs vazias | Crie e preencha o `.env` ("Subir do zero"), depois `make migrate`. |
 | `password authentication failed for user "hellosquad_api"` | Senha do `.env` ainda não gravada no banco (ou `db reset` recente) | `make migrate`. |
+| `erro: o papel hellosquad_api já tem outra senha` | Segundo checkout nesta máquina com outro `API_DATABASE_URL` (o papel é um só) | Copie o `API_DATABASE_URL` do `.env` do outro checkout. Trocar de propósito derruba a API do outro: `uv run hellosquad-local-db roles --rotate` em `apps/backend`. |
+| `make test`, `make seed` ou `make e2e` param esperando e saem com erro do `flock` depois de 10 min | Outro alvo está com a trava do banco (outra sessão rodando `make test`/`make e2e`) ou travou | `lsof /tmp/hellosquad-db.lock` mostra quem está com ela; com `flock -o` é só o `flock` do alvo (um worker órfão do `make e2e` não a segura mais). Worker órfão consumindo a fila: `pgrep -af hellosquad-worker` e `kill <pid>`. |
 | Login de teste responde 429 | Limite de login da Auth local (300 a cada 5 min por IP) | Esperar alguns minutos. |
 | `Seed fictício recusado` | Há usuário com e-mail fora de `.example` no banco local | Remover esse usuário (dados de teste são só fictícios) ou `pnpm exec supabase db reset`. |
 | Página em branco ou erro estranho no `make dev` depois de `make build` | `next build` e `next dev` dividem a pasta `.next` | Pare o `make dev`, rode o build, suba de novo. |
