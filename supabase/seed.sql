@@ -494,3 +494,75 @@ begin
      v_free_start + interval '5 minutes');
 end;
 $seed_creditos$;
+
+-- S2b — base de clientes do Max e métricas da Íris (DADOS_FICTICIOS.md, "Contatos fictícios" e "Métricas
+-- fictícias"). Ids fixos nos contatos; datas relativas ao dia do seed, para a base e a série estarem sempre
+-- atuais.
+--
+-- Estado garantido:
+--   Miolo: 20 contatos (cliente01…cliente20@contatos.example, +55 11 99999-0001…0020), origem "importação CSV de
+--     teste"; consentimento de e-mail nos 10 primeiros (WhatsApp em 6 deles) e nenhum nos outros 10. Última
+--     compra e número de compras fictícios, para a segmentação (ativos, esfriando, inativos, sem compra).
+--   Miolo e Vitta: 90 dias de métricas até ontem (sessões no site, seguidores e alcance no Instagram, pedidos),
+--     origem `fonte_de_teste`, unidade declarada, valores de função determinística (semente fixa); a Miolo tem
+--     um buraco de 3 dias nas sessões (dado ausente). Trilha sem contatos nem métricas (primeiro acesso,
+--     estado vazio honesto).
+do $seed_s2b$
+declare
+  v_miolo uuid := (select id from public.workspaces where slug = 'miolo');
+begin
+  delete from public.contacts c using public.workspaces s where s.id = c.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  delete from public.contact_imports i using public.workspaces s where s.id = i.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  delete from public.metrics_daily m using public.workspaces s where s.id = m.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+
+  insert into public.contacts (id, workspace_id, full_name, email, phone, source, last_purchase_on, purchases_count)
+  select ('5eed0000-0000-4000-8000-0000000010' || lpad(c.n::text, 2, '0'))::uuid, v_miolo, c.name,
+         'cliente' || lpad(c.n::text, 2, '0') || '@contatos.example',
+         '+55119999900' || lpad(c.n::text, 2, '0'),
+         'importação CSV de teste',
+         case when c.days_ago is not null then current_date - c.days_ago end, c.purchases
+  from (values
+    (1, 'Ana Souza', 5, 12), (2, 'Bruno Lima', 12, 4), (3, 'Camila Rocha', 25, 2), (4, 'Diego Alves', 40, 6),
+    (5, 'Elisa Martins', 55, 1), (6, 'Fábio Ribeiro', 75, 3), (7, 'Gabriela Castro', 100, 5),
+    (8, 'Henrique Duarte', 130, 2), (9, 'Isabela Moreira', 160, 1), (10, 'João Ferreira', null, 0),
+    (11, 'Larissa Gomes', 8, 7), (12, 'Marcos Pereira', 20, 1), (13, 'Natália Barbosa', 35, 2),
+    (14, 'Otávio Mendes', 60, 4), (15, 'Paula Carvalho', 95, 1), (16, 'Renato Araújo', 120, 3),
+    (17, 'Sofia Teixeira', 200, 1), (18, 'Tiago Monteiro', null, 0), (19, 'Vanessa Freitas', 15, 3),
+    (20, 'Wagner Lopes', 110, 2)
+  ) as c (n, name, days_ago, purchases);
+
+  insert into public.consents (workspace_id, contact_id, channel, status, legal_basis, source, given_at, recorded_at)
+  select v_miolo, ('5eed0000-0000-4000-8000-0000000010' || lpad(c.n::text, 2, '0'))::uuid, c.channel::public.consent_channel,
+         'granted', 'consent', 'importação CSV de teste', date '2026-09-01' + c.n, timestamptz '2026-10-01 12:00-03'
+  from (
+    select n, 'email' as channel from generate_series(1, 10) as n
+    union all
+    select n, 'whatsapp' from unnest(array[1, 2, 4, 6, 7, 9]) as n
+  ) as c;
+
+  insert into public.metrics_daily (workspace_id, channel, metric, day, value, unit, source, collected_at)
+  select w.id, p.channel, p.metric, current_date - g.n,
+         case when p.kind = 'stock' then
+           p.base + p.step_old * least(90 - g.n, 60) + p.step_new * greatest(30 - g.n, 0)
+           + (('x' || substr(md5(p.slug || p.metric || g.n), 1, 8))::bit(32)::int % 3)
+         else
+           round(p.base * case when g.n <= 30 then p.recent else 1 end
+                 * case g.n % 7 when 0 then 1.2 when 1 then 1.05 when 4 then 0.9 else 1 end
+                 * (1 + 0.08 * ((('x' || substr(md5(p.slug || p.metric || g.n), 1, 8))::bit(32)::int % 1000) / 1000.0)))
+         end,
+         p.unit, 'fonte_de_teste', (current_date - g.n + 1)::timestamptz + interval '6 hours'
+  from (values
+    ('miolo', 'site', 'sessions', 'sessões', 'flow', 140, 0.87, 0, 0),
+    ('miolo', 'instagram', 'followers', 'seguidores', 'stock', 3850, 1, 3, 4),
+    ('miolo', 'instagram', 'reach', 'pessoas alcançadas', 'flow', 900, 1.18, 0, 0),
+    ('miolo', 'store', 'orders', 'pedidos', 'flow', 38, 0.96, 0, 0),
+    ('vitta', 'site', 'sessions', 'sessões', 'flow', 85, 1.06, 0, 0),
+    ('vitta', 'instagram', 'followers', 'seguidores', 'stock', 5200, 1, 5, 2),
+    ('vitta', 'instagram', 'reach', 'pessoas alcançadas', 'flow', 1300, 0.9, 0, 0),
+    ('vitta', 'store', 'orders', 'pedidos', 'flow', 9, 1.03, 0, 0)
+  ) as p (slug, channel, metric, unit, kind, base, recent, step_old, step_new)
+  join public.workspaces w on w.slug = p.slug
+  cross join generate_series(1, 90) as g (n)
+  where not (p.slug = 'miolo' and p.metric = 'sessions' and g.n between 43 and 45);
+end;
+$seed_s2b$;
