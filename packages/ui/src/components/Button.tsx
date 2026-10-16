@@ -131,14 +131,19 @@ export function Button(props: ButtonProps) {
       className={cx(classes, disabled && variant === "primary" && "is-disabled")}
       disabled={disabled}
       aria-busy={state === "loading" || undefined}
-      onClick={(event: MouseEvent<HTMLButtonElement>) => {
-        // Enquanto carrega ou mostra "pronto", o botão não dispara de novo (nem envia o formulário).
-        if (busy) {
-          event.preventDefault();
-          return;
-        }
-        onClick?.(event);
-      }}
+      // Só há handler quando precisa: assim o Button também renderiza em Server Components.
+      onClick={
+        busy || onClick
+          ? (event: MouseEvent<HTMLButtonElement>) => {
+              // Enquanto carrega ou mostra "pronto", não dispara de novo (nem envia o formulário).
+              if (busy) {
+                event.preventDefault();
+                return;
+              }
+              onClick?.(event);
+            }
+          : undefined
+      }
     >
       {label}
     </button>

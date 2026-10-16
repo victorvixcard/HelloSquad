@@ -1,11 +1,22 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { siteUrl } from "@/lib/env";
+import { OPEN_GRAPH_BASE, SITE } from "@/lib/site";
 import { gabarito, jetbrainsMono } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "HelloSquad",
-  description:
-    "Equipe de marketing com IA para pequenos e médios negócios: sete especialistas que conhecem a sua marca.",
+  metadataBase: new URL(siteUrl()),
+  title: { default: SITE.title, template: "%s · HelloSquad" },
+  description: SITE.description,
+  applicationName: "HelloSquad",
+  openGraph: OPEN_GRAPH_BASE,
+  twitter: { card: "summary", title: SITE.title, description: SITE.description },
+  formatDetection: { telephone: false, email: false, address: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#F7F7F5",
+  colorScheme: "light",
 };
 
 export default function RootLayout({

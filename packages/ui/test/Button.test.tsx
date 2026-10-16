@@ -88,3 +88,13 @@ describe("Button", () => {
     expect(custom).toHaveClass("hs-btn--soft");
   });
 });
+
+describe("Button em Server Component", () => {
+  it("sem onClick e em repouso, não anexa handler (props serializáveis no RSC)", async () => {
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const html = renderToStaticMarkup(<Button type="submit">Sair</Button>);
+    expect(html).toContain('type="submit"');
+    const element = Button({ type: "submit", children: "Sair" }) as React.ReactElement<{ onClick?: unknown }>;
+    expect(element.props.onClick).toBeUndefined();
+  });
+});
