@@ -32,7 +32,7 @@ ferramentas:
   - entregas.criar_versao
   - squad.delegar
   - contatos.importar_csv        # com deduplicação, origem e consentimento
-  - contatos.ler_crm             # conector a definir (RD Station, HubSpot)
+  - contatos.ler_crm             # conector a definir (CRM externo)
   - segmentos.criar
   - jornadas.desenhar            # fluxo planejado, não ativo
   - jornadas.ativar              # exige permissão + consentimento dos destinatários
