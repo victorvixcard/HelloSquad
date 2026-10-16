@@ -49,7 +49,7 @@ export async function Landing({ locale }: { locale: Locale }) {
         {t("home.skipToContent")}
       </a>
       <JsonLd data={ld} />
-      <SiteHeader locale={locale} current="inicio" />
+      <SiteHeader locale={locale} current="inicio" nav={false} />
       <main id="conteudo">
         <section className="hm-hero" aria-labelledby="hm-titulo">
           <h1 id="hm-titulo">

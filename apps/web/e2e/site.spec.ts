@@ -77,7 +77,9 @@ test.describe("site público (A2c)", () => {
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Você cuida do seu negócio.");
     await expect(page.getByRole("table", { name: /Mais do que ferramentas/ })).toBeVisible();
     await snap(page, "a2c-03-landing");
-    await page.getByRole("navigation", { name: "Navegação do site" }).getByRole("link", { name: "Perguntas" }).click();
+    // Cabeçalho da landing como a R32 (só "Entrar"); a navegação do site fica no rodapé e nas páginas novas.
+    await expect(page.getByRole("navigation", { name: "Navegação do site" })).toHaveCount(0);
+    await page.getByRole("contentinfo").getByRole("link", { name: "Perguntas" }).click();
     await expect(page).toHaveURL(/\/faq$/);
     await expect(page.getByRole("heading", { level: 3 }).first()).toBeVisible();
     await snap(page, "a2c-04-faq");

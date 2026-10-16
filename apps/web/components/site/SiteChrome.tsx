@@ -14,24 +14,30 @@ const NAV = [
   ["sobre", "nav.about"],
 ] as const satisfies readonly (readonly [SitePageKey, string])[];
 
-export async function SiteHeader({ locale, current }: { locale: Locale; current: SitePageKey }) {
+/**
+ * Cabeçalho. Na landing (`nav={false}`) fica como a R32 no topo: wordmark e "Entrar". Nas páginas novas, que a R32 não
+ * desenha, entra a navegação entre elas (que também está no rodapé de todas).
+ */
+export async function SiteHeader({ locale, current, nav = true }: { locale: Locale; current: SitePageKey; nav?: boolean }) {
   const t = await getTranslations({ locale, namespace: "site" });
   return (
-    <header className="hm-head st-head">
+    <header className={nav ? "hm-head st-head" : "hm-head"}>
       <Link href={sitePath("inicio", locale)} className="hs-wordmark hm-wm" aria-label={t("home.homeLink")}>
         HelloSquad
       </Link>
-      <nav className="st-nav" aria-label={t("nav.label")}>
-        <ul>
-          {NAV.map(([key, label]) => (
-            <li key={key}>
-              <Link className="hm-link" href={sitePath(key, locale)} aria-current={current === key ? "page" : undefined}>
-                {t(label)}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {nav ? (
+        <nav className="st-nav" aria-label={t("nav.label")}>
+          <ul>
+            {NAV.map(([key, label]) => (
+              <li key={key}>
+                <Link className="hm-link" href={sitePath(key, locale)} aria-current={current === key ? "page" : undefined}>
+                  {t(label)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ) : null}
       <nav className="st-account" aria-label={t("home.accountNav")}>
         <Link className="hm-link" href="/entrar">
           {t("home.signIn")}

@@ -102,6 +102,9 @@ describe("Landing", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       /Você cuida do seu negócio\.\s*Seu squad de IA assume o marketing\./,
     );
+    // Cabeçalho como a R32 no topo (wordmark e "Entrar"); a navegação do site fica no rodapé.
+    expect(screen.queryByRole("navigation", { name: "Navegação do site" })).toBeNull();
+    expect(within(screen.getByRole("contentinfo")).getByRole("link", { name: "Como funciona" })).toHaveAttribute("href", "/como-funciona");
     // Botão do Hero como aprovado na R32 (pergunta P1 da N2a com o dono); o encerramento usa o CTA sem preço.
     expect(screen.getByRole("link", { name: "Criar conta grátis" })).toHaveAttribute("href", "/criar-conta");
     expect(screen.getAllByRole("link", { name: "Começar com o squad" })[0]).toHaveAttribute("href", "/criar-conta");
