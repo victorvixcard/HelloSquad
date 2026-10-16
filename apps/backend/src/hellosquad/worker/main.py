@@ -23,6 +23,7 @@ from hellosquad.config import Settings, get_settings
 from hellosquad.i18n import DEFAULT_LOCALE, catalog, t
 from hellosquad.llm.base import LLMClient, LLMError
 from hellosquad.llm.factory import build_llm_client
+from hellosquad.research.websearch import WebSearch, build_web_search
 from hellosquad.runtime import configure_logging
 from hellosquad.squad.flow import FlowError, Squad, run_flow, run_reply
 from hellosquad.squad.loader import SquadLoader
@@ -87,14 +88,22 @@ class Worker:
         *,
         llm: LLMClient | None = None,
         loader: SquadLoader | None = None,
+        web_search: WebSearch | None = None,
     ) -> None:
         self.settings = settings
+        api_key = settings.web_search_api_key
         self.squad = Squad(
             loader=loader or SquadLoader(settings.squad_dir),
             llm=llm or build_llm_client(settings),
             prices=settings.llm_prices,
             history_limit=settings.worker_history_messages,
             memory_budget=settings.memory_context_tokens,
+            web_search=web_search
+            or build_web_search(
+                settings.web_search_provider,
+                api_key.get_secret_value() if api_key else None,
+                timeout=settings.web_search_timeout_seconds,
+            ),
         )
         self.pool = AsyncConnectionPool(
             worker_conninfo(settings),

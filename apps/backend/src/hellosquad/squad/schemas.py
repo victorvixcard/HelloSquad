@@ -130,6 +130,23 @@ TRIAGE_SCHEMA = obj(
     }
 )
 
+OBSERVATIONS_SCHEMA = {
+    "type": "array",
+    "items": obj(
+        {
+            "leitura": STRING,
+            "explicacao": STRING,
+            "area": {
+                "type": "string",
+                "enum": ["business", "brand", "audience", "knowledge"],
+            },
+            "assunto": STRING,
+            "chave": STRING,
+        }
+    ),
+}
+
+# Produção da 04.01; as outras deliveries montam o seu em squad/deliveries.py.
 PRODUCTION_SCHEMA = obj(
     {
         "entrega": obj(
@@ -144,21 +161,7 @@ PRODUCTION_SCHEMA = obj(
             }
         ),
         "mensagem": STRING,
-        "observacoes": {
-            "type": "array",
-            "items": obj(
-                {
-                    "leitura": STRING,
-                    "explicacao": STRING,
-                    "area": {
-                        "type": "string",
-                        "enum": ["business", "brand", "audience", "knowledge"],
-                    },
-                    "assunto": STRING,
-                    "chave": STRING,
-                }
-            ),
-        },
+        "observacoes": OBSERVATIONS_SCHEMA,
     }
 )
 

@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     llm_prices: dict[str, ModelPrice] = Field(default_factory=lambda: dict(DEFAULT_PRICES))
     # Pasta squad/ (agent.yaml, SOUL.md, skills/). Vazio: a do monorepo.
     squad_dir: Path | None = None
+    # Busca web da Bia (02.07). Desligada por padrão: a entrega fica só com sugestões sem validação.
+    # mock = resultados fictícios fixos (testes, demonstração); brave = busca real, com a chave.
+    web_search_provider: Literal["disabled", "mock", "brave"] = "disabled"
+    web_search_api_key: SecretStr | None = None
+    web_search_timeout_seconds: float = Field(default=10.0, gt=0)
 
     # Worker: runs simultâneos no processo, teto por workspace (aplicado ao tirar da fila) e
     # tentativas.
