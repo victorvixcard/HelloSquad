@@ -1,0 +1,7 @@
+{"suggestions": 1, "conflicts": 0, "outdated": 0}
+Não usar a palavra 'artesanal' nas legendas
+200 sugestão confirm, conhecimento b45d5005-c27d-4ba9-9228-09f34aadebdf confirmed
+200 sugestão confirm, conhecimento b45d5005-c27d-4ba9-9228-09f34aadebdf confirmed
+2
+[{"id": "5eed0000-0000-4000-8000-000000000801", "kind": "onboarding", "name": "Onboarding e o que você contou", "state": "declared", "permissions": [], "last_sync_at": "2026-10-01T13:00:00Z", "fact_count": 4, "created_at": "2026-10-01T13:00:00Z", "updated_at": "2026-10-01T13:00:00Z"}, {"id": "5eed0000-0000-4000-8000-000000000802", "kind": "connection", "name": "Instagram", "state": "not_connected
+[]

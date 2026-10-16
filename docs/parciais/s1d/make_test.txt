@@ -1,0 +1,128 @@
+pnpm install --frozen-lockfile
+Scope: all 4 workspace projects
+✓ Lockfile passes supply-chain policies (verified 40m ago)
+Lockfile is up to date, resolution step is skipped
+Done in 36ms using pnpm v12.11.2
+cd apps/backend && uv sync --locked
+Resolved 49 packages in 0.67ms
+Checked 46 packages in 0.27ms
+pnpm exec supabase start
+Stopped services: [supabase_imgproxy_hellosquad supabase_edge_runtime_hellosquad supabase_pooler_hellosquad]
+pnpm exec supabase migration up --local
+Connecting to local database...
+{"applied":[],"message":"Migrations applied"}
+cd apps/backend && uv run hellosquad-local-db roles --optional
+senha do papel hellosquad_api definida a partir de API_DATABASE_URL
+pnpm exec supabase migration up --local
+Connecting to local database...
+{"applied":[],"message":"Migrations applied"}
+cd apps/backend && uv run hellosquad-local-db roles
+senha do papel hellosquad_api definida a partir de API_DATABASE_URL
+cd apps/backend && uv run hellosquad-local-db seed ../../supabase/seed.sql
+  miolo    owner           marina@miolo.example
+  trilha   owner           juliana@trilha.example
+  vitta    editor          carla@vitta.example
+  vitta    owner           rafael@vitta.example
+  -        sem membership  pedro@semconta.example
+seed aplicado: ../../supabase/seed.sql
+senha do papel hellosquad_api definida a partir de API_DATABASE_URL
+cd apps/backend && uv run ruff check . && uv run ruff format --check . && uv run pytest
+/etc/bash.bashrc: line 7: PS1: unbound variable
+All checks passed!
+61 files already formatted
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/vitao/projetos/hellosquad/apps/backend
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 105 items
+
+tests/test_auth.py ....................                                  [ 19%]
+tests/test_core_api.py ..............                                    [ 32%]
+tests/test_health.py ..                                                  [ 34%]
+tests/test_identity_api.py .......................                       [ 56%]
+tests/test_llm.py ..........                                             [ 65%]
+tests/test_local_db.py .....                                             [ 70%]
+tests/test_memory_api.py ..........                                      [ 80%]
+tests/test_memory_runtime.py ....                                        [ 83%]
+tests/test_openapi.py .                                                  [ 84%]
+tests/test_squad_prompt.py .....                                         [ 89%]
+tests/test_worker.py ...........                                         [100%]
+
+============================= 105 passed in 13.38s =============================
+pnpm --filter web lint
+/etc/bash.bashrc: line 7: PS1: unbound variable
+$ eslint
+pnpm -r --if-present typecheck
+/etc/bash.bashrc: line 7: PS1: unbound variable
+packages/contracts typecheck$ tsc --noEmit
+packages/ui typecheck$ tsc --noEmit
+packages/contracts typecheck: Done
+packages/ui typecheck: Done
+apps/web typecheck$ tsc --noEmit
+apps/web typecheck: Done
+pnpm -r --if-present test
+/etc/bash.bashrc: line 7: PS1: unbound variable
+Scope: 3 of 4 workspace projects
+packages/contracts test$ vitest run
+packages/ui test$ vitest run
+packages/contracts test: 
+packages/contracts test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/packages/contracts
+packages/contracts test: 
+packages/ui test: 
+packages/ui test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/packages/ui
+packages/ui test: 
+packages/contracts test: 
+packages/contracts test:  Test Files  1 passed (1)
+packages/contracts test:       Tests  9 passed (9)
+packages/contracts test:    Start at  09:42:43
+packages/contracts test:    Duration  475ms (import 69%, tests 27%, transform 3%, worker 1%)
+packages/contracts test: 
+packages/contracts test: Done
+packages/ui test: 
+packages/ui test:  Test Files  5 passed (5)
+packages/ui test:       Tests  49 passed (49)
+packages/ui test:    Start at  09:42:43
+packages/ui test:    Duration  738ms (environment 68%, tests 15%, setup 11%, transform 3%, import 2%, worker 1%)
+packages/ui test: 
+packages/ui test: Done
+apps/web test$ vitest run
+apps/web test: (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+apps/web test:   - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+apps/web test: Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+apps/web test: 
+apps/web test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/apps/web
+apps/web test: 
+apps/web test: 
+apps/web test:  Test Files  6 passed (6)
+apps/web test:       Tests  37 passed (37)
+apps/web test:    Start at  09:42:44
+apps/web test:    Duration  1.61s (tests 49%, environment 36%, setup 8%, import 4%, transform 2%)
+apps/web test: 
+apps/web test: Done
+pnpm exec supabase test db
+/etc/bash.bashrc: line 7: PS1: unbound variable
+Connecting to local database...
+/home/vitao/projetos/hellosquad/supabase/tests/database/00_extensions.test.sql ............. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/01_rls_coverage.test.sql ........... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/02_workspace_isolation.test.sql .... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/03_membership_management.test.sql .. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/04_invitations.test.sql ............ ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/05_audit_events.test.sql ........... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/06_create_workspace.test.sql ....... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/07_reserved_slugs.test.sql ......... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/08_core_isolation.test.sql ......... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/09_messages.test.sql ............... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/10_work_item_transitions.test.sql .. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/11_approvals.test.sql .............. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/12_run_queues.test.sql ............. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/13_realtime_broadcast.test.sql ..... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/14_create_conversation.test.sql .... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/15_squad_runtime.test.sql .......... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/16_brand_memory.test.sql ........... ok
+All tests successful.
+Files=17, Tests=309,  1 wallclock secs ( 0.05 usr  0.00 sys +  0.09 cusr  0.04 csys =  0.18 CPU)
+Result: PASS
+exit 0
