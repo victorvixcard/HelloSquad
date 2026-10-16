@@ -1,0 +1,25 @@
+{
+  "name": "hellosquad",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HelloSquad — equipe de marketing com IA para pequenos e médios negócios (monorepo).",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "supabase": "supabase",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:status": "supabase status",
+    "db:migrate": "supabase migration up --local",
+    "db:test": "supabase test db",
+    "dev:web": "pnpm --filter web dev",
+    "lint:web": "pnpm --filter web lint",
+    "build:web": "pnpm --filter web build"
+  },
+  "devDependencies": {
+    "supabase": "2.121.0"
+  }
+}
