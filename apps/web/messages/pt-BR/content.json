@@ -62,7 +62,7 @@
     "approving": "Aprovando",
     "adjust": "Pedir ajuste",
     "adjustDraft": "Quero pedir um ajuste nesta versão.",
-    "adjustNote": "O ajuste abre a conversa com {agent} ao lado, com a legenda à vista.",
+    "adjustNote": "O ajuste abre a conversa com {article, select, a {a} other {o}} {agent} ao lado, com a legenda à vista.",
     "approved": "Aprovada por você",
     "approvedText": "Aprovar não publica: a publicação pede autorização própria.",
     "decideError": "Não foi possível registrar a sua decisão agora. Tente de novo.",
@@ -78,7 +78,7 @@
       "tom": "Tom",
       "restricoes": "Restrições"
     },
-    "talk": "Conversar com {name}",
+    "talk": "Conversar com {article, select, a {a} other {o}} {name}",
     "notFound": "Este trabalho não existe mais ou não é deste negócio.",
     "prepSubAdjusted": "{agent} criou e ajustou",
     "newProposal": "Pedir nova proposta",

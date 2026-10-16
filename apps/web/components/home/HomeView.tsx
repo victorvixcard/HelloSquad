@@ -62,7 +62,7 @@ export function HomeView({ firstName, business, needs, inProgress, onboarding = 
   const all = chosen.length >= ORDER.length;
   const nameOf = (a: AgentId) => getAgent(a).name;
   const joinNames = (ids: AgentId[]) =>
-    ids.length <= 1 ? ids.map(nameOf).join("") : ids.slice(0, -1).map(nameOf).join(", ") + t("and") + nameOf(ids[ids.length - 1]);
+    ids.length <= 1 ? ids.map(nameOf).join("") : ids.slice(0, -1).map(nameOf).join(", ") + t("and", { next: ids[ids.length - 1] }) + nameOf(ids[ids.length - 1]);
   const one = chosen.length === 1 ? getAgent(chosen[0]) : null;
   const toWho = all ? t("toRoom") : one ? tc("agentTo", { article: one.article, name: one.name }) : t("toMany", { names: joinNames(chosen) });
   const selLabel = all

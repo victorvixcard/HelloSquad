@@ -13,6 +13,7 @@
   },
   "agentWith": "{article, select, a {com a} other {com o}} {name}",
   "agentTo": "{article, select, a {para a} other {para o}} {name}",
+  "agentRef": "{article, select, a {a} other {o}} {name}",
   "states": {
     "draft": "Rascunho",
     "in_progress": "Em andamento",

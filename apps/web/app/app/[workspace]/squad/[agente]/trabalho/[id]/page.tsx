@@ -71,7 +71,8 @@ export default async function TrabalhoPage({ params }: Params) {
     .filter((k) => brief[k] != null)
     .map((k) => ({ k: t(`brief.${k}`), v: Array.isArray(brief[k]) ? (brief[k] as unknown[]).join("; ") : String(brief[k]) }));
   const channel = typeof content.canal === "string" ? content.canal : typeof brief.canal === "string" ? brief.canal : null;
-  const named = (a: AgentId) => `${getAgent(a).article} ${getAgent(a).name}`;
+  // "o Otto", "a Kaia" em pt-BR; só o nome em en e es (o artigo fica no catálogo de cada idioma).
+  const named = (a: AgentId) => tc("agentRef", { article: getAgent(a).article, name: getAgent(a).name });
 
   // Origem (V4.6 §2.1): "pedido na conversa com o Otto · 15/10", "pedido na Sala do Squad · 05/10"…
   const conversation = await loadConversation(membership.workspace.id, item.conversation_id);

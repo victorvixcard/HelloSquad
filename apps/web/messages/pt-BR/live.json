@@ -20,5 +20,5 @@
   },
   "lost": "Conexão perdida",
   "lostDetail": "tentando de novo",
-  "toastDelivered": "{who} entregou a v{version}"
+  "toastDelivered": "{article, select, a {A} other {O}} {name} entregou a v{version}"
 }

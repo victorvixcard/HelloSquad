@@ -45,7 +45,8 @@ export function SuggestionBand({ items, selected, onPick }: { items: Suggestion[
     const who =
       c.ags.length === 1
         ? t("chipOnly", { article: first.article, name: first.name })
-        : t("chipMany", { who: names.slice(0, -1).join(", ") + t("and") + names[names.length - 1] });
+        : // O conectivo vem do catálogo e conhece o próximo nome (em espanhol, "y" vira "e" antes de Íris).
+          t("chipMany", { who: names.slice(0, -1).join(", ") + t("and", { next: c.ags[c.ags.length - 1] }) + names[names.length - 1] });
     const isSel = selected === c.t;
     return (
       <button

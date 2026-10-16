@@ -10,8 +10,8 @@ export function currentWeek(now: Date, locale: string, timeZone = TIME_ZONE) {
   const wd = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(get("weekday"));
   const start = new Date(Date.UTC(y, m - 1, d - wd));
   const end = new Date(Date.UTC(y, m - 1, d - wd + 6));
-  const month = (date: Date) =>
-    new Intl.DateTimeFormat(locale, { timeZone: "UTC", month: "short" }).format(date).replace(".", "").toLocaleLowerCase(locale);
+  // Abreviação do próprio idioma ("out", "oct", "Oct"): pt-BR e es já vêm em minúscula; en, com maiúscula.
+  const month = (date: Date) => new Intl.DateTimeFormat(locale, { timeZone: "UTC", month: "short" }).format(date).replace(".", "");
   return {
     from: start.getUTCDate(),
     to: end.getUTCDate(),

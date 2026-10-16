@@ -54,7 +54,6 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
   const making = decision === "changes_requested" || (decision === "rejected" && followUp === "revise");
   const cancelled = decision === "rejected" && followUp === "cancel";
   const v = data.version?.no ?? 1;
-  const agentRef = `${member.article === "a" ? "a" : "o"} ${member.name}`;
 
   async function run(kind: Choice) {
     if (!data.approval || busy || !shell.canDecide) return;
@@ -140,7 +139,7 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
               })
             }
           >
-            {t("talk", { name: `${member.article === "a" ? "a" : "o"} ${member.name}` })}
+            {t("talk", { article: member.article, name: member.name })}
           </Button>
         </div>
       </header>
@@ -224,7 +223,7 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
                     </Button>
                   </div>
                   <p className="ps-dec-n" role={error ? "alert" : undefined}>
-                    {error ? t("decideError") : t("adjustNote", { agent: agentRef })}
+                    {error ? t("decideError") : t("adjustNote", { article: member.article, agent: member.name })}
                   </p>
                 </>
               ) : (

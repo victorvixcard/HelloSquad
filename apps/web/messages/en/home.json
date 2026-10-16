@@ -28,7 +28,7 @@
   "avOff": "{name}, {area}, not in this conversation. Add",
   "avTip": "{name} · {area}",
   "pronoun": "{article, select, a {her} other {him}}",
-  "and": " and ",
+  "and": "{next, select, other { and }}",
   "bandLabel": "Request suggestions. Choosing one fills in the field and sets who participates, without sending. Drag sideways to see more",
   "chipAria": "{text}. Fills in the request; {who}",
   "chipOnly": "only {name} participates",

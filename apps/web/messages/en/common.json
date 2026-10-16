@@ -13,6 +13,7 @@
   },
   "agentWith": "with {name}",
   "agentTo": "to {name}",
+  "agentRef": "{name}",
   "states": {
     "draft": "Draft",
     "in_progress": "In progress",

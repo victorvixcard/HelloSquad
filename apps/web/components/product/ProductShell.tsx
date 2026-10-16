@@ -138,8 +138,7 @@ function Shell(props: ProductShellProps) {
     const open = convRef.current;
     if (open.mode !== "off" && notice.conversationId && open.target?.conversationId === notice.conversationId) return;
     const m = getAgent(notice.agent);
-    const who = `${m.article === "a" ? "A" : "O"} ${m.name}`;
-    toast(tl("toastDelivered", { who, version: notice.version }), notice.agent);
+    toast(tl("toastDelivered", { article: m.article, name: m.name, version: notice.version }), notice.agent);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- um aviso por entrega (seq)
   }, [notice?.seq]);
 

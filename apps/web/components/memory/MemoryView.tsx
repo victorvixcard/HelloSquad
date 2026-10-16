@@ -87,11 +87,6 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
   const when = (iso: string) => shortWhen(iso, now, locale, (time) => t("log.today", { time }));
   const stateLabel = (x: MemItem) => t(`states.${x.state}`);
   const who = (a: AgentId) => getAgent(a).name;
-  const withArt = (a: AgentId, upper = false) => {
-    const m = getAgent(a);
-    const art = upper ? m.article.toUpperCase() : m.article;
-    return `${art} ${m.name}`;
-  };
 
   function run(task: () => Promise<{ ok: boolean; message?: string }>, done: string, agent: AgentId = "nexo") {
     startTransition(async () => {
@@ -343,7 +338,7 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
     const value = lowerFirst(h.value);
     const text =
       h.kind === "suggested"
-        ? t("log.suggested", { who: withArt(h.who, true), value })
+        ? t("log.suggested", { article: getAgent(h.who).article, who: getAgent(h.who).name, value })
         : h.kind === "resolved"
           ? t("log.resolved", { key: lowerFirst(h.key), value })
           : t(`log.${h.kind}`, { value });
@@ -824,7 +819,7 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
             <span className="me-agfs-l">{t("browse.byAgent")}</span>
             {AGENT_IDS.map((a) => {
               const on = filters.agent === a;
-              const aria = t("browse.agentAria", { who: withArt(a) });
+              const aria = t("browse.agentAria", { article: getAgent(a).article, who: getAgent(a).name });
               return (
                 <button
                   key={a}
@@ -877,7 +872,11 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
           <div className="me-agb">
             <Agent agent={filters.agent} size={36} />
             <span className="me-agb-t">
-              <b>{t("browse.agentTitle", { who: withArt(filters.agent, true), count: agentCount(items, filters.agent) })}</b>
+              <b>{t("browse.agentTitle", {
+                  article: getAgent(filters.agent).article,
+                  who: getAgent(filters.agent).name,
+                  count: agentCount(items, filters.agent),
+                })}</b>
               <small>{t("browse.agentSub", { uses: t(`uses.${filters.agent}`) })}</small>
             </span>
             <button type="button" className="hm-link is-s" onClick={() => setFilters((f) => ({ ...f, agent: null }))}>

@@ -1,6 +1,10 @@
+import { createTranslator } from "next-intl";
 import { describe, expect, it } from "vitest";
 import { icuArguments, icuTags } from "@/i18n/icu";
 import { PUBLIC_LOCALE_PATHS, publicLocaleOf, resolveLocale, userLocaleFromClaims } from "@/i18n/resolve";
+import enMessages from "@/messages/en";
+import esMessages from "@/messages/es";
+import ptBR from "@/messages/pt-BR";
 
 describe("resolveLocale: pessoa → negócio → pt-BR (ADR-0010)", () => {
   it("a escolha da pessoa vence a do negócio", () => {
@@ -63,5 +67,33 @@ describe("icuArguments: argumentos de uma mensagem do catálogo", () => {
 
   it("tags de texto rico", () => {
     expect([...icuTags("Fica assim: <code>/app/{slug}</code>")]).toEqual(["code"]);
+  });
+});
+
+describe("frases montadas com nome de agente nos três idiomas (artigo só no pt-BR)", () => {
+  const tr = (locale: "pt-BR" | "en" | "es", messages: object) => createTranslator({ locale, messages: messages as never });
+  const pt = tr("pt-BR", ptBR);
+  const en = tr("en", enMessages);
+  const es = tr("es", esMessages);
+
+  it("aviso de entrega: 'O Otto entregou a v2' / 'Otto delivered v2' / sem artigo em espanhol", () => {
+    const args = { article: "o", name: "Otto", version: 2 };
+    expect(pt("live.toastDelivered" as never, args as never)).toBe("O Otto entregou a v2");
+    expect(en("live.toastDelivered" as never, args as never)).toBe("Otto delivered v2");
+    expect(es("live.toastDelivered" as never, args as never)).not.toMatch(/\b[OA] Otto\b/);
+  });
+
+  it("referência ao agente: 'a Kaia' em pt-BR, só o nome em en e es", () => {
+    const args = { article: "a", name: "Kaia" };
+    expect(pt("common.agentRef" as never, args as never)).toBe("a Kaia");
+    expect(en("common.agentRef" as never, args as never)).toBe("Kaia");
+    expect(es("common.agentRef" as never, args as never)).toBe("Kaia");
+  });
+
+  it("conectivo da lista: em espanhol, 'y' vira 'e' antes de Íris", () => {
+    expect(es("home.and" as never, { next: "iris" } as never)).toBe(" e ");
+    expect(es("home.and" as never, { next: "bia" } as never)).toBe(" y ");
+    expect(pt("home.and" as never, { next: "iris" } as never)).toBe(" e ");
+    expect(en("home.and" as never, { next: "iris" } as never)).toBe(" and ");
   });
 });

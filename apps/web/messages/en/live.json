@@ -20,5 +20,5 @@
   },
   "lost": "Connection lost",
   "lostDetail": "trying again",
-  "toastDelivered": "{who} delivered v{version}"
+  "toastDelivered": "{name} delivered v{version}"
 }

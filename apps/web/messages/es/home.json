@@ -28,7 +28,7 @@
   "avOff": "{name}, {area}, fuera de esta conversación. Agregar",
   "avTip": "{name} · {area}",
   "pronoun": "{article, select, a {ella} other {él}}",
-  "and": " y ",
+  "and": "{next, select, iris { e } other { y }}",
   "bandLabel": "Sugerencias de pedidos. Elegir una completa el campo y prepara quién participa, sin enviar. Desliza hacia los lados para ver más",
   "chipAria": "{text}. Completa el pedido; {who}",
   "chipOnly": "solo {name} participa",
