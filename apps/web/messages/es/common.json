@@ -42,5 +42,10 @@
     "todayUpper": "Hoy",
     "yesterday": "ayer"
   },
-  "ownerDecides": "Decide el titular de la cuenta"
+  "ownerDecides": "Decide el titular de la cuenta",
+  "localeNames": {
+    "pt-BR": "Português (Brasil)",
+    "en": "English",
+    "es": "Español"
+  }
 }
