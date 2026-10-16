@@ -1,0 +1,6 @@
+post da Miolo: True | trabalho: 7f589cb3
+  Rafael · calendar_post da Miolo · na Vitta: 404 {"error": {"code": "not_found", "message": "Objeto da conversa não encontrado.", "details": []}}
+  Rafael · calendar_post da Miolo · na Miolo: 404 {"error": {"code": "not_found", "message": "Workspace não encontrado.", "details": []}}
+  Rafael · work_item da Miolo · na Vitta: 404 {"error": {"code": "not_found", "message": "Objeto da conversa não encontrado.", "details": []}}
+  Rafael · work_item da Miolo · na Miolo: 404 {"error": {"code": "not_found", "message": "Workspace não encontrado.", "details": []}}
+  controle: Marina · post da Miolo: 201 {"id": "ed545ff7-87f5-4165-9c88-406b85a5ef39", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "kind": "object", "primary_agent_id": "otto", "context_ty
