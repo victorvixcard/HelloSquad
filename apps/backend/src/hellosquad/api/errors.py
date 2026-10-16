@@ -7,6 +7,7 @@ Formato único: {"error": {"code": "...", "message": "...", "details": [{"field"
 import logging
 from typing import Any
 
+import psycopg
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -49,7 +50,7 @@ def error_responses(*status_codes: int) -> dict[int | str, dict[str, Any]]:
         401: "Token ausente, inválido ou expirado.",
         403: "Sem permissão para esta ação.",
         404: "Recurso não encontrado (ou fora do seu acesso).",
-        409: "Conflito com um registro existente.",
+        409: "Conflito com o estado atual do registro.",
         422: "Dados inválidos.",
         503: "Dependência indisponível (banco ou Auth).",
     }
@@ -92,10 +93,11 @@ def _validation_detail(error: dict[str, Any]) -> ErrorDetail:
     location = [str(part) for part in error.get("loc", ())]
     if location and location[0] in REQUEST_LOCATIONS:
         location = location[1:]
-    return ErrorDetail(
-        field=".".join(location) or None,
-        message=VALIDATION_MESSAGES.get(error.get("type", ""), "Valor inválido."),
-    )
+    message = VALIDATION_MESSAGES.get(error.get("type", ""), "Valor inválido.")
+    # ValueError dos validadores dos schemas já vem escrito em português para quem usa.
+    if error.get("type") == "value_error" and error.get("ctx", {}).get("error"):
+        message = str(error["ctx"]["error"])
+    return ErrorDetail(field=".".join(location) or None, message=message)
 
 
 async def handle_api_error(request: Request, exc: ApiError) -> JSONResponse:
@@ -116,11 +118,35 @@ async def handle_http_error(request: Request, exc: StarletteHTTPException) -> JS
     return error_json(exc.status_code, code, message, headers=getattr(exc, "headers", None))
 
 
-async def handle_insufficient_privilege(
-    request: Request, exc: errors.InsufficientPrivilege
-) -> JSONResponse:
-    # Inclui a recusa da RLS (WITH CHECK): o banco é quem decide a permissão.
-    return error_json(403, "forbidden", "Você não tem permissão para esta ação.")
+# SQLSTATE das funções app.* (tabela da S1a §1) → status, code estável e mensagem padrão.
+SQLSTATE_ERRORS: dict[str, tuple[int, str, str]] = {
+    "P0002": (404, "not_found", "Recurso não encontrado."),
+    "42501": (403, "forbidden", "Você não tem permissão para esta ação."),
+    "22023": (422, "invalid_parameter", "Dados inválidos."),
+    "22P02": (422, "invalid_value", "Valor inválido."),
+    "55000": (409, "invalid_state", "O estado atual não permite esta ação."),
+    "WI001": (409, "transition_not_allowed", "Esta mudança de estado do trabalho não é permitida."),
+    "WI002": (
+        409,
+        "status_changed",
+        "O trabalho mudou de estado enquanto a ação acontecia. Atualize e tente de novo.",
+    ),
+}
+
+
+def raised_by_app_function(exc: psycopg.Error) -> bool:
+    """A mensagem veio de um RAISE das funções app.* (escrita para o usuário, em português)."""
+    return " at RAISE" in (exc.diag.context or "")
+
+
+async def handle_database_error(request: Request, exc: psycopg.Error) -> JSONResponse:
+    mapped = SQLSTATE_ERRORS.get(exc.sqlstate or "")
+    if mapped is None:
+        return await handle_unexpected(request, exc)
+    status_code, code, default_message = mapped
+    # Inclui a recusa da RLS (42501 sem RAISE): o banco é quem decide a permissão.
+    message = exc.diag.message_primary if raised_by_app_function(exc) else default_message
+    return error_json(status_code, code, message or default_message)
 
 
 async def handle_check_violation(request: Request, exc: errors.CheckViolation) -> JSONResponse:
@@ -132,6 +158,9 @@ async def handle_unique_violation(request: Request, exc: errors.UniqueViolation)
 
 
 async def handle_database_unavailable(request: Request, exc: Exception) -> JSONResponse:
+    # 55000 (estado não permite) é OperationalError no psycopg: vale a tabela da S1a, não o 503.
+    if isinstance(exc, psycopg.Error) and exc.sqlstate in SQLSTATE_ERRORS:
+        return await handle_database_error(request, exc)
     log.warning("banco indisponível em %s %s: %s", request.method, request.url.path, exc)
     return error_json(503, "database_unavailable", "Banco de dados indisponível. Tente de novo.")
 
@@ -145,9 +174,9 @@ def register_error_handlers(app: FastAPI) -> None:
     app.add_exception_handler(ApiError, handle_api_error)
     app.add_exception_handler(RequestValidationError, handle_validation_error)
     app.add_exception_handler(StarletteHTTPException, handle_http_error)
-    app.add_exception_handler(errors.InsufficientPrivilege, handle_insufficient_privilege)
     app.add_exception_handler(errors.CheckViolation, handle_check_violation)
     app.add_exception_handler(errors.UniqueViolation, handle_unique_violation)
     # Inclui PoolTimeout (subclasse de OperationalError): pool esgotado também é indisponibilidade.
     app.add_exception_handler(OperationalError, handle_database_unavailable)
+    app.add_exception_handler(psycopg.Error, handle_database_error)
     app.add_exception_handler(Exception, handle_unexpected)

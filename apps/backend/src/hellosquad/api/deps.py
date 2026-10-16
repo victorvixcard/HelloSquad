@@ -1,9 +1,12 @@
 """Dependências comuns das rotas: usuário do JWT e acesso ao banco."""
 
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from psycopg import AsyncConnection
+from psycopg.rows import DictRow
 
 from hellosquad.api.errors import ApiError
 from hellosquad.auth import AuthUnavailableError, InvalidTokenError, Principal, TokenVerifier
@@ -51,3 +54,15 @@ def get_database(request: Request) -> Database:
 
 CurrentPrincipal = Annotated[Principal, Depends(get_principal)]
 DatabaseDep = Annotated[Database, Depends(get_database)]
+
+
+VISIBLE_WORKSPACE = """
+select 1 from public.workspaces w
+where w.id = %s and w.id in (select app.current_user_workspace_ids())
+"""
+
+
+async def ensure_workspace(conn: AsyncConnection[DictRow], workspace_id: UUID) -> None:
+    """Coleções sob /workspaces/{id}: quem não é membro recebe o mesmo 404 de um id inexistente."""
+    if await (await conn.execute(VISIBLE_WORKSPACE, (workspace_id,))).fetchone() is None:
+        raise ApiError(404, "not_found", "Workspace não encontrado.")
