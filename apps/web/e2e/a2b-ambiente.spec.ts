@@ -56,10 +56,10 @@ test.describe("Conversa do ambiente (A2b, H1-04)", () => {
     await page.locator("button.v4-talk").click();
     const panel = page.getByRole("region", { name: "Conversa" });
     await expect(panel.locator(".cx-sub-n")).toHaveText("Conteúdo");
-    // Sem pauta no calendário do seed, o Otto diz isso (V4.6 `_cxEnvFirst`); nenhuma mensagem da conversa direta aparece.
+    // A primeira fala do ambiente fala do calendário (V4.6 `_cxEnvFirst`); as mensagens da conversa direta do seed
+    // ("Otto, preciso de uma legenda…") não estão aqui. Os fluxos ao vivo (live.spec) já conversaram neste ambiente.
     await expect(panel.locator(".ps-msg-t").first()).toContainText("calendário", { timeout: 15_000 });
-    await expect(panel.locator(".ps-msg-u")).toHaveCount(0);
-    await expect(panel.getByRole("group", { name: "Pergunte ao Otto" })).toBeVisible();
+    await expect(panel.getByText("Otto, preciso de uma legenda para o post de sábado sobre o pão de fermentação longa.")).toHaveCount(0);
     await snap(page, "a2b-ambiente-otto");
   });
 });
