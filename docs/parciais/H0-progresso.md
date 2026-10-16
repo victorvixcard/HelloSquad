@@ -8,8 +8,8 @@
 |---|---|---|
 | 0 | Leitura do PASSO 0 (diretrizes, plano, relatórios J0/S0/A0, setup, dados fictícios, arquitetura §3.1) | ✅ |
 | 1 | Isolamento e autorização (alvos 1 a 5) | ✅ nada quebrou |
-| 2 | Web (alvos 6 e 7) | 🟡 em andamento |
-| 3 | Diretrizes do dono (alvos 8 a 11) | ⏳ |
+| 2 | Web (alvos 6 e 7) | ✅ 4 achados (3🟡 1ℹ️), núcleo resistiu |
+| 3 | Diretrizes do dono (alvos 8 a 11) | 🟡 em andamento |
 | 4 | Reprodutibilidade (alvos 12 e 13) | ⏳ |
 | 5 | Relatório `H0-relatorio.md` e limpeza (seed, portas, containers) | ⏳ |
 
@@ -34,3 +34,15 @@ Postura de papéis conferida no banco: anon/service_role **sem nenhum grant** em
 
 - **H0-01 (ℹ️/🟡 a decidir):** a Data API local aceita token HS256 assinado com o `JWT_SECRET`, que é o **default público do Supabase CLI** (55 bytes, contém "at-least-32"). Quem alcança a Data API local pode forjar um token `authenticated`/`service_role`. Barreiras que seguram: RLS + zero grants para anon/service_role; a API de produto (8100) só aceita ES256/JWKS. Local-only (nuvem usa segredo real e chaves assimétricas). Detalhe e correção no relatório.
 - Falso alarme registrado: token "expirado" só passou na Data API quando dentro da folga de relógio padrão do PostgREST (~30s); expirado de verdade (2h, 30d) → 401 `PGRST303`. Não é achado.
+
+## Bloco 2 — Web (alvos 6 e 7)
+
+Scripts: `06_web_http.sh`, `07_web_sessao.mjs`, `08_slug_e_cadastro_api.sh`, `09_cadastro_web.mjs` e teste unitário do `safeNext` (inline). Web buildado (`make build`) e servido com `next start` na 3100.
+
+Resistiu: `safeNext` bloqueia todos os vetores de `?next=` (`//site`, `https://`, `/apple`, `\`, `%2F%2F` literal e decodificado, `/app//evil`, `/APP`, `/app@evil`, `javascript:`, espaço à frente) e só deixa passar `/app`, `/app/…`, `/app?`, `/app#`; `/sair` por GET não encerra sessão (com e sem sessão); `/app/vitta` e `/app/trilha` como Marina → 404 sem vazar dado; sessão adulterada → `/entrar` sem vazar; `noindex`/`X-Robots-Tag: noindex, nofollow` em `/app`, `/app/<inexistente>` e `/app/<rota funda>`; host preservado (127.0.0.1 não vira localhost, sem perder sessão); cadastro valida nome/e-mail/senha em pt-BR sem emoji e **não cria usuário** (auth.users=5); duplicado → "Já existe uma conta com esse e-mail."; slug rejeita curto/longo/acento/espaço/`--`/vazio e **injeção SQL** no slug (422) e no nome (armazenado literal, tabela intacta); maiúscula é normalizada (MIOLO→409 slug_taken).
+
+Achados:
+- **H0-02 (🟡):** nenhum cabeçalho de segurança em nenhuma rota — sem CSP, X-Frame-Options, Referrer-Policy, X-Content-Type-Options, HSTS. `X-Powered-By` corretamente ausente. A0 §6 já declarou CSP pendente. Clickjacking possível na área logada (sem `frame-ancestors`/X-Frame-Options).
+- **H0-03 (🟡):** cookie de sessão `sb-127-auth-token` é legível por JS (`httpOnly=false`), visível em `document.cookie`. Padrão do `@supabase/ssr`, já declarado pela A0. Um XSS exfiltra o access_token; agravado pela ausência de CSP (H0-02).
+- **H0-04 (🟡):** a API aceita o slug reservado `novo-workspace` (201, cria workspace); só o web recusa. Gap já apontado por A0 §5.3 e S0. Provado com o Pedro (criado e removido; Pedro volta a 0 memberships).
+- **H0-05 (ℹ️):** a defesa da chave secreta funciona (middleware recusa com 500 e a chave **não** vaza para o bundle do browser — 0 arquivos em `.next/static`), mas "o web recusa subir" (A0 §2.7) é impreciso: build e boot passam, a home pública serve 200, e a falha é um 500 opaco só nas rotas de auth/app, com a mensagem apenas no log do servidor.
