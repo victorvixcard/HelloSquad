@@ -48,6 +48,13 @@ A chave da API da Anthropic ainda não foi fornecida. Todo o núcleo (schema, es
 
 1. Fila liberada (S1c + A1f em paralelo). 2. Acesso do Diogo: depois. 3. Chave da Anthropic: fica pendente, runtime simulado. 4. Regras de identidade da S0: ficam como estão; o Stark não altera mais nada sem perguntar. 5. Preço e créditos por último; agora é teste. 6. As perguntas de produto do núcleo serão reapresentadas em linguagem simples (Thor). 7. Escopo `workflow` do token: explicação devida (Thor); CI pode esperar. 8. Pagamento recorrente é requisito: Asaas e Mercado Pago (ADR-0008). 9. Motor de imagem é do Vic; Kaia espera. 10. Embeddings: explicação devida (ADR-0009). 11. Idiomas pt-BR, en, es (ADR-0010). 12. Data API desligada em produção (ADR-0011). 13. Domínio: depois. 14. Créditos no mobile e na web.
 
+## Trilha SA — Super Admin (pedido do Vic 16/10 09:15)
+
+| # | Fatia | Agente | Estado | Depende de | Critério de pronto |
+|---|---|---|---|---|---|
+| SA0 | Protótipo navegável do Super Admin com o DS do HelloSquad (todas as telas de `docs/SUPER_ADMIN.md` §2, dados fictícios, pt-BR), em `design/super-admin-proto/` (fora de `apps/`), servido localmente | Aranha (2ª sessão) | 🟡 em execução (disparada 16/10 ~09:20, Opus 5.5) | plano `SUPER_ADMIN.md` | abre em http://127.0.0.1:8020, todas as telas navegáveis, capturas em `docs/parciais/sa0/`, relatório `SA0-relatorio.md`; o Vic ajusta antes do SA1 |
+| SA1–SA6 | Ver `docs/SUPER_ADMIN.md` §5 | Stark / Aranha | ⚪ pendente | S1e, Fase 2 | — |
+
 ## Método corrigido pelo Vic (16/10 09:05): o protótipo responde primeiro
 
 O template do Diogo já traz a lógica que o usuário percorre e as decisões prontas. Fatia **X1** (analista, em execução desde 09:05) extrai do `ProductUIV4.dc.html` a especificação `docs/FLUXOS_DA_V46.md` (telas, objetos e estados, as quatro jornadas guiadas, conversa, "Precisa de você", Memória, Modo Autônomo, conexões, dados da Miolo, cruzamento com o banco e a API, e o que o protótipo não responde). **A partir da X1, `FLUXOS_DA_V46.md` é PASSO 0 de toda fatia de produto; perguntas ao Vic ficam restritas ao que o protótipo não responde.**

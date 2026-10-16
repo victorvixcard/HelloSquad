@@ -73,6 +73,9 @@ O Documento Mestre mapeia 46 deliveries e 23 integrações para novembro de 2026
 **Entregas:** Meta Ads (leitura, depois escrita com teto) via Marketing API mockada; WhatsApp Cloud e e-mail marketing (06.02, 06.04, 06.06) em sandbox; CMS/blog (04.07); e-commerce (10.03); vídeo (03.07); Expo iOS/Android rodando em simulador contra a API local, com push em modo de desenvolvimento.
 **Critério:** nenhuma mudança de verba sem permissão com teto; app abre, autentica e recebe "Precisa de você" no simulador.
 
+### Trilha paralela SA — Super Admin (pedido do Vic em 16/10)
+Painel de plataforma para controlar contas, catálogo, planos, pagamentos, auditoria, os sete agentes (SOUL, skills, ferramentas, versões, "o que ele lê"), regras de negócio, motor de imagem, modelos e custos, consumo por cliente, saúde das APIs, fila de trabalhos e qualidade das entregas. Plano completo e fases SA0–SA6 em `docs/SUPER_ADMIN.md`. SA0 (plano + protótipo com o DS) roda já; SA1 em diante entra depois do núcleo de cada fase, nunca à frente dele.
+
 ### Fase 5 — Publicação (só com go explícito do Vic)
 **Pré-condição:** todas as fases anteriores validadas pelo Hulk e aceitas pelo Vic; revisão de segurança feita (RLS, IDOR, escopo de tenant, injeção via conteúdo de cliente).
 **Entregas:** projetos Supabase `staging` e `production`; serviços Railway; projeto Vercel; domínio e DNS; segredos nos cofres de cada plataforma; migrações aplicadas; organização na API da Anthropic fora do tier Evaluation com teto de gasto adequado; solicitações de revisão Meta e Google abertas com o produto publicado; homologação de cada integração com contas de teste dos provedores; monitoramento (Sentry, Langfuse, PostHog) ligado.
