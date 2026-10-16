@@ -1,7 +1,7 @@
 """Adaptador Mercado Pago: clientes, assinaturas (preapproval), pagamentos Pix e cartão, webhooks.
 
-Autenticação `Authorization: Bearer`; POST /v1/payments exige `X-Idempotency-Key`. O webhook traz só o
-id do recurso: o estado vem de um GET no recurso. A origem é verificada pelo `x-signature`
+Autenticação `Authorization: Bearer`; POST /v1/payments exige `X-Idempotency-Key`. O webhook traz só
+o id do recurso: o estado vem de um GET no recurso. A origem é verificada pelo `x-signature`
 (HMAC-SHA256 do manifesto `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` com a assinatura
 secreta). Assinatura pela API só com cartão (`card_token_id`). Fontes e datas: relatório da S2e.
 """

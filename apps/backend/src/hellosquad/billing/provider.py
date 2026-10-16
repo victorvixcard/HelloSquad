@@ -1,8 +1,8 @@
 """Interface única de provedor de pagamento (ADR-0008) e o modelo que os adaptadores devolvem.
 
-Cada adaptador (Asaas, Mercado Pago, simulado) traduz a API do provedor para estes tipos; o resto do
-sistema não conhece formato de provedor. Cartão nunca passa por aqui: só o token que o provedor gerou
-no navegador ou no app.
+Cada adaptador (Asaas, Mercado Pago, simulado) traduz a API do provedor para estes tipos; o resto
+do sistema não conhece formato de provedor. Cartão nunca passa por aqui: só o token que o provedor
+gerou no navegador ou no app.
 """
 
 from collections.abc import Mapping

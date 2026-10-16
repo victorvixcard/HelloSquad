@@ -61,6 +61,14 @@ class Database:
         await self._pool.close()
 
     @asynccontextmanager
+    async def transaction_as_billing(self) -> AsyncIterator[AsyncConnection[DictRow]]:
+        """Transação do webhook de pagamento (não há usuário): papel hellosquad_billing, que só executa
+        app.billing_apply_event e não lê tabela nenhuma."""
+        async with self._pool.connection() as conn, conn.transaction():
+            await conn.execute("select set_config('role', 'hellosquad_billing', true)")
+            yield conn
+
+    @asynccontextmanager
     async def transaction_as(self, principal: Principal) -> AsyncIterator[AsyncConnection[DictRow]]:
         """Transação em que o banco enxerga o usuário do JWT: papel authenticated, RLS valendo."""
         async with self._pool.connection() as conn, conn.transaction():
