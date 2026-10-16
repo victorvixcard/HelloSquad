@@ -1,0 +1,179 @@
+{
+  "title": "My Team & Conversations",
+  "sub": {
+    "team": "Seven specialists who know {business}. Choose one to see what they’re doing.",
+    "chats": "Everything you’ve discussed with the squad, by topic and by context."
+  },
+  "openRoom": "Open the Squad Room",
+  "tabsLabel": "My Team and Conversations",
+  "tabs": {
+    "team": "Team",
+    "chats": "Conversations"
+  },
+  "stageLabel": "Choose a specialist",
+  "nameAria": "{name} · {role}",
+  "talk": "Talk {with}",
+  "ask": "Ask for something",
+  "askTitle": "Common requests",
+  "profileTabs": {
+    "now": "Now",
+    "skills": "Skills",
+    "made": "Deliveries",
+    "with": "Works with"
+  },
+  "noNow": "Nothing in progress right now. {intro}",
+  "noMade": "No deliveries for {business} yet.",
+  "now": {
+    "idle": "Available.",
+    "idleNexo": "Available. Ask for anything.",
+    "care": "Tracks {count, plural, one {# work item} other {# work items}} and calls you in when the decision is yours.",
+    "irisIdle": "Waiting for a data source, like Instagram.",
+    "wait": "Waiting for your approval on v{version} {object}.",
+    "waitObject": {
+      "d0401": "of the caption",
+      "default": "of the work"
+    },
+    "waitPlain": "Waiting for you.",
+    "work": "{verb} “{title}”.",
+    "verb": {
+      "creating": "Creating",
+      "writing": "Writing",
+      "researching": "Researching",
+      "working": "Working on"
+    }
+  },
+  "work": {
+    "waitVersion": "v{version} waiting for your approval"
+  },
+  "agents": {
+    "nexo": {
+      "pitch": "I organize the squad and only call you in when the decision is yours.",
+      "intro": "I coordinate the {business} squad. I take your requests, put together the right team for each one, and see it through to the end.",
+      "skills": {
+        "k1": "Organizing requests",
+        "k2": "Putting together the right team",
+        "k3": "Tracking deadlines",
+        "k4": "Summarizing what matters"
+      },
+      "asks": {
+        "q1": "What do you need from me this week?",
+        "q2": "Let’s plan a campaign",
+        "q3": "I want to organize my marketing"
+      }
+    },
+    "bia": {
+      "pitch": "I find where the opportunity is for {business}.",
+      "intro": "Assessments, positioning, and plans with clear priorities. I read the market and the neighborhood before proposing anything.",
+      "skills": {
+        "k1": "Marketing assessment",
+        "k2": "Market research",
+        "k3": "Positioning",
+        "k4": "Campaign strategy"
+      },
+      "asks": {
+        "q1": "Where can {business} grow before Christmas?",
+        "q2": "Create a promotion for this week",
+        "q3": "Analyze the bakeries in the neighborhood"
+      }
+    },
+    "kaia": {
+      "pitch": "I shape {business}’s brand in every piece.",
+      "intro": "Posts, campaigns, in-store materials, and visual identity, always with {business}’s look and feel.",
+      "skills": {
+        "k1": "Art direction",
+        "k2": "Social media pieces",
+        "k3": "In-store materials",
+        "k4": "Visual identity"
+      },
+      "asks": {
+        "q1": "Create a post for World Bread Day",
+        "q2": "A counter poster for orders",
+        "q3": "New covers for the Highlights"
+      }
+    },
+    "otto": {
+      "pitch": "I keep {business} showing up, in its own voice.",
+      "intro": "Calendar, captions, scripts, and copy for every channel, in {business}’s warm tone.",
+      "skills": {
+        "k1": "Editorial calendar",
+        "k2": "Captions and scripts",
+        "k3": "Website copy",
+        "k4": "Customer emails"
+      },
+      "asks": {
+        "q1": "How’s the plan for next week?",
+        "q2": "I want to improve my Instagram",
+        "q3": "A Reels script about fermentation"
+      }
+    },
+    "kiwi": {
+      "pitch": "I grow {business}: more people finding it, more visits turning into orders.",
+      "intro": "Google Search, ads, conversion, and growth tests. Not a cent is spent without your authorization.",
+      "skills": {
+        "k1": "Google Search",
+        "k2": "Ads with clear criteria",
+        "k3": "Visits that turn into orders",
+        "k4": "Growth tests"
+      },
+      "asks": {
+        "q1": "Where can {business} show up more on Google?",
+        "q2": "How much should I spend on ads at Christmas?",
+        "q3": "Why do so many visits never turn into orders?"
+      }
+    },
+    "max": {
+      "pitch": "I bring {business}’s customers back.",
+      "intro": "Segments, journeys, and messages for people who’ve already bought, always with consent.",
+      "skills": {
+        "k1": "Customer segmentation",
+        "k2": "Reactivation",
+        "k3": "Email and WhatsApp journeys",
+        "k4": "Loyalty"
+      },
+      "asks": {
+        "q1": "Win back customers who drifted away",
+        "q2": "An email for people who ordered last Christmas",
+        "q3": "Loyalty ideas for the counter"
+      }
+    },
+    "iris": {
+      "pitch": "I read the numbers and tell you what to do with them.",
+      "intro": "Metrics, reports, and recommendations, always with the source and without making up causes.",
+      "skills": {
+        "k1": "Monthly metrics",
+        "k2": "Reports",
+        "k3": "Campaign analysis",
+        "k4": "Recommendations"
+      },
+      "asks": {
+        "q1": "Analyze my latest results",
+        "q2": "Which post drove the most people to the website?",
+        "q3": "Put together the October report"
+      }
+    }
+  },
+  "chats": {
+    "search": "Search conversations",
+    "filterRoom": "Squad Room",
+    "room": "Squad Room",
+    "roomWho": "all specialists",
+    "who": "{name} · {area}",
+    "about": "{who} · about {what}",
+    "roomTopic": "Squad Room · {topic}",
+    "groupWho": "group conversation · demo",
+    "aboutWhat": {
+      "calendar_post": "a post",
+      "project": "a project",
+      "metric": "a metric",
+      "other": "a context"
+    },
+    "request": "{who} · request: {name}",
+    "untitled": "Conversation {with}",
+    "lastYou": "You: {text}",
+    "lastAgent": "{name}: {text}",
+    "material": "sent material",
+    "none": "No conversations match this filter.",
+    "clear": "Clear filters",
+    "newWith": "New conversation {with}"
+  }
+}

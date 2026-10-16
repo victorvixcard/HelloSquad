@@ -1,0 +1,199 @@
+{
+  "title": "Brand Memory",
+  "sub": "What your squad knows about you and your business.",
+  "search": "Search memory",
+  "add": "Add knowledge",
+  "unavailableApi": "Brand Memory didn’t respond just now. Nothing was changed; try again in a moment.",
+  "dossier": {
+    "know": "What the squad knows",
+    "sumFirst": "The squad still knows little about {business}: only what you shared at sign-up. Every connected source and every conversation helps fill in the rest. Nothing becomes guidance without your OK.",
+    "footFirst": "Summary from your sign-up",
+    "from": "Where it comes from",
+    "fromAria": "Where the squad’s knowledge comes from",
+    "pillAria": "{name}: {state}. View sources",
+    "keys": "Key facts",
+    "keyMiss": "Doesn’t know yet · tell now",
+    "keyAria": "{key}: {value}. Open",
+    "keyMissAria": "{key}: doesn’t know yet. Tell now",
+    "key": {
+      "value": "Value proposition",
+      "audience": "Audience",
+      "products": "Products",
+      "differentials": "Differentiators",
+      "positioning": "Positioning",
+      "visual": "Visual identity",
+      "tone": "Tone of voice"
+    }
+  },
+  "pend": {
+    "title": "The squad noticed",
+    "sub": "nothing becomes guidance without your OK",
+    "kickHypo": "{name} noticed · {topic}",
+    "kickConf": "Conflicting information · {key}",
+    "kickOld": "Outdated · {key}",
+    "origin": "Origin: {origin}",
+    "note": "Nothing changes in deliveries until you confirm.",
+    "confQ": "Two sources say different things about {key}. Until you decide, the squad uses neither.",
+    "keep": "Use this one",
+    "keepAria": "Use this one: {value}",
+    "neither": "Neither: correct it",
+    "keepUsing": "Still valid",
+    "oldNote": "The squad lets you know when it uses this data.",
+    "more": "Show {count} more",
+    "less": "Show less",
+    "none": "All reviewed. When the squad notices something new, it shows up here for you to confirm, correct, or discard.",
+    "noneFirst": "When Nexo reads your website or you talk to the squad, whatever it notices shows up here for you to confirm. Nothing becomes guidance without your OK.",
+    "today": "today"
+  },
+  "act": {
+    "confirm": "Confirm",
+    "fix": "Correct",
+    "discard": "Discard",
+    "saveConfirmed": "Save as confirmed",
+    "save": "Save",
+    "cancel": "Cancel",
+    "editAria": "Correct this fact",
+    "off": "Stop using",
+    "on": "Use again",
+    "talk": "Talk about this"
+  },
+  "toast": {
+    "confirmed": "Confirmed. The whole squad uses it now.",
+    "corrected": "Corrected. The squad uses the new version.",
+    "discarded": "Discarded. It won’t become a rule and no one on the squad uses it.",
+    "resolved": "Conflict resolved. The other version leaves memory."
+  },
+  "log": {
+    "title": "Recent changes",
+    "none": "Confirmations, corrections, and discards show up here.",
+    "more": "View all changes ({count})",
+    "confirmed": "You confirmed: {value}",
+    "corrected": "You corrected: {value}",
+    "discarded": "You discarded: {value}",
+    "decided": "You decided: {value}",
+    "suggested": "{who} suggested: {value}",
+    "resolved": "You resolved the {key} conflict: {value} stands",
+    "today": "today · {time}"
+  },
+  "browse": {
+    "title": "Everything the squad knows",
+    "sub": "by topic · open an item to see its origin and who uses it",
+    "byAgent": "View by specialist",
+    "byAgentAria": "See what each specialist consults",
+    "agentAria": "See what {who} consults",
+    "tabsAria": "Topics",
+    "all": "All",
+    "sources": "Connections and sources",
+    "results": "{count, plural, one {# result} other {# results}} for “{q}”",
+    "clear": "Clear search",
+    "agentTitle": "{who} consults {count} facts",
+    "agentSub": "Uses them {uses}. Suggestions and conflicts stay out until you decide.",
+    "seeAll": "View all",
+    "rowAria": "{key}: {value}. {state}. {action}",
+    "rowOpen": "Show details",
+    "rowClose": "Collapse",
+    "origin": "Origin",
+    "changes": "Changes",
+    "prev": "Before: “{value}”",
+    "entered": "Added to memory: {origin}",
+    "usesHow": "How the squad uses it",
+    "usesAfter": "Who will use it after your OK",
+    "usesNone": "No one uses it right now",
+    "usesAll": "The whole squad consults it when needed",
+    "agentRole": "{name} · {role}",
+    "empty": "Nothing here yet.",
+    "emptyQ": "Nothing found. Try another word or add this knowledge.",
+    "showHidden": "Show discarded and unused ({count})",
+    "hideHidden": "Hide discarded and unused",
+    "factCount": "{count, plural, one {# fact} other {# facts}}"
+  },
+  "areas": {
+    "business": "My business",
+    "brand": "My brand",
+    "audience": "My audience",
+    "knowledge": "Knowledge and learnings"
+  },
+  "areaDesc": {
+    "business": "History, location, products, differentiators, and operations",
+    "brand": "Visual identity, tone of voice, positioning, creative preferences, and references",
+    "audience": "Who buys, what they need, and how they behave",
+    "knowledge": "Research, findings, decisions, and confirmed guidance"
+  },
+  "states": {
+    "confirmed": "Confirmed",
+    "decision": "Your decision",
+    "from_source": "From source",
+    "observed": "Observed",
+    "suggested": "Suggested",
+    "outdated": "Outdated",
+    "discarded": "Discarded",
+    "conflicting": "Conflicting",
+    "unused": "Not used"
+  },
+  "stateLine": {
+    "confirmed": "Confirmed by you · {date}",
+    "decision": "Your decision · {date}",
+    "from_source": "Read from {source} · {date} · in use, not confirmed by you",
+    "observed": "Observed by the squad · used as context, not as a rule",
+    "suggested": "Suggestion · no one uses it until you confirm",
+    "outdated": "Outdated · the squad lets you know when it uses it",
+    "conflicting": "Conflicting · not used until you decide",
+    "discarded": "Discarded by you · won’t become a rule",
+    "unused": "Not in use, at your request"
+  },
+  "sourceStates": {
+    "declared": "Stated by you",
+    "connected": "Connected",
+    "outdated": "Outdated",
+    "needs_reconnect": "Needs reconnecting",
+    "not_connected": "Not connected",
+    "unavailable": "Unavailable"
+  },
+  "sourceKinds": {
+    "onboarding": "Onboarding",
+    "conversation": "Conversations",
+    "correction": "Stated by you",
+    "approval": "Conversations",
+    "file": "Documents",
+    "connection": "Connection",
+    "agent_observation": "Specialists"
+  },
+  "sourceShort": {
+    "onboarding": "You",
+    "conversation": "Conversations",
+    "correction": "You",
+    "approval": "Conversations",
+    "file": "Documents",
+    "agent_observation": "Specialists"
+  },
+  "roles": {
+    "nexo": "Coordination",
+    "bia": "Strategy",
+    "kaia": "Creative",
+    "otto": "Content",
+    "kiwi": "Growth",
+    "max": "CRM",
+    "iris": "Results"
+  },
+  "uses": {
+    "nexo": "to organize projects and deadlines",
+    "bia": "to set priorities and campaigns",
+    "kaia": "to create pieces, artwork, and the identity",
+    "otto": "to plan and write content",
+    "kiwi": "in searches, ads, and tests",
+    "max": "in segments and messages to customers",
+    "iris": "to read and explain the results"
+  },
+  "strip": {
+    "suggestions": "{count, plural, one {# suggestion} other {# suggestions}}",
+    "conflicts": "{count} conflicting",
+    "outdated": "{count} outdated",
+    "and": " and ",
+    "sub": "Nothing becomes squad guidance without your OK.",
+    "cta": "Review",
+    "who": "Squad"
+  },
+  "context": {
+    "meta": "Brand Memory · {state}"
+  }
+}
