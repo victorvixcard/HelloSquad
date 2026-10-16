@@ -1,0 +1,7 @@
+API: needs_you etapa 3 de 3 [(1, 'bia', 'done'), (2, 'kaia', 'waiting_engine'), (3, 'otto', 'needs_you')] projeto 52638d77-1520-4c03-a2e8-99bee7587483
+Projetos: 'Campanha de Natal' true | 'etapa' false | 'Aguardando o motor' false | 'Nenhum projeto ainda' false
+Trabalho: /app/miolo/squad/nexo/trabalho/23bcfe83-5c7d-4bc0-b5ea-e4044776217e | status http ok: true
+  Bia/Kaia/Otto no detalhe: [ true, true, true ] | 'Aguardando o motor' false | 'etapa' false | 'Estratégia'/'Peças'/'Textos' [ false, false, false ]
+  trecho: Projetos / Campanha de Natal ENTREGA PONTUAL pedido na Sala do Squad · 16/10 Campanha de Natal Campanha de Natal Nexo com a Bia, a Kaia e o Otto Conversar com o Nexo Preparação Nexo criou 2 Sua aprovação v1 aguarda você 3 Publicação só com autorização sua 4 Confirmação quando o canal confirmar Nexo · legenda v1 16/10 Nexo aguarda você Primeira versão. FORMATO 01.02 CANAL Instagram, site e loja PUBLICAÇÃO não incluída Aprovar v1 Aprovando Pronto Pedir ajuste Pedir nova proposta Cancelar trabalho O ajuste abre a conversa com o Nexo ao lado, com a legenda à vista. Legenda Briefing Histórico Nexo 
+Sala: cartão da equipe ('estratégia e conceito') false | fala do Nexo 'Montei o squad' true | fala da Kaia 'motor de imagem' true
+ 
