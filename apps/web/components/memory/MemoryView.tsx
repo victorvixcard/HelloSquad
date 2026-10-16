@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useMemo, useState, useTransition } from "react";
 import {
+  addFactAction,
   correctFactAction,
   decideSuggestionAction,
   factHistoryAction,
@@ -17,6 +18,7 @@ import type { BrandFactHistory, FactSource, MemoryConflict, MemoryData } from "@
 import {
   AREAS,
   KEY_TOPICS,
+  type Area,
   MISSING_ICON,
   STATE_LOOK,
   agentCount,
@@ -65,6 +67,8 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
   const [pendMore, setPendMore] = useState(false);
   const [logMore, setLogMore] = useState(false);
   const [history, setHistory] = useState<Record<string, BrandFactHistory>>({});
+  // "Adicionar conhecimento" (V4.5 L5200): aberto pelo botão do topo ou por "Ainda não sabe · contar agora" de uma chave.
+  const [add, setAdd] = useState<{ area: Area; topic: string | null; value: string } | null>(null);
   const uid = useId();
   const now = useMemo(() => new Date(), []);
 
@@ -102,6 +106,30 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
     });
   }
   const unavailable = () => shell.toast(tc("unavailable"));
+
+  /** Abre o formulário na área (e no assunto, quando vem de uma chave do dossiê); só o owner guarda conhecimento. */
+  function openAdd(area: Area = "business", topic: string | null = null) {
+    if (!canDecide) return shell.toast(tc("ownerDecides"));
+    setAdd({ area, topic, value: "" });
+  }
+
+  function saveAdd() {
+    if (!add) return;
+    const content = add.value.trim();
+    // V4.5 `_m5AddSave`: guardar vazio só fecha.
+    if (!content) return setAdd(null);
+    startTransition(async () => {
+      const result = await addFactAction(shell.workspace.id, { area: add.area, topic: add.topic, content });
+      if (!result.ok) {
+        shell.toast(result.message || t("unavailableApi"), "nexo");
+        return;
+      }
+      setAdd(null);
+      setFilters((f) => ({ ...f, area: add.area, q: "", agent: null }));
+      shell.toast(t("addForm.saved"), "nexo");
+      router.refresh();
+    });
+  }
 
   function talk(x: MemItem) {
     const users = x.usedBy.filter((a) => a !== "nexo");
@@ -585,13 +613,58 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
             }}
           />
         </label>
-        <button type="button" className="hm-btn is-dark is-s me-add-b" aria-expanded={false} onClick={unavailable}>
+        <button
+          type="button"
+          className="hm-btn is-dark is-s me-add-b"
+          aria-expanded={!!add}
+          onClick={() => (add ? setAdd(null) : openAdd())}
+        >
           <svg className="sb-ic" viewBox="0 0 18 18" aria-hidden="true">
             <path d={PRODUCT_ICONS.plus} />
           </svg>
           <span>{t("add")}</span>
         </button>
       </header>
+
+      {add ? (
+        <section className="me-add" aria-label={t("add")}>
+          <label className="ka-k" htmlFor={`${uid}-add`}>
+            {t("addForm.ask")}
+          </label>
+          <textarea
+            id={`${uid}-add`}
+            className="me-ta"
+            rows={2}
+            placeholder={t("addForm.placeholder")}
+            value={add.value}
+            autoFocus
+            onChange={(e) => setAdd({ ...add, value: e.target.value })}
+          />
+          <div className="me-add-f">
+            <span className="me-add-a" role="group" aria-label={t("addForm.area")}>
+              {AREAS.map((a) => (
+                <button
+                  key={a}
+                  type="button"
+                  className={`me-ac${add.area === a ? " is-on" : ""}`}
+                  aria-pressed={add.area === a}
+                  onClick={() => setAdd({ ...add, area: a, topic: a === add.area ? add.topic : null })}
+                >
+                  {t(`areas.${a}`)}
+                </button>
+              ))}
+            </span>
+            <span className="ps-grow" />
+            <button type="button" className="ps-mini" onClick={() => setAdd(null)}>
+              {t("addForm.cancel")}
+            </button>
+            <button type="button" className="ps-mini is-pri" disabled={busy} onClick={saveAdd}>
+              {t("addForm.save")}
+            </button>
+          </div>
+          <p className="me-add-n">{t("addForm.note")}</p>
+        </section>
+      ) : null}
 
       <NeedsStrip items={needs} tight />
 
@@ -646,7 +719,8 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
                     className={fact ? "me-key" : "me-key is-miss"}
                     aria-label={fact ? t("dossier.keyAria", { key: label, value: fact.value }) : t("dossier.keyMissAria", { key: label })}
                     onClick={() => {
-                      if (!fact) return unavailable();
+                      // "Ainda não sabe · contar agora" abre "Adicionar conhecimento" no assunto da chave (FLUXOS §6).
+                      if (!fact) return openAdd(k.area, k.topic);
                       setFilters((f) => ({ ...f, area: "all", q: "", agent: null }));
                       toggleRow(fact);
                       requestAnimationFrame(() => document.querySelector(`[data-mid="${fact.id}"]`)?.scrollIntoView({ block: "center" }));

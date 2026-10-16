@@ -3,6 +3,15 @@
   "sub": "O que o seu squad sabe sobre você e o seu negócio.",
   "search": "Buscar na memória",
   "add": "Adicionar conhecimento",
+  "addForm": {
+    "ask": "O que o squad precisa saber?",
+    "placeholder": "Ex.: aos domingos a loja fecha às 13h",
+    "area": "Assunto",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "note": "Entra como declarado por você, já confirmado. Todo o squad passa a usar.",
+    "saved": "Guardado na Memória da Marca. Todo o squad passa a usar."
+  },
   "unavailableApi": "A Memória da Marca não respondeu agora. Nada foi alterado; tente de novo em instantes.",
   "dossier": {
     "know": "O que o squad sabe",

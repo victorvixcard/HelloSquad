@@ -79,21 +79,28 @@ export async function factHistoryAction(factId: string): Promise<ActionResult<Br
   }
 }
 
+type NewFact = { area: BrandFact["area"]; content: string; topic?: string | null; key?: string | null };
+
 /**
- * Objetivo contado ao Nexo no primeiro acesso (V4.6 `_setObjective`, L7928): entra na Memória como declarado por você,
- * já confirmado, pela rota de "Adicionar conhecimento" (S1f; só o owner). Todo o squad passa a usar.
+ * "Adicionar conhecimento" (V4.5 `_m5AddSave`, L13009; rota da S1f, só o owner): entra como declarado por você, já
+ * confirmado, e todo o squad passa a usar. Sem assunto, a API usa o primeiro da área; sem chave, "Contado por você".
  */
-export async function addObjectiveAction(workspaceId: string, content: string): Promise<ActionResult<BrandFact>> {
+export async function addFactAction(workspaceId: string, fact: NewFact): Promise<ActionResult<BrandFact>> {
   try {
     const api = await serverApi();
-    const fact = await unwrap(
+    const created = await unwrap(
       api.POST("/workspaces/{workspace_id}/memory/facts", {
         params: { path: { workspace_id: workspaceId } },
-        body: { ...OBJECTIVE_FACT, content },
+        body: { area: fact.area, content: fact.content, topic: fact.topic ?? null, key: fact.key ?? null },
       }),
     );
-    return { ok: true, data: fact };
+    return { ok: true, data: created };
   } catch (error) {
     return fail(error);
   }
+}
+
+/** Objetivo contado ao Nexo no primeiro acesso (V4.6 `_setObjective`, L7928): "Objetivos" · "Objetivo atual". */
+export async function addObjectiveAction(workspaceId: string, content: string): Promise<ActionResult<BrandFact>> {
+  return addFactAction(workspaceId, { ...OBJECTIVE_FACT, content });
 }

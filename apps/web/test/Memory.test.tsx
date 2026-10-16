@@ -16,6 +16,7 @@ import type { BrandFact, MemoryData, MemorySuggestion } from "@/lib/memory";
 import { makeShell, renderWithShell } from "./render";
 
 const actions = vi.hoisted(() => ({
+  addFactAction: vi.fn(),
   decideSuggestionAction: vi.fn(),
   correctFactAction: vi.fn(),
   resolveConflictAction: vi.fn(),
@@ -323,5 +324,75 @@ describe("Memória da Marca · tela (V4.5/V4.6)", () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole("region", { name: /Precisa de você/ })).toBeNull();
     expect(screen.getByText("Você decidiu: não usar a palavra 'artesanal' nas legendas")).toBeInTheDocument();
+  });
+});
+
+describe("Adicionar conhecimento (V4.5 L5200, `_m5AddSave`; rota da S1f) — fatos essenciais pelo caminho da tela (A2a)", () => {
+  beforeEach(() => actions.addFactAction.mockReset().mockResolvedValue({ ok: true, data: {} }));
+
+  it("abre o formulário da V4.5, guarda como declarado e confirmado e avisa como o protótipo", async () => {
+    const user = userEvent.setup();
+    const shell = makeShell();
+    renderWithShell(<MemoryView data={miolo()} business="Miolo" userInitial="M" />, shell);
+    const open = screen.getByRole("button", { name: "Adicionar conhecimento" });
+    await user.click(open);
+    expect(open).toHaveAttribute("aria-expanded", "true");
+    const form = screen.getByRole("region", { name: "Adicionar conhecimento" });
+    const field = within(form).getByLabelText("O que o squad precisa saber?");
+    expect(field).toHaveAttribute("placeholder", "Ex.: aos domingos a loja fecha às 13h");
+    expect(within(form).getByText("Entra como declarado por você, já confirmado. Todo o squad passa a usar.")).toBeInTheDocument();
+    const areas = within(form).getByRole("group", { name: "Assunto" });
+    expect(within(areas).getAllByRole("button").map((b) => b.textContent)).toEqual([
+      "Meu negócio",
+      "Minha marca",
+      "Meu público",
+      "Conhecimento e aprendizados",
+    ]);
+    expect(within(areas).getByRole("button", { name: "Meu negócio" })).toHaveAttribute("aria-pressed", "true");
+    await user.click(within(areas).getByRole("button", { name: "Minha marca" }));
+    await user.type(field, "Cores da marca: verde-escuro e creme");
+    await user.click(within(form).getByRole("button", { name: "Guardar" }));
+    expect(actions.addFactAction).toHaveBeenCalledWith("ws-1", { area: "brand", topic: null, content: "Cores da marca: verde-escuro e creme" });
+    await vi.waitFor(() => expect(shell.toast).toHaveBeenCalledWith("Guardado na Memória da Marca. Todo o squad passa a usar.", "nexo"));
+    expect(screen.queryByRole("region", { name: "Adicionar conhecimento" })).toBeNull();
+  });
+
+  it("Ainda não sabe · contar agora abre o formulário no assunto da chave; guardar vazio só fecha", async () => {
+    const user = userEvent.setup();
+    renderWithShell(<MemoryView data={miolo()} business="Miolo" userInitial="M" />, makeShell());
+    await user.click(screen.getByRole("button", { name: "Diferenciais: ainda não sabe. Contar agora" }));
+    const form = screen.getByRole("region", { name: "Adicionar conhecimento" });
+    expect(within(form).getByRole("button", { name: "Meu negócio" })).toHaveAttribute("aria-pressed", "true");
+    await user.type(within(form).getByLabelText("O que o squad precisa saber?"), "Fermentação de 48 horas");
+    await user.click(within(form).getByRole("button", { name: "Guardar" }));
+    expect(actions.addFactAction).toHaveBeenCalledWith("ws-1", { area: "business", topic: "Diferenciais", content: "Fermentação de 48 horas" });
+
+    await user.click(screen.getByRole("button", { name: "Posicionamento: ainda não sabe. Contar agora" }));
+    const again = screen.getByRole("region", { name: "Adicionar conhecimento" });
+    expect(within(again).getByRole("button", { name: "Minha marca" })).toHaveAttribute("aria-pressed", "true");
+    await user.click(within(again).getByRole("button", { name: "Guardar" }));
+    expect(actions.addFactAction).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("region", { name: "Adicionar conhecimento" })).toBeNull();
+  });
+
+  it("quem não é o dono não abre o formulário: Quem decide é o dono da conta", async () => {
+    const user = userEvent.setup();
+    const shell = makeShell({ canDecide: false });
+    renderWithShell(<MemoryView data={miolo()} business="Miolo" userInitial="M" />, shell);
+    await user.click(screen.getByRole("button", { name: "Adicionar conhecimento" }));
+    expect(shell.toast).toHaveBeenCalledWith("Quem decide é o dono da conta");
+    expect(screen.queryByRole("region", { name: "Adicionar conhecimento" })).toBeNull();
+  });
+
+  it("se a API recusar, o formulário fica aberto com o texto e o motivo vem da API", async () => {
+    actions.addFactAction.mockResolvedValue({ ok: false, code: "forbidden", message: "Só o dono da conta toma esta decisão." });
+    const user = userEvent.setup();
+    const shell = makeShell();
+    renderWithShell(<MemoryView data={miolo()} business="Miolo" userInitial="M" />, shell);
+    await user.click(screen.getByRole("button", { name: "Adicionar conhecimento" }));
+    await user.type(screen.getByLabelText("O que o squad precisa saber?"), "Abre aos domingos");
+    await user.click(screen.getByRole("button", { name: "Guardar" }));
+    await vi.waitFor(() => expect(shell.toast).toHaveBeenCalledWith("Só o dono da conta toma esta decisão.", "nexo"));
+    expect(screen.getByLabelText("O que o squad precisa saber?")).toHaveValue("Abre aos domingos");
   });
 });
