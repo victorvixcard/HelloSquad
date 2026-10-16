@@ -53,7 +53,7 @@ As "perguntas GEO" são escritas como a pessoa digita ou fala para um assistente
 | `/squad/kiwi` | A Kiwi faz o negócio crescer com critério: anúncios, buscadores e conversão, dentro do teto que você autorizar. | growth marketing com IA | gestão de anúncios com IA; SEO para pequenas empresas; plano de mídia; otimização de conversão | "IA pode cuidar dos meus anúncios sem gastar além do limite?"; "Por que meu site não aparece nas buscas?" |
 | `/squad/max` | O Max faz os clientes voltarem, com mensagens consentidas e no momento certo. | CRM de marketing com IA | reativar clientes inativos; jornada de relacionamento; fidelização | "Como reativar clientes que pararam de comprar?"; "IA pode mandar mensagem para meus clientes?" |
 | `/squad/iris` | A Íris lê seus números e diz o que fazer com eles, sem inventar dado nem causa. | análise de resultados de marketing com IA | relatório de marketing; métricas para pequenas empresas; recomendações | "IA consegue analisar os resultados do meu marketing?"; "Como saber qual post trouxe mais visitas ao site?" |
-| `/faq` | Respostas diretas às dúvidas de quem está avaliando a HelloSquad. | perguntas sobre marketing com IA | segurança; autorização; idiomas; dados | Ver `pt-BR/faq.md` (18 perguntas). |
+| `/faq` | Respostas diretas às dúvidas de quem está avaliando a HelloSquad. | perguntas sobre marketing com IA | segurança; autorização; idiomas; dados | Ver `pt-BR/faq.md` (19 perguntas). |
 | `/sobre` | Por que a HelloSquad existe e os princípios que ela não negocia. | HelloSquad | equipe de marketing com IA; princípios | "Quem faz a HelloSquad?"; "A HelloSquad é confiável?" |
 
 ## 4. Metadados (pt-BR)

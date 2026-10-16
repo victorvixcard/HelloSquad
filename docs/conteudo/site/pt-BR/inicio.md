@@ -91,7 +91,7 @@ Ajuste já decidido pelo Vic (15/10), não por este documento: o cartão da Kiwi
 
 **Copy aprovada (R32):** "Dúvidas antes de começar? A gente responde."
 
-Mostrar seis perguntas curtas da `/faq` (1, 2, 5, 6, 9 e 11 de `faq.md`) com link "Ver todas as perguntas" → `/faq`. A pergunta da R32 "Posso começar gratuitamente? Como funcionam os créditos?" fica fora até o dono decidir preço (pergunta P2 do relatório). O `FAQPage` em JSON-LD fica só na `/faq`.
+Mostrar seis perguntas curtas da `/faq` (1, 2, 7, 8, 9 e 12 de `faq.md`, as mesmas da R32 sem a de créditos) com link "Ver todas as perguntas" → `/faq`. A pergunta da R32 "Posso começar gratuitamente? Como funcionam os créditos?" fica fora até o dono decidir preço (pergunta P2 do relatório). O `FAQPage` em JSON-LD fica só na `/faq`.
 
 ## 10. Encerramento
 
