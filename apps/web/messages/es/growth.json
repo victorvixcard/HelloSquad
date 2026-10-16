@@ -1,1 +1,86 @@
-{}
+{
+  "paid": {
+    "plan": "Plan de medios",
+    "tests": "Pruebas de anuncios",
+    "audience": "Público",
+    "budget": "Presupuesto",
+    "budgetV": "hasta {value} · {period}",
+    "proposed": "tope propuesto, sin presupuesto liberado",
+    "split": "Distribución",
+    "goal": "Objetivo",
+    "limits": "Límites",
+    "audiences": "Públicos",
+    "testList": "Pruebas",
+    "testMeta": "cambia {variable} · {duration} · {budget}",
+    "noBudget": "sin presupuesto propio",
+    "fromPlan": "Dentro del plan de medios v{no}, con tope de {value}.",
+    "review": "Revisar el plan",
+    "see": "Ver la propuesta"
+  },
+  "state": {
+    "draft": "Borrador",
+    "you": "Esperando aprobación",
+    "auth": "Esperando autorización",
+    "prog": "Programada",
+    "pause": "Pausada",
+    "done": "Concluida"
+  },
+  "channel": {
+    "meta_ads": "Meta Ads (Instagram y Facebook)",
+    "google_ads": "Google Ads"
+  },
+  "variable": {
+    "publico": "el público",
+    "mensagem": "el mensaje",
+    "criativo": "la creatividad",
+    "formato": "el formato"
+  },
+  "format": {
+    "post": "post",
+    "carousel": "carrusel",
+    "reels": "reels",
+    "stories": "stories",
+    "status": "estado",
+    "article": "artículo",
+    "email": "e-mail",
+    "video": "video"
+  },
+  "exec": {
+    "plan": "Nada fue invertido: la cuenta de anuncios no está conectada. Aprobar este plan no autoriza invertir.",
+    "tests": "Ningún anuncio fue creado: la cuenta de anuncios no está conectada. Aprobar estas pruebas no autoriza invertir."
+  },
+  "doc": {
+    "goals": "Objetivos",
+    "goalMeta": "{indicator} · {deadline}",
+    "channels": "Canales",
+    "role": "Papel: {role}",
+    "audience": "Público: {audience}",
+    "budget": "Presupuesto",
+    "ceiling": "tope propuesto",
+    "informed": "tope que informaste",
+    "notInformed": "no informado",
+    "period": "período",
+    "split": "Distribución por canal",
+    "limits": "Límites",
+    "hypotheses": "Hipótesis",
+    "measure": "Cómo medir: {how}",
+    "success": "Criterio de éxito: {criterion}",
+    "toRun": "Para ejecutar",
+    "premises": "Premisas",
+    "audiences": "Públicos",
+    "why": "Por qué: {why}",
+    "messages": "Mensajes",
+    "variations": "Variaciones",
+    "variation": "{audience} + {message} · {channel} · {format}",
+    "tests": "Pruebas",
+    "testK": "Prueba {order}",
+    "variable": "Cambia {variable}",
+    "uses": "Variaciones: {list}",
+    "metric": "Métrica principal: {metric}",
+    "duration": "Duración: {duration}",
+    "testBudget": "Presupuesto: {value}",
+    "noBudget": "Presupuesto: sin presupuesto propio",
+    "forKaia": "Pedido para Kaia",
+    "planRef": "Sigue el plan de medios v{no}, con tope de {value}."
+  }
+}

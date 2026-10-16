@@ -1,1 +1,86 @@
-{}
+{
+  "paid": {
+    "plan": "Media plan",
+    "tests": "Ad tests",
+    "audience": "Audience",
+    "budget": "Budget",
+    "budgetV": "up to {value} · {period}",
+    "proposed": "proposed ceiling, no budget released",
+    "split": "Split",
+    "goal": "Goal",
+    "limits": "Limits",
+    "audiences": "Audiences",
+    "testList": "Tests",
+    "testMeta": "changes {variable} · {duration} · {budget}",
+    "noBudget": "no budget of its own",
+    "fromPlan": "Within media plan v{no}, with a ceiling of {value}.",
+    "review": "Review the plan",
+    "see": "See the proposal"
+  },
+  "state": {
+    "draft": "Draft",
+    "you": "Awaiting approval",
+    "auth": "Awaiting authorization",
+    "prog": "Scheduled",
+    "pause": "Paused",
+    "done": "Completed"
+  },
+  "channel": {
+    "meta_ads": "Meta Ads (Instagram and Facebook)",
+    "google_ads": "Google Ads"
+  },
+  "variable": {
+    "publico": "the audience",
+    "mensagem": "the message",
+    "criativo": "the creative",
+    "formato": "the format"
+  },
+  "format": {
+    "post": "post",
+    "carousel": "carousel",
+    "reels": "reels",
+    "stories": "stories",
+    "status": "status",
+    "article": "article",
+    "email": "email",
+    "video": "video"
+  },
+  "exec": {
+    "plan": "Nothing was invested: the ad account is not connected. Approving this plan does not authorize spending.",
+    "tests": "No ad was created: the ad account is not connected. Approving these tests does not authorize spending."
+  },
+  "doc": {
+    "goals": "Goals",
+    "goalMeta": "{indicator} · {deadline}",
+    "channels": "Channels",
+    "role": "Role: {role}",
+    "audience": "Audience: {audience}",
+    "budget": "Budget",
+    "ceiling": "proposed ceiling",
+    "informed": "ceiling you provided",
+    "notInformed": "not provided",
+    "period": "period",
+    "split": "Split by channel",
+    "limits": "Limits",
+    "hypotheses": "Hypotheses",
+    "measure": "How to measure: {how}",
+    "success": "Success criterion: {criterion}",
+    "toRun": "To execute",
+    "premises": "Assumptions",
+    "audiences": "Audiences",
+    "why": "Why: {why}",
+    "messages": "Messages",
+    "variations": "Variations",
+    "variation": "{audience} + {message} · {channel} · {format}",
+    "tests": "Tests",
+    "testK": "Test {order}",
+    "variable": "Changes {variable}",
+    "uses": "Variations: {list}",
+    "metric": "Main metric: {metric}",
+    "duration": "Duration: {duration}",
+    "testBudget": "Budget: {value}",
+    "noBudget": "Budget: none of its own",
+    "forKaia": "Request for Kaia",
+    "planRef": "Follows media plan v{no}, with a ceiling of {value}."
+  }
+}
