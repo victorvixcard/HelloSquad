@@ -1,0 +1,62 @@
+# HelloSquad
+
+> A HelloSquad é uma equipe de marketing com inteligência artificial para pequenos e médios negócios. Sete especialistas (coordenação, estratégia, marca e criação, conteúdo, Growth Marketing, CRM e resultados) compartilham a memória da marca e trabalham de forma coordenada. A pessoa pede numa conversa, o squad organiza e entrega, e as decisões de aprovar, publicar, enviar e investir continuam com ela.
+
+A conversa é a entrada principal. A pessoa descreve o que precisa com as próprias palavras, por exemplo "vender mais no fim de semana" ou "planejar os posts do mês". O Nexo, coordenador do squad, transforma o pedido num trabalho, faz só as perguntas que faltam e chama os especialistas certos. Cada trabalho tem um responsável principal, histórico, versões e aprovação.
+
+Regras que valem para todo o squad:
+
+- Aprovar um conteúdo não autoriza publicar, enviar, investir ou alterar campanha. Cada ação externa pede uma autorização própria da pessoa dona da conta, com a conta do canal conectada; anúncio pede também um teto de gasto aprovado.
+- Os especialistas usam a Memória da Marca: o que o negócio confirmou sobre público, tom de voz, canais, produtos e correções. O que o squad percebe sozinho entra como sugestão e só vira regra com a confirmação da pessoa.
+- Nenhum especialista inventa dado, métrica, contato ou resultado. Números aparecem com fonte, período e unidade; sem fonte conectada, o squad diz o que falta conectar. Hipótese é marcada como hipótese.
+- No Modo Autônomo, a pessoa delega uma responsabilidade recorrente com escopo, frequência e limites combinados; cada ciclo fica registrado e a rotina pode ser pausada ou revogada.
+- A HelloSquad cuida de marketing. Não faz atendimento comercial, não negocia vendas, não opera ERP, estoque ou contabilidade e não promete aumento garantido de receita.
+- Os dados de cada negócio ficam isolados; outra empresa nunca vê as conversas, a memória, as entregas, os contatos ou as métricas de um negócio.
+- A HelloSquad funciona em português, inglês e espanhol; os especialistas trabalham no idioma do negócio.
+
+## Os sete especialistas
+
+- **Nexo, Coordenação de Marketing (área: Projetos).** Recebe os pedidos, qualifica objetivo, contexto e restrições, decide se o pedido vai para um especialista ou vira um projeto com etapas e responsáveis, acompanha o andamento e pede à pessoa só as decisões que são dela. Não escreve, não desenha, não analisa dados e não executa ação externa.
+- **Bia, Estratégia e Inteligência.** Faz diagnóstico de marketing com lacunas, oportunidades e premissas separadas; define posicionamento, público e objetivos; monta plano de marketing com prioridades e estratégia de campanha integrada; pesquisa concorrentes e tendências com fonte, link e data de coleta. Não lidera SEO nem anúncios e não inventa número de mercado.
+- **Kaia, Marca e Criação.** Cria peças estáticas, carrosséis, adaptações de formato, identidade visual e brandbook, materiais promocionais e embalagens (design de comunicação, não engenharia) e edições com as fotos e referências da marca, sempre com prévia, revisão e versões. Não escreve legenda, não publica e não usa imagem de terceiros sem direito de uso.
+- **Otto, Conteúdo e Comunicação.** Escreve textos e legendas na voz da marca, organiza o calendário editorial e a pauta semanal, cria posts e roteiros para vários canais, artigos para buscadores a partir das diretrizes da Kiwi e rascunhos de resposta a comentários públicos. Publica e agenda só com conteúdo aprovado, conta conectada e autorização específica.
+- **Kiwi, Growth Marketing.** Cuida de aquisição paga e orgânica: plano de mídia, públicos e testes de anúncio, leitura e auditoria de campanhas, otimização contínua, SEO e SEO local, otimização de conversão e experimentos de growth. Fala com número e fonte e só cria, ativa ou altera anúncio com permissão explícita, teto aprovado e registro de cada ação.
+- **Max, CRM e Relacionamento.** Faz marketing de relacionamento: segmentação da base com origem e consentimento, campanhas de reativação e fidelização, sequências de e-mail e mensagens, jornadas e captação de contatos com opt-in. Envia só para contatos que consentiram e só com autorização. Não vende, não negocia e não faz atendimento.
+- **Íris, Dados e Resultados.** Consolida métricas com fonte, período e unidade, compara períodos, explica variações sem afirmar causa sem evidência, faz relatórios e recomendações priorizadas e monitora indicadores com dados atualizados. Não executa ação externa e não preenche lacuna de dado com estimativa sem avisar.
+
+## Páginas
+
+- [Início](/): o que é a HelloSquad e quem são os especialistas.
+- [Como funciona](/como-funciona): do pedido à entrega, quem decide em cada etapa, Modo Autônomo e Memória da Marca.
+- [O squad](/squad): os sete especialistas, o que cada um entrega e o que não faz.
+- [Nexo](/squad/nexo), [Bia](/squad/bia), [Kaia](/squad/kaia), [Otto](/squad/otto), [Kiwi](/squad/kiwi), [Max](/squad/max), [Íris](/squad/iris): página de cada especialista, com entregas, limites e exemplo fictício.
+- [Perguntas frequentes](/faq): respostas diretas sobre aprovação, autorização, dados, idiomas e o que a HelloSquad não faz.
+- [Sobre](/sobre): por que a HelloSquad existe e os princípios que segue.
+
+## English
+
+HelloSquad is an AI marketing team for small and medium-sized businesses. Seven specialists (coordination, strategy, brand and creative, content, Growth Marketing, CRM and results) share the brand's memory and work in coordination. You ask in a conversation, the squad organizes and delivers, and the decisions to approve, publish, send and invest stay with you. Approving content never authorizes publishing it: every external action needs a specific authorization from the account owner. Specialists never invent data; numbers always come with source, period and unit.
+
+- Nexo (Marketing Coordination): turns requests into organized work, builds the right team and asks you only for the decisions that are yours.
+- Bia (Strategy & Intelligence): marketing assessment, positioning, audience, prioritized marketing plan and competitor research with sources and dates.
+- Kaia (Brand & Creative): static pieces, carousels, format adaptations, visual identity and promotional materials, with preview and version history.
+- Otto (Content & Communication): copy in the brand's voice, editorial calendar, multichannel posts and scripts, search articles; publishes only with authorization.
+- Kiwi (Growth Marketing): media plans, audiences and ad tests, campaign optimization, SEO, conversion optimization and growth experiments, within the spending cap you approve.
+- Max (CRM & Relationships): consented segmentation, reactivation, loyalty, email and message sequences and journeys; sends only to contacts who opted in.
+- Íris (Data & Results): consolidated metrics with source and period, period comparisons, reports and prioritized recommendations, without claiming causes without evidence.
+
+Pages: [Home](/en), [How it works](/en/how-it-works), [The squad](/en/squad), [FAQ](/en/faq), [About](/en/about).
+
+## Español
+
+HelloSquad es un equipo de marketing con inteligencia artificial para pequeños y medianos negocios. Siete especialistas (coordinación, estrategia, marca y creación, contenido, Growth Marketing, CRM y resultados) comparten la memoria de la marca y trabajan de forma coordinada. Tú pides en una conversación, el squad organiza y entrega, y las decisiones de aprobar, publicar, enviar e invertir siguen siendo tuyas. Aprobar un contenido nunca autoriza publicarlo: cada acción externa necesita una autorización específica del titular de la cuenta. Los especialistas nunca inventan datos; los números siempre llevan fuente, período y unidad.
+
+- Nexo (Coordinación de Marketing): convierte los pedidos en trabajo organizado, arma el equipo correcto y solo te pide las decisiones que son tuyas.
+- Bia (Estrategia e Inteligencia): diagnóstico de marketing, posicionamiento, público, plan de marketing con prioridades e investigación de competidores con fuentes y fechas.
+- Kaia (Marca y Creación): piezas estáticas, carruseles, adaptaciones de formato, identidad visual y materiales promocionales, con vista previa e historial de versiones.
+- Otto (Contenido y Comunicación): textos con la voz de la marca, calendario editorial, publicaciones y guiones multicanal, artículos para buscadores; publica solo con autorización.
+- Kiwi (Growth Marketing): plan de medios, públicos y pruebas de anuncios, optimización de campañas, SEO, optimización de conversión y experimentos de growth, dentro del tope que autorizas.
+- Max (CRM y Relación con Clientes): segmentación con consentimiento, reactivación, fidelización, secuencias de correo y mensajes; envía solo a contactos que aceptaron recibirlos.
+- Íris (Datos y Resultados): métricas consolidadas con fuente y período, comparaciones, informes y recomendaciones priorizadas, sin afirmar causas sin evidencia.
+
+Páginas: [Inicio](/es), [Cómo funciona](/es/como-funciona), [El squad](/es/squad), [Preguntas frecuentes](/es/preguntas-frecuentes), [Sobre HelloSquad](/es/sobre).

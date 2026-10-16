@@ -1,0 +1,23 @@
+# robots.txt sugerido para o site público da HelloSquad (N2a, 16/10/2026).
+# A implementação viva é apps/web/app/robots.ts; este arquivo é a referência de conteúdo.
+# Público (/, /como-funciona, /squad, /squad/<agente>, /faq, /sobre e as versões /en e /es): liberado.
+# Área logada (/app) e saída (/sair): bloqueadas para todos.
+# /entrar não é bloqueada aqui: ela leva <meta name="robots" content="noindex">, que o robô só lê se puder rastrear a página.
+
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /app/
+Disallow: /sair
+
+# Assistentes de IA: liberados no site público, bloqueados no app.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+Allow: /
+Disallow: /app
+Disallow: /app/
+Disallow: /sair
+
+Sitemap: {{SITE_URL}}/sitemap.xml
