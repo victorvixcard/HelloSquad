@@ -1,7 +1,8 @@
 """Integração da S2e: cobrança atrás de PaymentProvider. Webhook idempotente (repetido não repete
 efeito), assinatura inválida recusada, Pix pendente → confirmado, ciclo da assinatura com validade,
 estorno e contestação pelo extrato, renovação no scheduler (só com pagamento confirmado; sem ele,
-past_due sem bloquear leitura) e leitura só do owner, sem dinheiro. Cada teste reaplica o seed ao fim.
+past_due sem bloquear leitura) e leitura só do owner, sem dinheiro. Cada teste reaplica o seed no
+fim.
 """
 
 import json
