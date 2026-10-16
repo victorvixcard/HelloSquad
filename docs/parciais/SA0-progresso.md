@@ -11,7 +11,7 @@ Aranha, 16/10/2026. Escopo: `docs/SUPER_ADMIN.md` §2 e §6. Pasta: `design/supe
 - 09:21 — telas Conta (detalhe, entrar no ambiente com motivo, ajuste de crédito, suspensão), Squad (palco do DS) e Agente (Alma, Skills, Ferramentas e limites, O que ele lê). Hash do prompt conferido igual ao do loader do backend: otto/04.01 `fb290a332565`, nexo/01.01 `b1623f1c52c9`.
 - 09:41 — Catálogo, Planos e recargas, Pagamentos e Auditoria integrados e revisados. Commit `9ec6f5c`.
 - 09:52 — Regras de negócio, Referências, Motor de imagem, Modelos e custos, Consumo, Saúde das APIs, Fila e Qualidade integrados; três incoerências de dados corrigidas (gasto de 7 dias da Anthropic, texto da falha da Meta, médias de outubro); testes dos ajudantes copiados para `tools/`. Commit `74e659b`.
-- 10:00 — verificação final no estado final; servidor da 8020 no ar com o mesmo bind da 8010; relatório fechado.
+- 09:52 — verificação final no estado final; servidor da 8020 no ar com o mesmo bind da 8010; relatório fechado.
 
 ## Telas
 

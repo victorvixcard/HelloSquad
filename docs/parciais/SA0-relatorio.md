@@ -1,6 +1,6 @@
 # SA0 — Protótipo navegável do Super Admin · relatório
 
-Aranha (Frontend & Design), 16/10/2026, 08:51–10:00. Escopo: `docs/SUPER_ADMIN.md` §2 (todas as telas) e §6 (o que o protótipo precisa provar). Nada em `apps/`, `packages/`, `supabase/` ou `docs/parciais/A1f*` foi tocado; do backend só li `llm/pricing.py`, `squad/prompt.py` e `squad/loader.py` para reproduzir preço e montagem do prompt. Três ajudantes fizeram 12 das 17 telas em paralelo, com a mesma casca; eu fiz a casca, os dados, Contas, Conta, Squad e Agente, e integrei e revisei tudo.
+Aranha (Frontend & Design), 16/10/2026, 08:51–09:53. Escopo: `docs/SUPER_ADMIN.md` §2 (todas as telas) e §6 (o que o protótipo precisa provar). Nada em `apps/`, `packages/`, `supabase/` ou `docs/parciais/A1f*` foi tocado; do backend só li `llm/pricing.py`, `squad/prompt.py` e `squad/loader.py` para reproduzir preço e montagem do prompt. Três ajudantes fizeram 12 das 17 telas em paralelo, com a mesma casca; eu fiz a casca, os dados, Contas, Conta, Squad e Agente, e integrei e revisei tudo.
 
 ## 1. O que foi feito
 
