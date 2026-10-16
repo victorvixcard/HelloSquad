@@ -36,7 +36,8 @@ export type LiveRun = {
   agent: AgentId | null;
   /** Etapa em curso ("nexo.triage", "otto.produce", "otto.check", "otto.revise"); null entre etapas. */
   step: string | null;
-  status: "running" | "succeeded" | "failed";
+  /** `queued` até o worker pegar (`started`): sem worker no ar, a tela não finge trabalho. */
+  status: "queued" | "running" | "succeeded" | "failed";
   lastSeq: number;
   conversationId: string | null;
   workItemId: string | null;
@@ -89,7 +90,7 @@ export function initialLiveState(workspaceId: string, pending: PendingApproval[]
 const agentOf = (value: unknown): AgentId | null => (typeof value === "string" && isAgentId(value) ? value : null);
 
 function blankRun(id: string): LiveRun {
-  return { id, owner: null, agent: null, step: null, status: "running", lastSeq: 0, conversationId: null, workItemId: null, revision: false };
+  return { id, owner: null, agent: null, step: null, status: "queued", lastSeq: 0, conversationId: null, workItemId: null, revision: false };
 }
 
 /** Eventos que mudam o que o servidor mostra: a casca relê a API (faixa, badge, Trabalhos, detalhe). */
@@ -113,6 +114,7 @@ function applyRunEvent(state: LiveState, event: RunEventPayload): LiveState {
       break;
     case "step.done":
       run.step = null;
+      if (run.status === "queued") run.status = "running";
       break;
     case "finished":
       run.status = "succeeded";
