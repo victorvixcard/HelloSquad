@@ -40,7 +40,9 @@ Contagem: 🔴 1 · 🟡 11 · ℹ️ 16 (números finais no §(b); os da compar
   em `S2d-relatorio.md` §7 "O que o web precisa para a A2c ou A2d"; a A2c foi o site público e **não existe A2d** no
   plano. No web: (1) a Marina escreve na Sala do Squad "Quero uma campanha de Natal para vender mais panetones." (a
   jornada 2 da V4.6, FLUXOS §3.2) e **nada acontece** em 25 s: o pedido vira só mensagem, porque
-  `deliveryForRequest` só reconhece "legenda/texto" → 04.01 (`lib/live/request.ts:7`); (2) "Coordenar uma campanha"
+  `deliveryForRequest` só reconhece "legenda/texto" → 04.01 (`lib/live/request.ts:7`); o botão do estado vazio de
+  Projetos, "Começar pela Campanha de Natal", leva exatamente a esse beco (abre a Sala com o pedido já escrito,
+  `components/env/projects/ProjectsView.tsx:62-63`); (2) "Coordenar uma campanha"
   no catálogo do Nexo abre a conversa da **Bia** com 02.04 (`lib/capabilities.ts:15`; registrado pela A2b §4 item 4
   como interpretação); (3) um projeto coordenado criado pela API (Bia aprovada, Kaia `waiting_engine`, Otto aguardando)
   aparece no detalhe do trabalho como **"ENTREGA PONTUAL"**, **"Nexo · legenda"**, "Nexo aguarda você · Primeira
