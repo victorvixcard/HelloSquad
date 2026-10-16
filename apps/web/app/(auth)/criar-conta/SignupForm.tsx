@@ -1,16 +1,18 @@
 "use client";
 
 import { Button } from "@hellosquad/ui";
+import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 import { TextField } from "@/components/TextField";
 import { signUp, type AuthFormState } from "@/lib/auth-actions";
 
 export function SignupForm() {
+  const t = useTranslations("auth");
   const [state, action, pending] = useActionState<AuthFormState, FormData>(signUp, {});
   return (
     <form action={action} className="hs-form" noValidate>
       <TextField
-        label="Seu nome"
+        label={t("fields.name")}
         name="name"
         autoComplete="name"
         required
@@ -19,25 +21,25 @@ export function SignupForm() {
         error={state.fieldErrors?.name}
       />
       <TextField
-        label="Seu e-mail"
+        label={t("fields.email")}
         name="email"
         type="email"
         inputMode="email"
         autoComplete="email"
-        placeholder="voce@seunegocio.com.br"
+        placeholder={t("fields.emailPlaceholder")}
         required
         defaultValue={state.values?.email}
         error={state.fieldErrors?.email}
       />
       <TextField
-        label="Crie uma senha"
+        label={t("fields.newPassword")}
         name="password"
         type="password"
         autoComplete="new-password"
         required
         minLength={6}
         reveal
-        hint="Pelo menos 6 caracteres."
+        hint={t("fields.newPasswordHint")}
         error={state.fieldErrors?.password}
       />
       {state.error ? (
@@ -45,8 +47,8 @@ export function SignupForm() {
           {state.error}
         </p>
       ) : null}
-      <Button type="submit" block state={pending ? "loading" : "rest"} loadingLabel="Criando sua conta">
-        Criar conta grátis
+      <Button type="submit" block state={pending ? "loading" : "rest"} loadingLabel={t("signUp.submitting")}>
+        {t("signUp.submit")}
       </Button>
     </form>
   );

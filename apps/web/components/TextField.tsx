@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useId, useState, type InputHTMLAttributes, type ReactNode } from "react";
 
 type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id"> & {
@@ -18,6 +19,7 @@ export function TextField({ label, hint, error, reveal = false, type = "text", c
   const hintId = `${id}-dica`;
   const errorId = `${id}-erro`;
   const [visible, setVisible] = useState(false);
+  const t = useTranslations("auth.textField");
   const describedBy = [hint ? hintId : null, error ? errorId : null].filter(Boolean).join(" ") || undefined;
   return (
     <div className={`hs-tf${className ? ` ${className}` : ""}`}>
@@ -40,7 +42,7 @@ export function TextField({ label, hint, error, reveal = false, type = "text", c
             aria-pressed={visible}
             onClick={() => setVisible((v) => !v)}
           >
-            {visible ? "Ocultar" : "Mostrar"}
+            {visible ? t("hide") : t("show")}
           </button>
         ) : null}
       </div>

@@ -1,13 +1,15 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  const t = await getTranslations("auth");
   return (
     <div className="flex min-h-dvh flex-col bg-papel">
       <a className="hs-skip" href="#conteudo">
-        Pular para o conteúdo
+        {t("skipToContent")}
       </a>
       <header className="flex h-16 items-center px-5 sm:px-8">
-        <Link href="/" className="hs-wordmark text-[22px]" aria-label="HelloSquad, página inicial">
+        <Link href="/" className="hs-wordmark text-[22px]" aria-label={t("homeLink")}>
           HelloSquad
         </Link>
       </header>
