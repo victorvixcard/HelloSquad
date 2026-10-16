@@ -272,6 +272,48 @@ curl -s -X POST $API/credits/estimate -H "$AUTH" -H "$JSON" \
 
 O worker reserva a estimativa ao começar o run (`credit_holds`, chave `run:<id>`; a retentativa usa a mesma reserva), cobra ao entregar (captura, `runs.credits_charged`) e libera se o run falhar ou se o Nexo só perguntar. Sem saldo, o run termina em `failed` com `insufficient_credits` e nada é cobrado. Erros da estimativa: `price_not_found` 404, `not_found` 404 (workspace alheio), `work_item_not_found` 404, `validation_error` 422. Extrato no banco: `select entry_type, amount, reserved_delta, run_id from credit_ledger order by created_at` (somente inserção). Saída dos curls acima em `docs/parciais/s1e/curl_creditos.txt`.
 
+### Conversa completa (S1f)
+
+Conversa em grupo (2 a 6 especialistas; o mesmo conjunto reabre a mesma conversa), resposta de **um especialista por vez**, contexto de objeto para os tipos do protótipo, não lidas por pessoa, cartão na mensagem do agente e ações da Memória que faltavam. Com as variáveis do bloco da S1b (`API`, `AUTH`, `JSON`, `WS` da Miolo):
+
+```bash
+# 1. Grupo: à frente o Nexo se participa, senão o primeiro na ordem do squad
+G=$(curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" \
+  -d '{"kind":"group","agent_ids":["otto","bia","kaia"]}' | python3 -c 'import sys,json; print(json.load(sys.stdin)["id"])')
+
+# 2. Mensagem e pedido de resposta: "@Nome" de quem participa direciona; sem menção, o especialista mais
+#    ligado ao pedido (palavras do protótipo); sem nenhuma, o Nexo ou o primeiro. 201; repetir → 200 (mesmo run).
+M=$(curl -s -X POST $API/conversations/$G/messages -H "$AUTH" -H "$JSON" \
+  -d '{"body":"Quero entender o mercado e a concorrência do bairro."}' | python3 -c 'import sys,json; print(json.load(sys.stdin)["id"])')
+curl -s -X POST $API/messages/$M/reply -H "$AUTH"      # {"agent_id":"bia","status":"queued",…}
+
+# 3. make worker (ou uv run hellosquad-worker --drain): a Bia responde; outra resposta na mesma conversa
+#    espera a vez ("outro especialista está respondendo nesta conversa; volta em 5s")
+
+# 4. Não lidas da pessoa logada e marcar como lida (qualquer membro, até viewer)
+curl -s $API/workspaces/$WS/conversations/unread -H "$AUTH"
+# {"conversations":1,"messages":2,"squad_room":{…},"by_agent":[{"conversations":1,"messages":2,"agent_id":"bia"}]}
+curl -s -X POST $API/conversations/$G/read -H "$AUTH"   # {"…","unread_count":0}
+
+# 5. Contexto de objeto que ainda não mora no banco: chave + título; período e origem para o cartão
+curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" -d '{"kind":"object","primary_agent_id":"iris",
+  "context":{"type":"metric","key":"alcance:semana","title":"Alcance da semana","period":"Semana 42","origin":"Resultados · semana"}}'
+
+# 6. Memória: "Não usar mais" / "Voltar a usar" / "Confirmar" (Da fonte, Observado) / "Continua valendo"
+curl -s -X POST $API/memory/facts/5eed0000-0000-4000-8000-000000000813/state -H "$AUTH" -H "$JSON" -d '{"action":"stop_using"}'
+curl -s -X POST $API/workspaces/$WS/memory/facts -H "$AUTH" -H "$JSON" \
+  -d '{"area":"business","content":"Aos domingos a loja fecha às 13h"}'   # "Adicionar conhecimento"
+curl -s -G $API/workspaces/$WS/memory/search --data-urlencode 'q=nao usar' -H "$AUTH"   # acha "Não usar…"
+```
+
+**Tipos de contexto** (`context.type`): pelo `id` (o objeto mora no banco; título e estado vêm de lá) `project`, `work_item`, `delivery`, `memory_fact`, `insight` ("<Agente> percebeu"); pela `key`, com `title` obrigatório e `status`/`summary` opcionais, `calendar_post`, `metric`, `opportunity`, `responsibility`, `segment`, `document` e `capability` (a chave é o código da delivery, ex.: `04.01`; abre uma conversa por pedido). `period` e `origin` valem para todos. O cartão de contexto (`GET /conversations/{id}` → `context`) devolve tipo, id ou chave, título, estado, resumo, período e origem.
+
+**Cartão na mensagem do agente** (`GET /conversations/{id}/messages` → `card`): `material` na entrega (ligado a `delivery_version_id`, `approval_id` e `work_item_id`; ações `approve` e `request_changes`) e `question` na pergunta do Nexo (`approval_id`; ação `answer`). O cartão traz o estado atual do objeto (`approval_status`, `decision`, `answer`, `version_status`, `work_item_status`); a decisão continua em `POST /approvals/{id}/decision`. O banco aceita também `work_created`, `approval`, `options`, `team` e `budget`, sempre ligados ao objeto.
+
+**Status por etapa** (`run_events`): `agent.thinking`, o novo `conversation.typing` (`conversation_id`, `agent_id`) e `approval.requested` levam `status_mode`, `status_short` ("escrevendo", "aguarda você") e `status_label` ("Otto · criando a primeira versão", "Bia · escrevendo", "Otto · aguarda sua aprovação").
+
+Rotas novas: `GET /workspaces/{id}/conversations/unread`, `POST /conversations/{id}/read`, `POST /messages/{id}/reply`, `POST /memory/facts/{id}/state`, `POST /workspaces/{id}/memory/facts`, `POST /memory/suggestions/{id}/seen`, `PUT /workspaces/{id}/memory/profile`. Saída de um roteiro completo contra a API local em `docs/parciais/s1f/curl_conversa.txt`.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
