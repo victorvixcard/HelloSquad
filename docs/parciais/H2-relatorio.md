@@ -194,7 +194,9 @@ API, Rafael, Carla, Pedro e anônimo veem **0 linhas** da Miolo em `calendar_pos
 `credit_holds`, `run_context_items` (anônimo 401; `billing_customers`, `payment_events`, `plan_prices`, `topup_packs`
 403 para todos). Escrita direta pela Data API (INSERT/PATCH/DELETE em 12 combinações, inclusive a Marina no próprio
 negócio): 403. API: 8 rotas novas com o id da Miolo → 404 para Rafael, Carla e Pedro, 401 sem token; Rafael importa
-na Miolo → 404; Carla lê cobrança da Vitta → 403. Realtime: nenhuma tabela pública na publicação; regressão da H1
+na Miolo → 404; Carla lê cobrança da Vitta → 403. IDOR no objeto da conversa: Rafael abre, na Vitta ou na Miolo,
+conversa sobre um post do calendário ou um trabalho da Miolo pelo id real → 404 nos quatro casos; controle da Marina
+201 (`h2/12_idor_objeto.txt`). Realtime: nenhuma tabela pública na publicação; regressão da H1
 (canal privado) passou (`h2/09_realtime_regressao.txt`). No prompt: o run da Vitta não tem nenhum aprendizado nem a
 palavra "Miolo" (`h2/08_falha_e_contexto.txt` B4).
 
@@ -216,7 +218,8 @@ gêmeos (`PAYMENT_RECEIVED` e `PAYMENT_CONFIRMED` com ids diferentes) **em paral
 em paralelo → 1 grant; assinatura de outro recurso, segredo errado, sem `x-request-id`, sem assinatura, token Asaas
 ausente ou errado, assinatura simulada errada → 401 e nada gravado; dois schedulers renovando ao mesmo tempo → o ciclo
 uma vez. Respostas de cobrança ao owner sem dinheiro (`h2/09_*.txt`); sem rota de preço no app nem no site
-(`find apps/web/app`; sitemap sem `/precos`); 0 chave real no repo e no histórico (E-xx do auxiliar).
+(`find apps/web/app`; sitemap sem `/precos`); 0 chave real no repo e no histórico (`h2/estatico/achados.md`,
+parte 1 item 2); o provedor simulado é recusado fora de `local`/`test` (`billing/factory.py:37-40`).
 
 **7. E-mail** (`h2/05_email.txt`, `05b`): Carla (es) recebe "Entrega lista" em espanhol e Rafael (sem idioma, Vitta en)
 "Needs you" em inglês; nada da Vitta para a Marina; editora não muda o idioma do negócio (403); preferência desligada
