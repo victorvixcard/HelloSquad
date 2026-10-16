@@ -7,6 +7,7 @@ type Message = components["schemas"]["Message"];
 type ConversationDetail = components["schemas"]["ConversationDetail"];
 type Approval = components["schemas"]["Approval"];
 type Decision = components["schemas"]["ApprovalDecision"];
+type RunEvent = components["schemas"]["RunEvent"];
 export type FollowUp = "cancel" | "revise";
 
 export type ActionResult<T> = { ok: true; data: T } | { ok: false; code: string; message: string };
@@ -111,6 +112,60 @@ export async function createDirectConversationAction(
       }),
     );
     return { ok: true, data: { id: conversation.id } };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+export type WorkItemStarted = { workItemId: string; runId: string | null; conversationId: string | null };
+
+/**
+ * POST /messages/{id}/work-items: o pedido vira trabalho (`draft`) com run na fila (`runs_interactive`), e o worker
+ * leva até "Precisa de você". Idempotente pela mensagem + tipo de entrega (sem chave própria): repetir devolve o mesmo.
+ */
+export async function createWorkItemAction(
+  messageId: string,
+  deliveryType: string,
+  title: string,
+): Promise<ActionResult<WorkItemStarted>> {
+  try {
+    const api = await serverApi();
+    const created = await unwrap(
+      api.POST("/messages/{message_id}/work-items", {
+        params: { path: { message_id: messageId } },
+        body: { delivery_type: deliveryType, title, briefing: {} },
+      }),
+    );
+    return { ok: true, data: { workItemId: created.id, runId: created.run_id, conversationId: created.conversation_id } };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+export type RunInfo = { conversationId: string | null; workItemId: string | null; agentId: string; status: string };
+
+/** GET /runs/{id}: liga um run visto no Realtime à conversa e ao trabalho dele (o broadcast só traz ids do run). */
+export async function runInfoAction(runId: string): Promise<ActionResult<RunInfo>> {
+  try {
+    const api = await serverApi();
+    const run = await unwrap(api.GET("/runs/{run_id}", { params: { path: { run_id: runId } } }));
+    return {
+      ok: true,
+      data: { conversationId: run.conversation_id, workItemId: run.work_item_id, agentId: run.agent_id, status: run.status },
+    };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+/** GET /runs/{id}/events?after=: o que o canal perdeu enquanto a conexão caiu (fallback do Realtime). */
+export async function runEventsAction(runId: string, after: number): Promise<ActionResult<RunEvent[]>> {
+  try {
+    const api = await serverApi();
+    const page = await unwrap(
+      api.GET("/runs/{run_id}/events", { params: { path: { run_id: runId }, query: { after, limit: 500 } } }),
+    );
+    return { ok: true, data: page.items };
   } catch (error) {
     return fail(error);
   }

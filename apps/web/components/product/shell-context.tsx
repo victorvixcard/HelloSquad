@@ -40,6 +40,8 @@ export type ShellApi = {
   /** Só o dono da conta (papel owner) decide: revisar, aprovar, rejeitar, autorizar (dono, 16/10 08:55). */
   canDecide: boolean;
   toast: (text: string, agent?: AgentId) => void;
+  /** Conversa de cada trabalho (id do trabalho → id da conversa). */
+  workConversations: Record<string, string>;
 };
 
 export const ShellContext = createContext<ShellApi | null>(null);

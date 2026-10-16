@@ -23,6 +23,7 @@ export function makeShell(overrides: Partial<ShellApi> = {}): ShellApi {
     rememberThread: vi.fn(),
     canDecide: true,
     toast: vi.fn(),
+    workConversations: {},
     ...overrides,
   };
 }

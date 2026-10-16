@@ -34,6 +34,7 @@
   "itemTipSay": "{label} · {say}",
   "say": {
     "roomAll": "todos os especialistas",
+    "roomWorking": "o squad está trabalhando",
     "needs": "{count, plural, one {# aguarda você} other {# aguardam você}}",
     "autoNone": "não configurado",
     "memPending": "{count, plural, one {# informação para confirmar} other {# informações para confirmar}}",

@@ -36,7 +36,14 @@ export default async function WorkspaceLayout({
     if (c.kind !== "agent_direct" || c.archived_at || !c.primary_agent_id || !isAgentId(c.primary_agent_id)) continue;
     (directThreads[c.primary_agent_id] ??= []).push({ id: c.id, title: c.title, at: recent(c) });
   }
-  const waiting = [...new Set(core.approvals.map((a) => a.requested_by_agent_id).filter(isAgentId))];
+  // Pendências da faixa "Precisa de você": o estado ao vivo parte delas (quem aguarda você) e o Realtime atualiza.
+  const pending = core.approvals
+    .filter((a) => a.status === "pending" && isAgentId(a.requested_by_agent_id))
+    .map((a) => ({ id: a.id, agent: a.requested_by_agent_id as AgentId, kind: a.kind, workItemId: a.work_item.id }));
+  // Conversa de cada trabalho: responder à pergunta do agente acontece na conversa em que ele perguntou.
+  const workConversations = Object.fromEntries(
+    core.workItems.filter((w) => w.conversation_id).map((w) => [w.id, w.conversation_id as string]),
+  );
   const firstName = (me.user.full_name || me.user.email || "").trim().split(/\s+/)[0] ?? "";
   return (
     <ProductShell
@@ -48,7 +55,8 @@ export default async function WorkspaceLayout({
         businesses: me.memberships.map((m) => ({ slug: m.workspace.slug, name: m.workspace.name })),
       }}
       needsCount={core.approvals.length}
-      waitingAgents={waiting}
+      pending={pending}
+      workConversations={workConversations}
       room={room}
       directThreads={directThreads}
       canDecide={membership.role === "owner"}

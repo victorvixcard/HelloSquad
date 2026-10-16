@@ -6,7 +6,9 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { productLayout, type ConversationMode } from "@/lib/product-layout";
 import type { AccountMenuProps } from "./AccountMenu";
+import type { PendingApproval } from "@/lib/live/live-state";
 import { ConversationPanel } from "./ConversationPanel";
+import { LiveProvider, useLive } from "./live";
 import { ShellContext, type ConversationTarget, type DirectThread, type ShellApi } from "./shell-context";
 import { ENV_OF_AGENT, Sidebar, type NavId } from "./Sidebar";
 
@@ -19,8 +21,10 @@ export type ProductShellProps = {
   workspace: { id: string; slug: string; name: string };
   account: Omit<AccountMenuProps, "onUnavailable">;
   needsCount: number;
-  /** Especialistas com decisão pendente: olhos grandes (expressão "big" da V4.6 para quem espera). */
-  waitingAgents: AgentId[];
+  /** Pendências ("Precisa de você") lidas pelo servidor: ponto de partida do estado ao vivo. */
+  pending: PendingApproval[];
+  /** Conversa de cada trabalho (responder à pergunta do agente acontece onde ele perguntou). */
+  workConversations: Record<string, string>;
   /** Sala do Squad do workspace (null = ainda não existe). */
   room: string | null;
   /** Conversas diretas por especialista, da mais recente para a mais antiga. */
@@ -63,7 +67,16 @@ function useViewport() {
  * com as medidas do renderVals() do protótipo. A conversa vive aqui para persistir entre ambientes.
  */
 export function ProductShell(props: ProductShellProps) {
-  const { workspace, account, needsCount, waitingAgents, room, canDecide, initialSideMin, children } = props;
+  return (
+    <LiveProvider workspaceId={props.workspace.id} pending={props.pending}>
+      <Shell {...props} />
+    </LiveProvider>
+  );
+}
+
+function Shell(props: ProductShellProps) {
+  const { workspace, account, needsCount, room, canDecide, initialSideMin, workConversations, children } = props;
+  const live = useLive();
   const t = useTranslations("shell");
   const tc = useTranslations("common");
   const pathname = usePathname();
@@ -132,8 +145,9 @@ export function ProductShell(props: ProductShellProps) {
       rememberThread,
       canDecide,
       toast,
+      workConversations,
     }),
-    [workspace, layout, mode, target, openConversation, closeConversation, conversationIds, directThreads, rememberThread, canDecide, toast],
+    [workspace, layout, mode, target, openConversation, closeConversation, conversationIds, directThreads, rememberThread, canDecide, toast, workConversations],
   );
 
   function toggleSide() {
@@ -143,11 +157,15 @@ export function ProductShell(props: ProductShellProps) {
     document.cookie = `${SIDEBAR_COOKIE}=${next ? "min" : "full"}; path=/app; max-age=31536000; samesite=lax`;
   }
 
-  const expression = (agent: AgentId): AgentExpression => (waitingAgents.includes(agent) ? "big" : "oval");
+  // V4.6 (_vSide): rosto "big" para quem aguarda você; o resto "oval". Vem do estado ao vivo (runs e pendências).
+  const expression = (agent: AgentId): AgentExpression => (live.modes[agent] === "wait" ? "big" : "oval");
+  // "o squad está trabalhando" quando há run em curso na Sala do Squad (roomLive da V4.6).
+  const roomLive = Object.values(live.state.runs).some((r) => r.status === "running" && !!room && r.conversationId === room);
 
   return (
     <ShellContext.Provider value={api}>
       <div
+        data-live={live.state.connection}
         className={
           layout.rootClassName +
           // V4.6: com a conversa do próprio especialista ao lado, a página sabe que ela está aberta.
@@ -165,6 +183,7 @@ export function ProductShell(props: ProductShellProps) {
           onToggle={toggleSide}
           needsCount={needsCount}
           agentExpression={expression}
+          roomLive={roomLive}
           account={{ ...account, onUnavailable: () => toast(tc("unavailable")) }}
         />
         <div className="ps-stage">

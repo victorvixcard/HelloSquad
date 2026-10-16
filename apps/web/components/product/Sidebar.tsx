@@ -43,6 +43,8 @@ export type SidebarProps = {
   needsCount: number;
   /** Expressão de cada especialista (quem aguarda você fica de olhos grandes). */
   agentExpression: (agent: AgentId) => AgentExpression;
+  /** Run em curso na Sala do Squad: a dica vira "o squad está trabalhando" (V4.6). */
+  roomLive?: boolean;
   account: AccountMenuProps;
 };
 
@@ -91,7 +93,7 @@ function AutoSwitch() {
 }
 
 /** Barra lateral da Product UI V4.6: Principal, Seu squad e Gestão; conta e notificações na base. */
-export function Sidebar({ slug, current, min, onToggle, needsCount, agentExpression, account }: SidebarProps) {
+export function Sidebar({ slug, current, min, onToggle, needsCount, agentExpression, roomLive = false, account }: SidebarProps) {
   const t = useTranslations("shell");
   const tc = useTranslations("common");
   const base = `/app/${slug}`;
@@ -102,7 +104,7 @@ export function Sidebar({ slug, current, min, onToggle, needsCount, agentExpress
       key: "main",
       items: [
         { id: "home", label: t("items.home"), href: base },
-        { id: "room", label: t("items.room"), href: `${base}/sala-do-squad`, say: t("say.roomAll") },
+        { id: "room", label: t("items.room"), href: `${base}/sala-do-squad`, say: roomLive ? t("say.roomWorking") : t("say.roomAll") },
       ],
     },
     {
