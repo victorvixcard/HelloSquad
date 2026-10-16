@@ -52,12 +52,12 @@ Los siete comparten la Memoria de Marca. Lo que confirmaste para uno vale para t
 
 Algunos pedidos que funcionan bien como primer trabajo:
 
-- "¿Qué necesitas de mí esta semana?" (Nexo)
-- "¿Dónde puede crecer mi negocio de aquí a Navidad?" (Bia)
-- "Crea un post para una fecha especial" (Kaia)
-- "¿Cómo va el calendario de la próxima semana?" (Otto)
+- "¿Qué necesita de mí esta semana?" (Nexo)
+- "¿Dónde puede crecer mi negocio antes de Navidad?" (Bia)
+- "Crear un post para una fecha especial" (Kaia)
+- "¿Cómo va el plan de la próxima semana?" (Otto)
 - "¿Por qué mi sitio no aparece en los buscadores?" (Kiwi)
-- "Reactiva a los clientes que desaparecieron" (Max)
+- "Reactivar clientes que desaparecieron" (Max)
 - "Analiza mis últimos resultados" (Íris)
 
 [Empezar con el squad]
