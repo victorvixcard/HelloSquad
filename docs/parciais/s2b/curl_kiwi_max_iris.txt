@@ -1,0 +1,73 @@
+bônus local concedido: 100.00
+== 1. Importação de CSV (Max): linha sem consentimento, duplicata e e-mail fora de .example recusados
+  total 4 aceitas 1 recusadas [{'line': 3, 'reason': 'no_consent'}, {'line': 4, 'reason': 'duplicate_existing'}, {'line': 5, 'reason': 'email_not_fictitious'}]
+  base: {"total": 21, "consented": {"email": 11, "whatsapp": 7, "any_channel": 11}, "without_consent": 10, "sources": [{"source": "importação CSV de teste", "contacts": 20}, {"source": "Planilha de teste do balcão", "contacts": 1}]}
+== 2. Primeira rodada: 05.01, 06.03, 07.02, 07.03
+2026-10-16 15:39:18,452 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+2026-10-16 15:39:18,466 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+2026-10-16 15:39:18,484 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5600 tokens de entrada, 1350 de saída, 3400 lidos e 3400 gravados no cache, US$ 0.059130
+2026-10-16 15:39:18,497 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5600 tokens de entrada, 1350 de saída, 3400 lidos e 3400 gravados no cache, US$ 0.059130
+  05.01 | needs_you | v1 aguarda sua aprovação | media_plan v1
+      execucao = {"investimento": "nao_executado", "conta_de_anuncios": "nao_conectada"}
+      orcamento.teto_informado = 1500
+      orcamento.teto_proposto = 1200
+      orcamento.distribuicao = [{"canal": "meta_ads", "valor": 900}, {"canal": "google_ads", "valor": 300}]
+  06.03 | needs_you | v1 aguarda sua aprovação | customer_segments v1
+      base.total = 21
+      base.com_consentimento = {"algum": 11, "email": 11, "whatsapp": 7}
+      base.sem_consentimento = 10
+      segmentos.0.id = "ativos_30"
+      segmentos.0.tamanho = 7
+      segmentos.0.elegiveis = {"email": 4, "whatsapp": 3}
+  07.02 | needs_you | v1 aguarda sua aprovação | performance_analysis v1
+      dados.periodo_atual = {"fim": "2026-10-15", "inicio": "2026-09-16"}
+      dados.lacunas.0 = {"de": "2026-09-01", "ate": "2026-09-03", "canal": "site", "metrica": "sessions"}
+      evidencias.0.variacao_pct = -13.9
+      evidencias.0.dias_com_dado = {"atual": 30, "anterior": 27}
+      leituras.0.tipo = "fato"
+      leituras.0.evidencias = ["E1"]
+  07.03 | needs_you | v1 aguarda sua aprovação | period_report v1
+      dados.atualizado_ate = "2026-10-15"
+      evidencias.2.metrica = "reach"
+      evidencias.2.variacao_pct = 18.3
+      relatorio_anterior = null
+== 3. Aprovação da dona da conta; segunda rodada: 05.02, 06.01, 07.04
+  decided
+  decided
+  decided
+  decided
+2026-10-16 15:39:19,679 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5400 tokens de entrada, 1700 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.063840
+2026-10-16 15:39:19,693 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+2026-10-16 15:39:19,703 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5600 tokens de entrada, 1350 de saída, 3400 lidos e 3400 gravados no cache, US$ 0.059130
+  05.02 | needs_you | v1 aguarda sua aprovação | ad_tests v1
+      execucao = {"anuncios": "nao_criados", "conta_de_anuncios": "nao_conectada"}
+      plano_de_midia = {"versao": 1, "teto_proposto": 1200, "delivery_version_id": "5e3ed0e7-14f1-440c-a2ac-4b26522dca1e"}
+      testes.0.variacoes = ["V1", "V2"]
+      testes.0.verba = 300
+  06.01 | needs_you | v1 aguarda sua aprovação | retention_campaign v1
+      segmento = {"id": "inativos_90", "por_que": "Já conhecem o pão e pararam de comprar; o Natal é um bom motivo para voltar.", "tamanho": 7, "elegiveis": {"email": 3, "whatsapp": 2}}
+      envio = "nao_autorizado"
+  07.04 | needs_you | v1 aguarda sua aprovação | prioritized_recommendations v1
+      analises = [{"versao": 1, "delivery_version_id": "f3531d11-ba3d-44b9-9988-88049e523885"}, {"versao": 1, "delivery_version_id": "f494ca97-0512-4e4b-bc53-b140aad1033b"}]
+      recomendacoes.0.base = "dado"
+      recomendacoes.0.evidencias = ["E4"]
+      recomendacoes.0.discutir_com = ["nexo", "max"]
+  decided
+== 4. Terceira rodada: 06.02 segue a campanha aprovada; nada é enviado
+2026-10-16 15:39:20,604 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+  06.02 | needs_you | v1 aguarda sua aprovação | message_sequence v1
+      envio = "nao_autorizado"
+      campanha = {"versao": 1, "delivery_version_id": "67efa4a2-4f2e-4056-bc49-54b7aebe6276"}
+      publico = {"tamanho": 7, "elegiveis": {"email": 3, "whatsapp": 2}}
+      etapas.0.canal = "email"
+      etapas.0.descadastro = "Link para sair da lista no rodapé do e-mail; quem clica não recebe mais nada."
+== 5. Métricas, conversa sobre a série e idioma do negócio
+   site sessions sessões ['fonte_de_teste'] 87 pontos; sem dado: ['2026-09-01', '2026-09-02', '2026-09-03']
+  conversa: iris {"type": "metric", "id": null, "key": "site.sessions", "title": "Sessões no site", "status": null, "summary": null, "period": "2026-07-18/2026-10-15", "origin": "fonte_de_teste"}
+  idioma do negócio: miolo en
+  /me: pt-BR ['en']
+== 6. Trilha (primeiro acesso, sem números): a Íris pede conexão, sem cobrar
+2026-10-16 15:39:21,585 INFO hellosquad.worker: run … concluído: briefing incompleto (metrics); pergunta enviada, trabalho em needs_you; 1600 tokens de entrada, 210 de saída, 0 lidos e 0 gravados no cache, US$ 0.002650
+   07.02 needs_you | Uma pergunta aguarda você | entregas: 0
+   Ainda não tenho números da Trilha Urbana para ler. Conecte o Instagram ou envie a planilha de encomendas e me avise por aqui. Nada aparece antes de existir um dado real.
+== seed reaplicado
