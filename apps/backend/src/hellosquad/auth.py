@@ -40,6 +40,12 @@ class Principal:
         metadata = self.claims.get("user_metadata") or {}
         return metadata.get("full_name") or metadata.get("name") or None
 
+    @property
+    def locale(self) -> str | None:
+        """Idioma que a pessoa escolheu (user_metadata.locale); fora de pt-BR, en e es, nenhum."""
+        value = (self.claims.get("user_metadata") or {}).get("locale")
+        return value if value in ("pt-BR", "en", "es") else None
+
 
 class TokenVerifier:
     def __init__(

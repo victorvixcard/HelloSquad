@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import StrEnum
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints
@@ -41,10 +41,15 @@ class WorkspaceCreate(BaseModel):
     )
 
 
+Locale = Literal["pt-BR", "en", "es"]
+SUPPORTED_LOCALES = ("pt-BR", "en", "es")
+
+
 class WorkspaceSummary(BaseModel):
     id: UUID
     slug: str
     name: str
+    locale: Locale = Field(description="Idioma do negócio; os agentes respondem nele (ADR-0010).")
 
 
 class Workspace(WorkspaceSummary):
@@ -56,10 +61,21 @@ class WorkspaceList(BaseModel):
     items: list[Workspace]
 
 
+class WorkspaceUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    locale: Locale = Field(description="Idioma do negócio (owner ou admin).")
+
+
 class User(BaseModel):
     id: UUID
     email: str | None
     full_name: str | None
+    locale: Locale | None = Field(
+        default=None,
+        description="Idioma escolhido pela pessoa (cadastro, user_metadata.locale); null usa o do "
+        "negócio.",
+    )
 
 
 class Membership(BaseModel):

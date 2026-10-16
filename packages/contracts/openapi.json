@@ -248,6 +248,102 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "identity"
+        ],
+        "summary": "Muda o idioma do negócio (owner ou admin)",
+        "operationId": "update_workspace_workspaces__workspace_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/workspaces/{workspace_id}/conversations": {
@@ -4446,6 +4542,318 @@
         ]
       }
     },
+    "/workspaces/{workspace_id}/contacts/imports": {
+      "post": {
+        "tags": [
+          "contacts"
+        ],
+        "summary": "Importa contatos de um CSV (só com consentimento; nada é enviado)",
+        "operationId": "import_contacts_workspaces__workspace_id__contacts_imports_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactImportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactImport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/contacts/summary": {
+      "get": {
+        "tags": [
+          "contacts"
+        ],
+        "summary": "Resumo da base: total, quem aceita mensagem por canal e de onde vieram os contatos",
+        "operationId": "contact_summary_workspaces__workspace_id__contacts_summary_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/metrics": {
+      "get": {
+        "tags": [
+          "metrics"
+        ],
+        "summary": "Métricas diárias por canal no período, com unidade, origem e dias sem dado",
+        "operationId": "list_metrics_workspaces__workspace_id__metrics_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Primeiro dia (AAAA-MM-DD).",
+              "title": "From"
+            },
+            "description": "Primeiro dia (AAAA-MM-DD)."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Último dia, até 366 dias depois.",
+              "title": "To"
+            },
+            "description": "Último dia, até 366 dias depois."
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Channel"
+            }
+          },
+          {
+            "name": "metric",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Metric"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -5629,6 +6037,183 @@
           "label"
         ],
         "title": "CardOption"
+      },
+      "ConsentCounts": {
+        "properties": {
+          "email": {
+            "type": "integer",
+            "title": "Email"
+          },
+          "whatsapp": {
+            "type": "integer",
+            "title": "Whatsapp"
+          },
+          "any_channel": {
+            "type": "integer",
+            "title": "Any Channel",
+            "description": "Aceitam receber mensagens em ao menos um canal."
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "whatsapp",
+          "any_channel"
+        ],
+        "title": "ConsentCounts"
+      },
+      "ContactImport": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "file_name": {
+            "type": "string",
+            "title": "File Name"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "total_rows": {
+            "type": "integer",
+            "title": "Total Rows"
+          },
+          "accepted_rows": {
+            "type": "integer",
+            "title": "Accepted Rows"
+          },
+          "refused_rows": {
+            "type": "integer",
+            "title": "Refused Rows"
+          },
+          "refused": {
+            "items": {
+              "$ref": "#/components/schemas/RefusedLine"
+            },
+            "type": "array",
+            "title": "Refused",
+            "description": "Linhas recusadas: número e motivo, sem o dado."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "file_name",
+          "source",
+          "total_rows",
+          "accepted_rows",
+          "refused_rows",
+          "refused",
+          "created_at"
+        ],
+        "title": "ContactImport"
+      },
+      "ContactImportRequest": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "File Name",
+            "examples": [
+              "clientes-balcao.csv"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source",
+            "description": "Origem dos dados, registrada em cada contato e consentimento.",
+            "examples": [
+              "Planilha de clientes do balcão"
+            ]
+          },
+          "csv": {
+            "type": "string",
+            "maxLength": 2000000,
+            "minLength": 1,
+            "title": "Csv",
+            "description": "Conteúdo do CSV (vírgula ou ponto e vírgula), com cabeçalho: nome, email, telefone, consentimento_email, consentimento_whatsapp (sim/não), data_consentimento (AAAA-MM-DD ou DD/MM/AAAA) e, opcionais, ultima_compra e compras."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_name",
+          "source",
+          "csv"
+        ],
+        "title": "ContactImportRequest"
+      },
+      "ContactSource": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "contacts": {
+            "type": "integer",
+            "title": "Contacts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source",
+          "contacts"
+        ],
+        "title": "ContactSource"
+      },
+      "ContactSummary": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "consented": {
+            "$ref": "#/components/schemas/ConsentCounts"
+          },
+          "without_consent": {
+            "type": "integer",
+            "title": "Without Consent",
+            "description": "Não recebem mensagem em canal nenhum."
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/ContactSource"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "last_import_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Import At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "consented",
+          "without_consent",
+          "sources",
+          "last_import_at"
+        ],
+        "title": "ContactSummary"
       },
       "ContextRef": {
         "properties": {
@@ -7033,6 +7618,19 @@
           "unavailable"
         ],
         "title": "FactSourceState"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
       },
       "Health": {
         "properties": {
@@ -8475,6 +9073,118 @@
         ],
         "title": "MessagePage"
       },
+      "MetricPoint": {
+        "properties": {
+          "day": {
+            "type": "string",
+            "format": "date",
+            "title": "Day"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "day",
+          "value"
+        ],
+        "title": "MetricPoint"
+      },
+      "MetricSeries": {
+        "properties": {
+          "channel": {
+            "type": "string",
+            "title": "Channel",
+            "description": "Id do canal; o web traduz.",
+            "examples": [
+              "site"
+            ]
+          },
+          "metric": {
+            "type": "string",
+            "title": "Metric",
+            "description": "Id da métrica; o web traduz.",
+            "examples": [
+              "sessions"
+            ]
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "examples": [
+              "sessões"
+            ]
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sources",
+            "examples": [
+              [
+                "fonte_de_teste"
+              ]
+            ]
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/MetricPoint"
+            },
+            "type": "array",
+            "title": "Points"
+          },
+          "missing_days": {
+            "items": {
+              "type": "string",
+              "format": "date"
+            },
+            "type": "array",
+            "title": "Missing Days",
+            "description": "Dias do período sem dado (não são zero)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "channel",
+          "metric",
+          "unit",
+          "sources",
+          "points",
+          "missing_days"
+        ],
+        "title": "MetricSeries"
+      },
+      "MetricsPage": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "date",
+            "title": "End"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MetricSeries"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start",
+          "end",
+          "items"
+        ],
+        "title": "MetricsPage"
+      },
       "MilestoneCreate": {
         "properties": {
           "title": {
@@ -9578,6 +10288,41 @@
         "type": "object",
         "title": "ReadCreate"
       },
+      "RefusedLine": {
+        "properties": {
+          "line": {
+            "type": "integer",
+            "title": "Line",
+            "description": "Linha do arquivo (o cabeçalho é a linha 1)."
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "missing_name",
+              "missing_address",
+              "invalid_email",
+              "email_not_fictitious",
+              "invalid_phone",
+              "no_consent",
+              "invalid_consent",
+              "consent_without_address",
+              "missing_consent_date",
+              "invalid_consent_date",
+              "invalid_purchase_date",
+              "invalid_purchases_count",
+              "duplicate_in_file",
+              "duplicate_existing"
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "line",
+          "reason"
+        ],
+        "title": "RefusedLine"
+      },
       "ReplyRequest": {
         "properties": {
           "run_id": {
@@ -10010,6 +10755,23 @@
               }
             ],
             "title": "Full Name"
+          },
+          "locale": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pt-BR",
+                  "en",
+                  "es"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locale",
+            "description": "Idioma escolhido pela pessoa (cadastro, user_metadata.locale); null usa o do negócio."
           }
         },
         "type": "object",
@@ -10019,6 +10781,46 @@
           "full_name"
         ],
         "title": "User"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
       },
       "WorkItem": {
         "properties": {
@@ -11073,6 +11875,16 @@
             "type": "string",
             "title": "Name"
           },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "pt-BR",
+              "en",
+              "es"
+            ],
+            "title": "Locale",
+            "description": "Idioma do negócio; os agentes respondem nele (ADR-0010)."
+          },
           "role": {
             "$ref": "#/components/schemas/WorkspaceRole",
             "description": "Seu papel neste workspace."
@@ -11088,6 +11900,7 @@
           "id",
           "slug",
           "name",
+          "locale",
           "role",
           "created_at"
         ],
@@ -11164,15 +11977,46 @@
           "name": {
             "type": "string",
             "title": "Name"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "pt-BR",
+              "en",
+              "es"
+            ],
+            "title": "Locale",
+            "description": "Idioma do negócio; os agentes respondem nele (ADR-0010)."
           }
         },
         "type": "object",
         "required": [
           "id",
           "slug",
-          "name"
+          "name",
+          "locale"
         ],
         "title": "WorkspaceSummary"
+      },
+      "WorkspaceUpdate": {
+        "properties": {
+          "locale": {
+            "type": "string",
+            "enum": [
+              "pt-BR",
+              "en",
+              "es"
+            ],
+            "title": "Locale",
+            "description": "Idioma do negócio (owner ou admin)."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "locale"
+        ],
+        "title": "WorkspaceUpdate"
       }
     },
     "securitySchemes": {

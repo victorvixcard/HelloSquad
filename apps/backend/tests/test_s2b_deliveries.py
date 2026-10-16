@@ -740,3 +740,47 @@ def test_parse_rows_accepts_comma_and_accented_headers():
         content.replace("contatos.example", "contatos.test"), today=date(2026, 10, 16), local=False
     )
     assert refused == []
+
+
+async def test_locale_in_me_and_business_language_change(api, access_token, admin_db, miolo):
+    """Pedido da A2a: idioma da pessoa e do negócio no GET /me; owner ou admin troca o do
+    negócio."""
+    me = (await api.get("/me", headers=bearer(access_token(MARINA)))).json()
+    stored = await one(
+        admin_db,
+        "select raw_user_meta_data ->> 'locale' as locale from auth.users where email = %s",
+        MARINA,
+    )
+    assert me["user"]["locale"] == stored["locale"]
+    assert [m["workspace"]["locale"] for m in me["memberships"]] == ["pt-BR"]
+    juliana = (await api.get("/me", headers=bearer(access_token(JULIANA)))).json()
+    assert juliana["user"]["locale"] is None
+
+    changed = await api.patch(
+        f"/workspaces/{miolo}", headers=bearer(access_token(MARINA)), json={"locale": "en"}
+    )
+    assert changed.status_code == 200, changed.text
+    assert (changed.json()["slug"], changed.json()["locale"]) == ("miolo", "en")
+    listed = await api.get("/workspaces", headers=bearer(access_token(MARINA)))
+    assert [w["locale"] for w in listed.json()["items"]] == ["en"]
+    audit = await one(
+        admin_db,
+        "select payload from public.audit_events where action = 'workspace.locale_changed' "
+        "and workspace_id = %s",
+        miolo,
+    )
+    assert audit["payload"] == {"from": "pt-BR", "to": "en"}
+
+    vitta = await workspace(admin_db, "vitta")
+    carla = await api.patch(
+        f"/workspaces/{vitta}", headers=bearer(access_token(CARLA)), json={"locale": "es"}
+    )
+    assert carla.status_code == 403, carla.text
+    rafael = await api.patch(
+        f"/workspaces/{miolo}", headers=bearer(access_token(RAFAEL)), json={"locale": "es"}
+    )
+    assert rafael.status_code == 404, rafael.text
+    unsupported = await api.patch(
+        f"/workspaces/{miolo}", headers=bearer(access_token(MARINA)), json={"locale": "fr"}
+    )
+    assert unsupported.status_code == 422

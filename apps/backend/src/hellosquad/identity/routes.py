@@ -17,6 +17,7 @@ from hellosquad.identity.schemas import (
     WorkspaceList,
     WorkspaceRole,
     WorkspaceSummary,
+    WorkspaceUpdate,
 )
 
 router = APIRouter(tags=["identity"])
@@ -24,7 +25,7 @@ router = APIRouter(tags=["identity"])
 # Créditos de cada workspace para a barra "Plano Squad · créditos do mês" (FLUXOS_DA_V46.md §1.1):
 # saldo pelo extrato; reservado e ciclo pelos grants válidos agora.
 MY_MEMBERSHIPS = """
-select w.id, w.slug, w.name, m.role,
+select w.id, w.slug, w.name, w.locale, m.role,
        pl.name as plan, coalesce(v.provisional, true) as provisional,
        app.credit_balance(w.id) as balance,
        c.reserved, c.cycle_credits, c.cycle_used, c.cycle_ends_at
@@ -48,20 +49,21 @@ order by w.name, w.id
 """
 
 MY_WORKSPACES = """
-select w.id, w.slug, w.name, w.created_at, m.role
+select w.id, w.slug, w.name, w.locale, w.created_at, m.role
 from public.workspaces w
 join public.memberships m on m.workspace_id = w.id and m.user_id = %s
 order by w.name, w.id
 """
 
 MY_WORKSPACE = """
-select w.id, w.slug, w.name, w.created_at, m.role
+select w.id, w.slug, w.name, w.locale, w.created_at, m.role
 from public.workspaces w
 join public.memberships m on m.workspace_id = w.id and m.user_id = %s
 where w.id = %s
 """
 
-CREATE_WORKSPACE = "select id, slug, name, created_at from app.create_workspace(%s, %s)"
+CREATE_WORKSPACE = "select id, slug, name, locale, created_at from app.create_workspace(%s, %s)"
+SET_LOCALE = "select id from app.set_workspace_locale(%s, %s)"
 
 
 @router.get(
@@ -73,10 +75,17 @@ async def get_me(principal: CurrentPrincipal, db: DatabaseDep) -> Me:
     async with db.transaction_as(principal) as conn:
         rows = await (await conn.execute(MY_MEMBERSHIPS, (principal.user_id,))).fetchall()
     return Me(
-        user=User(id=principal.user_id, email=principal.email, full_name=principal.full_name),
+        user=User(
+            id=principal.user_id,
+            email=principal.email,
+            full_name=principal.full_name,
+            locale=principal.locale,
+        ),
         memberships=[
             Membership(
-                workspace=WorkspaceSummary(id=row["id"], slug=row["slug"], name=row["name"]),
+                workspace=WorkspaceSummary(
+                    id=row["id"], slug=row["slug"], name=row["name"], locale=row["locale"]
+                ),
                 role=row["role"],
                 credits=CreditBalance(
                     plan=row["plan"],
@@ -148,4 +157,18 @@ async def get_workspace(
     if row is None:
         # Inexistente e alheio respondem igual: não revela que o workspace existe.
         raise ApiError(404, "workspace_not_found", "Workspace não encontrado.")
+    return Workspace(**row)
+
+
+@router.patch(
+    "/workspaces/{workspace_id}",
+    summary="Muda o idioma do negócio (owner ou admin)",
+    responses=error_responses(401, 403, 404, 422, 503),
+)
+async def update_workspace(
+    workspace_id: UUID, payload: WorkspaceUpdate, principal: CurrentPrincipal, db: DatabaseDep
+) -> Workspace:
+    async with db.transaction_as(principal) as conn:
+        await conn.execute(SET_LOCALE, (workspace_id, payload.locale))
+        row = await (await conn.execute(MY_WORKSPACE, (principal.user_id, workspace_id))).fetchone()
     return Workspace(**row)

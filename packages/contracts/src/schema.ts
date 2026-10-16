@@ -51,7 +51,8 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Muda o idioma do negócio (owner ou admin) */
+        patch: operations["update_workspace_workspaces__workspace_id__patch"];
         trace?: never;
     };
     "/workspaces/{workspace_id}/conversations": {
@@ -758,6 +759,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workspaces/{workspace_id}/contacts/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Importa contatos de um CSV (só com consentimento; nada é enviado) */
+        post: operations["import_contacts_workspaces__workspace_id__contacts_imports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/contacts/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Resumo da base: total, quem aceita mensagem por canal e de onde vieram os contatos */
+        get: operations["contact_summary_workspaces__workspace_id__contacts_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Métricas diárias por canal no período, com unidade, origem e dias sem dado */
+        get: operations["list_metrics_workspaces__workspace_id__metrics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1234,6 +1286,87 @@ export interface components {
              * @example Nos dois
              */
             label: string;
+        };
+        /** ConsentCounts */
+        ConsentCounts: {
+            /** Email */
+            email: number;
+            /** Whatsapp */
+            whatsapp: number;
+            /**
+             * Any Channel
+             * @description Aceitam receber mensagens em ao menos um canal.
+             */
+            any_channel: number;
+        };
+        /** ContactImport */
+        ContactImport: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** File Name */
+            file_name: string;
+            /** Source */
+            source: string;
+            /** Total Rows */
+            total_rows: number;
+            /** Accepted Rows */
+            accepted_rows: number;
+            /** Refused Rows */
+            refused_rows: number;
+            /**
+             * Refused
+             * @description Linhas recusadas: número e motivo, sem o dado.
+             */
+            refused: components["schemas"]["RefusedLine"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** ContactImportRequest */
+        ContactImportRequest: {
+            /**
+             * File Name
+             * @example clientes-balcao.csv
+             */
+            file_name: string;
+            /**
+             * Source
+             * @description Origem dos dados, registrada em cada contato e consentimento.
+             * @example Planilha de clientes do balcão
+             */
+            source: string;
+            /**
+             * Csv
+             * @description Conteúdo do CSV (vírgula ou ponto e vírgula), com cabeçalho: nome, email, telefone, consentimento_email, consentimento_whatsapp (sim/não), data_consentimento (AAAA-MM-DD ou DD/MM/AAAA) e, opcionais, ultima_compra e compras.
+             */
+            csv: string;
+        };
+        /** ContactSource */
+        ContactSource: {
+            /** Source */
+            source: string;
+            /** Contacts */
+            contacts: number;
+        };
+        /** ContactSummary */
+        ContactSummary: {
+            /** Total */
+            total: number;
+            consented: components["schemas"]["ConsentCounts"];
+            /**
+             * Without Consent
+             * @description Não recebem mensagem em canal nenhum.
+             */
+            without_consent: number;
+            /** Sources */
+            sources: components["schemas"]["ContactSource"][];
+            /** Last Import At */
+            last_import_at: string | null;
         };
         /** ContextRef */
         ContextRef: {
@@ -1840,6 +1973,11 @@ export interface components {
          * @enum {string}
          */
         FactSourceState: "declared" | "connected" | "outdated" | "needs_reconnect" | "not_connected" | "unavailable";
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
         /** Health */
         Health: {
             /**
@@ -2401,6 +2539,65 @@ export interface components {
              */
             next_cursor: string | null;
         };
+        /** MetricPoint */
+        MetricPoint: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Value */
+            value: string;
+        };
+        /** MetricSeries */
+        MetricSeries: {
+            /**
+             * Channel
+             * @description Id do canal; o web traduz.
+             * @example site
+             */
+            channel: string;
+            /**
+             * Metric
+             * @description Id da métrica; o web traduz.
+             * @example sessions
+             */
+            metric: string;
+            /**
+             * Unit
+             * @example sessões
+             */
+            unit: string;
+            /**
+             * Sources
+             * @example [
+             *       "fonte_de_teste"
+             *     ]
+             */
+            sources: string[];
+            /** Points */
+            points: components["schemas"]["MetricPoint"][];
+            /**
+             * Missing Days
+             * @description Dias do período sem dado (não são zero).
+             */
+            missing_days: string[];
+        };
+        /** MetricsPage */
+        MetricsPage: {
+            /**
+             * Start
+             * Format: date
+             */
+            start: string;
+            /**
+             * End
+             * Format: date
+             */
+            end: string;
+            /** Items */
+            items: components["schemas"]["MetricSeries"][];
+        };
         /**
          * MilestoneCreate
          * @example {
@@ -2815,6 +3012,19 @@ export interface components {
              */
             read_at?: string | null;
         };
+        /** RefusedLine */
+        RefusedLine: {
+            /**
+             * Line
+             * @description Linha do arquivo (o cabeçalho é a linha 1).
+             */
+            line: number;
+            /**
+             * Reason
+             * @enum {string}
+             */
+            reason: "missing_name" | "missing_address" | "invalid_email" | "email_not_fictitious" | "invalid_phone" | "no_consent" | "invalid_consent" | "consent_without_address" | "missing_consent_date" | "invalid_consent_date" | "invalid_purchase_date" | "invalid_purchases_count" | "duplicate_in_file" | "duplicate_existing";
+        };
         /** ReplyRequest */
         ReplyRequest: {
             /**
@@ -3014,6 +3224,24 @@ export interface components {
             email: string | null;
             /** Full Name */
             full_name: string | null;
+            /**
+             * Locale
+             * @description Idioma escolhido pela pessoa (cadastro, user_metadata.locale); null usa o do negócio.
+             */
+            locale?: ("pt-BR" | "en" | "es") | null;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
         };
         /** WorkItem */
         WorkItem: {
@@ -3412,6 +3640,12 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /**
+             * Locale
+             * @description Idioma do negócio; os agentes respondem nele (ADR-0010).
+             * @enum {string}
+             */
+            locale: "pt-BR" | "en" | "es";
             /** @description Seu papel neste workspace. */
             role: components["schemas"]["WorkspaceRole"];
             /**
@@ -3456,6 +3690,21 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /**
+             * Locale
+             * @description Idioma do negócio; os agentes respondem nele (ADR-0010).
+             * @enum {string}
+             */
+            locale: "pt-BR" | "en" | "es";
+        };
+        /** WorkspaceUpdate */
+        WorkspaceUpdate: {
+            /**
+             * Locale
+             * @description Idioma do negócio (owner ou admin).
+             * @enum {string}
+             */
+            locale: "pt-BR" | "en" | "es";
         };
     };
     responses: never;
@@ -3624,6 +3873,77 @@ export interface operations {
             };
             /** @description Token ausente, inválido ou expirado. */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_workspace_workspaces__workspace_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorkspaceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Workspace"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6483,6 +6803,200 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CreditEstimate"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    import_contacts_workspaces__workspace_id__contacts_imports_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ContactImportRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContactImport"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    contact_summary_workspaces__workspace_id__contacts_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContactSummary"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_metrics_workspaces__workspace_id__metrics_get: {
+        parameters: {
+            query: {
+                /** @description Primeiro dia (AAAA-MM-DD). */
+                from: string;
+                /** @description Último dia, até 366 dias depois. */
+                to: string;
+                channel?: string | null;
+                metric?: string | null;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetricsPage"];
                 };
             };
             /** @description Token ausente, inválido ou expirado. */
