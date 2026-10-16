@@ -171,6 +171,49 @@ curl -s -X POST http://127.0.0.1:8100/workspaces -H "Authorization: Bearer $JWT"
 
 Rotas da S0: `GET /health`, `GET /me`, `GET /workspaces`, `POST /workspaces`, `GET /workspaces/{id}`. Documentação interativa em http://127.0.0.1:8100/docs com a API no ar. Erros vêm sempre como `{"error": {"code", "message", "details"}}`, com a mensagem em português.
 
+### Pedido → trabalho → aprovação (S1b)
+
+Com o `JWT` da Marina (bloco acima). `field` lê um campo do JSON (`items.0.id` = primeiro item). O run fica em `queued` até a S1c ligar o worker; a aprovação decidida no fim é a do seed (`make seed` a devolve para pendente).
+
+```bash
+API=http://127.0.0.1:8100; AUTH="Authorization: Bearer $JWT"; JSON='Content-Type: application/json'
+field() { python3 -c 'import json, sys
+d = json.load(sys.stdin)
+for k in sys.argv[1].split("."): d = d[int(k)] if k.isdigit() else d[k]
+print(d if isinstance(d, str) else json.dumps(d, ensure_ascii=False))' "$1"; }
+WS=$(curl -s $API/workspaces -H "$AUTH" | field items.0.id)                             # Miolo
+
+# 1. Conversa direta com o Otto (201; Sala do Squad e conversa de objeto são reutilizadas: 200)
+CONV=$(curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" \
+  -d '{"kind":"agent_direct","primary_agent_id":"otto"}' | field id)
+
+# 2. Pedido na conversa (201)
+MSG=$(curl -s -X POST $API/conversations/$CONV/messages -H "$AUTH" -H "$JSON" \
+  -d '{"body":"Otto, uma legenda para o post de sábado sobre o pão de fermentação longa."}' | field id)
+
+# 3. Mensagem → trabalho 04.01 com run na fila runs_interactive (201; repetir a chave: 200, o mesmo)
+for i in 1 2; do
+  curl -s -o /tmp/wi.json -w '%{http_code} ' -X POST $API/messages/$MSG/work-items -H "$AUTH" -H "$JSON" \
+    -d '{"delivery_type":"04.01","title":"Legenda do pão de sábado","briefing":{"canal":"instagram"},"idempotency_key":"curl-1"}'
+  echo "trabalho $(field id < /tmp/wi.json) $(field status < /tmp/wi.json), run $(field run_id < /tmp/wi.json)"
+done
+
+# 4. Quadro/lista, mensagens (cursor) e "Precisa de você"
+curl -s "$API/workspaces/$WS/work-items?status=draft&status=needs_you" -H "$AUTH" | field items
+curl -s "$API/conversations/$CONV/messages?limit=50" -H "$AUTH" | field items.0.body
+APPROVAL=$(curl -s "$API/workspaces/$WS/approvals?status=pending" -H "$AUTH" | field items.0.id)
+
+# 5. Decisão (200; repetir devolve o mesmo estado) e o trabalho com as versões
+for i in 1 2; do
+  curl -s -o /tmp/ap.json -w '%{http_code} ' -X POST $API/approvals/$APPROVAL/decision -H "$AUTH" -H "$JSON" \
+    -d '{"decision":"approved"}'
+  echo "aprovação $(field status < /tmp/ap.json) $(field decision < /tmp/ap.json) em $(field decided_at < /tmp/ap.json), trabalho $(field work_item.status < /tmp/ap.json)"
+done
+curl -s $API/work-items/$(field work_item.id < /tmp/ap.json) -H "$AUTH" | field deliveries.0.versions.0.status
+```
+
+Rotas da S1b: `GET|POST /workspaces/{id}/conversations`, `GET /conversations/{id}`, `GET|POST /conversations/{id}/messages`, `POST /messages/{id}/work-items`, `GET /workspaces/{id}/work-items`, `GET /work-items/{id}`, `GET /workspaces/{id}/approvals`, `POST /approvals/{id}/decision`, `GET /workspaces/{id}/projects`, `GET /projects/{id}`, `GET /runs/{id}`, `GET /runs/{id}/events?after=`. Erros das funções do banco: `not_found` 404, `forbidden` 403, `invalid_parameter`/`invalid_value` 422, `invalid_state` 409, `transition_not_allowed`/`status_changed` 409.
+
 ## Como parar
 
 - Servidores de desenvolvimento: Ctrl+C no terminal do `make dev`.

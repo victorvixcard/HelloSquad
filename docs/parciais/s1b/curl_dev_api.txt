@@ -1,0 +1,23 @@
+# curl real contra make dev-api (16/10, 04:06)
+201 trabalho b8d0689e-d962-4dd0-9b23-a3997c31f17c draft, run c519ae5b-b633-4b9c-a4cf-6929ab2d1f88
+200 trabalho b8d0689e-d962-4dd0-9b23-a3997c31f17c draft, run c519ae5b-b633-4b9c-a4cf-6929ab2d1f88
+[{"id": "b8d0689e-d962-4dd0-9b23-a3997c31f17c", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "project_id": null, "conversation_id": "d70ea8e3-cad9-42a7-83e8-f3e441a55c08", "origin_message_id": "4558861d-2347-4e60-993d-654f30d26640", "title": "Legenda do pão de sábado", "delivery_type": 
+Otto, uma legenda para o post de sábado sobre o pão de fermentação longa.
+200 aprovação decided approved em 2026-10-16T07:06:09.143218Z, trabalho approved
+200 aprovação decided approved em 2026-10-16T07:06:09.143218Z, trabalho approved
+approved
+# fila runs_interactive depois do curl (papel postgres): msg 17 → run c519ae5b… (otto), run queued
+# log de acesso da API
+GET /health 200
+GET /health 200
+GET /workspaces 200
+POST /workspaces/<id>/conversations 201
+POST /conversations/<id>/messages 201
+POST /messages/<id>/work-items 201
+POST /messages/<id>/work-items 200
+GET /workspaces/<id>/work-items?status=draft&status=needs_you 200
+GET /conversations/<id>/messages?limit=50 200
+GET /workspaces/<id>/approvals?status=pending 200
+POST /approvals/<id>/decision 200
+POST /approvals/<id>/decision 200
+GET /work-items/<id> 200
