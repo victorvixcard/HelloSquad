@@ -1,0 +1,120 @@
+{
+  "bia": {
+    "kicker": "Dirección estratégica",
+    "firstTitle": "Bia aún no conoce {business} lo suficiente para proponer una dirección.",
+    "firstText": "Empieza por un diagnóstico: ella usa lo que cuentes en la conversación y pregunta lo que falte.",
+    "start": "Analizar mi negocio",
+    "startAsk": "Quiero analizar mi negocio."
+  },
+  "kaia": {
+    "bench": "Mesa de trabajo de Kaia",
+    "prod": "En producción",
+    "prodTag": "En curso",
+    "prodSingle": "En producción · entrega única",
+    "gallery": "Creaciones",
+    "gallerySub": "Lo que Kaia creó para {business}, con lo que está en producción primero. Los mismos archivos de la Biblioteca.",
+    "gallerySubCat": "Para pedir más, usa la última pieza de esta lista.",
+    "filters": "Filtrar creaciones",
+    "catAria": "{label}: {count, plural, =0 {ninguna creación} one {# creación} other {# creaciones}}",
+    "cats": {
+      "all": "Todas",
+      "social": "Redes sociales",
+      "car": "Carruseles",
+      "brand": "Identidad",
+      "promo": "Promocionales",
+      "img": "Imágenes",
+      "vid": "Video y motion"
+    },
+    "new": {
+      "social": "Nueva pieza para redes",
+      "car": "Nuevo carrusel",
+      "brand": "Revisar la identidad",
+      "promo": "Nuevo material promocional",
+      "img": "Editar imágenes",
+      "vid": "Nuevo video"
+    },
+    "ask": {
+      "social": "Quiero crear una pieza para redes.",
+      "car": "Quiero crear un carrusel.",
+      "brand": "Quiero crear o revisar la identidad visual.",
+      "promo": "Quiero crear materiales promocionales.",
+      "img": "Quiero editar y adaptar imágenes.",
+      "vid": "Quiero producir un video."
+    },
+    "newKick": "Nuevo pedido",
+    "newMeta": "Tú cuentas la idea; Kaia guía el brief.",
+    "newAria": "{label}: abre la conversación con Kaia",
+    "wip": "Kaia está creando",
+    "wipKick": "Creación",
+    "wipTag": "En producción",
+    "wipAria": "{title}, en producción. Abrir",
+    "emptyTitle": "Aún no hay creaciones.",
+    "emptyText": "Lo que Kaia produzca para {business} aparecerá aquí. Elige un tipo arriba para hacer el primer pedido."
+  },
+  "kiwi": {
+    "goalKicker": "Objetivo de crecimiento",
+    "emptyTitle": "Aún no hay un objetivo de crecimiento acordado.",
+    "emptyText": "Conecta tu Perfil de Negocio de Google o envía la hoja de cálculo de pedidos. Nada aparece aquí antes de que exista un dato real.",
+    "connections": "Ver conexiones",
+    "lanes": "Frentes de crecimiento",
+    "lane": {
+      "org": {
+        "label": "Adquisición orgánica",
+        "value": "Sin datos",
+        "sub": "ninguna búsqueda para mostrar",
+        "text": "Búsquedas en las que {business} puede aparecer más, en orden de prioridad. Interés estimado por Kiwi.",
+        "action": "Pedir un análisis SEO",
+        "ask": "Quiero analizar las oportunidades de crecimiento orgánico de mi marca.",
+        "empty": "Aún no hay búsquedas para mostrar."
+      },
+      "paid": {
+        "label": "Campañas pagadas",
+        "value": "Nada activo",
+        "sub": "no se invierte nada sin tu autorización",
+        "text": "Ningún anuncio activo. No se invierte ni se activa nada sin tu autorización.",
+        "action": "Nueva campaña",
+        "ask": "Quiero planificar una campaña pagada.",
+        "empty": "Aún no hay campañas."
+      },
+      "cro": {
+        "label": "Conversión y pruebas",
+        "value": "Ninguna prueba",
+        "sub": "ninguna hipótesis en cola",
+        "text": "Una hipótesis a la vez, con lo que cuenta como resultado acordado de antemano.",
+        "action": "Nueva prueba",
+        "ask": "Quiero crear una prueba de crecimiento.",
+        "empty": "Aún no hay pruebas."
+      }
+    }
+  },
+  "max": {
+    "kicker": "Centro de relación con clientes",
+    "emptyTitle": "Tu base de clientes aún no está aquí.",
+    "emptyText": "Max empieza por los contactos que ya tienes. No se envía nada sin consentimiento y sin tu autorización.",
+    "sheet": "Hoja de cálculo de clientes",
+    "sheetState": "CSV o Excel · aún no importada",
+    "sheetAction": "Importar",
+    "sheetAria": "Importar la hoja de cálculo de clientes",
+    "store": "Plataforma de la tienda",
+    "storeState": "integración pendiente",
+    "email": "Correo electrónico",
+    "emailState": "no conectado",
+    "emailAction": "Conectar",
+    "emailAria": "Conectar el correo electrónico",
+    "wa": "WhatsApp",
+    "waState": "canal no disponible",
+    "waAction": "Saber más",
+    "waAria": "Saber más sobre WhatsApp"
+  },
+  "iris": {
+    "emptyTitle": "Íris aún no tiene números para leer",
+    "emptyText": "Conecta Instagram o envía la hoja de cálculo de pedidos. Nada aparece aquí antes de que exista un dato real.",
+    "tracks": "Lo que Íris va a monitorear",
+    "kpis": {
+      "orders": "Pedidos por el sitio web",
+      "visits": "Visitas desde Instagram",
+      "reach": "Alcance en Instagram"
+    },
+    "connections": "Ver conexiones"
+  }
+}

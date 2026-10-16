@@ -1,0 +1,186 @@
+{
+  "roadmap": {
+    "title": "Hoja de ruta de proyectos",
+    "legend": {
+      "project": "proyecto",
+      "milestone": "hito",
+      "planned": "planificado",
+      "you": "decisión tuya"
+    },
+    "sub": "{active, plural, =1 {# activo} other {# activos}}{paused, plural, =0 {} =1 { · # en pausa} other { · # en pausa}}",
+    "emptyTitle": "Aún no hay proyectos",
+    "emptyText": "Los proyectos son pedidos más grandes, como una campaña. Nexo arma el squad, organiza las etapas y te avisa cuando la decisión es tuya.",
+    "emptyStart": "Empezar por la Campaña de Navidad",
+    "startDraft": "Quiero una campaña de Navidad para vender más panetones.",
+    "rowAria": "{title}: {status}. Ver el detalle del proyecto",
+    "detailAria": "Detalle del proyecto {title}",
+    "objective": "Objetivo",
+    "owners": "Responsables",
+    "status": "Estado",
+    "nextMilestone": "Próximo hito",
+    "due": "Plazo",
+    "noDate": "Sin fecha",
+    "noDue": "Sin plazo",
+    "works": "Trabajos pedidos en este proyecto · {count}",
+    "talk": "Hablar con Nexo sobre este proyecto",
+    "projectStatus": {
+      "active": "En curso",
+      "paused": "En pausa",
+      "done": "Completado"
+    }
+  },
+  "working": {
+    "title": "Tu squad está trabajando",
+    "sum": "{count, plural, =1 {# trabajo en curso} other {# trabajos en curso}}",
+    "talk": "Hablar con Nexo sobre quién está trabajando",
+    "talkTip": "Hablar con Nexo",
+    "empty": "Nadie en producción ahora. Pide algo y Nexo organiza quién lo hace.",
+    "more": "Ver {count} más",
+    "less": "Ver menos",
+    "state": "en curso"
+  },
+  "milestones": {
+    "title": "Próximos hitos",
+    "talk": "Hablar con Nexo sobre los próximos hitos",
+    "talkTip": "Hablar con Nexo",
+    "empty": "Ningún hito con fecha en los próximos días."
+  },
+  "summary": {
+    "meta": "Resumen · Proyectos"
+  },
+  "all": {
+    "title": "Todos los trabajos",
+    "sub": "Proyectos, entregas únicas y ciclos del Modo Autónomo, según la situación de cada uno.",
+    "views": "Vista",
+    "view": {
+      "board": "Tablero",
+      "list": "Lista",
+      "library": "Biblioteca"
+    },
+    "kindMenu": "Tipo de trabajo",
+    "kind": {
+      "all": "Todos los tipos",
+      "deliveries": "Entregas únicas",
+      "projects": "Proyectos"
+    },
+    "kindItem": {
+      "all": "Todos",
+      "deliveries": "Entregas únicas",
+      "projects": "Proyectos"
+    },
+    "kindAria": "Tipo de trabajo: {kind}",
+    "kindAriaValue": {
+      "all": "todos",
+      "deliveries": "entregas únicas",
+      "projects": "proyectos"
+    },
+    "formats": "Formato",
+    "format": {
+      "all": "Todo",
+      "pieces": "Piezas",
+      "documents": "Documentos"
+    },
+    "agentFilter": "Filtrar por especialista",
+    "agentShow": "Mostrar solo trabajos {with}",
+    "agentShowing": "Mostrando trabajos {with}",
+    "agentTip": "{name} · {role}",
+    "agentClear": "Mostrar trabajos de todos los especialistas",
+    "clear": "Limpiar filtros",
+    "noneTitle": "Aún no hay trabajos",
+    "noneText": "Pídele algo al squad en Nuevo pedido. Nexo organiza quién lo hace, y lo que necesite de ti aparece aquí primero.",
+    "filteredTitle": "Ningún trabajo con esos filtros",
+    "libNoneTitle": "Aún no hay materiales",
+    "libNoneText": "Las piezas y los documentos que produzca el squad aparecen aquí, con la situación de cada uno.",
+    "libFilteredTitle": "Ningún material con esos filtros"
+  },
+  "cols": {
+    "you": "Necesita de ti",
+    "and": "En curso",
+    "prog": "Programados",
+    "done": "Completados"
+  },
+  "colsEmpty": {
+    "you": "Ninguna decisión pendiente",
+    "and": "Nada en producción",
+    "prog": "Nada programado",
+    "done": "Aún no hay nada completado"
+  },
+  "colAria": "{col}, {count, plural, =1 {# trabajo} other {# trabajos}}",
+  "groupAria": "{col}, {count}",
+  "listCols": {
+    "situation": "Situación",
+    "owner": "Responsable",
+    "date": "Fecha",
+    "next": "Próximo paso"
+  },
+  "st": {
+    "you": "Te espera",
+    "and": "En curso",
+    "prog": "Programado",
+    "done": "Completado",
+    "pause": "En pausa",
+    "working": "Trabajando"
+  },
+  "kinds": {
+    "delivery": "Entrega",
+    "work": "Trabajo",
+    "workOf": "Trabajo de {project}"
+  },
+  "sit": {
+    "review": "v{version} espera tu aprobación",
+    "reviewDue": "v{version} espera tu aprobación · hasta el {due}"
+  },
+  "foot": {
+    "until": "hasta el {due}",
+    "approved": "Aprobado",
+    "approvedByYou": "Aprobado por ti",
+    "paused": "En pausa"
+  },
+  "card": {
+    "working": "{name} está trabajando en esto",
+    "responds": "{name} responde",
+    "with": " · con {names}",
+    "aria": "{title}. {st}: {sit}{next}. {lead}{co}. Abrir el trabajo",
+    "ariaNext": ". Próximo paso: {next}",
+    "ariaCo": ", con {names}",
+    "ctaAria": "{cta}: {title}",
+    "more": "+{count}"
+  },
+  "roles": {
+    "nexo": "Coordinación",
+    "bia": "Estrategia",
+    "kaia": "Creación",
+    "otto": "Contenido",
+    "kiwi": "Growth",
+    "max": "CRM",
+    "iris": "Datos"
+  },
+  "work": {
+    "stackLabel": "{lead} con {names}",
+    "project": "Proyecto: {name}",
+    "origin": {
+      "direct": "pedido en la conversación con {agent} · {date}",
+      "room": "pedido en la Sala del Squad · {date}",
+      "object": "conversación sobre {subject} · {date}",
+      "plain": "pedido en {area} · {date}"
+    },
+    "history": {
+      "asked": "Lo pediste en la conversación con {agent}",
+      "askedRoom": "Lo pediste en la Sala del Squad",
+      "askedPlain": "Lo pediste",
+      "started": "{name} empezó a trabajar en esto",
+      "failed": "{name} no pudo terminarlo",
+      "delivered": "v{version} entregada",
+      "approved": "Aprobaste la v{version}",
+      "approvedPlain": "Lo aprobaste",
+      "adjust": "Pediste: “{note}”",
+      "adjustPlain": "Pediste un ajuste en la v{version}",
+      "revise": "Pediste una nueva propuesta",
+      "cancel": "Cancelaste el trabajo",
+      "answered": "Respondiste",
+      "rejected": "No lo aprobaste",
+      "today": "hoy · {time}",
+      "at": "{date} · {time}"
+    }
+  }
+}

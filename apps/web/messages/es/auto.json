@@ -1,0 +1,65 @@
+{
+  "title": "Modo Autónomo",
+  "sub": "Deja en manos del squad lo que se repite. Tú defines los límites.",
+  "delegate": "Delegar una responsabilidad",
+  "resps": {
+    "title": "Responsabilidades",
+    "sub": "lo que el squad hace solo, en ciclos"
+  },
+  "empty": {
+    "title": "Aún no hay nada delegado.",
+    "text": "Empieza por lo que más se repite en tu semana. El squad habla contigo, te muestra lo acordado y solo lo activa después de tu visto bueno.",
+    "cta": "Delegar la primera responsabilidad"
+  },
+  "more": {
+    "title": "Qué más puede quedar en manos del squad",
+    "sub": "cada delegación empieza con una conversación",
+    "aria": "Delegar: {title}"
+  },
+  "templates": {
+    "plan": {
+      "title": "Planificar mis contenidos cada semana",
+      "text": "Temas, pies de foto y diseños, listos para que los apruebes."
+    },
+    "posts": {
+      "title": "Preparar posts cada lunes",
+      "text": "Piezas de la semana con pie de foto, para que las revises."
+    },
+    "opp": {
+      "title": "Avisarme cuando surja una oportunidad",
+      "text": "Fechas, barrio, competencia y tus números."
+    },
+    "reviews": {
+      "title": "Responder reseñas de Google",
+      "text": "Respuestas con el tono de {business}, para que las apruebes."
+    }
+  },
+  "levels": {
+    "title": "Cómo funciona la autonomía",
+    "sub": "tres niveles, cada uno con su límite",
+    "an": {
+      "k": "Analizar",
+      "d": "Investiga, monitorea e interpreta información, solo en las cuentas que conectaste.",
+      "w": "Lo hace solo"
+    },
+    "pr": {
+      "k": "Preparar",
+      "d": "Crea borradores, planes, piezas e informes en cada ciclo, sin que tengas que volver a pedirlo.",
+      "w": "Lo hace solo · tú apruebas lo que sale"
+    },
+    "ex": {
+      "k": "Ejecutar",
+      "d": "Publicar, enviar mensajes, cambiar campañas e invertir solo ocurren con la autorización específica de cada acción.",
+      "w": "Solo con tu autorización"
+    },
+    "foot": "Aprobar un contenido no autoriza a publicar, enviar mensajes, cambiar campañas ni invertir. Cada una de esas acciones requiere su propia autorización."
+  },
+  "next": {
+    "title": "Próximas ejecuciones",
+    "empty": "Nada programado. Cuando delegues algo, las ejecuciones aparecerán aquí."
+  },
+  "history": {
+    "title": "Historial de ejecuciones",
+    "empty": "Cada ejecución queda registrada aquí, con lo que se hizo, lo que falló y el trabajo que generó."
+  }
+}
