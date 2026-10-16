@@ -74,7 +74,7 @@ pui_06249_conversas-títulos.txt	6249-6261	13 linhas	conversas (títulos)
 pui_06262_mensagens.txt	6262-6263	2 linhas	mensagens
 pui_06264_mid.txt	6264-6264	1 linhas	mid
 pui_06265_m.txt	6265-6272	8 linhas	M
-pui_06273_threadsfor.txt	6273-6329	67 linhas	threadsFor
+pui_06273_threadsfor.txt	6273-6329	68 linhas	threadsFor
 pui_06330_initstate.txt	6330-6372	45 linhas	initState
 pui_06373_r3-trabalhos-calendário-do-protótipo-e-s.txt	6373-6375	3 linhas	R3 · Trabalhos: calendário do protótipo e sinais de situação
 (omitido)	6376-6376	1 linhas	wkD
@@ -244,7 +244,7 @@ pui_11873_ka-new.txt	11873-11874	2 linhas	KA_NEW
 pui_11875_v42p.txt	11875-11877	3 linhas	V42P
 pui_11878_bloco.txt	11878-11878	1 linhas	bloco
 pui_11879_catálogo-compacto-o-mesmo-no-cabeçalho-e.txt	11879-11930	55 linhas	catálogo compacto (o mesmo no cabeçalho e dentro da conversa)
-pui_11931_pedidos-cada-pedido-é-uma-conversa-e-pod.txt	11931-12044	124 linhas	pedidos: cada pedido é uma conversa e pode virar um trabalho próprio
+pui_11931_pedidos-cada-pedido-é-uma-conversa-e-pod.txt	11931-12044	125 linhas	pedidos: cada pedido é uma conversa e pode virar um trabalho próprio
 pui_12045_o-trabalho-no-resto-do-produto-quadro-li.txt	12045-12095	55 linhas	o trabalho no resto do produto: Quadro, Lista, roadmap e detalhe
 pui_12096_kaia-marca-criação-estúdio.txt	12096-12143	57 linhas	Kaia · Marca & Criação (estúdio)
 pui_12144_kiwi-growth-marketing-oportunidades-vira.txt	12144-12197	66 linhas	Kiwi · Growth Marketing (oportunidades viram iniciativas)
@@ -326,4 +326,4 @@ pui_13860_v46p.txt	13860-13861	2 linhas	V46P
 pui_13862_bloco.txt	13862-13862	1 linhas	bloco
 pui_13863_precisa-de-você-o-especialista-aparece-r.txt	13863-13873	11 linhas	Precisa de você: o especialista aparece (rosto + nome), não só a cor
 pui_13874_status-o-mesmo-desenho-para-o-mesmo-esta.txt	13874-13962	90 linhas	status: o mesmo desenho para o mesmo estado
-pui_strings.tsv	-	3063 linhas	literais de texto em português do script
+pui_strings.tsv	-	3201 linhas	literais de texto em português do script

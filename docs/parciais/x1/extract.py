@@ -27,7 +27,7 @@ SKIP_TOP = re.compile(
 )
 
 PATH_DATA = re.compile(r'\b(d|points|viewBox|transform)="[^"]{30,}"')
-JS_PATH = re.compile(r"'(M[\d.\-\s,a-zA-Z]{40,})'")
+JS_PATH = re.compile(r"'(M\s?-?\d[\d.\-\s,a-zA-Z]{38,})'")  # dados de path SVG: sempre "M" + número
 STYLE_ATTR = re.compile(r'\sstyle="[^"]{60,}"')
 
 
@@ -136,7 +136,7 @@ def strings_of(lines, s0, s1, tag):
     for i in range(s0, s1):
         for m in STR_RX.finditer(lines[i]):
             s = next(g for g in m.groups() if g is not None)
-            if " " in s and PT_HINT.search(s) and not s.startswith("M"):
+            if " " in s and PT_HINT.search(s) and not JS_PATH.fullmatch("'" + s + "'"):
                 rows.append(f"{tag}\t{i + 1}\t{s}")
     return rows
 
