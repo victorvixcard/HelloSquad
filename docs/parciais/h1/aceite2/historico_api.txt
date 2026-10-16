@@ -1,0 +1,4 @@
+status: approved | origem: {'type': 'message', 'ref': 'a7e04ae1-77b5-494a-a784-5d6e766d5547', 'conversation_id': 'ec9d8640-da5e-4a25-8ac1-1562b15d5872', 'conversation_kind': 'agent_direct', 'agent_id': 'nexo', 'title': None} | eventos no histórico: 3
+ - {'actor_type': 'user', 'agent_id': 'None', 'kind': 'requested'}
+ - {'actor_type': 'agent', 'agent_id': 'otto', 'kind': 'delivered'}
+ - {'actor_type': 'user', 'agent_id': 'None', 'kind': 'decided'}

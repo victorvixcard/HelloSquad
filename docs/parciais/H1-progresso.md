@@ -14,8 +14,8 @@ mexe no banco roda sob a trava `flock /tmp/hellosquad-db.lock`, como o `Makefile
 | 2 | Isolamento das tabelas novas (API e Data API) e Realtime entre tenants | feito: 31 tabelas x Rafael/Pedro/anônimo pela Data API, 42 rotas da API, Realtime leitura e escrita; nada vazou |
 | 3 | Owner-only (aprovações e memória), editor e viewer; memória respeita confirmação | feito: editor/admin/viewer 403 em decidir e na memória; sugestão descartada fora do contexto e do prompt; correção vira versão nova |
 | 4 | Créditos (saldo, ledger imutável, falha libera, respond, estimativa, "Agora não") e worker | feito: 14 cenários, todos resistiram (rodada 1 tinha erro do meu harness; rodada 2 10/10) |
-| 5 | Web (CSP, cookie, `?next=`, noindex) e comparação com o protótipo | pendente |
-| 6 | Diretrizes (nuvem, segredos, dados fictícios, pt-BR sem emoji) e clone limpo | pendente |
+| 5 | Web (CSP, cookie, `?next=`, noindex) e comparação com o protótipo | feito: web resistiu; 2 🟡 do protótipo não registrados (H1-03, H1-04) |
+| 6 | Diretrizes (nuvem, segredos, dados fictícios, pt-BR sem emoji) e clone limpo | feito: 0 segredo/nuvem/emoji; clone: make test 0 e make e2e 10/10 |
 
 ## Estado inicial do ambiente (13:26)
 
@@ -35,3 +35,7 @@ mexe no banco roda sob a trava `flock /tmp/hellosquad-db.lock`, como o `Makefile
   esgotado entre cenários).
 - 13:51-13:55 `h1/03_isolamento_papeis_memoria.py` (resultado em `h1/03_resultado.txt`) e Realtime
   (`h1/04_realtime_tenants.mjs`, `h1/04c_broadcast_injecao.mjs`): tudo resistiu.
+- 13:55-13:56 `make e2e` do clone com a API e o web do dono parados (10/10, exit 0); os dois religados.
+- 13:57 aceite, rodada 2 (`h1/aceite2/`): o cartão do painel ao lado acompanha a aprovação sem recarregar.
+- 14:03 seed reaplicado e conferido; clone `/tmp/h1_clone` removido. Laudo em `docs/parciais/H1-relatorio.md`:
+  🔴 0 · 🟡 4 · ℹ️ 7. **H1 fechada.**
