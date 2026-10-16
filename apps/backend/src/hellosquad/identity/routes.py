@@ -1,0 +1,115 @@
+"""Rotas de identidade. Tudo roda como o usuário do JWT: a RLS decide o que ele enxerga."""
+
+from uuid import UUID
+
+from fastapi import APIRouter, Response, status
+from psycopg import errors
+
+from hellosquad.api.deps import CurrentPrincipal, DatabaseDep
+from hellosquad.api.errors import ApiError, error_responses
+from hellosquad.identity.schemas import (
+    Me,
+    Membership,
+    User,
+    Workspace,
+    WorkspaceCreate,
+    WorkspaceList,
+    WorkspaceRole,
+    WorkspaceSummary,
+)
+
+router = APIRouter(tags=["identity"])
+
+MY_MEMBERSHIPS = """
+select w.id, w.slug, w.name, m.role
+from public.memberships m
+join public.workspaces w on w.id = m.workspace_id
+where m.user_id = %s
+order by w.name, w.id
+"""
+
+MY_WORKSPACES = """
+select w.id, w.slug, w.name, w.created_at, m.role
+from public.workspaces w
+join public.memberships m on m.workspace_id = w.id and m.user_id = %s
+order by w.name, w.id
+"""
+
+MY_WORKSPACE = """
+select w.id, w.slug, w.name, w.created_at, m.role
+from public.workspaces w
+join public.memberships m on m.workspace_id = w.id and m.user_id = %s
+where w.id = %s
+"""
+
+CREATE_WORKSPACE = "select id, slug, name, created_at from app.create_workspace(%s, %s)"
+
+
+@router.get(
+    "/me",
+    summary="Usuário autenticado e os workspaces dele",
+    responses=error_responses(401, 503),
+)
+async def get_me(principal: CurrentPrincipal, db: DatabaseDep) -> Me:
+    async with db.transaction_as(principal) as conn:
+        rows = await (await conn.execute(MY_MEMBERSHIPS, (principal.user_id,))).fetchall()
+    return Me(
+        user=User(id=principal.user_id, email=principal.email, full_name=principal.full_name),
+        memberships=[
+            Membership(
+                workspace=WorkspaceSummary(id=row["id"], slug=row["slug"], name=row["name"]),
+                role=row["role"],
+            )
+            for row in rows
+        ],
+    )
+
+
+@router.get(
+    "/workspaces",
+    summary="Workspaces de que o usuário participa",
+    responses=error_responses(401, 503),
+)
+async def list_workspaces(principal: CurrentPrincipal, db: DatabaseDep) -> WorkspaceList:
+    async with db.transaction_as(principal) as conn:
+        rows = await (await conn.execute(MY_WORKSPACES, (principal.user_id,))).fetchall()
+    return WorkspaceList(items=[Workspace(**row) for row in rows])
+
+
+@router.post(
+    "/workspaces",
+    status_code=status.HTTP_201_CREATED,
+    summary="Cria um workspace; quem cria vira owner",
+    responses=error_responses(401, 409, 422, 503),
+)
+async def create_workspace(
+    payload: WorkspaceCreate, principal: CurrentPrincipal, db: DatabaseDep, response: Response
+) -> Workspace:
+    try:
+        async with db.transaction_as(principal) as conn:
+            cursor = await conn.execute(CREATE_WORKSPACE, (payload.name, payload.slug))
+            row = await cursor.fetchone()
+    except errors.UniqueViolation as exc:
+        if exc.diag.constraint_name == "workspaces_slug_key":
+            raise ApiError(
+                409, "slug_taken", "Já existe um workspace com esse endereço (slug)."
+            ) from exc
+        raise
+    response.headers["Location"] = f"/workspaces/{row['id']}"
+    return Workspace(**row, role=WorkspaceRole.owner)
+
+
+@router.get(
+    "/workspaces/{workspace_id}",
+    summary="Um workspace de que o usuário participa",
+    responses=error_responses(401, 404, 422, 503),
+)
+async def get_workspace(
+    workspace_id: UUID, principal: CurrentPrincipal, db: DatabaseDep
+) -> Workspace:
+    async with db.transaction_as(principal) as conn:
+        row = await (await conn.execute(MY_WORKSPACE, (principal.user_id, workspace_id))).fetchone()
+    if row is None:
+        # Inexistente e alheio respondem igual: não revela que o workspace existe.
+        raise ApiError(404, "workspace_not_found", "Workspace não encontrado.")
+    return Workspace(**row)

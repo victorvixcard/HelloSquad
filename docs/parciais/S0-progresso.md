@@ -7,8 +7,8 @@ Identidade, isolamento por tenant e API base. **Iniciada em 16/10/2026 00:14.** 
 | 1 | Migrations: `workspaces`, `memberships`, `invitations`, `audit_events`, schema `app` com funções auxiliares, RLS habilitada e forçada, papel `hellosquad_api`, `auto_expose_new_tables = false` | ✅ `supabase db reset` aplica as 4 migrations (exit 0); 4 tabelas com `relrowsecurity` e `relforcerowsecurity` = t; `hellosquad_api` sem INHERIT/BYPASSRLS, membro de `authenticated` só com SET |
 | 2 | Seed idempotente (`make seed`): 3 workspaces e 5 usuários de `docs/DADOS_FICTICIOS.md` | ✅ `supabase/seed.sql` roda no `supabase db reset` ("Seeding data from supabase/seed.sql") e no `make seed`; duas execuções seguidas dão o mesmo estado (memberships sem `updated_at` alterado); login da Marina na Auth local → HTTP 200 |
 | 3 | Testes pgTAP de RLS e isolamento (varredura de RLS, Marina, Pedro, Carla, Rafael, `audit_events` imutável) | ✅ `make test-db`: 7 arquivos, 98 testes, `Result: PASS`. Testes de mutação (quebrar a RLS numa cópia transacional) derrubam a suíte em todos os 7 casos |
-| 4 | FastAPI: JWT (JWKS + fallback HS256), transação com `SET LOCAL ROLE authenticated`, `/me`, `/workspaces`, testes de integração | ⏳ em andamento |
-| 5 | `make openapi` → `packages/contracts/openapi.json` | ⚪ |
+| 4 | FastAPI: JWT (JWKS + fallback HS256), transação com `SET LOCAL ROLE authenticated`, `/me`, `/workspaces`, testes de integração | ✅ `make test-backend`: ruff ok, pytest 43 passed (22 unitários + 21 de integração com login real na Auth local); `curl` na API real: Marina vê só a Miolo, Pedro recebe `{"items":[]}`, token inválido → 401 |
+| 5 | `make openapi` → `packages/contracts/openapi.json` | ⏳ em andamento |
 | 6 | `docs/SETUP_LOCAL.md` e `docs/parciais/S0-relatorio.md` | ⚪ |
 
 ## Observações iniciais
@@ -27,6 +27,11 @@ Identidade, isolamento por tenant e API base. **Iniciada em 16/10/2026 00:14.** 
 
 - Mutações usadas para provar que os testes pegam regressão: política de leitura de workspaces `using (true)` (7 falhas); `NO FORCE ROW LEVEL SECURITY` em invitations (1); view sem `security_invoker` com GRANT (1); política de INSERT em memberships aceitando viewer (7); GRANT de UPDATE/DELETE em audit_events (5); leitura de convites liberada a qualquer membro (1, depois de acrescentar o caso no 04); `create_workspace` como SECURITY INVOKER (aborta o arquivo: 2 de 14).
 
+- Pydantic: `to_lower` do `StringConstraints` roda depois do `pattern`; slug com maiúscula dava 422. Normalização movida para um `BeforeValidator` (teste de integração pegou).
+- Limite local de login da Auth subiu de 30 para 300 por 5 min (`config.toml`): cada `make test` loga 5 usuários do seed.
+- CORS só para `http://127.0.0.1:3100` e `http://localhost:3100` (configurável em `API_CORS_ORIGINS`), sem credenciais: a A0 chama a API do navegador com o token no cabeçalho.
+- CI estacionado (`infra/github/workflows/ci.yml`) roda `pytest -m "not integration"`: o runner não tem Supabase.
+
 ## Próximo passo
 
-API FastAPI (item 4).
+OpenAPI (item 5).

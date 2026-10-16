@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     api_host: str = "127.0.0.1"
     api_port: int = 8100
     api_reload: bool = False
+    # Origens do navegador que podem chamar a API (o web local). Valor no .env separado por vírgula.
+    api_cors_origins: Annotated[list[str], NoDecode] = [
+        "http://127.0.0.1:3100",
+        "http://localhost:3100",
+    ]
     log_level: str = "INFO"
     worker_idle_seconds: float = 30.0
     scheduler_tick_seconds: float = 60.0
@@ -35,6 +40,8 @@ class Settings(BaseSettings):
     auth_jwks_url: str | None = None
     auth_jwt_issuer: str | None = None
     auth_jwt_audience: str = "authenticated"
+    # Tolerância a relógio adiantado/atrasado entre a Auth e a API (exp, iat).
+    auth_jwt_leeway_seconds: float = 5.0
     auth_jwks_cache_seconds: float = 300.0
     supabase_jwt_secret: SecretStr | None = None
 
@@ -45,9 +52,9 @@ class Settings(BaseSettings):
     # Usuário postgres do Supabase local: só ferramentas locais (seed, senha do papel, testes).
     database_url: SecretStr | None = None
 
-    @field_validator("auth_jwt_algorithms", mode="before")
+    @field_validator("auth_jwt_algorithms", "api_cors_origins", mode="before")
     @classmethod
-    def split_algorithms(cls, value: object) -> object:
+    def split_comma_separated(cls, value: object) -> object:
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value

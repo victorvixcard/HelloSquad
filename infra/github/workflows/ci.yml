@@ -39,7 +39,9 @@ jobs:
       - run: uv sync --locked
       - run: uv run ruff check .
       - run: uv run ruff format --check .
-      - run: uv run pytest
+      # Os testes marcados `integration` precisam do Supabase local (make up && make seed) e rodam
+      # no `make test`. Aqui ficam os unitários; um job com `supabase start` pode cobri-los depois.
+      - run: uv run pytest -m "not integration"
 
   web:
     name: Web (lint + build)
