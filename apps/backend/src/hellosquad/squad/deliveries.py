@@ -372,8 +372,8 @@ MULTICHANNEL_SCHEMA = obj(
 
 
 # 05.01 · Plano de mídia e recomendação de orçamento -------------------------------------------
-# Verba de mídia é dinheiro do cliente, separado dos créditos da plataforma: o teto proposto é o limite
-# que a pessoa autorizaria, nunca crédito. Nada é investido: `execucao` entra pelo fluxo.
+# Verba de mídia é dinheiro do cliente, separado dos créditos da plataforma: o teto proposto é o
+# limite que a pessoa autorizaria, nunca crédito. Nada é investido: `execucao` entra pelo fluxo.
 
 AD_CHANNELS = ["meta_ads", "google_ads"]
 AdChannel = Literal["meta_ads", "google_ads"]
