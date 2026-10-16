@@ -71,7 +71,8 @@ describe("SitePage", () => {
     const ctas = screen.getAllByRole("link", { name: "Começar com o squad" });
     expect(ctas.length).toBeGreaterThanOrEqual(1);
     for (const cta of ctas) expect(cta).toHaveAttribute("href", "/criar-conta");
-    expect(ldTypes()).toEqual(["BreadcrumbList", "Service"]);
+    // A Organization mínima entra para o `provider` do Service resolver na própria página (H2-26).
+    expect(ldTypes()).toEqual(["BreadcrumbList", "Service", "Organization"]);
     expect(document.body.textContent).not.toMatch(/grátis|R\$|\{\{/);
   });
 
