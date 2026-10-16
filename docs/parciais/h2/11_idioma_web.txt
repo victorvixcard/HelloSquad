@@ -1,0 +1,3 @@
+carla@vitta.example | html lang = es | barra: HelloSquad PRINCIPAL Inicio Sala del Squad TU SQUAD Proyectos Nexo 1 Estrategia Bia Marca y Creación Kaia Contenido Otto
+rafael@vitta.example | html lang = pt-BR | barra: HelloSquad PRINCIPAL Início Sala do Squad SEU SQUAD Projetos Nexo 1 Estratégia Bia Marca & Criação Kaia Conteúdo Otto Gr
+volta: Vitta pt-BR, Carla sem idioma
