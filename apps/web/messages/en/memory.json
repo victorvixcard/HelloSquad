@@ -70,7 +70,7 @@
     "confirmed": "Confirmed. The whole squad starts using it.",
     "corrected": "Corrected. The squad uses the new version.",
     "discarded": "Discarded. It won’t become a rule and no one on the squad uses it.",
-    "resolved": "Conflict resolved. The other version leaves memory."
+    "resolved": "Conflict resolved. The other version is removed from memory."
   },
   "log": {
     "title": "Recent changes",
@@ -186,7 +186,7 @@
   },
   "uses": {
     "nexo": "to organize projects and deadlines",
-    "bia": "to set priorities and campaigns",
+    "bia": "to define priorities and campaigns",
     "kaia": "to create pieces, artwork, and the identity",
     "otto": "to plan and write content",
     "kiwi": "in searches, ads, and tests",
