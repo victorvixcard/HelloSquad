@@ -249,6 +249,27 @@ curl -s "$API/workspaces/$WS/memory/conflicts?state=open" -H "$AUTH" | field ite
 
 O próximo run do worker já recebe a versão nova: os essenciais (decisões, Minha marca, Meu público) vão no bloco cacheado do prompt, a busca pelo pedido completa até `MEMORY_CONTEXT_TOKENS` (1.500) e tudo o que entrou fica em `run_context_items`. Rotas: `GET /workspaces/{id}/memory`, `GET /workspaces/{id}/memory/suggestions?state=`, `POST /memory/suggestions/{id}/decision`, `POST /memory/facts/{id}/correct`, `GET /memory/facts/{id}/history`, `GET /workspaces/{id}/memory/search?q=`, `GET /workspaces/{id}/memory/sources`, `GET /workspaces/{id}/memory/conflicts?state=`, `POST /memory/conflicts/{id}/resolve`.
 
+### Créditos (S1e)
+
+Valores **provisórios** (dono, 16/10: "preço e créditos ficam por último"): plano Free com 20 créditos (migration), 46 preços de delivery no seed (01.01 = 0, as demais = 10, profundidade inferida no SA0) e o plano Squad fictício da Miolo (100 por mês). `make seed` devolve: Miolo com 36 de 100 (64% usados, a barra da V4.6), Vitta com 20 e Trilha com 19,2 de 20 (4%, o primeiro acesso). Com as variáveis do bloco da S1b (`API`, `AUTH`, `JSON`, `field`, `WS` da Miolo):
+
+```bash
+# 1. Saldo de cada workspace em GET /me (barra "Plano Squad · créditos do mês")
+curl -s $API/me -H "$AUTH" | field memberships.0.credits
+# {"plan": "Squad", "provisional": true, "balance": 36.0, "reserved": 0.0, "available": 36.0,
+#  "cycle_credits": 100.0, "cycle_used": 64.0, "cycle_ends_at": "2026-11-01T03:00:00Z"}
+
+# 2. Estimativa antes de pedir (o mesmo valor que o worker reserva ao começar o run)
+curl -s -X POST $API/credits/estimate -H "$AUTH" -H "$JSON" -d "{\"workspace_id\":\"$WS\",\"delivery_type\":\"04.01\"}"
+# {"delivery_type":"04.01","depth":"produzir","credits":10.0,"revision":false,"provisional":true,"available":36.0,"sufficient":true}
+
+# 3. Nova versão de um trabalho já entregue (ajuste ou nova proposta): preço de revisão
+curl -s -X POST $API/credits/estimate -H "$AUTH" -H "$JSON" \
+  -d "{\"workspace_id\":\"$WS\",\"delivery_type\":\"04.01\",\"work_item_id\":\"5eed0000-0000-4000-8000-000000000301\"}"
+```
+
+O worker reserva a estimativa ao começar o run (`credit_holds`, chave `run:<id>`; a retentativa usa a mesma reserva), cobra ao entregar (captura, `runs.credits_charged`) e libera se o run falhar ou se o Nexo só perguntar. Sem saldo, o run termina em `failed` com `insufficient_credits` e nada é cobrado. Erros da estimativa: `price_not_found` 404, `not_found` 404 (workspace alheio), `work_item_not_found` 404, `validation_error` 422. Extrato no banco: `select entry_type, amount, reserved_delta, run_id from credit_ledger order by created_at` (somente inserção). Saída dos curls acima em `docs/parciais/s1e/curl_creditos.txt`.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).

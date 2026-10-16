@@ -1,0 +1,17 @@
+# 1. Saldo em GET /me (barra Plano Squad · créditos do mês)
+$ curl -s $API/me -H "$AUTH" | field memberships.0.credits
+{"plan": "Squad", "provisional": true, "balance": 36.0, "reserved": 0.0, "available": 36.0, "cycle_credits": 100.0, "cycle_used": 64.0, "cycle_ends_at": "2026-11-01T03:00:00Z"}
+
+# 2. Estimativa antes de pedir (04.01, primeira versão)
+$ curl -s -X POST $API/credits/estimate -H "$AUTH" -H "$JSON" -d "{\"workspace_id\":\"$WS\",\"delivery_type\":\"04.01\"}"
+{"delivery_type":"04.01","depth":"produzir","credits":10.0,"revision":false,"provisional":true,"available":36.0,"sufficient":true}
+
+# 3. Nova versão de um trabalho já entregue (preço de revisão)
+$ curl -s -X POST $API/credits/estimate ... "work_item_id":"5eed0000-0000-4000-8000-000000000301"
+{"delivery_type":"04.01","depth":"produzir","credits":10.0,"revision":true,"provisional":true,"available":36.0,"sufficient":true}
+
+# 4. Erros no envelope
+$ ... -d "{\"workspace_id\":\"$WS\",\"delivery_type\":\"99.99\"}"
+{"error":{"code":"price_not_found","message":"Esta entrega ainda não tem preço em créditos.","details":[]}} HTTP 404
+$ ... -d "{\"workspace_id\":\"$WS\",\"delivery_type\":\"4.1\"}"
+{"error":{"code":"validation_error","message":"Dados inválidos.","details":[{"field":"delivery_type","message":"Formato inválido."}]}} HTTP 422
