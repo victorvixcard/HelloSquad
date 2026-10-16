@@ -29,6 +29,7 @@ import {
 } from "./content/calendar";
 import { loadCalendarAction } from "./content/calendar-actions";
 import { Glyph, ListView, MonthView, OwnerFace, StatusPill, WeekView, type CalItem, type View } from "./content/CalendarViews";
+import "./content/content.css";
 import { EnvIdentity } from "./EnvIdentity";
 import { NeedsStrip, type StripNeed } from "./NeedsStrip";
 
