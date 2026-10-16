@@ -1,0 +1,32 @@
+== 1. Marina pede a legenda do pão de abóbora; o Otto entrega a v1
+2026-10-16 16:38:48,624 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 4150 tokens de entrada, 890 de saída, 5800 lidos e 0 gravados no cache, US$ 0.026860
+  v1 | needs_you | Promoção imperdível: pão de abóbora saindo do forno. / Vocês vão adorar a casca dourada e o miolo macio. / Passem na Miolo e garantam o de vocês.
+== 2. Marina pede ajuste com uma correção concreta; nada entra na fila de reflexão (ajuste não fecha)
+in_progress
+  reflexões na fila: 0
+2026-10-16 16:38:49,613 INFO hellosquad.worker: run … concluído: entrega v2; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 4150 tokens de entrada, 890 de saída, 5800 lidos e 0 gravados no cache, US$ 0.026860
+  v2 | needs_you | Pão de abóbora saindo do forno, com casca dourada e miolo macio. / Você sente o perfume da fermentação natural já na porta. / Passe na Miolo e leve o seu.
+== 3. Marina aprova a v2: o trabalho fecha e a fila memory_reflect recebe o fechamento
+approved
+  desfecho: approved_with_edits | versões: 2 | correção: Nunca use 'promoção imperdível'; chame o cliente de 'você'.
+== 4. O worker reflete: aprendizados do Otto com a Miolo (versão em vigor)
+2026-10-16 16:38:50,498 INFO hellosquad.worker: reflexão … do trabalho …: 3 aprendizado(s) gravado(s)
+  Tratamento   promoted  explicit_correction  Chamar o cliente de “você”, no singular, nunca de “vocês”.
+  Vocabulário  promoted  explicit_correction  Nunca usar a expressão “promoção imperdível” nas legendas.
+  Abertura     candidate -                    Abrir a legenda pelo produto, não pela oferta.
+== 5. Próximo pedido de 04.01 da Miolo: o aprendizado entra no contexto e a entrega o respeita
+2026-10-16 16:38:51,392 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 4150 tokens de entrada, 890 de saída, 5800 lidos e 0 gravados no cache, US$ 0.026860
+  v1 | needs_you | Sexta tem pão de abóbora quentinho saindo do forno. / Você vai sentir a casca dourada e o miolo macio. / Passe na Miolo e leve o seu.
+  run_context_items: Tratamento (delivery, 46 tokens), Vocabulário (delivery, 46 tokens)
+== 6. Isolamento: a Vitta pede o mesmo e não recebe nada da Miolo
+2026-10-16 16:38:52,418 INFO hellosquad.worker: run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 4150 tokens de entrada, 890 de saída, 5800 lidos e 0 gravados no cache, US$ 0.026860
+  v1 | needs_you | Promoção imperdível: pão de abóbora saindo do forno. / Vocês vão adorar a casca dourada e o miolo macio. / Passem na Miolo e garantam o de vocês.
+  aprendizados no contexto da Vitta: 0
+  GET learnings da Miolo pelo Rafael: 404
+== 7. Pedro cria um negócio em espanhol: conversa de boas-vindas com a primeira fala do Nexo
+  conversa: Bienvenida
+  nexo: Hola, Pedro. Soy Nexo y coordino el squad de Panadería Pedro. Puedes pedir cualquier cosa por aquí o hablar directo con un especialista. Para empezar: ¿cuál es el objetivo más importante de Panadería Pedro ahora?
+  objetivo guardado: Objetivos · Objetivo actual = Conseguir más pedidos (confirmed)
+  nexo: Anotado en la Memoria de Marca: “Conseguir más pedidos”. Ya puedes pedir la primera entrega.
+== 8. make seed (banco local de volta ao estado do seed)
+  seed reaplicado
