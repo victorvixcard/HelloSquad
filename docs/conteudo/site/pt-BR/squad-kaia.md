@@ -49,7 +49,7 @@ O texto dentro de cada peça vem do Otto ou do que você aprovou; a Kaia não es
 
 *Exemplo com marca fictícia.* A Miolo é uma padaria de fermentação natural em Pinheiros, São Paulo.
 
-1. No projeto da campanha de fim de ano, a Bia aprovou o conceito "O Natal que leva tempo".
+1. No projeto da campanha de fim de ano, o conceito da Bia, "O Natal que leva tempo", já foi aprovado pela dona do negócio.
 2. A Kaia lê a Memória da Marca: tom acolhedor, direto, e as referências visuais que a dona já aprovou.
 3. Ela propõe uma direção visual, com uma frase explicando a escolha, e monta o carrossel com os textos que o Otto escreveu.
 4. A dona pede para trocar a foto do segundo slide. A Kaia cria a versão 2 e a versão 1 continua no histórico.

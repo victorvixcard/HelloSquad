@@ -35,7 +35,7 @@ When your tone of voice isn't defined yet, he proposes two short directions and 
 
 ## How Otto works with the rest of the squad
 
-SEO strategy belongs to Kiwi; Otto produces the content from it. Images belong to Kaia; Otto requests them in the work conversation. Max's relationship messages go out in the tone Otto helps define. On a campaign, everyone follows the concept Bia approved.
+SEO strategy belongs to Kiwi; Otto produces the content from it. Images belong to Kaia; Otto requests them in the work conversation. Max's relationship messages go out in the tone Otto helps define. On a campaign, everyone follows Bia's concept, the one you approved.
 
 ## What Otto doesn't do
 

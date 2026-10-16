@@ -35,7 +35,7 @@ Quando o tom de voz ainda não foi definido, ele propõe duas direções curtas 
 
 ## Como o Otto trabalha com o resto do squad
 
-A estratégia de SEO é da Kiwi; o Otto produz o conteúdo a partir dela. As imagens são da Kaia; o Otto pede pela conversa do trabalho. As mensagens de relacionamento do Max saem com o tom que o Otto ajuda a definir. Numa campanha, todos seguem o conceito que a Bia aprovou.
+A estratégia de SEO é da Kiwi; o Otto produz o conteúdo a partir dela. As imagens são da Kaia; o Otto pede pela conversa do trabalho. As mensagens de relacionamento do Max saem com o tom que o Otto ajuda a definir. Numa campanha, todos seguem o conceito da Bia que você aprovou.
 
 ## O que o Otto não faz
 
