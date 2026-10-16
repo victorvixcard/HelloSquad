@@ -33,6 +33,11 @@ test.describe("Conteúdo · Otto (A2b)", () => {
     await field.press("Enter");
 
     await expect(panel.locator(".ps-msg-u .ps-bub").filter({ hasText: REQUEST })).toBeVisible();
+    // Sem período no pedido, o squad pergunta antes de produzir (triagem da 04.02, fixture `briefing_incompleto`); a
+    // resposta da Marina na mesma conversa é o `answered` da pergunta e o Otto segue.
+    await expect(panel.getByText("Para o Otto montar o calendário: para qual semana ou período?")).toBeVisible({ timeout: 30_000 });
+    await field.fill("Da próxima semana, de 19 a 25 de outubro.");
+    await field.press("Enter");
     const card = panel.locator(".ps-mat").filter({ hasText: "Material · v1" });
     await expect(card).toBeVisible({ timeout: 30_000 });
 
@@ -83,6 +88,7 @@ test.describe("Conteúdo · Otto (A2b)", () => {
     const row = cal2.getByRole("button", { name: /^Fornada de segunda, seg, 19\/10, 9h, Post, publicação não autorizada/ });
     await expect(row).toBeVisible();
     await expect(row.getByText("Aprovado")).toBeVisible();
-    await expect(cal2.getByText("Aguarda você")).toHaveCount(0);
+    // Nenhum post ainda à espera (a legenda "aguarda você" do calendário continua, em minúsculas).
+    await expect(cal2.getByText("Aguarda você", { exact: true })).toHaveCount(0);
   });
 });
