@@ -6,7 +6,10 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.143.2",
     "httpx>=0.28.1",
+    "psycopg-pool>=3.3.3",
+    "psycopg[binary]>=3.3.6",
     "pydantic-settings>=2.16.0",
+    "pyjwt[crypto]>=2.15.1",
     "uvicorn[standard]>=0.54.0",
 ]
 
@@ -14,6 +17,7 @@ dependencies = [
 hellosquad-api = "hellosquad.api.main:run"
 hellosquad-worker = "hellosquad.worker.main:run"
 hellosquad-scheduler = "hellosquad.scheduler.main:run"
+hellosquad-local-db = "hellosquad.local_db:run"
 
 [build-system]
 requires = ["uv_build>=0.11.28,<0.12.0"]
@@ -37,3 +41,6 @@ select = ["E", "W", "F", "I", "UP", "B", "SIM", "ASYNC"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "-ra"
+markers = [
+    "integration: usa o Supabase local no ar (make up && make seed) e o .env da raiz",
+]

@@ -27,8 +27,8 @@ install: ## Instala dependências JS (pnpm) e Python (uv) a partir dos lockfiles
 
 up: install ## Sobe o Supabase local (projeto hellosquad) e aplica migrations pendentes
 	$(SUPABASE) start
-	$(SUPABASE) migration up --local
-	@echo "Supabase local no ar. Chaves locais: pnpm exec supabase status -o env (ANON_KEY e SERVICE_ROLE_KEY vão para o .env)."
+	$(MAKE) --no-print-directory migrate
+	@echo "Supabase local no ar. Chaves locais: pnpm exec supabase status -o env (PUBLISHABLE_KEY e SECRET_KEY vão para o .env)."
 
 down: ## Para o Supabase local do HelloSquad (os dados ficam no volume Docker)
 	$(SUPABASE) stop
@@ -41,11 +41,12 @@ status: ## Estado do Supabase local, da API (:8100) e da web (:3100)
 		&& echo "Web no ar em http://127.0.0.1:$(WEB_PORT)" \
 		|| echo "Web fora do ar em :$(WEB_PORT) (make dev-web)"
 
-migrate: ## Aplica migrations pendentes de supabase/migrations no banco local
+migrate: ## Aplica migrations pendentes e grava a senha do papel hellosquad_api (API_DATABASE_URL do .env)
 	$(SUPABASE) migration up --local
+	cd $(BACKEND_DIR) && uv run hellosquad-local-db roles
 
-seed: ## Dados fictícios no banco local (implementado pelo Stark na S0)
-	@echo "seed: ainda não implementado. Chega na fatia S0 (Stark), a partir de docs/DADOS_FICTICIOS.md."
+seed: ## Dados fictícios de docs/DADOS_FICTICIOS.md no banco local (idempotente)
+	cd $(BACKEND_DIR) && uv run hellosquad-local-db seed ../../supabase/seed.sql
 
 test: test-backend test-web test-db ## Roda todos os testes locais (backend, web e banco)
 

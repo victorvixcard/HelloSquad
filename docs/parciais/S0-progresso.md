@@ -5,8 +5,8 @@ Identidade, isolamento por tenant e API base. **Iniciada em 16/10/2026 00:14.** 
 | # | Item | Estado |
 |---|---|---|
 | 1 | Migrations: `workspaces`, `memberships`, `invitations`, `audit_events`, schema `app` com funções auxiliares, RLS habilitada e forçada, papel `hellosquad_api`, `auto_expose_new_tables = false` | ✅ `supabase db reset` aplica as 4 migrations (exit 0); 4 tabelas com `relrowsecurity` e `relforcerowsecurity` = t; `hellosquad_api` sem INHERIT/BYPASSRLS, membro de `authenticated` só com SET |
-| 2 | Seed idempotente (`make seed`): 3 workspaces e 5 usuários de `docs/DADOS_FICTICIOS.md` | ⏳ em andamento |
-| 3 | Testes pgTAP de RLS e isolamento (varredura de RLS, Marina, Pedro, Carla, Rafael, `audit_events` imutável) | ⚪ |
+| 2 | Seed idempotente (`make seed`): 3 workspaces e 5 usuários de `docs/DADOS_FICTICIOS.md` | ✅ `supabase/seed.sql` roda no `supabase db reset` ("Seeding data from supabase/seed.sql") e no `make seed`; duas execuções seguidas dão o mesmo estado (memberships sem `updated_at` alterado); login da Marina na Auth local → HTTP 200 |
+| 3 | Testes pgTAP de RLS e isolamento (varredura de RLS, Marina, Pedro, Carla, Rafael, `audit_events` imutável) | ⏳ em andamento |
 | 4 | FastAPI: JWT (JWKS + fallback HS256), transação com `SET LOCAL ROLE authenticated`, `/me`, `/workspaces`, testes de integração | ⚪ |
 | 5 | `make openapi` → `packages/contracts/openapi.json` | ⚪ |
 | 6 | `docs/SETUP_LOCAL.md` e `docs/parciais/S0-relatorio.md` | ⚪ |
@@ -20,6 +20,11 @@ Identidade, isolamento por tenant e API base. **Iniciada em 16/10/2026 00:14.** 
 - `log_statement = ddl` no Postgres local: senha em `ALTER ROLE` apareceria no log. A senha do `hellosquad_api` vai com hash SCRAM calculado no cliente.
 - Teste rápido em transação desfeita: usuário sem membership vê 0 workspaces e 0 memberships; `anon` recebe `permission denied`; INSERT em `audit_events` como `authenticated` recebe `permission denied`; rebaixar o único owner falha com "O workspace precisa de pelo menos um owner.".
 
+- Seed em SQL (inserção em `auth.users`/`auth.identities` com `crypt`), num único bloco `DO`: aplica tudo ou nada. O `make seed` reaplica o mesmo arquivo via `hellosquad-local-db` (Python), que também grava a senha do `hellosquad_api`. A ferramenta recusa `APP_ENV` fora de local/test e `DATABASE_URL` fora desta máquina.
+- O token do usuário vem da Auth local em ES256 com `kid` do JWKS: `iss=http://127.0.0.1:56321/auth/v1`, `aud=authenticated`, `role=authenticated`, nome em `user_metadata.full_name`.
+- Senha do `hellosquad_api`: o log do Postgres registra só `password 'SCRAM-SHA-256$…'`; busca pela senha em claro no log do container: 0 ocorrências.
+- Depois de `supabase db reset` o papel volta sem senha: rodar `make seed` (ou `make migrate`).
+
 ## Próximo passo
 
-Seed idempotente (item 2).
+Testes pgTAP (item 3).

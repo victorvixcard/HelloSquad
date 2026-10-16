@@ -1,9 +1,12 @@
 """Configuração lida do ambiente e, em máquina local, do `.env` da raiz do monorepo."""
 
 from functools import lru_cache
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import SecretStr, field_validator, model_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+JwtAlgorithm = Literal["ES256", "RS256", "HS256"]
 
 
 class Settings(BaseSettings):
@@ -21,6 +24,49 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     worker_idle_seconds: float = 30.0
     scheduler_tick_seconds: float = 60.0
+
+    supabase_url: str = "http://127.0.0.1:56321"
+    supabase_publishable_key: str | None = None
+    supabase_secret_key: SecretStr | None = None
+
+    # Algoritmos aceitos no JWT do usuário. ES256/RS256: chave pública do JWKS da Auth.
+    # HS256: só como fallback, com SUPABASE_JWT_SECRET. Valor no .env separado por vírgula.
+    auth_jwt_algorithms: Annotated[list[JwtAlgorithm], NoDecode] = ["ES256"]
+    auth_jwks_url: str | None = None
+    auth_jwt_issuer: str | None = None
+    auth_jwt_audience: str = "authenticated"
+    auth_jwks_cache_seconds: float = 300.0
+    supabase_jwt_secret: SecretStr | None = None
+
+    # Papel hellosquad_api (sem BYPASSRLS). A API só fala com o banco por aqui.
+    api_database_url: SecretStr | None = None
+    api_db_pool_min_size: int = 1
+    api_db_pool_max_size: int = 10
+    # Usuário postgres do Supabase local: só ferramentas locais (seed, senha do papel, testes).
+    database_url: SecretStr | None = None
+
+    @field_validator("auth_jwt_algorithms", mode="before")
+    @classmethod
+    def split_algorithms(cls, value: object) -> object:
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        return value
+
+    @model_validator(mode="after")
+    def require_secret_for_hs256(self) -> "Settings":
+        if "HS256" in self.auth_jwt_algorithms and not self.supabase_jwt_secret:
+            raise ValueError("AUTH_JWT_ALGORITHMS inclui HS256 e SUPABASE_JWT_SECRET está vazio.")
+        if not self.auth_jwt_algorithms:
+            raise ValueError("AUTH_JWT_ALGORITHMS não pode ser vazio.")
+        return self
+
+    @property
+    def jwks_url(self) -> str:
+        return self.auth_jwks_url or f"{self.jwt_issuer}/.well-known/jwks.json"
+
+    @property
+    def jwt_issuer(self) -> str:
+        return self.auth_jwt_issuer or f"{self.supabase_url.rstrip('/')}/auth/v1"
 
 
 @lru_cache
