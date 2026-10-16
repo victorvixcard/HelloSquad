@@ -172,6 +172,8 @@ begin
   where w.id = a.workspace_id
     and w.slug in ('miolo', 'vitta', 'trilha')
     and a.entity_type in ('work_item', 'approval', 'run', 'conversation', 'message', 'delivery');
+  -- S2a: o calendário editorial recomeça junto com o núcleo (o post sobreviveria ao trabalho apagado).
+  delete from public.calendar_posts p using public.workspaces s where s.id = p.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.work_items w using public.workspaces s where s.id = w.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.runs r using public.workspaces s where s.id = r.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.conversations c using public.workspaces s where s.id = c.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
