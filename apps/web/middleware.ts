@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { LOCALE_HEADER, publicLocaleOf } from "./i18n/resolve";
 import { updateSession } from "./lib/supabase/middleware";
 import { ACTION_PATH_HEADER, isAppPath } from "./lib/supabase/session-cookie";
 import { contentSecurityPolicy, createNonce } from "./lib/security-headers";
@@ -10,7 +11,15 @@ export async function middleware(request: NextRequest) {
   // grava, por cima do que vier do browser; a ação do token do Realtime só responde na área logada (H1-10).
   if (request.headers.has("next-action")) request.headers.set(ACTION_PATH_HEADER, request.nextUrl.pathname);
   else request.headers.delete(ACTION_PATH_HEADER);
+  // O idioma da tela só vem do middleware (ADR-0010); o cabeçalho que chegar do browser não vale.
+  request.headers.delete(LOCALE_HEADER);
   const { pathname } = request.nextUrl;
+  // Site público por idioma: /en e /es (a / é pt-BR e estática, fora do middleware).
+  const publicLocale = publicLocaleOf(pathname);
+  if (publicLocale) {
+    request.headers.set(LOCALE_HEADER, publicLocale);
+    return NextResponse.next({ request });
+  }
   if (!isAppPath(pathname) && !SESSION_PAGES.includes(pathname)) return NextResponse.next({ request });
 
   // CSP com nonce por requisição. O Next lê o nonce deste cabeçalho da requisição e o põe nos
@@ -26,7 +35,7 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-// Só onde a sessão importa: a área logada e as telas de entrar, criar conta e sair.
+// Só onde a sessão ou o idioma importam: a área logada, as telas de entrar, criar conta e sair, e /en e /es.
 // A página pública fica estática e não depende da Auth; nela o middleware só vê os POSTs de Server Action.
 export const config = {
   matcher: [
@@ -35,6 +44,8 @@ export const config = {
     "/entrar",
     "/criar-conta",
     "/sair",
+    "/en",
+    "/es",
     { source: "/((?!_next/static|_next/image).*)", has: [{ type: "header", key: "next-action" }] },
   ],
 };
