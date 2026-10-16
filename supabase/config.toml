@@ -113,7 +113,8 @@ enabled = true
 # Port to use for the email testing server web interface.
 port = 56324
 # Uncomment to expose additional ports for testing user applications that send emails.
-# smtp_port = 56325
+# HelloSquad (S2f): SMTP do Mailpit exposto em 127.0.0.1:56325 para o EmailProvider local (sem autenticação).
+smtp_port = 56325
 # pop3_port = 56326
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
