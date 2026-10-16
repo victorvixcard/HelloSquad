@@ -1,9 +1,9 @@
 "use server";
 
 import { isApiError, unwrap } from "@hellosquad/contracts";
-import { serverApi } from "@/lib/api";
+import { loadMe, serverApi } from "@/lib/api";
 import type { BrandFact, BrandFactHistory, MemoryConflict } from "@/lib/memory";
-import { OBJECTIVE_FACT } from "@/lib/onboarding";
+import { objectiveFact } from "@/lib/onboarding";
 import type { ActionResult } from "./actions";
 
 type SuggestionDecision = "confirm" | "correct" | "discard";
@@ -100,7 +100,12 @@ export async function addFactAction(workspaceId: string, fact: NewFact): Promise
   }
 }
 
-/** Objetivo contado ao Nexo no primeiro acesso (V4.6 `_setObjective`, L7928): "Objetivos" · "Objetivo atual". */
+/**
+ * Objetivo contado ao Nexo no primeiro acesso (V4.6 `_setObjective`, L7928): "Objetivos" · "Objetivo atual", com os
+ * nomes no idioma do negócio (H2-06, A2d), lido de `GET /me` (a mesma resposta da página, em cache na requisição).
+ */
 export async function addObjectiveAction(workspaceId: string, content: string): Promise<ActionResult<BrandFact>> {
-  return addFactAction(workspaceId, { ...OBJECTIVE_FACT, content });
+  const me = await loadMe();
+  const locale = me.ok ? me.me.memberships.find((m) => m.workspace.id === workspaceId)?.workspace.locale : undefined;
+  return addFactAction(workspaceId, { ...objectiveFact(locale), content });
 }

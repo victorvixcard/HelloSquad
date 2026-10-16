@@ -20,7 +20,7 @@ export function objectiveFact(locale?: unknown) {
   return { area: "business", topic: catalog.topics.business.goals, key: catalog.objectiveKey } as const;
 }
 
-/** O objetivo com os nomes em pt-BR (quem grava ainda não passa o idioma do negócio: `objectiveFact(locale)`). */
+/** O objetivo com os nomes em pt-BR, o padrão quando o idioma do negócio não vem (`addObjectiveAction` passa o dele). */
 export const OBJECTIVE_FACT = objectiveFact(DEFAULT_LOCALE);
 
 /** Estados que orientam o squad (o que a Memória "sabe"); sugestão, conflito, descartado e fora de uso não contam. */
