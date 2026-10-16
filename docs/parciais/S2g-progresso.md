@@ -44,5 +44,8 @@ A main achou a fatia sem relatório: o `faa06d2` foi publicado do worktree e só
 
 | Hora | Item | Commit | Quem | Estado |
 |---|---|---|---|---|
-| 20:19 | PASSO 0; H2-20 (`e34c4ac`: 0021/0022, nenhum telefone fora de `+55 11 99999-00NN` em `apps/backend/tests`) e guia do 2º checkout (`cf0b330`) conferidos; `make openapi` + `pnpm --filter contracts generate` sem diferença (59 operações) | este | Stark | feito |
-| — | `make test` completo (infra, web, backend, pgTAP) | — | Stark | em andamento |
+| 20:16 | PASSO 0; H2-20 (`e34c4ac`: 0021/0022, nenhum telefone fora de `+55 11 99999-00NN` em `apps/backend/tests`) e guia do 2º checkout (`cf0b330`) conferidos; `make openapi` + `pnpm --filter contracts generate` sem diferença (59 operações) | `83b1c82` | Stark | feito |
+| 20:18 | `make test` completo verde em `83b1c82` (exit 0): guarda 21/21, ESLint e tipos ok, Vitest 9 + 49 + 406, ruff ok, pytest 267 passed, pgTAP 712 PASS | `83b1c82` | Stark | feito |
+| 20:19 | Relatório: §2 com o `make test` verde, §5 sem o `test-web` vermelho, §6 com o estado da retomada; as 15 anotações da H2 conferidas (hashes certos) | `594f0a8` | Stark | feito |
+
+**Retomada fechada às 20:20.**
