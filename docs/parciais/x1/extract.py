@@ -141,6 +141,20 @@ def strings_of(lines, s0, s1, tag):
     return rows
 
 
+LABEL_RX = re.compile(r"^[A-ZÀ-Ý\"“+][^{}()=<>;]{1,90}$")
+
+
+def labels_of(lines, s0, s1, tag):
+    """Literais curtos com cara de rótulo (começam por maiúscula), inclusive de uma palavra só."""
+    rows = []
+    for i in range(s0, s1):
+        for m in STR_RX.finditer(lines[i]):
+            s = next(g for g in m.groups() if g is not None)
+            if LABEL_RX.match(s) and not JS_PATH.fullmatch("'" + s + "'") and not re.fullmatch(r"[A-Z0-9_\-.]+", s):
+                rows.append(f"{tag}\t{i + 1}\t{s}")
+    return rows
+
+
 TEXT_NODE = re.compile(r">([^<>{}][^<>]*?)<")
 ATTR_TXT = re.compile(r'\b(aria-label|title|placeholder|alt|data-tip)="([^"]+)"')
 
@@ -194,6 +208,9 @@ def process(src, prefix, outdir):
         idx.append(f"{fn}\t{a + 1}-{b}\t{n} linhas\t{name}")
     srows = strings_of(lines, sc0 + 1, sc1, prefix)
     (outdir / f"{prefix}_strings.tsv").write_text("\n".join(srows) + "\n", encoding="utf-8")
+    lrows = labels_of(lines, sc0 + 1, sc1, prefix)
+    (outdir / f"{prefix}_rotulos.tsv").write_text("\n".join(lrows) + "\n", encoding="utf-8")
+    idx.append(f"{prefix}_rotulos.tsv\t-\t{len(lrows)} linhas\tliterais com cara de rótulo (maiúscula inicial, inclusive uma palavra)")
     idx.append(f"{prefix}_strings.tsv\t-\t{len(srows)} linhas\tliterais de texto em português do script")
     (outdir / f"{prefix}_INDICE.tsv").write_text("\n".join(idx) + "\n", encoding="utf-8")
     (outdir / f"{prefix}_meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

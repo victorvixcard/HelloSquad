@@ -326,4 +326,5 @@ pui_13860_v46p.txt	13860-13861	2 linhas	V46P
 pui_13862_bloco.txt	13862-13862	1 linhas	bloco
 pui_13863_precisa-de-você-o-especialista-aparece-r.txt	13863-13873	11 linhas	Precisa de você: o especialista aparece (rosto + nome), não só a cor
 pui_13874_status-o-mesmo-desenho-para-o-mesmo-esta.txt	13874-13962	90 linhas	status: o mesmo desenho para o mesmo estado
+pui_rotulos.tsv	-	3890 linhas	literais com cara de rótulo (maiúscula inicial, inclusive uma palavra)
 pui_strings.tsv	-	3201 linhas	literais de texto em português do script
