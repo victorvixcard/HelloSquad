@@ -4,7 +4,7 @@
 # Uso: flock -w 1800 /tmp/hellosquad-db.lock bash docs/parciais/h1/01_aceite.sh
 set -uo pipefail
 source /home/vitao/projetos/hellosquad/docs/parciais/h1/lib.sh
-OUT="$H1_ROOT/docs/parciais/h1/aceite"; mkdir -p "$OUT"
+OUT="${H1_ACEITE_OUT:-$H1_ROOT/docs/parciais/h1/aceite}"; mkdir -p "$OUT"
 
 echo "== antes"
 B0=$(h1_psql -c "select app.credit_balance('$MIOLO')")

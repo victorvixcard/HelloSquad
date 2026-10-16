@@ -1,0 +1,71 @@
+{
+  "steps": [
+    {
+      "t": "16:57:22",
+      "name": "login",
+      "bar": "(sem barra)",
+      "needs": null
+    },
+    {
+      "t": "16:57:23",
+      "name": "painel-nexo-aberto",
+      "placeholder": "Mensagem para o Nexo…"
+    },
+    {
+      "t": "16:57:23",
+      "name": "pedido-enviado"
+    },
+    {
+      "t": "16:57:25",
+      "name": "entrega-v1-ao-vivo",
+      "semRecarregar": true,
+      "cartao": "Sábado tem pão de fermentação longa saindo do forno. Casca crocante, miolo macio e o tempo que a massa pede. Passe na Miolo de manhã e leve o seu ainda morno. MATERIAL · V1 Quero uma legenda para o In"
+    },
+    {
+      "t": "16:57:26",
+      "name": "revisao-aberta",
+      "workId": "444482e1-3ff9-4292-b44e-e6c41b889a1d"
+    },
+    {
+      "t": "16:57:27",
+      "name": "aprovado"
+    },
+    {
+      "t": "16:57:27",
+      "name": "painel-ao-lado-sem-recarregar",
+      "aprovadaNoPainel": true,
+      "botaoAprovarAinda": 0,
+      "texto": " uma legenda para o Instagram sobre o pão de centeio da semana Aprovada por você"
+    },
+    {
+      "t": "16:57:27",
+      "name": "historico",
+      "trecho": "Histórico Otto · legenda Sábado tem pão de fermentação longa saindo do forno. Casca crocante, miolo macio e o tempo que a massa pede. Passe na Miolo de manhã e leve o seu ainda morno."
+    },
+    {
+      "t": "16:57:27",
+      "name": "persistiu-apos-recarregar"
+    },
+    {
+      "t": "16:57:28",
+      "name": "projetos",
+      "aparece": true,
+      "trecho": "nga v1 aguarda sua aprovação Revisar Em andamento 0 Nada em produção Programados 0 Nada programado Concluídos 1 ENTREGA Quero uma legenda para o Instagram sobre o pão de centeio da semana Aprovado Aprovado"
+    },
+    {
+      "t": "16:57:29",
+      "name": "conversa-depois",
+      "cartao": "Sábado tem pão de fermentação longa saindo do forno. Casca crocante, miolo macio e o tempo que a massa pede. Passe na Miolo de manhã e leve o seu ainda morno. MATERIAL · V1 Quero uma legenda para o In"
+    },
+    {
+      "t": "16:58:00",
+      "name": "barra-creditos-depois",
+      "bar": "(sem barra)"
+    }
+  ],
+  "errors": [],
+  "console": [],
+  "workItemId": "444482e1-3ff9-4292-b44e-e6c41b889a1d",
+  "wsFramesSample": [],
+  "wsFrames": 0
+}
