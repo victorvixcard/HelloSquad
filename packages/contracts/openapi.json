@@ -5417,7 +5417,7 @@
               }
             ],
             "title": "Id",
-            "description": "Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact` e `insight` (\"<Agente> percebeu\")."
+            "description": "Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact`, `insight` (\"<Agente> percebeu\") e `calendar_post` (post do calendário editorial; o post que ainda não mora no banco continua vindo pela chave)."
           },
           "key": {
             "anyOf": [
@@ -5430,7 +5430,7 @@
               }
             ],
             "title": "Key",
-            "description": "Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, `opportunity`, `responsibility`, `segment`, `document` e `capability` (o código da delivery, ex.: `04.01`). Exclusiva com `id`.",
+            "description": "Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, `opportunity`, `responsibility`, `segment`, `document`, `capability` (o código da delivery, ex.: `04.01`) e `environment` (o agente do ambiente, ex.: `bia`; uma conversa por ambiente, com o agente do ambiente à frente). Exclusiva com `id`.",
             "examples": [
               "04.01"
             ]
@@ -5532,7 +5532,8 @@
           "responsibility",
           "segment",
           "document",
-          "capability"
+          "capability",
+          "environment"
         ],
         "title": "ContextType"
       },
@@ -6117,6 +6118,17 @@
               }
             ],
             "description": "Cartão do objeto (só em `object`)."
+          },
+          "opening": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConversationOpening"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Só na conversa do ambiente (`environment`): a primeira fala do agente e as sugestões do ambiente, calculadas a cada leitura."
           }
         },
         "type": "object",
@@ -6147,6 +6159,41 @@
           "group"
         ],
         "title": "ConversationKind"
+      },
+      "ConversationOpening": {
+        "properties": {
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Primeira fala do agente do ambiente (V4.6 `_cxEnvFirst`), no idioma do workspace e com o estado de agora.",
+            "examples": [
+              "Oi, eu sou a Bia. Disponível. O que você precisa?"
+            ]
+          },
+          "suggestions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Suggestions",
+            "description": "Sugestões de pergunta (\"Pergunte à Bia\"); somem depois da primeira mensagem da pessoa.",
+            "examples": [
+              [
+                "Onde a Miolo pode crescer até o Natal?"
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "agent_id",
+          "message",
+          "suggestions"
+        ],
+        "title": "ConversationOpening"
       },
       "ConversationPage": {
         "properties": {

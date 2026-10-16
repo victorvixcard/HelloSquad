@@ -1170,12 +1170,12 @@ export interface components {
             type: components["schemas"]["ContextType"];
             /**
              * Id
-             * @description Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact` e `insight` ("<Agente> percebeu").
+             * @description Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact`, `insight` ("<Agente> percebeu") e `calendar_post` (post do calendário editorial; o post que ainda não mora no banco continua vindo pela chave).
              */
             id?: string | null;
             /**
              * Key
-             * @description Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, `opportunity`, `responsibility`, `segment`, `document` e `capability` (o código da delivery, ex.: `04.01`). Exclusiva com `id`.
+             * @description Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, `opportunity`, `responsibility`, `segment`, `document`, `capability` (o código da delivery, ex.: `04.01`) e `environment` (o agente do ambiente, ex.: `bia`; uma conversa por ambiente, com o agente do ambiente à frente). Exclusiva com `id`.
              * @example 04.01
              */
             key?: string | null;
@@ -1208,7 +1208,7 @@ export interface components {
          * ContextType
          * @enum {string}
          */
-        ContextType: "project" | "work_item" | "delivery" | "memory_fact" | "insight" | "calendar_post" | "metric" | "opportunity" | "responsibility" | "segment" | "document" | "capability";
+        ContextType: "project" | "work_item" | "delivery" | "memory_fact" | "insight" | "calendar_post" | "metric" | "opportunity" | "responsibility" | "segment" | "document" | "capability" | "environment";
         /** Conversation */
         Conversation: {
             /**
@@ -1442,12 +1442,32 @@ export interface components {
             participants: components["schemas"]["Participant"][];
             /** @description Cartão do objeto (só em `object`). */
             context: components["schemas"]["ConversationContext"] | null;
+            /** @description Só na conversa do ambiente (`environment`): a primeira fala do agente e as sugestões do ambiente, calculadas a cada leitura. */
+            opening?: components["schemas"]["ConversationOpening"] | null;
         };
         /**
          * ConversationKind
          * @enum {string}
          */
         ConversationKind: "squad_room" | "agent_direct" | "object" | "group";
+        /** ConversationOpening */
+        ConversationOpening: {
+            agent_id: components["schemas"]["AgentId"];
+            /**
+             * Message
+             * @description Primeira fala do agente do ambiente (V4.6 `_cxEnvFirst`), no idioma do workspace e com o estado de agora.
+             * @example Oi, eu sou a Bia. Disponível. O que você precisa?
+             */
+            message: string;
+            /**
+             * Suggestions
+             * @description Sugestões de pergunta ("Pergunte à Bia"); somem depois da primeira mensagem da pessoa.
+             * @example [
+             *       "Onde a Miolo pode crescer até o Natal?"
+             *     ]
+             */
+            suggestions: string[];
+        };
         /** ConversationPage */
         ConversationPage: {
             /**
