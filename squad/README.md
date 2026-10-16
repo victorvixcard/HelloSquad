@@ -42,4 +42,4 @@ Toda mudança nesta pasta gera uma nova linha em `agent_prompt_versions`; cada r
 
 ## Fonte
 
-Nomes, cores, formas, skills e pedidos sugeridos vêm de `design/handoff-v4.6/product-ui/ProductUIV4.dc.html` (objeto `AG`) e de `ds/hellosquad/tokens.json`. Responsabilidades, limites e deliveries vêm do `Documento_Mestre_HelloSquad_v1.0.md`, seções 4 e Anexo A. Onde o protótipo e o Documento Mestre divergem (Kiwi), vale o Documento Mestre.
+Nomes, cores, formas, skills e pedidos sugeridos vêm de `design/handoff-v4.6/product-ui/ProductUIV4.dc.html` (objeto `AG`) e de `ds/hellosquad/tokens.json`. Responsabilidades, limites e deliveries vêm do `Documento_Mestre_HelloSquad_v1.0.md`, seções 4 e Anexo A. Kiwi: o Vic confirmou em 15/10/2026 que todo o fluxo é **Growth Marketing** e que o tratamento é **"a Kiwi"**; a UI V4.6 ainda mostra "Mídia" e será alinhada na V5.

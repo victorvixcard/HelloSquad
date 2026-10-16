@@ -37,7 +37,7 @@ Vercel serve a web (Next.js, SSR para SEO/GEO). Supabase é o plano de dados ún
 
 **Aberto e tratado como configuração:** preços, créditos, planos, paywall; fornecedor de imagem e vídeo; gateway de pagamento; semântica do botão global de autonomia; viabilidade do Meta Ads MCP multi-tenant.
 
-**Divergência encontrada:** a UI V4.6 rotula Kiwi como "Mídia e Performance"; o Documento Mestre (mais novo) define **Growth Marketing** (inclui SEO, CRO, testes). Adotei o Documento Mestre. A V5 de design precisa alinhar o rótulo.
+**Divergência resolvida (Vic, 15/10/2026):** a UI V4.6 rotula Kiwi como "Mídia e Performance"; o Documento Mestre define **Growth Marketing** (inclui SEO, CRO, testes). Vale Growth Marketing para todo o fluxo; só o termo da área muda. Tratamento: "a Kiwi". A V5 de design alinha o rótulo.
 
 ---
 
@@ -81,6 +81,26 @@ Storage: bucket por ambiente, caminho `workspace_id/<entidade>/<id>/<versão>`; 
 | Workspace gigante | Memória vira dossiê de milhares de fatos | Recuperação por relevância com orçamento de tokens (seção 5.4); nunca "despejar o dossiê inteiro". |
 
 **Alvos iniciais (SLO):** p95 de abertura de tela < 800 ms; primeiro evento de progresso de um run < 5 s após o pedido; nenhuma ação externa executada duas vezes; zero vazamento entre workspaces (teste automatizado de RLS em CI com dois tenants).
+
+### 3.3 Cenário concreto: 10 clientes pedem deliveries no mesmo instante
+
+Pergunta do Vic (15/10/2026): dez clientes, cada um na sua sessão, disparam deliveries ao mesmo tempo. A infra atende?
+
+**Premissa de carga de uma delivery típica de texto ou estratégia:** cerca de 5 chamadas de LLM (triagem do Nexo, produção, uso de ferramentas, autoverificação), ~30 mil tokens de entrada dos quais 60% a 80% vêm do cache (SOUL, skill, fatos da marca), ~5 mil tokens de saída, duração de 1 a 4 minutos.
+
+| Componente | Carga de 10 simultâneos | Limite do componente | Onde estoura |
+|---|---|---|---|
+| API Anthropic, tier **Start** (o menor tier padrão; limites conferidos em 15/10/2026) | ~50 requisições, ~100 mil tokens de entrada não cacheados, ~50 mil de saída no pior minuto | 1.000 req/min · 2.000.000 tokens de entrada/min (**só o não cacheado conta**) · 400.000 tokens de saída/min, por modelo | Uso de ~5% das requisições, ~5% da entrada e ~12% da saída. O gargalo é a saída: ~80 deliveries iniciadas no mesmo minuto. Build: ~200/min. Scale: ~400/min. |
+| Workers (Railway) | 10 runs ocupam metade de uma réplica com concorrência 20 | runs são I/O (esperam a LLM); ~20 por réplica; autoscale por profundidade de fila | Réplica nova em segundos; a fila absorve o excedente sem erro. |
+| Postgres (Supavisor) | conexão ocupada só nas gravações, milissegundos por run | pool configurável por réplica | Sem efeito em 10. |
+| Realtime | 10 canais abertos | milhares de conexões por projeto | Sem efeito. |
+| Motor de imagem (Kaia) | depende do fornecedor; alguns limitam 5 a 10 gerações simultâneas por chave | fila dedicada por fornecedor com concorrência configurada | **Este é o gargalo real** para 10 pedidos de arte simultâneos: alguns esperam segundos em "Na fila"; ninguém recebe erro. |
+
+**Resposta:** sim, com folga. Dez pedidos simultâneos usam entre 5% e 12% da capacidade do menor tier. As execuções são paralelas e independentes: cada pedido é um job próprio, com contexto do seu workspace, contra uma API de LLM sem estado. Não existe "um agente atendendo um cliente por vez".
+
+**O que exige ação antes do lançamento, e não é código:** organizações novas na API da Anthropic começam no tier *Evaluation*, abaixo do Start, e cada tier tem teto de gasto mensal (Start US$ 500, Build US$ 1.000, Scale US$ 200 mil). Ao bater o teto, a API para até o dia 1 do mês seguinte. Então: criar a organização na Fase 0, gerar histórico de uso em staging desde cedo e pedir aumento de tier pelo Console antes de abrir para clientes. Sem isso, o produto para no meio do mês com clientes pagantes.
+
+**Proteções que entram desde a Fase 1:** cap de 3 runs simultâneos por workspace (configurável por plano) para um cliente não sufocar os outros; posição na fila visível ao usuário quando houver espera; prompt caching agressivo (tokens lidos do cache não contam no limite de entrada); segundo provedor de LLM atrás do adaptador para absorver excedente ou indisponibilidade.
 
 ---
 

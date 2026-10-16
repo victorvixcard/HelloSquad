@@ -1,9 +1,9 @@
 id: kiwi
 name: Kiwi
-artigo: a                      # "a Kiwi" (confirmar com o Vic; o protótipo usa "o Kiwi")
-area_ui: Growth
+artigo: a                      # "a Kiwi" — confirmado pelo Vic em 15/10/2026
+area_ui: Growth Marketing      # confirmado pelo Vic em 15/10/2026: todo o fluxo é Growth Marketing; só o termo da área mudou em relação à UI V4.6 ("Mídia")
 papel: Growth Marketing
-papel_completo: Growth Marketing          # Documento Mestre; a UI V4.6 ainda diz "Mídia e Performance"
+papel_completo: Growth Marketing
 cor: "#B6FF2E"
 tinta_suave: "rgba(182,255,46,.24)"
 forma: hex
