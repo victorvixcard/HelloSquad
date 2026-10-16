@@ -53,9 +53,10 @@ test: test-backend test-web test-db ## Roda todos os testes locais (backend, web
 test-backend: ## Backend: ruff (lint e formato) e pytest
 	cd $(BACKEND_DIR) && uv run ruff check . && uv run ruff format --check . && uv run pytest
 
-test-web: ## Web: ESLint e checagem de tipos
+test-web: ## Web e pacotes: ESLint, checagem de tipos e testes de componente (Vitest)
 	pnpm --filter web lint
-	pnpm --filter web typecheck
+	pnpm -r --if-present typecheck
+	pnpm -r --if-present test
 
 test-db: ## Banco: testes pgTAP de supabase/tests (exige make up)
 	$(SUPABASE) test db

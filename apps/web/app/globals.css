@@ -1,24 +1,90 @@
 @import "tailwindcss";
+@import "@hellosquad/ui/tokens.css";
+@import "@hellosquad/ui/styles.css";
 
+/* Famílias: o nome vem de tokens.json; o arquivo, do next/font/local (app/fonts.ts). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --hs-font-display: var(--hs-font-gabarito), "Gabarito", sans-serif;
+  --hs-font-mono: var(--hs-font-jetbrains), "JetBrains Mono", monospace;
+}
+
+/* Só as cores do Design System viram utilitárias (bg-papel, text-tinta...): a paleta padrão do
+   Tailwind fica desligada para nenhuma tela inventar cor. */
+@theme {
+  --color-*: initial;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-papel: var(--hs-papel);
+  --color-tinta: var(--hs-tinta);
+  --color-branco: var(--hs-branco);
+  --color-tinta-suave: var(--hs-tinta-suave);
+  --color-nevoa: var(--hs-nevoa);
+  --color-rotulo: var(--hs-rotulo);
+  --color-kbd: var(--hs-kbd);
+  --color-l1: var(--hs-l1);
+  --color-l2: var(--hs-l2);
+  --color-l3: var(--hs-l3);
+  --color-coord: var(--hs-coord);
+  --color-coord-labio: var(--hs-coord-labio);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-display: var(--hs-font-display);
+  --font-mono: var(--hs-font-mono);
+
+  --radius-pilula: var(--hs-r-pilula);
+  --radius-painel: var(--hs-r-painel);
+  --radius-painel-s: var(--hs-r-painel-s);
+  --radius-campo: var(--hs-r-campo);
+  --radius-menu: var(--hs-r-menu);
+  --radius-item: var(--hs-r-item);
+
+  --shadow-apoiado: var(--hs-e1-apoiado);
+  --shadow-flutuante: var(--hs-e2-flutuante);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--hs-papel);
+  color: var(--hs-tinta);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--hs-papel);
+  color: var(--hs-tinta);
+  font-family: var(--hs-font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--hs-tinta);
+  outline-offset: 3px;
+}
+
+/* Link de pular para o conteúdo: aparece só no foco por teclado. */
+.hs-skip {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 14px;
+  border-radius: var(--hs-r-item);
+  background: var(--hs-tinta);
+  color: var(--hs-papel);
+  font-weight: 600;
+  text-decoration: none;
+}
+.hs-skip:focus-visible {
+  top: 12px;
+}
+
+.hs-label {
+  font-family: var(--hs-font-mono);
+  font-size: var(--hs-type-rotulo-ui-size);
+  font-weight: var(--hs-type-rotulo-ui-weight);
+  letter-spacing: var(--hs-type-rotulo-ui-tracking);
+  text-transform: uppercase;
+  color: var(--hs-rotulo);
 }

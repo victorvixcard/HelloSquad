@@ -17,7 +17,11 @@
     "db:test": "supabase test db",
     "dev:web": "pnpm --filter web dev",
     "lint:web": "pnpm --filter web lint",
-    "build:web": "pnpm --filter web build"
+    "build:web": "pnpm --filter web build",
+    "lint": "pnpm --filter web lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "build": "pnpm --filter web build"
   },
   "devDependencies": {
     "supabase": "2.121.0"

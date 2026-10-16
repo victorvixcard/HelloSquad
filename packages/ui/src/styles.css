@@ -1,0 +1,180 @@
+/* HelloSquad Design System, componentes.
+   Portado de design/handoff-v4.6/product-ui/ds/hellosquad/components/bundle.css (Design System V1) e,
+   para os status, da camada "V4.6 · consolidação visual" do ProductUIV4.dc.html. Valores sem redesenho;
+   o que mudou está marcado com "A0:". Os valores vêm de tokens.css (gerado de tokens.json): importe
+   tokens.css antes deste arquivo. */
+
+/* ---------- família e foco ---------- */
+.hs-btn, .hs-cmd, .hs-field, .hs-input, .hs-send, .hs-state, .hs-st {
+  font-family: var(--hs-font-display);
+  -webkit-tap-highlight-color: transparent;
+}
+:where(.hs-btn, .hs-send, .hs-input):focus:not(:focus-visible) { outline: none; }
+
+/* ---------- olhos: só agente trabalhando se mexe ---------- */
+@keyframes hs-look { 0%, 16% { transform: translate(0, 0); } 24%, 42% { transform: translate(-15px, 1px); } 52%, 70% { transform: translate(13px, -3px); } 80%, 100% { transform: translate(0, 0); } }
+@keyframes hs-look-s { 0%, 16% { transform: translate(0, 0); } 24%, 42% { transform: translate(-1.6px, 0); } 52%, 70% { transform: translate(1.6px, -0.4px); } 80%, 100% { transform: translate(0, 0); } }
+@keyframes hs-blink { 0%, 90%, 100% { transform: scaleY(1); } 94% { transform: scaleY(0.12); } }
+.hs-lids { transform-box: fill-box; transform-origin: center; }
+.hs-think .hs-eyes { animation: hs-look 2.6s var(--hs-e-precisa) infinite; }
+.hs-think .hs-lids { animation: hs-blink 3.4s linear infinite; }
+.hs-glyph.hs-think .hs-eyes, .hs-think .hs-glyph .hs-eyes { animation-name: hs-look-s; }
+.is-loading .hs-lbl--load .hs-eyes, .hs-send.is-coord .hs-eyes { animation: hs-look-s 2.6s var(--hs-e-precisa) infinite; }
+.is-loading .hs-lbl--load .hs-lids, .hs-send.is-coord .hs-lids { animation: hs-blink 3.4s linear infinite; }
+
+/* ---------- botões ---------- */
+.hs-btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; height: 52px; box-sizing: border-box;
+  padding: 0 22px 0 26px; margin: 0; border: 0; border-radius: var(--hs-r-pilula);
+  font-size: var(--hs-type-botao-size); font-weight: var(--hs-type-botao-weight); letter-spacing: var(--hs-type-botao-tracking);
+  white-space: nowrap; cursor: pointer; text-decoration: none;
+  transition: transform 260ms var(--hs-e-mola), box-shadow var(--hs-t-rapido) var(--hs-e-saida), background-color var(--hs-t-rapido) var(--hs-e-saida), color var(--hs-t-rapido) var(--hs-e-saida);
+}
+.hs-btn:focus-visible { outline: 2px solid var(--hs-tinta); outline-offset: 3px; }
+.hs-face { display: grid; }
+.hs-lbl { grid-area: 1 / 1; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: opacity var(--hs-t-base) var(--hs-e-saida), transform var(--hs-t-base) var(--hs-e-saida); }
+.hs-lbl--load, .hs-lbl--done { opacity: 0; transform: translateY(7px); }
+.is-loading .hs-lbl--rest, .is-done .hs-lbl--rest { opacity: 0; transform: translateY(-7px); }
+.is-loading .hs-lbl--load, .is-done .hs-lbl--done { opacity: 1; transform: none; }
+.hs-arrow { transition: transform var(--hs-t-base) var(--hs-e-saida); }
+
+/* primário: Tinta com lábio (E1 · tecla) */
+.hs-btn--pri { background: var(--hs-tinta); color: var(--hs-papel); box-shadow: var(--hs-e1-tecla); }
+.hs-btn--pri:hover { background: var(--hs-tinta-hover); transform: translateY(-1px); box-shadow: var(--hs-e1-tecla-hover); }
+.hs-btn--pri:hover .hs-arrow { transform: translateX(3px); }
+.hs-btn--pri:active { transform: translateY(2px); box-shadow: var(--hs-e1-tecla-toque); transition-duration: var(--hs-t-toque); transition-timing-function: var(--hs-e-saida); }
+.hs-btn--pri:active .hs-arrow { transform: translateX(5px); }
+.hs-btn--pri.is-loading, .hs-btn--pri.is-done { cursor: default; transform: none; background: var(--hs-tinta); box-shadow: var(--hs-e1-tecla); }
+.hs-btn--pri.is-disabled, .hs-btn--pri:disabled { background: var(--hs-indisponivel); color: var(--hs-rotulo); box-shadow: none; transform: none; cursor: not-allowed; }
+
+/* secundário: transparente, com o play */
+.hs-btn--sec { background: transparent; color: var(--hs-tinta); padding: 0 20px 0 11px; }
+.hs-btn--sec .hs-lbl { gap: 11px; }
+.hs-play {
+  width: 30px; height: 30px; border-radius: var(--hs-r-pilula); background: rgba(15, 13, 34, 0.07); color: var(--hs-tinta);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background-color var(--hs-t-rapido) var(--hs-e-saida), color var(--hs-t-rapido) var(--hs-e-saida), transform 300ms var(--hs-e-mola);
+}
+.hs-btn--sec:hover { background: rgba(15, 13, 34, 0.05); }
+.hs-btn--sec:hover .hs-play { background: var(--hs-tinta); color: var(--hs-papel); transform: scale(1.08); }
+.hs-btn--sec:active { background: rgba(15, 13, 34, 0.085); transform: translateY(1px); transition-duration: var(--hs-t-toque); }
+.hs-btn--sec:active .hs-play { background: var(--hs-tinta); color: var(--hs-papel); transform: scale(0.94); }
+
+/* pílula branca (soft) e fantasma */
+.hs-btn--soft { background: var(--hs-branco); color: var(--hs-tinta); box-shadow: inset 0 0 0 1px var(--hs-l2), 0 2px 0 0 var(--hs-lip); }
+.hs-btn--soft:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px var(--hs-l3), 0 3px 0 0 var(--hs-lip); }
+.hs-btn--soft:active { transform: translateY(1px); box-shadow: inset 0 0 0 1px var(--hs-l3), 0 0 0 0 var(--hs-lip); transition-duration: var(--hs-t-toque); }
+.hs-btn--ghost { background: transparent; color: var(--hs-tinta-suave); padding: 0 14px; }
+.hs-btn--ghost:hover { background: rgba(15, 13, 34, 0.05); color: var(--hs-tinta); }
+/* A0: secundário, pílula e fantasma indisponíveis (o DS só desenha o primário indisponível) */
+.hs-btn:not(.hs-btn--pri):disabled { color: var(--hs-rotulo); cursor: not-allowed; transform: none; }
+.hs-btn--s { height: 40px; font-size: var(--hs-type-menu-size); padding: 0 16px 0 18px; }
+.hs-btn--s .hs-lbl { gap: 8px; }
+.hs-btn--block { width: 100%; }
+
+/* ---------- tecla ---------- */
+.hs-kbd {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px;
+  border-radius: var(--hs-r-kbd); background: var(--hs-nevoa); font-family: var(--hs-font-mono); font-size: 11px; font-weight: 500;
+  color: var(--hs-kbd); box-shadow: inset 0 -1px 0 rgba(15, 13, 34, 0.08);
+}
+
+/* ---------- campo de pedido ---------- */
+.hs-cmd { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 740px; }
+/* A0: largura fluida (o DS fixa 740 px); no celular o campo ocupa a linha. */
+.hs-field {
+  position: relative; display: flex; align-items: center; gap: 10px; width: 100%; height: 60px; box-sizing: border-box; padding: 0 8px 0 22px;
+  border-radius: var(--hs-r-campo); background: var(--hs-branco);
+  box-shadow: inset 0 0 0 1.5px var(--hs-l2), 0 0 0 0 rgba(15, 13, 34, 0), 0 3px 0 0 var(--hs-lip);
+  transition: box-shadow var(--hs-t-base) var(--hs-e-saida);
+}
+.hs-field:hover { box-shadow: inset 0 0 0 1.5px var(--hs-l3), 0 0 0 0 rgba(15, 13, 34, 0), 0 3px 0 0 var(--hs-lip); }
+.hs-field:focus-within { box-shadow: inset 0 0 0 1.5px rgba(15, 13, 34, 0.6), var(--hs-halo-campo), 0 3px 0 0 var(--hs-lip); }
+.hs-input {
+  flex: 1; min-width: 0; height: 100%; margin: 0; padding: 0; border: 0; outline: 0; background: transparent;
+  font-family: var(--hs-font-display); font-size: var(--hs-type-campo-size); font-weight: var(--hs-type-campo-weight); letter-spacing: var(--hs-type-campo-tracking);
+  color: var(--hs-tinta); caret-color: var(--hs-coord); transition: opacity var(--hs-t-base) var(--hs-e-saida);
+}
+.hs-input::placeholder { color: var(--hs-ph); opacity: 1; }
+.is-sending .hs-input { opacity: 0.42; }
+.hs-hint {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--hs-font-mono); font-size: 11.5px; color: var(--hs-rotulo);
+  opacity: 0; transform: translateX(4px); transition: opacity var(--hs-t-base) var(--hs-e-saida), transform var(--hs-t-base) var(--hs-e-saida);
+}
+.hs-field.is-ready .hs-hint { opacity: 1; transform: none; }
+.hs-send {
+  position: relative; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: var(--hs-r-acao);
+  display: inline-flex; align-items: center; justify-content: center; overflow: hidden;
+  background: rgba(15, 13, 34, 0.065); color: var(--hs-envio-inativo); cursor: default;
+  transition: background-color var(--hs-t-base) var(--hs-e-saida), color var(--hs-t-base) var(--hs-e-saida), box-shadow var(--hs-t-base) var(--hs-e-saida), transform 300ms var(--hs-e-mola);
+}
+.hs-send:focus-visible { outline: 2px solid var(--hs-tinta); outline-offset: 3px; }
+.hs-send .hs-send-ico { display: inline-flex; transition: transform 320ms var(--hs-e-mola), opacity var(--hs-t-rapido) var(--hs-e-saida); }
+.hs-send .hs-send-eyes {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateY(8px) scale(0.7);
+  transition: opacity var(--hs-t-base) var(--hs-e-saida), transform 320ms var(--hs-e-mola);
+}
+.hs-send.is-ready { background: var(--hs-tinta); color: var(--hs-papel); cursor: pointer; box-shadow: 0 2px 0 0 var(--hs-fundo); }
+@keyframes hs-pop { 0% { transform: scale(0.55); } 100% { transform: scale(1); } }
+.hs-send.is-ready .hs-send-ico { animation: hs-pop 360ms var(--hs-e-mola); }
+.hs-send.is-ready:hover { transform: translateY(-1px); box-shadow: 0 3px 0 0 var(--hs-fundo); }
+.hs-send.is-ready:active { transform: translateY(1px) scale(0.96); box-shadow: 0 0 0 0 var(--hs-fundo); transition-duration: var(--hs-t-toque); }
+.hs-send.is-coord { background: var(--hs-coral); color: var(--hs-tinta); cursor: default; box-shadow: 0 2px 0 0 var(--hs-coord-labio); }
+.hs-send.is-coord .hs-send-ico { opacity: 0; transform: translateY(-14px); }
+.hs-send.is-coord .hs-send-eyes { opacity: 1; transform: none; }
+/* A0: campo indisponível (o DS não desenha; usado enquanto o squad não responde, Fase 0) */
+.hs-field.is-disabled, .hs-field.is-disabled:hover { background: #FBFBFA; box-shadow: inset 0 0 0 1.5px var(--hs-l1), 0 3px 0 0 var(--hs-lip); }
+.hs-field.is-disabled .hs-input { cursor: not-allowed; }
+.hs-field.is-disabled .hs-send { cursor: not-allowed; }
+.hs-cmd-note { margin: 0; padding-left: 4px; font-size: 14px; font-weight: 500; color: var(--hs-tinta-suave); }
+
+/* ---------- presença: agente + o que está fazendo (StatePill do DS) ---------- */
+.hs-state {
+  display: inline-flex; align-items: center; gap: 8px; height: 32px; box-sizing: border-box; padding: 0 12px 0 7px; border-radius: var(--hs-r-pilula);
+  background: var(--hs-branco); box-shadow: inset 0 0 0 1px var(--hs-l1); font-size: var(--hs-type-sugestao-size); font-weight: 500; color: var(--hs-tinta); white-space: nowrap;
+}
+.hs-state i { font-style: normal; color: var(--hs-tinta-suave); }
+
+/* ---------- status: um desenho por estado (V4.6) ----------
+   Aguardando você = Tinta (o único escuro) · Em andamento = branco com contorno · Programado = contorno leve
+   Concluído = cinza quente com check · Pausado = tracejado · Bloqueado = hachura · Erro = coral claro.
+   Sempre glifo e texto, nunca só cor. */
+.hs-st {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 100%; height: 22px; box-sizing: border-box; padding: 0 8px 0 5px;
+  border-radius: var(--hs-r-pilula); background: var(--hs-branco); color: var(--hs-tinta); box-shadow: inset 0 0 0 1px rgba(15, 13, 34, 0.2);
+  font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden;
+}
+.hs-st > span { overflow: hidden; text-overflow: ellipsis; }
+.hs-st--prog { color: #3D3A52; box-shadow: inset 0 0 0 1px rgba(15, 13, 34, 0.13); }
+.hs-st--you { background: var(--hs-tinta); color: var(--hs-papel); box-shadow: none; }
+.hs-st--done { background: #EFEEE9; color: #3D3A52; box-shadow: none; }
+.hs-st--pause { background: transparent; color: var(--hs-kbd); box-shadow: inset 0 0 0 1px rgba(15, 13, 34, 0.13); }
+.hs-st--block {
+  background-color: var(--hs-branco); background-image: repeating-linear-gradient(135deg, rgba(15, 13, 34, 0.06) 0 3px, transparent 3px 7px);
+  color: #3D3A52; box-shadow: inset 0 0 0 1px rgba(15, 13, 34, 0.3);
+}
+.hs-st--fail { background: rgba(255, 77, 31, 0.1); color: #C2360F; box-shadow: none; }
+
+.hs-sg { display: block; width: 12px; height: 12px; flex: none; overflow: visible; }
+.hs-sg .g-o { fill: none; stroke: var(--hs-tinta); stroke-width: 1.5; }
+.hs-sg .g-f { fill: var(--hs-tinta); }
+.hs-sg .g-m { fill: none; stroke: var(--hs-tinta); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.hs-sg.is-you .g-o { stroke: var(--hs-coord); }
+.hs-sg.is-you .g-f { fill: var(--hs-coord); }
+.hs-sg.is-done .g-f { fill: #3D3A52; }
+.hs-sg.is-done .g-m { stroke: var(--hs-branco); }
+.hs-sg.is-pause .g-o { stroke: var(--hs-rotulo); stroke-dasharray: 2.4 2.1; }
+.hs-sg.is-pause .g-m { stroke: var(--hs-kbd); }
+.hs-sg.is-block .g-m, .hs-sg.is-fail .g-m { stroke: currentColor; stroke-width: 1.8; }
+
+/* ---------- ponto do agente ---------- */
+.hs-agent-dot { display: inline-block; width: 7px; height: 7px; flex-shrink: 0; border-radius: var(--hs-r-pilula); box-shadow: inset 0 0 0 1px rgba(15, 13, 34, 0.1); }
+
+/* ---------- movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  :where([class*="hs-"]), :where([class*="hs-"]) *, :where([class*="hs-"])::after {
+    animation: none !important;
+    transition-property: opacity, color, background-color, box-shadow, fill, stroke !important;
+    transition-duration: 120ms !important;
+  }
+}
