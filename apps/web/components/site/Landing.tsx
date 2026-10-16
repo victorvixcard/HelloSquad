@@ -58,7 +58,7 @@ export async function Landing({ locale }: { locale: Locale }) {
             <span>{t("home.heroLine2")}</span>
           </h1>
           <p className="hm-lead">{t("definition")}</p>
-          <Button href="/criar-conta" linkAs={Link}>
+          <Button href="/criar-conta" linkAs={Link} loadingLabel={t("ctaLoading")} doneLabel={t("ctaDone")}>
             {t("home.signUp")}
           </Button>
           <ul className="hm-row" aria-label={t("home.squadRow")}>
@@ -188,7 +188,7 @@ export async function Landing({ locale }: { locale: Locale }) {
         <section className="lp-sec lp-close" aria-label={t("cta")}>
           {/* Linha de apoio da R32 (modal de cadastro), a mesma do catálogo de cadastro. */}
           <p>{ta("lead")}</p>
-          <Button href="/criar-conta" linkAs={Link}>
+          <Button href="/criar-conta" linkAs={Link} loadingLabel={t("ctaLoading")} doneLabel={t("ctaDone")}>
             {t("cta")}
           </Button>
         </section>

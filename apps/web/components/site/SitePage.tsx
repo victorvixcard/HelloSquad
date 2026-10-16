@@ -68,7 +68,7 @@ export async function SitePage({ locale, page: key }: { locale: Locale; page: Si
         ))}
         {page.cta ? (
           <div className="st-cta">
-            <Button href="/criar-conta" linkAs={Link}>
+            <Button href="/criar-conta" linkAs={Link} loadingLabel={t("ctaLoading")} doneLabel={t("ctaDone")}>
               {t("cta")}
             </Button>
           </div>

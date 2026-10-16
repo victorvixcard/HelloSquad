@@ -122,6 +122,7 @@ describe("Landing", () => {
     await renderServer(<Landing locale="en" />);
     expect(screen.getByRole("link", { name: "See how it works" })).toHaveAttribute("href", "/en/how-it-works");
     expect(screen.getByRole("link", { name: "See all questions" })).toHaveAttribute("href", "/en/faq");
-    expect(document.body.textContent).not.toMatch(/você|não|Começar/);
+    // Nem os rótulos ocultos do botão do DS ("Carregando", "Pronto") ficam em português no HTML en.
+    expect(document.body.textContent).not.toMatch(/você|não|Começar|Carregando|Pronto/);
   });
 });

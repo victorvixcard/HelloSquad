@@ -14,6 +14,8 @@
     "iris": "Metrics, analyses, and performance readouts."
   },
   "cta": "Start with the squad",
+  "ctaLoading": "Loading",
+  "ctaDone": "Done",
   "nav": {
     "label": "Site navigation",
     "howItWorks": "How it works",

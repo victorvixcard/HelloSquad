@@ -14,6 +14,8 @@
     "iris": "Métricas, análisis y lecturas de desempeño."
   },
   "cta": "Empezar con el squad",
+  "ctaLoading": "Cargando",
+  "ctaDone": "Listo",
   "nav": {
     "label": "Navegación del sitio",
     "howItWorks": "Cómo funciona",
