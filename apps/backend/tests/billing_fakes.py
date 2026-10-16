@@ -1,7 +1,7 @@
 """Servidores falsos do Asaas (API v3) e do Mercado Pago para os testes da S2e.
 
-Reproduzem o que a documentação oficial descreve (fontes com data em docs/parciais/S2e-relatorio.md):
-rotas, campos obrigatórios, códigos HTTP, formato de erro, estados e o webhook de cada um, inclusive a
+Reproduzem o que a documentação oficial descreve (fontes com data no relatório da S2e): rotas,
+campos obrigatórios, códigos HTTP, formato de erro, estados e o webhook de cada um, inclusive a
 autenticação (Asaas: `asaas-access-token`; Mercado Pago: `x-signature` HMAC-SHA256 do manifesto). Um
 app ASGI só, porque as rotas não colidem (`/v3/...` do Asaas; `/v1/...`, `/preapproval` e
 `/authorized_payments` do Mercado Pago). Credenciais e dados são fictícios.
@@ -286,7 +286,8 @@ class FakeAsaas:
             return payment
 
     def next_cycle(self, subscription_id: str, *, token: str | None = None) -> dict[str, Any]:
-        """O Asaas gera a cobrança do ciclo (até 40 dias antes do vencimento) e avança nextDueDate."""
+        """O Asaas gera a cobrança do ciclo (até 40 dias antes do vencimento) e avança o
+        nextDueDate."""
         subscription = self.subscriptions[subscription_id]
         due = date.fromisoformat(subscription["nextDueDate"])
         card = subscription["billingType"] == "CREDIT_CARD"
@@ -547,7 +548,8 @@ class FakeMercadoPago:
         return {k: v for k, v in preapproval.items() if not k.startswith("_")}
 
     def charge_cycle(self, preapproval_id: str, *, approve: bool = True) -> dict[str, Any]:
-        """Parcela do ciclo: authorized_payment com o pagamento do cartão (retentativas no mesmo id)."""
+        """Parcela do ciclo: authorized_payment com o pagamento do cartão (as retentativas ficam no
+        mesmo id)."""
         preapproval = self.preapprovals[preapproval_id]
         debit = datetime.fromisoformat(preapproval["next_payment_date"])
         payment = self._new_payment(
