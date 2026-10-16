@@ -1,0 +1,567 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HelloSquad API",
+    "description": "API do HelloSquad. Autenticação: `Authorization: Bearer <access_token>` da Auth do Supabase. Toda consulta roda com a identidade do usuário e passa pela RLS do banco. Erros seguem o formato `{\"error\": {\"code\", \"message\", \"details\"}}`.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/me": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "summary": "Usuário autenticado e os workspaces dele",
+        "operationId": "get_me_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Me"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/workspaces": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "summary": "Workspaces de que o usuário participa",
+        "operationId": "list_workspaces_workspaces_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "summary": "Cria um workspace; quem cria vira owner",
+        "operationId": "create_workspace_workspaces_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com um registro existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/workspaces/{workspace_id}": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "summary": "Um workspace de que o usuário participa",
+        "operationId": "get_workspace_workspaces__workspace_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "infra"
+        ],
+        "summary": "Health",
+        "description": "Liveness: o processo está de pé. Não consulta banco nem serviço externo.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Identificador estável do erro, em inglês."
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Explicação em português para quem usa."
+          },
+          "details": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            },
+            "type": "array",
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorBody"
+      },
+      "ErrorDetail": {
+        "properties": {
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field",
+            "description": "Campo com problema, quando houver."
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ErrorDetail"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse"
+      },
+      "Health": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "title": "Status",
+            "default": "ok"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "environment": {
+            "type": "string",
+            "title": "Environment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "environment"
+        ],
+        "title": "Health"
+      },
+      "Me": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "memberships": {
+            "items": {
+              "$ref": "#/components/schemas/Membership"
+            },
+            "type": "array",
+            "title": "Memberships",
+            "description": "Workspaces ativos de que você participa."
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "memberships"
+        ],
+        "title": "Me"
+      },
+      "Membership": {
+        "properties": {
+          "workspace": {
+            "$ref": "#/components/schemas/WorkspaceSummary"
+          },
+          "role": {
+            "$ref": "#/components/schemas/WorkspaceRole"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workspace",
+          "role"
+        ],
+        "title": "Membership"
+      },
+      "User": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "full_name"
+        ],
+        "title": "User"
+      },
+      "Workspace": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "$ref": "#/components/schemas/WorkspaceRole",
+            "description": "Seu papel neste workspace."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "role",
+          "created_at"
+        ],
+        "title": "Workspace"
+      },
+      "WorkspaceCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "description": "Nome do negócio, como aparece para o time.",
+            "examples": [
+              "Miolo"
+            ]
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 48,
+            "minLength": 3,
+            "title": "Slug",
+            "description": "Endereço único: letras minúsculas, números e hífen (3 a 48).",
+            "examples": [
+              "miolo"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "slug"
+        ],
+        "title": "WorkspaceCreate"
+      },
+      "WorkspaceList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Workspace"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "WorkspaceList"
+      },
+      "WorkspaceRole": {
+        "type": "string",
+        "enum": [
+          "owner",
+          "admin",
+          "editor",
+          "viewer"
+        ],
+        "title": "WorkspaceRole"
+      },
+      "WorkspaceSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "name"
+        ],
+        "title": "WorkspaceSummary"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "description": "access_token da Auth do Supabase (login do usuário).",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

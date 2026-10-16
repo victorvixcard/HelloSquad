@@ -15,7 +15,7 @@ API_PORT ?= $(or $(call env_value,API_PORT),8100)
 WEB_PORT ?= $(or $(call env_value,WEB_PORT),3100)
 
 .PHONY: help install up down status migrate seed test test-backend test-web test-db build \
-	dev dev-api dev-web worker scheduler
+	openapi dev dev-api dev-web worker scheduler
 
 help: ## Lista os alvos disponíveis
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -62,6 +62,9 @@ test-db: ## Banco: testes pgTAP de supabase/tests (exige make up)
 
 build: ## Build de produção do web (o mesmo que o CI roda)
 	pnpm --filter web build
+
+openapi: ## Exporta o contrato da API para packages/contracts/openapi.json
+	cd $(BACKEND_DIR) && uv run hellosquad-openapi ../../packages/contracts/openapi.json
 
 dev: ## API e web juntas (Ctrl+C encerra as duas)
 	$(MAKE) --no-print-directory -j 2 dev-api dev-web

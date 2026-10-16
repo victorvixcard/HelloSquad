@@ -18,6 +18,7 @@ hellosquad-api = "hellosquad.api.main:run"
 hellosquad-worker = "hellosquad.worker.main:run"
 hellosquad-scheduler = "hellosquad.scheduler.main:run"
 hellosquad-local-db = "hellosquad.local_db:run"
+hellosquad-openapi = "hellosquad.api.openapi:run"
 
 [build-system]
 requires = ["uv_build>=0.11.28,<0.12.0"]
