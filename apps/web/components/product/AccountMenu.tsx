@@ -128,7 +128,7 @@ export function AccountMenu({
             </Link>
             {/* Idioma do negócio: a API ainda não guarda nem devolve (pedido à S2b); por ora, o aviso padrão. */}
             <button type="button" className="sb-bz" onClick={() => { setOpen(false); onUnavailable(); }}>
-              <span className="sb-bz-ic" aria-hidden="true">
+              <span className="sb-bz-ic is-add" aria-hidden="true">
                 <svg className="sb-ic" viewBox="0 0 18 18">
                   <path d={PRODUCT_ICONS.globe} />
                 </svg>
@@ -167,7 +167,7 @@ export function AccountMenu({
                   disabled={Boolean(pendingLocale)}
                   onClick={() => chooseLocale(l)}
                 >
-                  <span className="sb-bz-ic" aria-hidden="true">
+                  <span className="sb-bz-ic is-add is-lang" aria-hidden="true">
                     {l.slice(0, 2).toUpperCase()}
                   </span>
                   <span className="sb-bz-t">
