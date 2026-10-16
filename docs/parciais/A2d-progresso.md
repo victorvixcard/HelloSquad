@@ -36,3 +36,4 @@ Horas = hora do commit.
 
 Falta, na ordem: prova do H2-04 e do H2-08 no build final; lado a lado do documento (H2-12/32); `make test-web`, build e
 `make e2e` no worktree `/tmp/hs-a2d`; relatório completo e "→ corrigido em A2d" na tabela (a) da H2.
+| 20:34 | H2-08 provado no build de produção de `0856d41` (worktree `/tmp/hs-a2d`, build exit 0, `next start` na 3199, já parado): `/sobre` 190.529 → 32.892 bytes; `/` 277.732 → 78.059; `/en/about` 189.749 → 32.457; `/en/faq` 248.724 → 55.454; nomes de plataforma no HTML (Instagram, Google Ads, WhatsApp, Facebook, TikTok, Mailchimp, RD Station, HubSpot) 36 → 0 em cada uma; texto da área logada ("aguarda você") em `/sobre` 7 → 0. "Antes" = build de `7b83679` (`/tmp/hs-a2d-base`) | este | feito |
