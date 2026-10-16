@@ -256,3 +256,29 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
   "Ver tabela", "Análises recentes", "Desempenho por canal"; rótulos, período e origem são os da A2b §4 26–30.
 - **CRM com base:** números, "Aceitam receber mensagens: 10 de 20 contatos", "Fontes e canais", "Segmentos", "Campanhas e
   jornadas" com a legenda "Estados" (A2b §4 21–24).
+- **Catálogo de todos os agentes (texto):** os rótulos de `caps.json` batem com a tabela do FLUXOS §1.2 (camada mais
+  tardia: "Analisar meu negócio", "Otimizar uma campanha", "Revisar orçamento e públicos", "Criar um teste de conversão",
+  "Reativar clientes inativos"); as descrições existem nas camadas V4.3/V4.4; os sete "Buscar: …" são os de L11894.
+- **Calendário do Otto com posts (19:26, 04.02 do Hulk):** "Semana", "Mês", "Lista", "19 a 25 out" sem "· esta semana"
+  fora da semana atual (como `wkRange`, L10768), "Hoje", legenda "aguarda você", "agendado", "publicado"; inspetor com
+  "V1 aguarda a sua aprovação" (o protótipo também capitaliza, `capF(it.stS)`, L10749), "seg, 19/10, 9h · Instagram ·
+  Post", "Quem", "Origem", "Conversar com Otto sobre este conteúdo"; o resto é A2b §4 16–20 (`nosso-otto-post.png` ×
+  `proto-otto-post.png`). Posts em dobro na semana são dado do teste do Hulk (duas 04.02), não tela.
+- **Conversa do indicador · cabeçalho e fatos:** "Íris · Resultados", "Conversando sobre <indicador>", fatos "Ambiente",
+  "Tipo: Indicador", "Período", "Negócio", "Origem: Resultados · mês", "Íris · responde · Resultados".
+- **Aviso "O Otto entregou a v1"** que apareceu em várias capturas das 19:03–19:10: veio das rodadas do Hulk (Realtime);
+  às 19:12, sem rodada, três navegações seguidas não mostraram aviso. Não é achado.
+
+## Não verificado
+
+- **Kiwi com 05.01/05.02, Max com segmento (06.03, painel "Público selecionado"), Íris com 07.02–07.04 e o estado
+  "aprovado" dos documentos:** as entregas do Hulk na Miolo (19:14) sumiram com o seed reaplicado antes da captura, e
+  até 19:28 só voltaram 04.02. O que está dito sobre documentos vale pelo código comum (`DocumentDetail`) e pela
+  captura da A2b.
+- **Conversas de publicação e de oportunidade:** só pelo código (P-09); não abri para não criar conversa nova no meio
+  dos testes do Hulk.
+- **Primeira fala da Íris no ambiente (P-02):** só pelo código, pelo mesmo motivo.
+- **Lista de Minha Equipe & Conversas com a conversa do ambiente:** a conversa que abri foi apagada pelo seed antes da
+  captura da lista; a A2b mostra "Estratégia · Bia · Estratégia · sobre o ambiente" (`docs/parciais/a2b/lado-a-lado-a2b-ambiente-lista.png`),
+  no formato do FLUXOS §4.4.
+- **Telas em en e es:** fora desta rodada.
