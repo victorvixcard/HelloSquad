@@ -8,7 +8,7 @@ Handoff versionado. Quem retoma (Thor ou humano) lê este arquivo primeiro, depo
 - Regra nova do Vic: **local primeiro, dados fictícios, publicação só após validação** (`docs/DIRETRIZES_DO_DONO.md`).
 - Plano v0.2 em `docs/PLANO_DE_DESENVOLVIMENTO.md`; fila da fase em `docs/PLANO_DE_ACAO_FASE0.md`.
 - Sete agentes definidos em `squad/` (aguardando revisão de texto do Vic; não bloqueia).
-- **Fase 0 em execução.** J0 (Jarvis) fechada em 16/10 00:09. S0 (Stark) fechada em 16/10 01:01: identidade multi-tenant com RLS forçada, seed fictício, API `/me` e `/workspaces` com JWT por JWKS, OpenAPI em `packages/contracts/openapi.json`; `make test` verde (pytest 45, pgTAP 98) conferido por Thor. Relatórios em `docs/parciais/`. A0 (Aranha) disparada em 16/10 ~01:15.
+- **Fase 0 em execução.** J0 (Jarvis) fechada em 16/10 00:09. S0 (Stark) fechada em 16/10 01:01: identidade multi-tenant com RLS forçada, seed fictício, API `/me` e `/workspaces` com JWT por JWKS, OpenAPI em `packages/contracts/openapi.json`; `make test` verde (pytest 45, pgTAP 98) conferido por Thor. A0 (Aranha) fechada em 16/10 02:05: Design System `@hellosquad/ui` (tokens gerados, fontes locais, 7 agentes e ícones extraídos do bundle, primitivos), cliente tipado em `@hellosquad/contracts`, auth web com `@supabase/ssr`, casca `/app/[workspace]` com barra lateral V4.6, `/app/novo-workspace`, página pública com SEO/GEO; 53 testes Vitest e 5 Playwright. Relatórios em `docs/parciais/`. H0 (Hulk) disparada em 16/10 ~02:20.
 - Decisões de acesso ao banco tomadas para a S0 (chaves novas, JWKS, `auto_expose_new_tables = false`, RLS forçada, API sem BYPASSRLS): `docs/ARQUITETURA_PROPOSTA.md` §3.1.
 
 ## O que já existe
@@ -17,9 +17,11 @@ Monorepo com pnpm e uv; Supabase local `hellosquad` (portas 5632x, Postgres 17.1
 
 Desde a S0: tabelas `workspaces`, `memberships`, `invitations`, `audit_events` com RLS habilitada e forçada; schema `app` (`current_user_workspace_ids`, `has_role`, `create_workspace`); papel `hellosquad_api` sem BYPASSRLS; seed idempotente dos 5 usuários fictícios; FastAPI com JWT (JWKS ES256, fallback HS256), `/me`, `/workspaces`; contrato OpenAPI; 98 testes pgTAP e 45 pytest. Como obter JWT de teste e chamar a API: `docs/SETUP_LOCAL.md`.
 
+Desde a A0: `packages/ui` e `packages/contracts`; web com `/entrar`, `/criar-conta`, `/sair`, `/app/[workspace]` (Início, Sala do Squad, 7 ambientes, Modo Autônomo, Memória da Marca, Equipe), `/app/novo-workspace`, `/` pública com Metadata, JSON-LD, `sitemap`, `robots`, `llms.txt`; `make test-web` e `make e2e`.
+
 ## O que ainda não existe
 
-Design System em `packages/ui`, login e cadastro no web, casca do app (A0); QA adversária (H0); tudo da Fase 1 em diante.
+QA adversária da Fase 0 (H0, em execução); tudo da Fase 1 em diante (conversas, trabalhos, runtime do squad, memória, créditos).
 
 ## Como retomar
 
