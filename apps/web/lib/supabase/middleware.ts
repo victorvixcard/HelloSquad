@@ -1,4 +1,4 @@
-import { createApiClient } from "@hellosquad/contracts";
+import type { Me } from "@hellosquad/contracts";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import {
@@ -59,9 +59,15 @@ export async function updateSession(request: NextRequest) {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
       if (!token) return null;
-      const api = createApiClient({ baseUrl: apiBaseUrl(), accessToken: token });
-      const { data: me } = await api.GET("/me", { signal: AbortSignal.timeout(WORKSPACE_LOCALE_TIMEOUT_MS) });
-      return me?.memberships.find((m) => m.workspace.slug === slug)?.workspace.locale ?? null;
+      // fetch puro: o cliente do contracts usa API do Node que o Edge Runtime do middleware não tem (só o tipo vem dele).
+      const res = await fetch(`${apiBaseUrl()}/me`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        signal: AbortSignal.timeout(WORKSPACE_LOCALE_TIMEOUT_MS),
+        cache: "no-store",
+      });
+      if (!res.ok) return null;
+      const me = (await res.json()) as Partial<Me>;
+      return me.memberships?.find((m) => m.workspace.slug === slug)?.workspace.locale ?? null;
     },
   });
   request.headers.set(LOCALE_HEADER, screen.locale);
