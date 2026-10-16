@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { EmptyPage } from "@/components/shell/EmptyPage";
+import { getTranslations } from "next-intl/server";
+import { PlaceholderView } from "@/components/env/PlaceholderView";
+import { workspaceOf } from "@/lib/workspace-page";
 
-export const metadata: Metadata = { title: "Modo Autônomo" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("pages.auto");
+  return { title: t("title") };
+}
 
-export default function ModoAutonomoPage() {
-  return (
-    <EmptyPage
-      eyebrow="Gestão"
-      title="Modo Autônomo"
-      description="Delegue o que se repete: o squad cuida sozinho e pede a sua aprovação quando precisa."
-    />
-  );
+export default async function Page({ params }: { params: Promise<{ workspace: string }> }) {
+  const workspace = await workspaceOf((await params).workspace);
+  return <PlaceholderView page="auto" business={workspace.name} />;
 }

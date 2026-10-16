@@ -1,7 +1,7 @@
 {
   "label": "Conversa",
   "roomTitle": "Sala do Squad",
-  "roomStatus": "Os sete especialistas",
+  "roomStatus": "todos os especialistas · o Nexo coordena",
   "about": "Conversando sobre",
   "openContext": "Abrir {name}",
   "expand": "Expandir a conversa",
@@ -12,7 +12,7 @@
   "closeTip": "Fechar",
   "attach": "Anexar",
   "placeholder": "Mensagem {to}…",
-  "placeholderRoom": "Mensagem para o squad…",
+  "placeholderRoom": "Escreva para o squad…",
   "ask": "Pergunte {article, select, a {à} other {ao}} {name}",
   "loading": "Abrindo a conversa",
   "loadError": "Não foi possível abrir a conversa agora. Tente de novo em instantes.",
@@ -39,5 +39,6 @@
       "O que devo acompanhar no Natal?"
     ]
   },
-  "capAria": "O que mais pedir {article, select, a {à} other {ao}} {name}"
+  "capAria": "O que mais pedir {article, select, a {à} other {ao}} {name}",
+  "roomHint": "O Nexo distribui para quem precisa"
 }

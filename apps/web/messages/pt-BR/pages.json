@@ -41,12 +41,18 @@
     "title": "Sala do Squad"
   },
   "auto": {
-    "title": "Modo Autônomo"
+    "title": "Modo Autônomo",
+    "sub": "O que o squad faz sozinho, com o seu combinado.",
+    "empty": "Nada configurado ainda. Delegue o que se repete: o squad cuida sozinho e pede a sua aprovação quando precisa."
   },
   "mem": {
-    "title": "Memória da Marca"
+    "title": "Memória da Marca",
+    "sub": "O que o squad sabe de {business}. Nada vira regra sem o seu ok.",
+    "empty": "Quando o squad perceber algo novo sobre {business}, aparece aqui para você confirmar."
   },
   "team": {
-    "title": "Minha Equipe & Conversas"
+    "title": "Minha Equipe & Conversas",
+    "sub": "Os perfis do squad e o histórico das conversas.",
+    "empty": "As conversas com o squad aparecem aqui, com o histórico de cada uma."
   }
 }

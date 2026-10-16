@@ -25,35 +25,36 @@ test.describe("área logada", () => {
     await snap(page, "01-entrar");
     await signIn(page, "marina@miolo.example");
     await expect(page).toHaveURL(/\/app\/miolo$/);
-    await expect(page.getByTestId("workspace-name")).toHaveText("Miolo");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Olá, Marina.");
+    // A1f: casca da V4.6 (conta no pé da barra, agente mini nos ambientes, Início V3).
+    await expect(page.getByRole("button", { name: "Conta, negócio e configurações. Marina, Miolo" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Com o que vamos trabalhar hoje?");
+    await expect(page.getByText("Hello, Marina.")).toBeVisible();
 
-    const nav = page.getByRole("navigation", { name: "Navegação principal" });
+    const nav = page.getByRole("navigation", { name: "HelloSquad" });
     for (const group of ["Principal", "Seu squad", "Gestão"]) {
       await expect(nav.getByRole("group", { name: group })).toBeVisible();
     }
     const squad = nav.getByRole("group", { name: "Seu squad" });
     await expect(squad.getByRole("link")).toHaveCount(7);
     for (const name of [
-      "Projetos, com o Nexo",
-      "Estratégia, com a Bia",
-      "Marca & Criação, com a Kaia",
-      "Conteúdo, com o Otto",
-      "Growth Marketing, com a Kiwi",
-      "CRM, com o Max",
-      "Resultados, com a Íris",
+      /^Projetos, com Nexo/,
+      "Estratégia, com Bia",
+      "Marca & Criação, com Kaia",
+      "Conteúdo, com Otto",
+      "Growth Marketing, com Kiwi",
+      "CRM, com Max",
+      "Resultados, com Íris",
     ]) {
       await expect(squad.getByRole("link", { name })).toBeVisible();
     }
-    for (const name of ["Início", "Sala do Squad", "Modo Autônomo", "Memória da Marca", "Minha Equipe & Conversas"]) {
-      await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
+    for (const name of [/^Início$/, /^Sala do Squad/, /^Modo Autônomo/, /^Memória da Marca$/, /^Minha Equipe & Conversas$/]) {
+      await expect(nav.getByRole("link", { name })).toBeVisible();
     }
-    await expect(nav.getByRole("link", { name: "Início", exact: true })).toHaveAttribute("aria-current", "page");
-    await expect(page.getByText("Nada aqui ainda. Comece pedindo algo ao squad.")).toBeVisible();
-    await expect(page.getByRole("textbox", { name: "Converse com o seu squad" })).toBeDisabled();
+    await expect(nav.getByRole("link", { name: /^Início$/ })).toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("textbox", { name: "Pedido para a Sala do Squad" })).toBeEnabled();
     await snap(page, "02-marina-shell");
 
-    await squad.getByRole("link", { name: "Growth Marketing, com a Kiwi" }).click();
+    await squad.getByRole("link", { name: "Growth Marketing, com Kiwi" }).click();
     await expect(page).toHaveURL(/\/app\/miolo\/squad\/kiwi$/);
     await expect(page.getByRole("heading", { level: 1, name: "Growth Marketing" })).toBeVisible();
 
@@ -65,8 +66,8 @@ test.describe("área logada", () => {
     const robots = await page.locator('meta[name="robots"]').getAttribute("content");
     expect(robots).toContain("noindex");
 
-    await page.getByRole("button", { name: /Sua conta/ }).click();
-    await page.getByRole("menuitem", { name: "Sair" }).click();
+    await page.getByRole("button", { name: /^Conta, negócio e configurações/ }).click();
+    await page.getByRole("dialog", { name: "Conta, negócio e configurações" }).getByRole("button", { name: "Sair" }).click();
     await expect(page).toHaveURL(/\/entrar$/);
   });
 
@@ -90,9 +91,9 @@ test.describe("área logada", () => {
     await page.getByLabel("Endereço do seu squad").fill(slug);
     await page.getByRole("button", { name: "Criar e entrar" }).click();
     await expect(page).toHaveURL(new RegExp(`/app/${slug}$`));
-    await expect(page.getByTestId("workspace-name")).toHaveText("Pedro Teste");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Olá, Pedro.");
-    await expect(page.getByRole("navigation", { name: "Navegação principal" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Conta, negócio e configurações\. Pedro, Pedro Teste$/ })).toBeVisible();
+    await expect(page.getByText("Hello, Pedro.")).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "HelloSquad" })).toBeVisible();
     await snap(page, "06-pedro-shell");
   });
 });

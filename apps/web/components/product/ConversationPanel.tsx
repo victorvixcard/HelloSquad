@@ -105,6 +105,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
 
   const room = !!target.room;
   const agent = target.agent ? getAgent(target.agent) : null;
+  const nexo = getAgent("nexo");
   const title = room ? t("roomTitle") : (agent?.name ?? "");
   const messages = loaded?.key === key ? loaded.messages : [];
   const agentSpoke = messages.some((m) => m.author_type === "agent");
@@ -335,15 +336,15 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                 </svg>
               </button>
             </div>
-            {agent ? (
+            {agent || room ? (
               <div className="cap-cw">
                 <button
                   type="button"
                   className="ps-attb cap-cb"
-                  aria-label={t("capAria", { article: agent.article, name: agent.name })}
-                  title={t("capAria", { article: agent.article, name: agent.name })}
+                  aria-label={t("capAria", { article: (agent ?? nexo).article, name: (agent ?? nexo).name })}
+                  title={t("capAria", { article: (agent ?? nexo).article, name: (agent ?? nexo).name })}
                   aria-expanded={false}
-                  onClick={() => shell.toast(tc("unavailable"), agent.id)}
+                  onClick={() => shell.toast(tc("unavailable"), (agent ?? nexo).id)}
                 >
                   <svg className="ps-ic" viewBox="0 0 18 18" aria-hidden="true">
                     <path d={PRODUCT_ICONS.capa} />
@@ -361,7 +362,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
             />
           </div>
           <div className="ps-cv-hint" aria-live="polite">
-            <span>{sendError ? t("sendError") : sending ? t("sending") : ""}</span>
+            <span>{sendError ? t("sendError") : sending ? t("sending") : room ? t("roomHint") : ""}</span>
           </div>
         </footer>
       </div>

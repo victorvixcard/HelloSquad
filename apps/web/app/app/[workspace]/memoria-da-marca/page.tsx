@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { EmptyPage } from "@/components/shell/EmptyPage";
+import { getTranslations } from "next-intl/server";
+import { PlaceholderView } from "@/components/env/PlaceholderView";
+import { workspaceOf } from "@/lib/workspace-page";
 
-export const metadata: Metadata = { title: "Memória da Marca" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("pages.mem");
+  return { title: t("title") };
+}
 
-export default function MemoriaDaMarcaPage() {
-  return (
-    <EmptyPage
-      eyebrow="Gestão"
-      title="Memória da Marca"
-      description="O que o squad sabe sobre a sua marca. Nada vira regra sem a sua confirmação."
-    />
-  );
+export default async function Page({ params }: { params: Promise<{ workspace: string }> }) {
+  const workspace = await workspaceOf((await params).workspace);
+  return <PlaceholderView page="mem" business={workspace.name} />;
 }
