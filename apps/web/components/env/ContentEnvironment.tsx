@@ -32,18 +32,34 @@ import { Glyph, ListView, MonthView, OwnerFace, StatusPill, WeekView, type CalIt
 import "./content/content.css";
 import { EnvIdentity } from "./EnvIdentity";
 import { NeedsStrip, type StripNeed } from "./NeedsStrip";
+import { useLabels } from "./results/labels";
+import type { OrganicPerf } from "./results/metrics";
 
 const capF = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
 /**
  * Conteúdo · Otto, as quatro camadas da V4.6: identidade com "Conversar com o Otto"; a visão protagonista
  * (calendário editorial, A2b: os posts da API em semana, mês e lista, com o inspetor do post); os componentes
- * inteligentes (próximas publicações = a pauta que vem; desempenho orgânico e "Otto percebeu" seguem no vazio da
- * V4.6, sem números no banco); e a conversa contextual (o painel universal, com o post como objeto).
+ * inteligentes (próximas publicações = a pauta que vem; desempenho orgânico = visitas ao site e alcance da última
+ * semana, lidos das séries da Íris, H2-09; "Otto percebeu" segue no vazio: a API não tem as oportunidades do Otto); e
+ * a conversa contextual (o painel universal, com o post como objeto).
  */
-export function ContentEnvironment({ business, needs, now, calendar }: { business: string; needs: StripNeed[]; now?: Date; calendar?: CalendarData }) {
+export function ContentEnvironment({
+  business,
+  needs,
+  now,
+  calendar,
+  perf = null,
+}: {
+  business: string;
+  needs: StripNeed[];
+  now?: Date;
+  calendar?: CalendarData;
+  perf?: OrganicPerf | null;
+}) {
   const t = useTranslations("content");
   const te = useTranslations("editorial");
+  const L = useLabels();
   const shell = useShell();
   const router = useRouter();
   const locale = useLocale();
@@ -407,7 +423,38 @@ export function ContentEnvironment({ business, needs, now, calendar }: { busines
               </svg>
             </button>
           </header>
-          <p className="v41-cd-e">{t("perf.empty")}</p>
+          {perf ? (
+            <>
+              {/* V4.6 `ct.b.has` (L4975): os dois números da semana, com a variação contra a semana anterior. A peça que
+                  mais levou gente ao site (`v41-best`) fica fora: a API não tem cliques por post. */}
+              <div className="v41-kv">
+                {perf.items.map((x) => (
+                  <div key={x.key}>
+                    <small>{t(x.key === "site.sessions" ? "perf.visits" : "perf.reach")}</small>
+                    <b>{x.now === null ? L.t("kpi.noData") : L.num(x.now)}</b>
+                    {x.variation === null ? (
+                      <small>{L.t("kpi.noCompare")}</small>
+                    ) : (
+                      <span className={`rs-d${x.variation < 0 ? " is-down" : ""}`}>{L.signed(x.variation)}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <footer className="v41-cd-f">
+                {/* No lugar de "dados ilustrativos", a origem como em Resultados (A2b §4 item 28). */}
+                <small className="v41-meta">
+                  <span>{L.range(perf.start, perf.end)}</span>
+                  <span>{L.t("sources", { sources: L.sources(perf.sources) })}</span>
+                </small>
+                <Link className="hm-link" href={`/app/${slug}/squad/iris`}>
+                  <span>{t("perf.toResults")}</span>
+                  <Icon name="arrow" size={14} strokeWidth={2} />
+                </Link>
+              </footer>
+            </>
+          ) : (
+            <p className="v41-cd-e">{t("perf.empty")}</p>
+          )}
         </section>
         <section className="v41-ai is-pill in6-box" aria-labelledby="ct-c-t">
           <i className="lv6-r" aria-hidden="true" />
@@ -422,7 +469,8 @@ export function ContentEnvironment({ business, needs, now, calendar }: { busines
               </svg>
             </button>
           </header>
-          <p className="v41-cd-e">{t("noticed.empty", { business })}</p>
+          {/* Sem as oportunidades do Otto na API, o vazio; com números da Íris, sem a parte que deixou de ser verdade. */}
+          <p className="v41-cd-e">{perf ? t("noticed.emptyWithNumbers", { business }) : t("noticed.empty", { business })}</p>
         </section>
       </div>
     </div>

@@ -1,8 +1,14 @@
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@/components/env/content/calendar-actions", () => ({ loadCalendarAction: vi.fn(async () => ({ ok: true, items: [] })) }));
+vi.mock("@/app/app/[workspace]/actions", () => ({ decideApprovalAction: vi.fn() }));
+
+import { ContentEnvironment } from "@/components/env/ContentEnvironment";
+import type { CalendarData } from "@/components/env/content/calendar";
 import { GrowthEnvironment } from "@/components/env/growth/GrowthEnvironment";
-import { dayNumber, isoDay, type MetricSeries } from "@/components/env/results/metrics";
+import { dayNumber, isoDay, type MetricSeries, organicPerf } from "@/components/env/results/metrics";
 import { ResultsEnvironment } from "@/components/env/results/ResultsEnvironment";
 import { makeShell, renderWithShell } from "./render";
 
@@ -103,5 +109,54 @@ describe("A2d · H2-10: Resultados contra a V4.6 (P-03, P-04, P-05)", () => {
     // Trimestre: o período anterior fica fora das 12 semanas, então só a faixa do período tem rótulo.
     await user.click(screen.getByRole("button", { name: "Trimestre" }));
     expect(bands()).toEqual(["rs-cl is-band = 18/07 a 15/10"]);
+  });
+});
+
+describe("A2d · H2-09 (P-01): Conteúdo lê os números da Íris em vez de negar que existem", () => {
+  const calendar: CalendarData = { ok: true, today: "2026-10-16", from: "2026-09-28", to: "2026-11-15", items: [], versions: {}, works: {} };
+  // Última semana (09 a 15/10) contra a anterior: sessões 100/dia × 110/dia; alcance 1.200/dia × 1.000/dia.
+  const WEEKLY: MetricSeries[] = [
+    serie("site", "sessions", "sessões", (n) => (n < 7 ? 100 : 110)),
+    serie("instagram", "followers", "seguidores", (n) => 4000 - n),
+    serie("instagram", "reach", "pessoas alcançadas", (n) => (n < 7 ? 1200 : 1000)),
+    serie("store", "orders", "pedidos", () => 5),
+  ];
+
+  it("organicPerf: a semana do período Semana de Resultados, só visitas e alcance; sem número, null (o vazio)", () => {
+    const perf = organicPerf(WEEKLY)!;
+    expect([isoDay(perf.start), isoDay(perf.end)]).toEqual(["2026-10-09", "2026-10-15"]);
+    expect(perf.items.map((x) => [x.key, x.now, x.variation])).toEqual([
+      ["site.sessions", 700, -9.1],
+      ["instagram.reach", 8400, 20],
+    ]);
+    expect(organicPerf([])).toBeNull();
+    expect(organicPerf([WEEKLY[3]!])).toBeNull();
+  });
+
+  it("com séries: Visitas ao site e Alcance com a variação, o período, a origem e Ver em Resultados; nada da peça mais clicada", () => {
+    const { container } = renderWithShell(<ContentEnvironment business="Miolo" needs={[]} calendar={calendar} perf={organicPerf(WEEKLY)} />, makeShell());
+    const card = screen.getByRole("region", { name: "Desempenho orgânico" });
+    const cells = [...card.querySelectorAll(".v41-kv > div")];
+    expect(cells.map((c) => c.textContent)).toEqual(["Visitas ao site700-9,1%", "Alcance8.400+20%"]);
+    expect(cells[0]!.querySelector(".rs-d")).toHaveClass("is-down");
+    expect(cells[1]!.querySelector(".rs-d")).not.toHaveClass("is-down");
+    expect(card.querySelector(".v41-meta")).toHaveTextContent("09/10 a 15/10Origem: fonte de teste");
+    expect(within(card).getByRole("link", { name: "Ver em Resultados" })).toHaveAttribute("href", "/app/miolo/squad/iris");
+    expect(card).not.toHaveTextContent("A Íris ainda não tem números do Instagram para ler.");
+    expect(card.querySelector(".v41-best")).toBeNull();
+    expect(card).not.toHaveTextContent(/ilustrativos|cliques/);
+    // "Otto percebeu" segue vazio (a API não tem as oportunidades do Otto), sem dizer que a Íris não tem números.
+    const noticed = screen.getByRole("region", { name: "Otto percebeu" });
+    expect(noticed).toHaveTextContent("As oportunidades aparecem quando o Otto conhecer Miolo.");
+    expect(noticed).not.toHaveTextContent("primeiros números");
+    expect(container.querySelectorAll(".rs-d")).toHaveLength(2);
+  });
+
+  it("sem número nenhum, o vazio da V4.6 continua nos dois cards", () => {
+    renderWithShell(<ContentEnvironment business="Miolo" needs={[]} calendar={calendar} perf={organicPerf([])} />, makeShell());
+    expect(screen.getByRole("region", { name: "Desempenho orgânico" })).toHaveTextContent("A Íris ainda não tem números do Instagram para ler.");
+    expect(screen.getByRole("region", { name: "Otto percebeu" })).toHaveTextContent(
+      "As oportunidades aparecem quando o Otto conhecer Miolo e a Íris tiver os primeiros números.",
+    );
   });
 });

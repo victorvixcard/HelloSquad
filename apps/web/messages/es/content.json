@@ -27,13 +27,17 @@
     "title": "Desempeño orgánico",
     "talk": "Analizar el desempeño con Íris",
     "talkTip": "Analizar con Íris",
-    "empty": "Íris aún no tiene números de Instagram para leer."
+    "empty": "Íris aún no tiene números de Instagram para leer.",
+    "visits": "Visitas al sitio",
+    "reach": "Alcance",
+    "toResults": "Ver en Resultados"
   },
   "noticed": {
     "title": "Otto notó",
     "talk": "Explorar oportunidades con Otto",
     "talkTip": "Explorar con Otto",
-    "empty": "Las oportunidades aparecerán cuando Otto conozca {business} e Íris tenga los primeros números."
+    "empty": "Las oportunidades aparecerán cuando Otto conozca {business} e Íris tenga los primeros números.",
+    "emptyWithNumbers": "Las oportunidades aparecerán cuando Otto conozca {business}."
   },
   "work": {
     "back": "Contenido",

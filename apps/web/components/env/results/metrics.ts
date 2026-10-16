@@ -147,6 +147,26 @@ export function weekly(s: MetricSeries, last: number, weeks = 12): Week[] {
   return out;
 }
 
+/**
+ * Conteúdo · "Desempenho orgânico" (V4.6 `ct.b`, L10783, com `RES['Semana']`): "Visitas ao site" (`site.sessions`) e
+ * "Alcance" (`instagram.reach`) na última semana com dado, a mesma conta do período "Semana" de Resultados. Sem nenhum
+ * número na semana, null: o card fica no vazio da V4.6 ("A Íris ainda não tem números do Instagram para ler.").
+ */
+export const ORGANIC_KEYS = ["site.sessions", "instagram.reach"] as const;
+export type OrganicPerf = Range & { items: Summary[]; sources: string[] };
+
+export function organicPerf(series: MetricSeries[]): OrganicPerf | null {
+  const last = lastDataDay(series);
+  if (last === null) return null;
+  const days = PERIOD_DAYS.week;
+  const items = ORGANIC_KEYS.flatMap((key) => {
+    const s = series.find((x) => seriesKey(x) === key);
+    return s ? [summarize(s, last, days)] : [];
+  });
+  if (!items.some((x) => x.now !== null)) return null;
+  return { ...periodRanges(last, days).current, items, sources: [...new Set(items.flatMap((x) => x.sources))] };
+}
+
 /** Teto "redondo" do eixo e o passo das linhas de grade (4 ou 5 linhas). */
 export function niceScale(max: number): { top: number; step: number } {
   if (!(max > 0)) return { top: 1, step: 1 };
