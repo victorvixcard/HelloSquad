@@ -32,3 +32,9 @@ Fatia A1b, "Projetos, Memória e os outros ambientes" (Fase 1). Início: 16/10/2
 | 12:10 | Sub-agente (a) Projetos: tira duas capturas repetidas do protótipo (a página rola por dentro; a captura inteira saía igual à da tela) | feito | `ba738e5` |
 | 12:09 | e2e do Quadro com o trabalho do seed, do dossiê da Miolo e da sugestão confirmada pela Marina com a outra aba ao vivo | feito | `094eec9` |
 | 12:11 | número suave da Memória na barra (sugestões abertas, 'N informações para confirmar'); capturas lado a lado da Memória e da barra de créditos | feito | `6b9c19d` |
+| 12:12 | Sem uso: `PlaceholderView` e as chaves `pages.auto`, `pages.mem`, `pages.team` | feito | `5808f3e` |
+| 12:12 | `make test-web` verde (eslint; typecheck de contracts, ui e web; contracts 9, ui 49, web 121 em 16 arquivos) | feito | — |
+| 12:12–12:13 | `next dev` da 3100 parado; `make e2e` com build de produção e worker simulado: 10 de 10 (3 novos da A1b); seed reaplicado; `next dev` subido de novo desacoplado (`/entrar` 200), API intocada | feito | — |
+| 12:15 | No navegador: número da Memória na barra ("1 informação para confirmar") e "Revisar" da faixa descendo até "O squad percebeu"; sem erro de console | feito | este |
+| 12:16 | `docs/parciais/A1b-relatorio.md` (entregue, verificação com evidência, decisões, 28 divergências registradas, perguntas por destinatário) | feito | este |
+
