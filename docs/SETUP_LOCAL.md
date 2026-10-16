@@ -488,6 +488,36 @@ curl -s $API/projects/$(curl -s $API/work-items/$WORK -H "$AUTH" | jq -r .projec
 - Roteiro completo com a saída: `docs/parciais/s2d/curl_projeto_coordenado.sh` (`.txt` ao lado). pytest `test_coordinated_project` e pgTAP `24_coordinated_work` provam o critério da fase.
 - `GET /work-items/{id}` traz `step_label` ("etapa 1 de 3") e, em cada etapa, responsável, delivery, dependências, responsabilidade, instrução, motivo (`status_reason` e o texto no idioma do negócio) e a versão de saída; o histórico tem "Bia começou a etapa 1 · Estratégia", "Etapa 2 · Peças: aguardando o motor de imagem" e "Etapa 3 · Textos concluída". `GET /projects/{id}` traz `owner` (o dono da conta, que decide cada entrega) e os marcos com `step_id`, na ordem das etapas.
 
+### Cobrança (S2e)
+
+Pagamento recorrente atrás de uma interface única (`PaymentProvider`, ADR-0008) com dois adaptadores, **Asaas** e **Mercado Pago**, e um **simulado** para quem não tem conta em provedor. O provedor das cobranças novas vem de `PAYMENT_PROVIDER` (`asaas`, `mercadopago` ou `mock`; o simulado só funciona em `APP_ENV=local`/`test`). Não há tela de preço, paywall nem compra: a compra pela web e pelo app é da Fase 4 (dono, 16/10). Preço em dinheiro só existe no seed, provisório (`plan_prices`: Squad 99,00; `topup_packs`: `recarga-50`, 50 créditos por 49,00); sem preço cadastrado nenhuma cobrança abre no provedor.
+
+O `make seed` dá à Miolo uma assinatura simulada do Squad (Pix), com o ciclo do mês pago (os 100 créditos do bloco da S1e) e uma **recarga Pix pendente** (`mock_pay_miolo_recarga`). Para simular o pagamento:
+
+```bash
+# 1. Segredo do webhook simulado no .env (só local) e a API recarregada (make dev-api)
+echo "PAYMENT_MOCK_WEBHOOK_SECRET=$(openssl rand -hex 24)" >> .env
+export PAYMENT_MOCK_WEBHOOK_SECRET=$(sed -n 's/^PAYMENT_MOCK_WEBHOOK_SECRET=//p' .env)
+
+# 2. Webhook assinado: x-mock-signature = sha256=<HMAC-SHA256 do corpo com o segredo>
+BODY='{"id":"evt-local-1","type":"payment.confirmed","payment":{"id":"mock_pay_miolo_recarga","status":"confirmed"}}'
+SIG="sha256=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$PAYMENT_MOCK_WEBHOOK_SECRET" | sed 's/^.* //')"
+curl -s -X POST http://127.0.0.1:8100/billing/webhooks/mock -H 'Content-Type: application/json' \
+  -H "x-mock-signature: $SIG" -d "$BODY"
+# {"received":true,"result":"SUCCESS","duplicate":false,"outcome":"applied"}   (de novo: "duplicate":true)
+
+# 3. Saldo (+50) e histórico, como owner (variáveis do bloco "JWT de teste")
+curl -s http://127.0.0.1:8100/workspaces/$WS/billing/subscription -H "$AUTH"
+curl -s "http://127.0.0.1:8100/workspaces/$WS/billing/payments?limit=5" -H "$AUTH"
+```
+
+- Roteiro completo com a saída: `docs/parciais/s2e/curl_cobranca.sh` (`.txt` ao lado). `make seed` devolve a Miolo ao estado do seed.
+- **Webhooks** (`POST /billing/webhooks/{asaas|mercadopago|mock}`, sem token de usuário): a assinatura é obrigatória e o segredo de cada provedor precisa estar no `.env` (Asaas: cabeçalho `asaas-access-token` igual a `ASAAS_WEBHOOK_TOKEN`; Mercado Pago: `x-signature` com HMAC-SHA256 do manifesto `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` e `MERCADOPAGO_WEBHOOK_SECRET`; simulado: `x-mock-signature`). Sem assinatura válida: 401 e nada gravado. Cada evento é gravado em `payment_events`, único por `(provider, event_id)`, antes do efeito e na mesma transação: repetido responde 200 com `duplicate: true` e não repete efeito. Cobrança que não é desta plataforma: 200 com `outcome: ignored`. No Mercado Pago a notificação só traz o id, então a API consulta o recurso no provedor (503 se ele não responder; o provedor reenvia).
+- **Efeito no extrato** (S1e): pagamento confirmado vira `credit_grants` uma vez só (chave `billing:payment:<id>`): ciclo da assinatura com a validade do período, recarga sem validade curta. Estorno ou contestação retiram o que ainda não foi usado (`adjustment`); contestação revertida devolve (`refund`); estorno parcial fica para conciliação à mão (`needs_review`).
+- **Renovação** (`make scheduler`, ou um tick: `cd apps/backend && uv run hellosquad-scheduler --once`): a assinatura com o período pago vencido é conciliada com o provedor (ciclos e estado); ciclo novo só com pagamento confirmado; sem ele, `past_due`, e nada é bloqueado (paywall é decisão do dono). A mesma assinatura vencida é conferida de novo a cada `BILLING_RECHECK_MINUTES`.
+- **Leitura** (só o owner; admin e editor recebem 403): `GET /workspaces/{id}/billing/subscription` (estado, plano, próximo ciclo) e `GET /workspaces/{id}/billing/payments` (créditos e estado de cada cobrança). Nenhum valor em dinheiro sai da API.
+- **Provedor real** (quando o dono criar as contas sandbox): preencha `ASAAS_API_KEY` e `ASAAS_WEBHOOK_TOKEN` ou `MERCADOPAGO_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET`, troque `PAYMENT_PROVIDER` e reinicie a API e o scheduler. O que falta para o sandbox está em `docs/parciais/S2e-relatorio.md`.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
