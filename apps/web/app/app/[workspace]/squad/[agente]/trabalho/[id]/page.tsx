@@ -60,6 +60,7 @@ export default async function TrabalhoPage({ params }: Params) {
           caption: typeof content.legenda === "string" ? content.legenda : "",
           hashtags: Array.isArray(content.hashtags) ? content.hashtags.map(String) : [],
           at: shortDate(current.created_at, locale),
+          note: current.change_note,
         }
       : null,
     versions: versions.map((x) => ({ no: x.version_no, at: shortDate(x.created_at, locale) })),

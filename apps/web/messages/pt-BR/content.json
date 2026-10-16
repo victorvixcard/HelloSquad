@@ -39,19 +39,19 @@
     "back": "Conteúdo",
     "tag": "entrega pontual",
     "origin": "pedido na conversa com {agent} · {date}",
-    "steps": "Etapas: preparação, revisão, publicação e confirmação",
+    "steps": "Etapas: preparação, aprovação, publicação e confirmação",
     "prep": "Preparação",
-    "prepSub": "{agent} preparou a versão {version}",
-    "review": "Sua revisão",
+    "prepSub": "{agent} criou",
+    "review": "Sua aprovação",
     "reviewSub": "v{version} aguarda você",
-    "reviewDone": "v{version} aprovada por você",
+    "reviewDone": "v{version} aprovada",
     "publish": "Publicação",
     "publishSub": "só com autorização sua",
     "confirm": "Confirmação",
     "confirmSub": "quando o canal confirmar",
     "versions": "Versões",
     "waits": "{agent} aguarda você",
-    "waitsText": "A versão {version} da legenda está pronta para a sua revisão.",
+    "waitsText": "A versão {version} está pronta para você.",
     "facts": {
       "format": "Formato",
       "channel": "Canal",
@@ -78,7 +78,8 @@
       "restricoes": "Restrições"
     },
     "talk": "Conversar com {name}",
-    "notFound": "Este trabalho não existe mais ou não é deste negócio."
+    "notFound": "Este trabalho não existe mais ou não é deste negócio.",
+    "prepSubAdjusted": "{agent} criou e ajustou"
   },
   "today": "Hoje"
 }

@@ -17,7 +17,7 @@ export type DeliveryDetailData = {
   origin: string;
   typeLabel: string;
   channel: string | null;
-  version: { no: number; caption: string; hashtags: string[]; at: string } | null;
+  version: { no: number; caption: string; hashtags: string[]; at: string; note: string | null } | null;
   versions: Array<{ no: number; at: string }>;
   approval: { id: string; status: "pending" | "decided" | "expired"; decision: string | null } | null;
   brief: Array<{ k: string; v: string }>;
@@ -60,7 +60,7 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
   }
 
   const steps = [
-    { k: "done", t: t("prep"), s: t("prepSub", { agent: member.name, version: v }) },
+    { k: "done", t: t("prep"), s: data.versions.length > 1 ? t("prepSubAdjusted", { agent: member.name }) : t("prepSub", { agent: member.name }) },
     { k: approved ? "done" : pending ? "you" : "todo", t: t("review"), s: approved ? t("reviewDone", { version: v }) : t("reviewSub", { version: v }) },
     { k: "todo", t: t("publish"), s: t("publishSub") },
     { k: "todo", t: t("confirm"), s: t("confirmSub") },
@@ -139,7 +139,7 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
                 </span>
                 <div>
                   <b>{t("waits", { agent: member.name })}</b>
-                  <p>{t("waitsText", { version: v })}</p>
+                  <p>{data.version?.note || t("waitsText", { version: v })}</p>
                 </div>
               </div>
               <dl className="ps-facts">

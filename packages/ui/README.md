@@ -30,7 +30,10 @@ Fontes: Gabarito e JetBrains Mono em `src/fonts/` (woff2 variável, subconjunto 
 | `src/generated/icons.ts` (11 ícones de traço) | objeto `D.icons` do `bundle.js` | idem | idem |
 | `src/generated/product-ui.ts` (glifos de status, ícones da barra lateral) | `ProductUIV4.dc.html` (`WK_SG`, `RIC5`, `IC.nav`, `IC.panel`) | idem | idem |
 
-`pnpm --filter @hellosquad/ui generate` roda os dois. Variáveis CSS: cores mantêm o nome do JSON (`--hs-papel`, `--hs-coord`…); escalas ganham o prefixo (`--hs-s-4`, `--hs-r-pilula`, `--hs-e1-tecla`, `--hs-t-toque`, `--hs-e-saida`); estilos de texto viram `--hs-type-<nome>-size|weight|tracking|leading`. No TS: `tokens.color["hs-papel"]` e `cssVar("r-campo")` → `"var(--hs-r-campo)"`.
+| `src/generated/product-ui.css` (o `<style>` inteiro da Product UI V4.6, na ordem original) e `src/generated/ds-bundle.css` (o `bundle.css` do DS) | `ProductUIV4.dc.html` e `ds/hellosquad/components/bundle.css`; só troca as famílias para as fontes locais e tira o `@import` do Google Fonts | `pnpm --filter @hellosquad/ui extract:css` | idem |
+| `src/generated/squad-stage.ts` (palco do Início V3: SVG dos sete e o motor `_sq*` de corpos, sombras, olhar e piscadas) | `ProductUIV4.dc.html` (`svg.hm-squad`, `SQ_*`, métodos `_sq*`), copiados como estão | `pnpm --filter @hellosquad/ui extract:stage` | idem |
+
+`pnpm --filter @hellosquad/ui generate` roda todos. A casca do produto (`apps/web/components/product`) usa as classes do protótipo (`ps`, `sb-*`, `hm-*`, `ps-conv`, `v4-*`, `nd`) com esse CSS, para a tela ficar igual à V4.6 sem reescrever o desenho; `PRODUCT_ICONS` traz os ícones de traço do objeto `IC` do protótipo. Variáveis CSS: cores mantêm o nome do JSON (`--hs-papel`, `--hs-coord`…); escalas ganham o prefixo (`--hs-s-4`, `--hs-r-pilula`, `--hs-e1-tecla`, `--hs-t-toque`, `--hs-e-saida`); estilos de texto viram `--hs-type-<nome>-size|weight|tracking|leading`. No TS: `tokens.color["hs-papel"]` e `cssVar("r-campo")` → `"var(--hs-r-campo)"`.
 
 Os nomes de token de cor dos agentes seguem o JSON oficial (`hs-midia` é a cor da Kiwi). Na interface, a área da Kiwi é **Growth Marketing** (decisão do dono, 15/10/2026), lida de `squad/kiwi/agent.yaml`.
 

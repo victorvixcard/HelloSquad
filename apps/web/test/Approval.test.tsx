@@ -15,7 +15,7 @@ const DATA: DeliveryDetailData = {
   origin: "pedido na conversa com o Otto · 15/10",
   typeLabel: "Legenda",
   channel: "Instagram",
-  version: { no: 1, caption: "Sábado tem pão de fermentação longa saindo do forno.", hashtags: ["#pinheiros"], at: "15/10" },
+  version: { no: 1, caption: "Sábado tem pão de fermentação longa saindo do forno.", hashtags: ["#pinheiros"], at: "15/10", note: "Primeira versão." },
   versions: [{ no: 1, at: "15/10" }],
   approval: { id: "ap-1", status: "pending", decision: null },
   brief: [{ k: "Tom", v: "acolhedor, direto, sem gíria" }],
@@ -49,8 +49,11 @@ describe("Precisa de você", () => {
     const decide = vi.fn(async () => approval("approved"));
     renderWithShell(<DeliveryDetail data={DATA} decide={decide} />);
     expect(screen.getByText("Otto aguarda você")).toBeInTheDocument();
+    expect(screen.getByText("Primeira versão.")).toBeInTheDocument();
+    expect(screen.getByText("Sua aprovação")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /Aprovar v1/ }));
     await waitFor(() => expect(decide).toHaveBeenCalledWith("ap-1", "approved"));
+    expect(await screen.findByText("v1 aprovada")).toBeInTheDocument();
     expect(await screen.findByText("Aprovada por você")).toBeInTheDocument();
     expect(screen.getByText(/Aprovar não publica/)).toBeInTheDocument();
   });
