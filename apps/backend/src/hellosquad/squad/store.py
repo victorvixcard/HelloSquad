@@ -9,6 +9,7 @@ vão numa transação só: ou tudo aparece para o usuário, ou nada.
 import contextlib
 import json
 from dataclasses import dataclass, field
+from datetime import date
 from decimal import Decimal
 from typing import Any, Literal
 from uuid import UUID
@@ -71,6 +72,7 @@ class WorkItem:
     delivery_type: str | None
     conversation_id: UUID | None
     origin_message_id: UUID | None
+    project_id: UUID | None = None
 
 
 @dataclass(frozen=True)
@@ -319,7 +321,7 @@ class RunStore:
                 conn,
                 """
                 select r.agent_id, r.attempts, w.id as work_item_id, w.status, w.title, w.briefing,
-                       w.delivery_type, w.conversation_id, w.origin_message_id,
+                       w.delivery_type, w.conversation_id, w.origin_message_id, w.project_id,
                        s.name as workspace_name, s.locale, m.body as request,
                        (select coalesce(max(v.version_no), 0) + 1
                         from public.delivery_versions v
@@ -387,6 +389,7 @@ class RunStore:
             delivery_type=row["delivery_type"],
             conversation_id=row["conversation_id"],
             origin_message_id=row["origin_message_id"],
+            project_id=row["project_id"],
         )
         return RunData(
             agent_id=row["agent_id"],
@@ -481,6 +484,49 @@ class RunStore:
                         ],
                     )
         return facts
+
+    async def approved_documents(
+        self, delivery_types: list[str], project_id: UUID | None
+    ) -> list[dict[str, Any]]:
+        """Última versão aprovada de cada delivery pedida, no mesmo projeto (sem projeto: no
+        workspace). É assim que a estratégia da Bia (02.04) alimenta o Otto, a Kaia e a Kiwi."""
+        async with self.pool.connection() as conn:
+            return await (
+                await conn.execute(
+                    """
+                    select distinct on (w.delivery_type)
+                           w.delivery_type, w.title, v.id as delivery_version_id, v.version_no,
+                           v.content
+                    from public.delivery_versions v
+                    join public.deliveries d
+                      on d.id = v.delivery_id and d.workspace_id = v.workspace_id
+                    join public.work_items w
+                      on w.id = d.work_item_id and w.workspace_id = d.workspace_id
+                    where v.workspace_id = %s and v.status = 'approved'
+                      and w.delivery_type = any(%s)
+                      and (%s::uuid is null or w.project_id = %s::uuid)
+                    order by w.delivery_type, v.created_at desc, v.id desc
+                    """,
+                    (self.workspace_id, delivery_types, project_id, project_id),
+                )
+            ).fetchall()
+
+    async def calendar_window(self, start: date, end: date) -> list[dict[str, Any]]:
+        """O que já está no calendário editorial no período (pauta e propostas em aberto)."""
+        async with self.pool.connection() as conn:
+            return await (
+                await conn.execute(
+                    """
+                    select scheduled_on, scheduled_time, channel, format, theme,
+                           owner_agent_id::text, status::text
+                    from public.calendar_posts
+                    where workspace_id = %s and scheduled_on between %s and %s
+                      and status <> 'cancelled'
+                    order by scheduled_on, scheduled_time nulls last, id
+                    """,
+                    (self.workspace_id, start, end),
+                )
+            ).fetchall()
 
     async def ensure_prompt_version(self, prompt: SquadPrompt) -> str:
         async with self.pool.connection() as conn:
@@ -693,9 +739,14 @@ class RunStore:
         prompt_version: str,
         observations: list[dict[str, str]] | None = None,
         status: dict[str, str] | None = None,
+        calendar_posts: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         """Entrega pronta: versão, mensagem do agente, revisão pedida, trabalho em needs_you e o que
-        o agente percebeu como sugestão "<Agente> percebeu" (nunca conhecimento confirmado)."""
+        o agente percebeu como sugestão "<Agente> percebeu" (nunca conhecimento confirmado).
+
+        Calendário editorial (04.02): os posts da versão entram como rascunho no mesmo commit e
+        trocam os rascunhos de uma versão anterior do mesmo trabalho; a aprovação os põe na pauta.
+        """
         async with self.pool.connection() as conn, conn.transaction():
             await self._fence(conn)
             delivery = await fetchone(
@@ -757,6 +808,8 @@ class RunStore:
                 "version_no": version["version_no"],
             }
             await self._event(conn, "delivery.created", ids)
+            if calendar_posts is not None:
+                await self._calendar(conn, work_item.id, version["id"], calendar_posts)
             message_id = await self._agent_message(
                 conn,
                 work_item.conversation_id,
@@ -814,6 +867,45 @@ class RunStore:
             "suggestion_ids": suggestions,
             **totals,
         }
+
+    async def _calendar(
+        self,
+        conn: AsyncConnection[DictRow],
+        work_item_id: UUID,
+        version_id: UUID,
+        posts: list[dict[str, Any]],
+    ) -> None:
+        await conn.execute(
+            "delete from public.calendar_posts "
+            "where workspace_id = %s and work_item_id = %s and status = 'draft'",
+            (self.workspace_id, work_item_id),
+        )
+        for post in posts:
+            await conn.execute(
+                """
+                insert into public.calendar_posts (
+                  workspace_id, scheduled_on, scheduled_time, channel, format, theme,
+                  owner_agent_id, notes, work_item_id, delivery_version_id
+                ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                (
+                    self.workspace_id,
+                    post["scheduled_on"],
+                    post["scheduled_time"],
+                    post["channel"],
+                    post["format"],
+                    post["theme"],
+                    post["owner_agent_id"],
+                    post["notes"],
+                    work_item_id,
+                    version_id,
+                ),
+            )
+        await self._event(
+            conn,
+            "calendar.updated",
+            {"work_item_id": work_item_id, "delivery_version_id": version_id, "posts": len(posts)},
+        )
 
     async def _suggest(
         self,

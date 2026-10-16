@@ -4,7 +4,8 @@ e entrega para a revisão da pessoa. Cada chamada de LLM ou ferramenta vira uma 
 
 import time
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any, TypeVar
 
@@ -21,29 +22,41 @@ from hellosquad.llm.base import (
     Usage,
 )
 from hellosquad.llm.pricing import ModelPrice, cost_usd
+from hellosquad.research.websearch import (
+    DisabledWebSearch,
+    SearchResponse,
+    WebSearch,
+    WebSearchUnavailable,
+)
+from hellosquad.squad.deliveries import (
+    EditorialCalendarDelivery,
+    ResearchDelivery,
+    delivery_spec,
+)
 from hellosquad.squad.loader import AgentDefinition, SquadLoader
 from hellosquad.squad.memory import search_text
 from hellosquad.squad.prompt import (
     RunContext,
+    as_json,
     check_messages,
     production_messages,
     reply_messages,
     revision_messages,
     system_blocks,
+    text,
     triage_messages,
 )
 from hellosquad.squad.schemas import (
     CHECK_SCHEMA,
-    PRODUCTION_SCHEMA,
     REPLY_SCHEMA,
     TRIAGE_SCHEMA,
     CheckResult,
-    ProductionResult,
     ReplyResult,
     StepOutput,
     TriageResult,
 )
 from hellosquad.squad.store import RunStore, WorkLive
+from hellosquad.work.live import DISPLAY_TZ
 
 COORDINATOR = "nexo"
 TRIAGE_SKILL = "01.01"
@@ -52,6 +65,22 @@ REPLY_STEP = "reply"
 SHORT_AT_WORK = {"bia": "researching", "kaia": "creating", "otto": "writing"}
 TRIAGE_THINKING_BUDGET = 1024
 TRIAGE_MAX_TOKENS = 4096
+RESEARCH = "02.07"
+CALENDAR = "04.02"
+MULTICHANNEL = "04.03"
+# Documentos aprovados que cada delivery lê antes de produzir (no mesmo projeto; sem projeto, no
+# workspace): o plano parte do diagnóstico, a campanha do posicionamento e do plano, e o Otto segue
+# a estratégia da campanha (Documento Mestre, Anexo A: 02.03, 02.04 e 04.03).
+PRIOR_DOCUMENTS = {
+    "02.02": ["02.01"],
+    "02.03": ["02.01", "02.02"],
+    "02.04": ["02.02", "02.03"],
+    CALENDAR: ["02.04"],
+    MULTICHANNEL: ["02.04"],
+}
+# Deliveries que trabalham com datas: a data de hoje vai no contexto.
+DATED = {"02.03", "02.04", CALENDAR, MULTICHANNEL}
+CALENDAR_LOOKAHEAD_DAYS = 35
 
 Output = TypeVar("Output", bound=StepOutput)
 
@@ -74,6 +103,7 @@ class Squad:
     prices: Mapping[str, ModelPrice]
     history_limit: int = 20
     memory_budget: int = 1500
+    web_search: WebSearch = field(default_factory=DisabledWebSearch)
 
 
 def status_fields(locale: str, agent: AgentDefinition, mode: str, phrase: str) -> dict[str, str]:
@@ -92,6 +122,13 @@ def status_fields(locale: str, agent: AgentDefinition, mode: str, phrase: str) -
 def production_phrase(feedback: dict[str, Any] | None) -> str:
     decision = (feedback or {}).get("decisao")
     return "adjusting" if decision in ("changes_requested", "rejected") else "creating_first"
+
+
+def triage_field(locale: str, delivery_type: str, name: str) -> str:
+    """Como perguntar pelo campo que falta: o texto da delivery, se houver; senão, o geral."""
+    key = f"triage.field.{delivery_type}.{name}"
+    text_ = t(locale, key)
+    return text_ if text_ != key else t(locale, f"triage.field.{name}")
 
 
 def require_tool(agent: AgentDefinition, tool: str) -> None:
@@ -257,7 +294,12 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     data = await store.load(history_limit=squad.history_limit)
     item, locale = data.work_item, data.locale
     delivery_type = item.delivery_type
-    if not delivery_type or not squad.loader.has_skill(data.agent_id, delivery_type):
+    spec = delivery_spec(delivery_type)
+    if (
+        not delivery_type
+        or spec is None
+        or not squad.loader.has_skill(data.agent_id, delivery_type)
+    ):
         raise FlowError(
             "delivery_not_supported", {"delivery_type": delivery_type, "agent_id": data.agent_id}
         )
@@ -316,7 +358,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     missing = missing_fields(triage, expert_prompt.skill.essentials)
     if missing:
         require_tool(nexo, "conversas.perguntar")
-        fields = "; ".join(t(locale, f"triage.field.{f}") for f in missing)
+        fields = "; ".join(triage_field(locale, delivery_type, f) for f in missing)
         question = (triage.pergunta or "").strip() or t(
             locale, "triage.fallback_question", fields=fields
         )
@@ -346,6 +388,9 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
 
     produce_title = t(locale, f"work_item_step.produce.{delivery_type}")
     await store.work_step(item.id, produce_title, expert.id, "in_progress")
+    gathered = await gather_context(
+        squad, store, calls, expert, item, delivery_type, briefing, data.request
+    )
     system = system_blocks(expert_prompt, ctx)
     common = {
         "agent": expert,
@@ -356,18 +401,19 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         "phrase": production_phrase(data.feedback),
     }
     production = await calls.llm(
-        ProductionResult,
+        spec.production,
         step=f"{expert.id}.produce",
         kind="llm_call",
-        messages=production_messages(ctx, briefing, triage.resumo),
-        schema=PRODUCTION_SCHEMA,
+        messages=production_messages(ctx, briefing, triage.resumo, gathered.blocks),
+        schema=spec.production_schema,
         **common,
     )
+    content = gathered.finalize(production.entrega)
     review = await calls.llm(
         CheckResult,
         step=f"{expert.id}.check",
         kind="check",
-        messages=check_messages(ctx, briefing, production.entrega.model_dump()),
+        messages=check_messages(ctx, briefing, content, gathered.blocks),
         schema=CHECK_SCHEMA,
         **common,
     )
@@ -375,22 +421,23 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     revisions = 0
     if not review.approved:
         production = await calls.llm(
-            ProductionResult,
+            spec.production,
             step=f"{expert.id}.revise",
             kind="llm_call",
             messages=revision_messages(
-                ctx, briefing, production.entrega.model_dump(), review.model_dump()
+                ctx, briefing, content, review.model_dump(), gathered.blocks
             ),
-            schema=PRODUCTION_SCHEMA,
+            schema=spec.production_schema,
             **common,
         )
+        content = gathered.finalize(production.entrega)
         observations |= {o.leitura: o for o in production.observacoes}
         revisions = 1
         review = await calls.llm(
             CheckResult,
             step=f"{expert.id}.check",
             kind="check",
-            messages=check_messages(ctx, briefing, production.entrega.model_dump()),
+            messages=check_messages(ctx, briefing, content, gathered.blocks),
             schema=CHECK_SCHEMA,
             **common,
         )
@@ -399,12 +446,16 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     kind = expert_prompt.skill.delivery_kind
     if not kind:
         raise FlowError("delivery_not_supported", {"delivery_type": delivery_type})
+    calendar = None
+    if isinstance(production.entrega, EditorialCalendarDelivery):
+        require_tool(expert, "calendario.agendar_rascunho")
+        calendar = calendar_rows(production.entrega)
     note_key = change_note_key(data.feedback, revisions)
     result = await store.deliver(
         work_item=item,
         agent_id=expert.id,
         kind=kind,
-        content=production.entrega.model_dump(),
+        content=content,
         message=production.mensagem,
         change_note=t(locale, f"delivery_version.change_note.{note_key}"),
         tool_data={
@@ -412,16 +463,225 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
             "agent_id": expert.id,
             "revisions": revisions,
             "check_approved": review.approved,
+            **gathered.tool_data(content),
         },
         work_step_title=produce_title,
         model=calls.last_model or expert.model["padrao"],
         prompt_version=expert_version,
         observations=[o.model_dump() for o in observations.values()],
         status=status_fields(locale, expert, "wait", "wait_approval"),
+        calendar_posts=calendar,
     )
     return {"outcome": "delivered", "revisions": revisions, "check_approved": review.approved} | (
         result
     )
+
+
+@dataclass
+class DeliveryContext:
+    """O que o fluxo juntou para a delivery antes de produzir e como fecha o conteúdo da versão."""
+
+    delivery_type: str
+    blocks: list[str] = field(default_factory=list)
+    research: SearchResponse | None = None
+    research_error: str | None = None
+    documents: list[dict[str, Any]] = field(default_factory=list)
+
+    def finalize(self, entrega: StepOutput) -> dict[str, Any]:
+        content = entrega.model_dump(mode="json")
+        if isinstance(entrega, ResearchDelivery):
+            content |= research_content(entrega, self.research, self.research_error)
+        if self.delivery_type == MULTICHANNEL:
+            content["estrategia"] = strategy_reference(self.documents)
+        return content
+
+    def tool_data(self, content: dict[str, Any]) -> dict[str, Any]:
+        if self.delivery_type == RESEARCH:
+            return {
+                "pesquisa": content["pesquisa"]["estado"],
+                "fontes": len(content["fontes"]),
+                "achados_pesquisa": sum(a["tipo"] == "pesquisa" for a in content["achados"]),
+            }
+        if self.documents:
+            return {"documentos": [str(d["delivery_version_id"]) for d in self.documents]}
+        return {}
+
+
+async def gather_context(
+    squad: Squad,
+    store: RunStore,
+    calls: StepCaller,
+    expert: AgentDefinition,
+    item: Any,
+    delivery_type: str,
+    briefing: dict[str, Any],
+    request: str,
+) -> DeliveryContext:
+    gathered = DeliveryContext(delivery_type)
+    today = datetime.now(DISPLAY_TZ).date()
+    if delivery_type in DATED:
+        gathered.blocks.append(f"<hoje>{today.isoformat()}</hoje>")
+    if delivery_type in PRIOR_DOCUMENTS:
+        require_tool(expert, "memoria.ler")
+        gathered.documents = await store.approved_documents(
+            PRIOR_DOCUMENTS[delivery_type], item.project_id
+        )
+        gathered.blocks += [
+            f'<documento_aprovado delivery="{d["delivery_type"]}" versao="{d["version_no"]}">'
+            f"{as_json(d['content'])}</documento_aprovado>"
+            for d in gathered.documents
+        ]
+    if delivery_type == CALENDAR:
+        require_tool(expert, "calendario.ler")
+        posts = await store.calendar_window(today, today + timedelta(days=CALENDAR_LOOKAHEAD_DAYS))
+        gathered.blocks.append(
+            f"<calendario_atual>{as_json([calendar_entry(p) for p in posts])}</calendario_atual>"
+        )
+    if delivery_type == RESEARCH:
+        gathered.research, gathered.research_error = await web_research(
+            squad, store, calls, expert, briefing, request
+        )
+        gathered.blocks.append(research_block(gathered.research))
+    return gathered
+
+
+async def web_research(
+    squad: Squad,
+    store: RunStore,
+    calls: StepCaller,
+    agent: AgentDefinition,
+    briefing: dict[str, Any],
+    request: str,
+) -> tuple[SearchResponse | None, str | None]:
+    """Busca web da 02.07 (`pesquisa.web`): o que voltou vira as fontes da entrega, com link e data.
+
+    Busca desligada ou com falha não derruba o run: a entrega fica só com sugestões sem validação.
+    """
+    require_tool(agent, "pesquisa.web")
+    query = (
+        " · ".join(str(v).strip() for v in (briefing.get("tema"), briefing.get("objetivo")) if v)
+        or request
+    )
+    await store.thinking(
+        agent.id,
+        f"{agent.id}.research",
+        status_fields(calls.locale, agent, "work", "searching"),
+        calls.conversation_id,
+        calls.work_live(agent, "searching"),
+    )
+    response, error = None, None
+    try:
+        response = await squad.web_search.search(query, locale=calls.locale)
+    except WebSearchUnavailable as exc:
+        error = exc.reason
+    await store.tool_step(
+        {
+            "tool": "pesquisa.web",
+            "agent_id": agent.id,
+            "provider": squad.web_search.provider,
+            "query": query,
+            "estado": "realizada" if response else "indisponivel",
+            "results": len(response.results) if response else 0,
+            "error": error,
+        }
+    )
+    return response, error
+
+
+def research_block(response: SearchResponse | None) -> str:
+    if response is None:
+        return '<pesquisa_web estado="indisponivel"/>'
+    sources = "\n".join(
+        f'<fonte id="F{n}" url="{text(r.url)}" publicado_em="'
+        f'{r.published_at.isoformat() if r.published_at else ""}">'
+        f"{text(r.title)} — {text(r.snippet)}</fonte>"
+        for n, r in enumerate(response.results, start=1)
+    )
+    return (
+        f'<pesquisa_web estado="realizada" provedor="{text(response.provider)}" '
+        f'consulta="{text(response.query)}" coletado_em="{response.retrieved_at.isoformat()}">'
+        f"\n{sources}\n</pesquisa_web>"
+    )
+
+
+def research_content(
+    entrega: ResearchDelivery, response: SearchResponse | None, error: str | None
+) -> dict[str, Any]:
+    """Pesquisa real só com fonte que a busca devolveu: achado "pesquisa" que não cita uma fonte
+    coletada vira "sugestão" (sem validação), e as fontes saem da busca, nunca do modelo."""
+    results = response.results if response else []
+    sources = {f"F{n}": r for n, r in enumerate(results, start=1)}
+    findings = []
+    for finding in entrega.achados:
+        cited = [s for s in finding.fontes if s in sources]
+        researched = finding.tipo == "pesquisa" and bool(cited)
+        findings.append(
+            {
+                "texto": finding.texto,
+                "tipo": "pesquisa" if researched else "sugestao",
+                "fontes": cited if researched else [],
+            }
+        )
+    collected = response.retrieved_at.isoformat() if response else None
+    return {
+        "pesquisa": {
+            "estado": "realizada" if response else "indisponivel",
+            "provedor": response.provider if response else None,
+            "consulta": response.query if response else None,
+            "coletado_em": collected,
+            "motivo": error,
+        },
+        "fontes": [
+            {
+                "id": key,
+                "titulo": r.title,
+                "url": r.url,
+                "trecho": r.snippet,
+                "publicado_em": r.published_at.isoformat() if r.published_at else None,
+                "coletado_em": collected,
+            }
+            for key, r in sources.items()
+        ],
+        "achados": findings,
+    }
+
+
+def strategy_reference(documents: list[dict[str, Any]]) -> dict[str, Any] | None:
+    strategy = next((d for d in documents if d["delivery_type"] == "02.04"), None)
+    if strategy is None:
+        return None
+    return {
+        "delivery_version_id": str(strategy["delivery_version_id"]),
+        "versao": strategy["version_no"],
+        "conceito": (strategy["content"].get("conceito") or {}).get("nome"),
+    }
+
+
+def calendar_entry(post: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "data": post["scheduled_on"].isoformat(),
+        "horario": post["scheduled_time"].strftime("%H:%M") if post["scheduled_time"] else None,
+        "canal": post["channel"],
+        "formato": post["format"],
+        "tema": post["theme"],
+        "responsavel": post["owner_agent_id"],
+        "estado": post["status"],
+    }
+
+
+def calendar_rows(calendar: EditorialCalendarDelivery) -> list[dict[str, Any]]:
+    return [
+        {
+            "scheduled_on": post.data,
+            "scheduled_time": post.horario,
+            "channel": post.canal,
+            "format": post.formato,
+            "theme": post.tema,
+            "owner_agent_id": post.responsavel,
+            "notes": post.notas or None,
+        }
+        for post in calendar.posts
+    ]
 
 
 async def run_reply(squad: Squad, store: RunStore) -> dict[str, Any]:

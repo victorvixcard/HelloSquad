@@ -1,10 +1,10 @@
-"""Formato da entrega de cada delivery (o `content` da versão revisável) e o JSON Schema da produção.
+"""Formato da entrega de cada delivery (`content` da versão revisável) e o JSON Schema da produção.
 
 O fluxo é o mesmo para todas (triagem do Nexo → produzir → autoverificar → no máximo uma revisão →
 entrega para a revisão da pessoa); o que muda por `delivery_type` é o formato da entrega, aqui, e o
-contexto extra que o fluxo junta antes de produzir (busca web da 02.07, calendário da 04.02, estratégia
-aprovada da Bia para o Otto), em `flow.py`. Chaves do conteúdo em português, como a 04.01; valores de
-lista fechada são ids que o web traduz.
+contexto extra que o fluxo junta antes de produzir (busca web da 02.07, calendário da 04.02,
+estratégia aprovada da Bia para o Otto), em `flow.py`. Chaves do conteúdo em português, como a
+04.01; valores de lista fechada são ids que o web traduz.
 """
 
 from dataclasses import dataclass
@@ -26,7 +26,17 @@ from hellosquad.squad.schemas import (
 )
 
 AGENTS = ["nexo", "bia", "kaia", "otto", "kiwi", "max", "iris"]
-CHANNELS = ["instagram", "facebook", "whatsapp", "gbp", "site", "blog", "email", "tiktok", "linkedin"]
+CHANNELS = [
+    "instagram",
+    "facebook",
+    "whatsapp",
+    "gbp",
+    "site",
+    "blog",
+    "email",
+    "tiktok",
+    "linkedin",
+]
 FORMATS = ["post", "carousel", "reels", "stories", "status", "article", "email", "video"]
 PRIORITIES = ["alta", "media", "baixa"]
 

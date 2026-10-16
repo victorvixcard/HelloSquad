@@ -7,8 +7,8 @@
   `WEB_SEARCH_API_KEY`. O fornecedor ainda não foi escolhido pelo dono (catálogo: "Tavily/Brave/
   SerpAPI — escolher"); trocar é escrever outro adaptador com a mesma interface.
 
-Toda resposta traz o provedor, a consulta e a hora da coleta; cada resultado, título, link, trecho e a
-data de publicação quando a fonte informa. Falha da busca não derruba o run: vira pesquisa
+Toda resposta traz o provedor, a consulta e a hora da coleta; cada resultado, título, link, trecho
+e a data de publicação quando a fonte informa. Falha da busca não derruba o run: vira pesquisa
 indisponível, e a entrega fica só com sugestões.
 """
 

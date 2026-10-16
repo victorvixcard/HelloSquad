@@ -7,6 +7,7 @@ breakpoint. Texto de pessoas ou do modelo entra escapado.
 """
 
 import json
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from html import escape
 from typing import Any
@@ -144,25 +145,29 @@ def triage_messages(ctx: RunContext, target: Skill) -> list[ChatMessage]:
 
 
 def production_messages(
-    ctx: RunContext, briefing: dict[str, Any], handoff: str
+    ctx: RunContext, briefing: dict[str, Any], handoff: str, extra: Sequence[str] = ()
 ) -> list[ChatMessage]:
+    """`extra`: contexto que o fluxo juntou para a delivery (busca web, calendário, documentos
+    aprovados, data de hoje), já montado e escapado."""
     return user_message(
         [
             *context_block(ctx),
             f"<briefing>{as_json(briefing)}</briefing>",
             f"<resumo_do_nexo>{text(handoff)}</resumo_do_nexo>",
+            *extra,
             "<etapa>produzir</etapa>",
         ]
     )
 
 
 def check_messages(
-    ctx: RunContext, briefing: dict[str, Any], delivery: dict[str, Any]
+    ctx: RunContext, briefing: dict[str, Any], delivery: dict[str, Any], extra: Sequence[str] = ()
 ) -> list[ChatMessage]:
     return user_message(
         [
             *context_block(ctx),
             f"<briefing>{as_json(briefing)}</briefing>",
+            *extra,
             f"<versao>{as_json(delivery)}</versao>",
             "<etapa>autoverificar</etapa>",
         ]
@@ -170,12 +175,17 @@ def check_messages(
 
 
 def revision_messages(
-    ctx: RunContext, briefing: dict[str, Any], delivery: dict[str, Any], review: dict[str, Any]
+    ctx: RunContext,
+    briefing: dict[str, Any],
+    delivery: dict[str, Any],
+    review: dict[str, Any],
+    extra: Sequence[str] = (),
 ) -> list[ChatMessage]:
     return user_message(
         [
             *context_block(ctx),
             f"<briefing>{as_json(briefing)}</briefing>",
+            *extra,
             f"<versao>{as_json(delivery)}</versao>",
             f"<parecer>{as_json(review)}</parecer>",
             "<etapa>revisar</etapa>",
