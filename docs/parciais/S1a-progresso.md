@@ -7,7 +7,7 @@ funções, RLS, filas, Realtime e pgTAP. Início: 16/10/2026, 03:26.
 |---|---|
 | 1. Enums e tabelas (conversas, mensagens, projetos, trabalhos, entregas, aprovações, runs) | feito: migration `20261016063500`, 13 tabelas com RLS forçada e só SELECT para `authenticated`, `app.post_message`; pgTAP 08 (12) e 09 (16) verdes, 01 continua verde |
 | 2. Máquina de estados dos trabalhos (`work_item_transitions`, `app.transition_work_item`) | feito: migration `20261016063600` (matriz de 23 transições em `app.work_item_transitions`, trigger que recusa UPDATE fora da matriz, `app.decide_approval` idempotente); pgTAP 10 (17) e 11 (20) verdes |
-| 3. Filas pgmq, `app.enqueue_run`, `app.create_work_item_from_message` | pendente |
+| 3. Filas pgmq, `app.enqueue_run`, `app.create_work_item_from_message` | feito: migration `20261016063700` (4 filas, schema `pgmq` fechado para `authenticated`/`anon`/`service_role`, trabalho + run + fila na mesma transação, idempotente); pgTAP 12 (18) verde |
 | 4. Realtime Broadcast a partir do banco (`run_events`, `approvals`) | pendente |
 | 5. pgTAP das novas tabelas e funções | pendente |
 | 6. Seed da Miolo (conversas, mensagens, trabalho 04.01 em `needs_you`) | pendente |
