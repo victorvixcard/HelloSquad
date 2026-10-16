@@ -1,0 +1,21 @@
+== controle: um worker (--drain)
+  worker: exit=0 concluídos=8 falhas=0
+   ['H2 ctl 0 02.01', '02.01', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 ctl 1 04.02', '04.02', 'needs_you', 'succeeded', '1', '0.00', 'released', '-', '0', '1']
+   ['H2 ctl 2 05.01', '05.01', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 ctl 3 07.02', '07.02', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 ctl 4 02.01', '02.01', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 ctl 5 04.02', '04.02', 'needs_you', 'succeeded', '1', '0.00', 'released', '-', '0', '1']
+   ['H2 ctl 6 05.01', '05.01', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 ctl 7 07.02', '07.02', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+== dois workers no ar antes dos pedidos
+   ['H2 par 0 02.01', '02.01', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 par 1 04.02', '04.02', 'needs_you', 'succeeded', '1', '0.00', 'released', '-', '0', '1']
+   ['H2 par 2 05.01', '05.01', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 par 3 07.02', '07.02', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 par 4 02.01', '02.01', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 par 5 04.02', '04.02', 'needs_you', 'succeeded', '1', '0.00', 'released', '-', '0', '1']
+   ['H2 par 6 05.01', '05.01', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+   ['H2 par 7 07.02', '07.02', 'needs_you', 'succeeded', '1', '10.00', 'captured', '10.00', '1', '1']
+  runs por worker: w1 0 | w2 8
+  capturas: 6
