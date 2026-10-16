@@ -115,6 +115,22 @@ class Settings(BaseSettings):
     # Scheduler: intervalo mínimo entre duas conciliações da mesma assinatura vencida.
     billing_recheck_minutes: int = Field(default=60, ge=1)
 
+    # E-mail transacional (S2f): mailpit = SMTP do Mailpit do Supabase local (sem autenticação);
+    # mock = em memória. Os dois só em local/test; o provedor de produção é decisão do dono (Fase 5).
+    # Em local/test o worker recusa destinatário fora do TLD reservado .example.
+    email_provider: Literal["mailpit", "mock"] = "mailpit"
+    email_from: str = "nao-responda@hellosquad.example"
+    email_from_name: str = "HelloSquad"
+    email_smtp_host: str = "127.0.0.1"
+    email_smtp_port: int = 56325
+    email_timeout_seconds: float = Field(default=10.0, gt=0)
+    # Endereço do web nos links dos e-mails e fuso das datas.
+    email_app_url: str = "http://127.0.0.1:3100"
+    email_timezone: str = "America/Sao_Paulo"
+    email_max_attempts: int = Field(default=5, ge=1)
+    email_retry_base_seconds: float = Field(default=10.0, ge=0)
+    email_visibility_timeout_seconds: int = Field(default=60, ge=10)
+
     @field_validator("auth_jwt_algorithms", "api_cors_origins", mode="before")
     @classmethod
     def split_comma_separated(cls, value: object) -> object:
