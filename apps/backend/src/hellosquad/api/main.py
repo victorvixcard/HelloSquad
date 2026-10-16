@@ -21,6 +21,7 @@ from hellosquad.contacts.routes import router as contacts_router
 from hellosquad.conversations.routes import router as conversations_router
 from hellosquad.credits.routes import router as credits_router
 from hellosquad.db import Database
+from hellosquad.email.routes import router as email_router
 from hellosquad.identity.routes import router as identity_router
 from hellosquad.memory.learnings import router as learnings_router
 from hellosquad.memory.routes import router as memory_router
@@ -85,6 +86,7 @@ app.include_router(learnings_router)
 app.include_router(credits_router)
 app.include_router(contacts_router)
 app.include_router(metrics_router)
+app.include_router(email_router)
 app.include_router(billing_router)
 
 
