@@ -15,7 +15,8 @@ export const SQUAD_EFFECT_ACTIONS: SquadEffectActions = { createWork: createWork
  * O que uma mensagem da pessoa faz no squad, depois de gravada (para entrar no histórico que o agente lê):
  * (1) "Pedir ajuste" registra `changes_requested` com a nota = texto (dono, 16/10 10:20);
  * (2) com uma pergunta do agente pendente nesta conversa, o texto é a resposta (`answered`, V4.6 §5 "Responder");
- * (3) o pedido de uma entrega que o squad executa vira trabalho com run na fila (`POST /messages/{id}/work-items`);
+ * (3) o pedido de uma entrega que o squad executa vira trabalho com run na fila (`POST /messages/{id}/work-items`):
+ * na conversa de um pedido do catálogo (A2b), a entrega é a da capacidade; nas outras, a das palavras do pedido;
  * senão, fica só a mensagem. O resultado (status, resposta, entrega, pendência) chega pelo Realtime.
  * Devolve false quando a API recusou a decisão ou o trabalho.
  */
@@ -29,11 +30,14 @@ export function useSquadEffect(actions: SquadEffectActions = SQUAD_EFFECT_ACTION
       messageId,
       body,
       adjust,
+      deliveryType,
     }: {
       conversationId: string;
       messageId: string;
       body: string;
       adjust?: ConversationTarget["adjust"] | null;
+      /** Pedido do catálogo (A2b): a entrega já escolhida pela capacidade, sem depender das palavras do pedido. */
+      deliveryType?: string | null;
     }): Promise<boolean> => {
       if (adjust) {
         const r = await actions.decide(adjust.approvalId, "changes_requested", body);
@@ -51,7 +55,7 @@ export function useSquadEffect(actions: SquadEffectActions = SQUAD_EFFECT_ACTION
         router.refresh();
         return true;
       }
-      const type = deliveryForRequest(body);
+      const type = deliveryType ?? deliveryForRequest(body);
       if (!type) return true;
       const r = await actions.createWork(messageId, type, workTitleFrom(body));
       if (!r.ok) return false;

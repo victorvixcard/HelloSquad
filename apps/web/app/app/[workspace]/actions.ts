@@ -120,6 +120,31 @@ export async function createDirectConversationAction(
   }
 }
 
+/**
+ * Conversa de um objeto (`kind: object`, A2b): o ambiente (H1-04, `environment`), o pedido do catálogo (`capability`),
+ * um post do calendário, um indicador, um segmento ou um documento. A API reaproveita a conversa do mesmo objeto
+ * (201 na primeira vez, 200 depois); o pedido do catálogo abre uma por pedido. Devolve o id e o detalhe (com a primeira
+ * fala do ambiente, `opening`).
+ */
+export async function openObjectConversationAction(
+  workspaceId: string,
+  context: components["schemas"]["ContextRef"],
+  agent?: components["schemas"]["AgentId"],
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const api = await serverApi();
+    const conversation = await unwrap(
+      api.POST("/workspaces/{workspace_id}/conversations", {
+        params: { path: { workspace_id: workspaceId } },
+        body: { kind: "object", context, primary_agent_id: agent ?? null, title: context.title ?? null },
+      }),
+    );
+    return { ok: true, data: { id: conversation.id } };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
 export type WorkItemStarted = { workItemId: string; runId: string | null; conversationId: string | null };
 
 /**
@@ -188,12 +213,17 @@ export type DeliveryCard = {
   excerpt: string;
 };
 
-/** Primeiro texto de uma versão: a skill 04.01 do worker (`versoes[].texto`) ou o formato do seed (`legenda`). */
+/**
+ * Primeiro texto de uma versão: a skill 04.01 do worker (`versoes[].texto`) ou o formato do seed (`legenda`); nos
+ * documentos da A2b, o resumo (ou o título) que o agente escreveu.
+ */
 function excerptOf(content: unknown): string {
-  const c = (content ?? {}) as { legenda?: unknown; versoes?: unknown };
+  const c = (content ?? {}) as { legenda?: unknown; versoes?: unknown; resumo?: unknown; titulo?: unknown; tema?: unknown };
   if (typeof c.legenda === "string") return c.legenda;
+  if (typeof c.resumo === "string") return c.resumo;
   const first = Array.isArray(c.versoes) ? (c.versoes[0] as { texto?: unknown } | undefined) : undefined;
-  return typeof first?.texto === "string" ? first.texto : "";
+  if (typeof first?.texto === "string") return first.texto;
+  return typeof c.titulo === "string" ? c.titulo : typeof c.tema === "string" ? c.tema : "";
 }
 
 /**
