@@ -1,0 +1,8 @@
+Marina (controle) | workspace:<Miolo> | privado=true | status=SUBSCRIBED | recebeu=["h1.sonda.miolo"]
+Rafael privado | workspace:<Miolo> | privado=true | status=CHANNEL_ERROR: Unauthorized: You do not have permissions to read from this Channel topic: workspace:6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc | recebeu=[]
+Rafael público mesmo nome (cliente próprio) | workspace:<Miolo> | privado=false | status=SUBSCRIBED | recebeu=[]
+Rafael no próprio (controle) | workspace:<Vitta> | privado=true | status=SUBSCRIBED | recebeu=["h1.sonda.vitta"]
+Pedro privado | workspace:<Miolo> | privado=true | status=CHANNEL_ERROR: Unauthorized: You do not have permissions to read from this Channel topic: workspace:6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc | recebeu=[]
+anônimo privado | workspace:<Miolo> | privado=true | status=CHANNEL_ERROR: Unauthorized: You do not have permissions to read from this Channel topic: workspace:6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc | recebeu=[]
+anônimo público (cliente próprio) | workspace:<Miolo> | privado=false | status=SUBSCRIBED | recebeu=[]
+RESULTADO: vazamento=false; controles recebem só o próprio=true

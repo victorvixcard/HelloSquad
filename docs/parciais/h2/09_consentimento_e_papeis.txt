@@ -1,0 +1,13 @@
+== consentimento: cliente01 da Miolo hoje: [['email', 'granted'], ['whatsapp', 'granted']]
+  reimporta com 'não' (revogar): 201 [{"line": 2, "reason": "no_consent"}]
+  mesma pessoa com caixa diferente: 201 [{"line": 2, "reason": "duplicate_existing"}]
+  depois: [['email', 'granted'], ['whatsapp', 'granted']] | contatos com esse e-mail: 1
+  rota para revogar consentimento: ['/workspaces/{workspace_id}/contacts/imports', '/workspaces/{workspace_id}/contacts/summary']
+== cobrança: a resposta do owner tem dinheiro?
+  subscription: 200 chaves=['cancelled_at', 'current_period_end', 'current_period_start', 'method', 'next_cycle_at', 'past_due_since', 'plan', 'provider', 'provisional', 'status'] | 'R$'/amount/value/price no corpo: False
+     {"status": "active", "plan": "Squad", "provisional": true, "provider": "mock", "method": "pix", "current_period_start": "2026-10-01T03:00:00Z", "current_period_end": "2026-11-01T03:00:00Z", "next_cycle_at": "2026-11-01T03:00:00Z", "past_due_since": null, "cancelled_at": null}
+  payments: 200 chaves=['items', 'next_cursor'] | 'R$'/amount/value/price no corpo: False
+     {"items": [{"id": "5eed0000-0000-4000-8000-0000000009d2", "kind": "topup", "method": "pix", "status": "pending", "provider": "mock", "credits": 50.0, "credits_revoked": 0.0, "period_start": null, "period_end": null, "confirmed_at": null, "created_at": "2026-10-01T03:10:00Z"}, {"id": "5eed0000-0000-4
+== aprendizado na Vitta: editora decide?
+  Carla lista: [('Tratamento', 'promoted'), ('Abertura', 'candidate'), ('Vocabulário', 'promoted')]
+  Carla descarta: 403 | Marina (outra empresa) descarta: 404 | Rafael repete promover 2x: [200, 200]
