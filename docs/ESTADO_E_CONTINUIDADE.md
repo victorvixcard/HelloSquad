@@ -8,16 +8,18 @@ Handoff versionado. Quem retoma (Thor ou humano) lê este arquivo primeiro, depo
 - Regra nova do Vic: **local primeiro, dados fictícios, publicação só após validação** (`docs/DIRETRIZES_DO_DONO.md`).
 - Plano v0.2 em `docs/PLANO_DE_DESENVOLVIMENTO.md`; fila da fase em `docs/PLANO_DE_ACAO_FASE0.md`.
 - Sete agentes definidos em `squad/` (aguardando revisão de texto do Vic; não bloqueia).
-- **Fase 0 em execução.** J0 (Jarvis) fechada em 16/10 00:09: ambiente local completo, `make up && make test` verde (conferido por Thor). Relatório em `docs/parciais/J0-relatorio.md`. S0 (Stark) disparada em 16/10 ~00:25.
+- **Fase 0 em execução.** J0 (Jarvis) fechada em 16/10 00:09. S0 (Stark) fechada em 16/10 01:01: identidade multi-tenant com RLS forçada, seed fictício, API `/me` e `/workspaces` com JWT por JWKS, OpenAPI em `packages/contracts/openapi.json`; `make test` verde (pytest 45, pgTAP 98) conferido por Thor. Relatórios em `docs/parciais/`. A0 (Aranha) disparada em 16/10 ~01:15.
 - Decisões de acesso ao banco tomadas para a S0 (chaves novas, JWKS, `auto_expose_new_tables = false`, RLS forçada, API sem BYPASSRLS): `docs/ARQUITETURA_PROPOSTA.md` §3.1.
 
 ## O que já existe
 
 Monorepo com pnpm e uv; Supabase local `hellosquad` (portas 5632x, Postgres 17.11, extensões vector/pgmq/pg_cron/pg_net); FastAPI com `/health` na 8100; Next.js 15 mínimo na 3100; `make up/down/migrate/seed/test/dev`; `docs/SETUP_LOCAL.md`. CI escrito em `infra/github/workflows/ci.yml`, aguardando o Vic dar escopo `workflow` ao token.
 
+Desde a S0: tabelas `workspaces`, `memberships`, `invitations`, `audit_events` com RLS habilitada e forçada; schema `app` (`current_user_workspace_ids`, `has_role`, `create_workspace`); papel `hellosquad_api` sem BYPASSRLS; seed idempotente dos 5 usuários fictícios; FastAPI com JWT (JWKS ES256, fallback HS256), `/me`, `/workspaces`; contrato OpenAPI; 98 testes pgTAP e 45 pytest. Como obter JWT de teste e chamar a API: `docs/SETUP_LOCAL.md`.
+
 ## O que ainda não existe
 
-Tabelas de domínio, RLS, seed fictício, autenticação na API, Design System e UI real (S0 e A0).
+Design System em `packages/ui`, login e cadastro no web, casca do app (A0); QA adversária (H0); tudo da Fase 1 em diante.
 
 ## Como retomar
 
