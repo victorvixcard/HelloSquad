@@ -88,9 +88,12 @@ test.describe("Onboarding progressivo (A2a)", () => {
     await expect(page.getByRole("article", { name: "Resultados" })).toContainText("A Íris ainda não tem números para ler");
     await snap(page, "a2a-07-pedro-configurado");
 
-    // A conversa com o Nexo guardou as duas mensagens da pessoa (lidas da API, depois de navegar).
-    await page.goto(`/app/${slug}/squad/nexo`);
-    await page.locator("button.v4-talk").click();
+    // A conversa com o Nexo guardou as duas mensagens da pessoa (lidas da API, depois de navegar). Ela é a conversa
+    // direta (a do primeiro acesso); "Conversar com Nexo" no ambiente abre a conversa do ambiente (H1-04, A2b), então a
+    // direta é reaberta pela lista de Minha Equipe & Conversas.
+    await page.goto(`/app/${slug}/equipe`);
+    await page.getByRole("tab", { name: /^Conversas/ }).click();
+    await page.locator("button.ps-ch").filter({ hasText: "Vender mais encomendas" }).first().click();
     const again = page.getByRole("region", { name: "Conversa" });
     await expect(again.getByText("Vender mais encomendas.", { exact: true })).toBeVisible();
     await expect(again.getByText(request, { exact: true })).toBeVisible();
