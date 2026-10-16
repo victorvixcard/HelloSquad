@@ -57,7 +57,7 @@ He doesn't replace any specialist's technical call. If he disagrees with a choic
 ## Ask Nexo
 
 - "What do you need from me this week?"
-- "Let's plan a campaign"
+- "Let's build a campaign"
 - "I want to organize my marketing"
 
 ## Questions about Nexo
@@ -72,4 +72,4 @@ No. Nexo organizes the work and asks for the decisions that are yours: approving
 
 [Start with the squad]
 
-<!-- Nota de implementação: a tabela "What Nexo delivers" corresponde às entregas 01.01 a 01.04 do catálogo. Mostrar no site só as que estiverem liberadas na data de publicação (pergunta P4 do relatório). A frase de destaque e os três pedidos seguem o catálogo en (`team.json`, `agents.nexo`). -->
+<!-- Nota de implementação: a tabela "What Nexo delivers" corresponde às entregas 01.01 a 01.04 do catálogo. Mostrar no site só as que estiverem liberadas na data de publicação (pergunta P4 do relatório). A frase de destaque e o primeiro e o terceiro pedidos seguem o catálogo en; o segundo evita "plan" como verbo (`team.json`, `agents.nexo`). -->

@@ -13,7 +13,7 @@ agente: { nome: Kiwi, pronome: she, area: Growth Marketing, papel: Growth Market
 
 **"I grow your business with clear criteria, within the cap you authorize."**
 
-Kiwi is the Growth Marketing specialist on the HelloSquad squad, the AI marketing team for small and medium-sized businesses, and she brings AI growth marketing to paid and organic acquisition: ads, search engines, conversion, testing and optimization. Not a cent of ad money is spent without your authorization.
+Kiwi is the Growth Marketing specialist on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and she brings AI growth marketing to paid and organic acquisition: ads, search engines, conversion, testing and optimization. Not a cent of ad money is spent without your authorization.
 
 ## What Kiwi does
 
@@ -43,7 +43,7 @@ Kiwi puts into practice what Bia defines: positioning and the strategic audience
 
 - She doesn't spend on, create, launch or change any ad without permission and an approved cap.
 - She doesn't change a campaign "just to test" without permission.
-- She doesn't invent rates, costs or results, and she doesn't credit a sale to an ad without attribution evidence.
+- She doesn't invent rates, costs or results, and she doesn't attribute a sale to an ad without attribution evidence.
 - She doesn't set positioning or the strategic audience. That's Bia.
 - She doesn't write the article or design the visual. That's Otto and Kaia.
 

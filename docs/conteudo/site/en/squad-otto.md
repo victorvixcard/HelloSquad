@@ -13,7 +13,7 @@ agente: { nome: Otto, pronome: he, area: Content, papel: Content & Communication
 
 **"I keep your brand showing up, in its own voice."**
 
-Otto is the writer and editor on the HelloSquad squad, the AI marketing team for small and medium-sized businesses, and he creates AI social media content in your brand's voice. He handles the editorial calendar, captions, scripts, website copy, emails and articles. He's also the one who publishes, when you authorize it.
+Otto is the writer and editor on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and he creates AI social media content in your brand's voice. He handles the editorial calendar, captions, scripts, website copy, emails and articles. He's also the one who publishes, when you authorize it.
 
 ## What Otto does
 
@@ -73,4 +73,4 @@ No. Approving copy doesn't authorize publishing it. Otto only publishes with the
 
 [Start with the squad]
 
-<!-- Nota de implementação: entregas 04.01 a 04.07 do catálogo. Mostrar só as liberadas na data de publicação (P4). O nome comercial do perfil local nos buscadores não é citado, pela regra de não citar fornecedor. A palavra que a Miolo não usa ("artesanal") não é citada no texto en, para não associar "artisanal" à Miolo. O primeiro pedido segue o catálogo en (`team.json`, `agents.otto.asks.q1`); o segundo troca a rede social citada no catálogo por "social media". -->
+<!-- Nota de implementação: entregas 04.01 a 04.07 do catálogo. Mostrar só as liberadas na data de publicação (P4). O nome comercial do perfil local nos buscadores não é citado, pela regra de não citar fornecedor. A palavra que a Miolo não usa ("artesanal") não é citada no texto en, nem o equivalente em inglês. O primeiro pedido segue o catálogo en (`team.json`, `agents.otto.asks.q1`); o segundo troca a rede social citada no catálogo por "social media". -->

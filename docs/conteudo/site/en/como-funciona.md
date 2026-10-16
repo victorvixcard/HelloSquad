@@ -101,6 +101,6 @@ HelloSquad also doesn't promise guaranteed revenue growth, and it never simulate
 6. Kiwi proposes how to promote the campaign, with a spending cap. Nothing is spent until the owner authorizes it.
 7. The owner approves the visuals and authorizes publishing. Íris tracks the preorders over the following days and proposes the next step.
 
-<!-- A palavra que a Miolo não usa é "artesanal" (Memória da Marca do seed). O texto en não cita a palavra, para não associar "artisanal" à Miolo. -->
+<!-- A palavra que a Miolo não usa é "artesanal" (Memória da Marca do seed). O texto en não cita a palavra nem o equivalente em inglês. -->
 
 [Start with the squad]

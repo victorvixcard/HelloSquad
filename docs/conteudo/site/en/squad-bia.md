@@ -13,7 +13,7 @@ agente: { nome: Bia, pronome: she, area: Strategy, papel: Strategy & Intelligenc
 
 **"I find where the opportunity is for your business."**
 
-Bia is the AI marketing strategist on the HelloSquad squad, the AI marketing team for small and medium-sized businesses. She reads the market, the audience and your business before proposing anything, then tells you where the opportunity is and what to tackle first.
+Bia is the AI marketing strategist on HelloSquad's squad, the AI marketing team for small and medium-sized businesses. She reads the market, the audience and your business before proposing anything, then tells you where the opportunity is and what to tackle first.
 
 ## What Bia does
 

@@ -13,7 +13,7 @@ agente: { nome: Max, pronome: he, area: CRM, papel: CRM & Relationships, cor: "#
 
 **"I bring your customers back."**
 
-Max handles customer relationships on the HelloSquad squad, the AI marketing team for small and medium-sized businesses, and he runs AI marketing CRM for the people who already know you. He looks after customers who have bought or shown interest: segmentation, reactivation, loyalty and journeys by email and messages. Always with consent.
+Max handles customer relationships on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and he runs AI marketing CRM for the people who already know you. He looks after customers who have bought or shown interest: segmentation, reactivation, loyalty and journeys by email and messages. Always with consent.
 
 ## What Max does
 

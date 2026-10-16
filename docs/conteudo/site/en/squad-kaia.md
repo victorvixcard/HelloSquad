@@ -13,7 +13,7 @@ agente: { nome: Kaia, pronome: she, area: Brand & Creative, papel: Brand & Creat
 
 **"I shape your brand in every piece."**
 
-Kaia is the art director on the HelloSquad squad, the AI marketing team for small and medium-sized businesses, and she handles AI social media design for your brand. Everything your brand shows goes through her: identity, social media visuals, in-store materials, mockups and edits.
+Kaia is the art director on HelloSquad's squad, the AI marketing team for small and medium-sized businesses, and she handles AI social media design for your brand. Everything your brand shows goes through her: identity, social media visuals, in-store materials, mockups and edits.
 
 ## What Kaia does
 
