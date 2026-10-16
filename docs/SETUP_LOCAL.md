@@ -356,6 +356,55 @@ curl -s $API/workspaces/$WS/squad/status -H "$AUTH"
 
 Rotas novas: `GET /workspaces/{id}/needs`, `GET /workspaces/{id}/squad/status`, `POST /approvals/{id}/defer`, `POST /approvals/{id}/resume`, `POST /workspaces/{id}/projects`, `PATCH /projects/{id}`, `PUT /projects/{id}/participants`, `POST /projects/{id}/milestones`, `PATCH /milestones/{id}`, `GET /workspaces/{id}/milestones`. Saída de um roteiro completo contra a API local em `docs/parciais/s1g/curl_trabalho_rico.txt`.
 
+### Bia e Otto (S2a)
+
+Sete deliveries novas, todas pelo mesmo caminho da 04.01: pedido na conversa → `POST /messages/{id}/work-items` com o `delivery_type` → o worker (Nexo faz a triagem e delega) → entrega revisável (versão, cartão `material`, pendência `review`, 10 créditos provisórios capturados) → decisão da dona da conta em `POST /approvals/{id}/decision`. O agente sai do código da delivery (`02.xx` = Bia, `04.xx` = Otto).
+
+| Delivery | Pedido de exemplo (conversa direta) | Entrega (`kind`) e o que ela traz |
+|---|---|---|
+| 02.01 | "Bia, quero um diagnóstico do marketing da Miolo. O objetivo é vender mais até o Natal." | `diagnosis`: resumo, lacunas, oportunidades com prioridade, premissas, dados que faltam |
+| 02.02 | "Bia, documente o posicionamento, o público e os objetivos da Miolo." | `positioning`: posicionamento, diferenciais, públicos, objetivos com indicador e prazo |
+| 02.03 | "Bia, preciso de um plano de marketing com prioridades para vender mais até o Natal." | `marketing_plan`: horizonte e ações em ordem, com porquê e responsável no squad |
+| 02.04 | "Bia, quero a estratégia da campanha de Natal para vender encomendas antecipadas." | `campaign_strategy`: conceito, público, mensagens-chave, período, frentes por especialista |
+| 02.07 | "Bia, pesquise os concorrentes do bairro e as tendências de fim de ano." | `market_research`: achados `pesquisa` (com fonte) ou `sugestao`, fontes com link e datas |
+| 04.02 | "Otto, monte o calendário editorial da próxima semana, de 19 a 25/10." | `editorial_calendar`: período e posts; grava `calendar_posts` (rascunho → pauta na aprovação) |
+| 04.03 | "Otto, quero um reels para o Instagram e um status de WhatsApp sobre os bastidores da fornada de sábado." | `multichannel_posts`: uma versão por canal (texto, roteiro, hashtags, CTA), pedido para a Kaia |
+
+Com as variáveis do bloco da S1b (`API`, `AUTH`, `JSON`, `field`, `WS` da Miolo):
+
+```bash
+pedir() {  # agente, delivery, título, pedido → id do trabalho (run na fila)
+  local conv msg
+  conv=$(curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" \
+    -d "{\"kind\":\"agent_direct\",\"primary_agent_id\":\"$1\"}" | field id)
+  msg=$(curl -s -X POST $API/conversations/$conv/messages -H "$AUTH" -H "$JSON" -d "{\"body\":\"$4\"}" | field id)
+  curl -s -X POST $API/messages/$msg/work-items -H "$AUTH" -H "$JSON" \
+    -d "{\"delivery_type\":\"$2\",\"title\":\"$3\"}" | field id
+}
+WI=$(pedir bia 02.04 "Estratégia de Natal" "Bia, quero a estratégia da campanha de Natal para vender encomendas antecipadas.")
+(cd apps/backend && LLM_PROVIDER=simulated uv run hellosquad-worker --drain)          # ou make worker no ar
+curl -s $API/work-items/$WI -H "$AUTH" | field status_label                            # v1 aguarda sua aprovação
+curl -s $API/work-items/$WI -H "$AUTH" | field deliveries.0.versions.0.content.conceito
+AP=$(curl -s $API/work-items/$WI -H "$AUTH" | field pending_approval.id)
+curl -s -X POST $API/approvals/$AP/decision -H "$AUTH" -H "$JSON" -d '{"decision":"approved"}' | field status
+
+# Calendário editorial (04.02): propostas (draft) e pauta aprovada (planned), sem os cancelados
+curl -s "$API/workspaces/$WS/calendar?from=2026-10-19&to=2026-10-25" -H "$AUTH"
+# Um post do calendário como objeto da conversa (pelo id; o post fora do banco segue pela chave)
+curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" \
+  -d '{"kind":"object","context":{"type":"calendar_post","id":"<id do post>"}}'
+
+# Conversa do ambiente ("Conversar com <Nome>"): uma por ambiente; 201 na primeira vez, 200 depois
+curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" \
+  -d '{"kind":"object","context":{"type":"environment","key":"bia","title":"Estratégia"}}' | field opening
+# {"agent_id": "bia", "message": "Oi, eu sou a Bia. Disponível. O que você precisa?",
+#  "suggestions": ["Onde a Miolo pode crescer até o Natal?", "Crie uma promoção para esta semana", …]}
+```
+
+- **Estratégia aprovada alimenta o Otto.** A última 02.04 aprovada do mesmo projeto (sem projeto, do workspace) entra no contexto da 04.02 e da 04.03; a 04.03 registra qual versão seguiu em `content.estrategia`. Do mesmo jeito, a 02.03 lê o diagnóstico e o posicionamento aprovados.
+- **Busca web da 02.07** (`WEB_SEARCH_PROVIDER`): `disabled` (padrão) não busca nada e a entrega diz que tudo é sugestão sem validação; `mock` devolve três resultados fictícios fixos (`.example`), bom para ver a entrega com fontes (`env WEB_SEARCH_PROVIDER=mock uv run hellosquad-worker --drain`); `brave` faz a busca real com `WEB_SEARCH_API_KEY`. As fontes da entrega saem da busca, com link, data de publicação e data de coleta; achado marcado como pesquisa sem fonte coletada vira sugestão.
+- **Créditos.** Cada pedido reserva 10 créditos provisórios e cobra ao entregar. A Miolo do seed tem 36: o quarto pedido seguido termina em `failed` com `insufficient_credits`, sem cobrar. O roteiro completo `docs/parciais/s2a/curl_bia_otto.sh` (nove pedidos) concede antes um bônus local de 100 pelo papel privilegiado; a saída está em `docs/parciais/s2a/curl_bia_otto.txt`. `make seed` devolve o saldo.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
