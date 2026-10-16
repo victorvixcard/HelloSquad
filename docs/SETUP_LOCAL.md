@@ -439,6 +439,32 @@ curl -s -X PATCH $API/workspaces/$WS -H "$AUTH" -H "$JSON" -d '{"locale":"en"}'
 - **Causa.** Leitura `fato` sem evidência citada e `causa` sem teste controlado (que a plataforma ainda não tem) viram `hipotese` no fluxo; o pytest varre as fixtures da Íris atrás de linguagem causal.
 - Roteiro completo: `docs/parciais/s2b/curl_kiwi_max_iris.sh` (bônus local de 100, as oito deliveries, importação, métricas, idioma e a Trilha), saída em `curl_kiwi_max_iris.txt`; termina com `make seed`.
 
+### Aprendizados por cliente e boas-vindas do Nexo (S2c)
+
+**Reflexão.** Quando um trabalho fecha (aprovado, aprovado depois de ajuste, recusado com nova proposta ou com cancelamento, cancelado), o banco grava a reflexão em `memory_reflections` e manda a mensagem para a fila `memory_reflect` (o `memory.reflect` da arquitetura; o pgmq não aceita ponto), com o trabalho, o desfecho e as referências (briefing da triagem, versões, correções da pessoa, decisão). Pedir ajuste não fecha o trabalho. O mesmo `make worker` consome a fila quando sobra vaga (e o `--drain` esvazia as duas): o agente que entregou relê o fechamento, com o que mudou entre as versões, e anota aprendizados em `agent_learnings`. A evidência é conferida no backend (rótulo inventado sai; aprendizado sem evidência não é gravado). Promoção: correção explícita da pessoa com confiança ≥ `LEARNING_PROMOTION_CONFIDENCE` → promovido; a mesma lição em `LEARNING_PROMOTION_REPEATS` trabalhos → promovido; o resto fica candidato. Aprendizado nunca vira regra da Memória da Marca. A reflexão não é run do agente: não aparece no status do squad, não conta no teto e não cobra crédito; o custo do modelo fica na própria reflexão.
+
+**Contexto do run** (Arquitetura §5.4): essenciais da Memória da Marca → aprendizados promovidos deste cliente com o agente (os da mesma delivery primeiro, depois os que a busca acha; até `LEARNING_TOP_K`, no mesmo teto `MEMORY_CONTEXT_TOKENS`) → fatos da busca → histórico → pedido. Tudo que entra fica em `run_context_items` (`kind = learning`, motivo `delivery` ou `search`).
+
+```bash
+# Ciclo da correção (Marina, Miolo): pedido → v1 → ajuste → v2 aprovada → reflexão → próximo pedido
+curl -s -X POST $API/approvals/$APPROVAL/decision -H "$AUTH" -H "$JSON" \
+  -d '{"decision":"changes_requested","note":"Nunca use '"'"'promoção imperdível'"'"'; chame o cliente de '"'"'você'"'"'."}'
+# … worker entrega a v2; aprovar fecha o trabalho e enfileira a reflexão
+curl -s $API/workspaces/$WS/memory/learnings -H "$AUTH"                       # versão em vigor de cada assunto
+curl -s "$API/workspaces/$WS/memory/learnings?status=candidate&agent_id=otto&delivery_type=04.01" -H "$AUTH"
+curl -s -X POST $API/memory/learnings/$LEARNING/decision -H "$AUTH" -H "$JSON" -d '{"action":"promote"}'  # ou discard, keep
+# Negócio novo: conversa "Boas-vindas" com a primeira fala do Nexo, no idioma escolhido (pt-BR se omitido)
+curl -s -X POST $API/workspaces -H "$AUTH" -H "$JSON" -d '{"name":"Padaria do Pedro","slug":"padaria-do-pedro","locale":"es"}'
+# Objetivo contado ao Nexo: a API nomeia assunto e chave no idioma do negócio e o Nexo responde nas boas-vindas
+curl -s -X POST $API/workspaces/$WS/memory/facts -H "$AUTH" -H "$JSON" \
+  -d '{"area":"business","content":"Vender mais encomendas","kind":"objective"}'
+```
+
+- Só o owner promove, descarta ou diz que continua valendo (403 para os outros papéis); repetir devolve o mesmo estado. `keep` só vale para promovido (senão 409) e renova a revisão: promovido sem isso há `LEARNING_REVIEW_DAYS` entra no contexto marcado para o agente revisar.
+- Texto e evidência de um aprendizado nunca mudam; evidência nova sobre o mesmo assunto cria versão nova e a anterior fica no histórico. Descartado não volta com a mesma lição; um palpite do agente não derruba o que a pessoa corrigiu.
+- A fala de boas-vindas (pt-BR, en, es) vem do catálogo do backend (`apps/backend/src/hellosquad/i18n/`) e só nasce na mesma transação que cria o negócio: depois disso ninguém escreve como o Nexo.
+- Modo simulado: as fixtures da 04.01 com o pão de abóbora (`otto.produce.json`, `otto.reflect.json`) reproduzem o ciclo; o pytest `test_learnings` prova o critério da fase.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
