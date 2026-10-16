@@ -13,6 +13,5 @@
     "title": "Não deu para abrir esta página agora.",
     "lead": "Algo falhou do nosso lado. Tente de novo; se continuar, volte para o <home>início</home>.",
     "retry": "Tentar de novo"
-  },
-  "loading": "Carregando…"
+  }
 }
