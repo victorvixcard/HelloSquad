@@ -23,6 +23,6 @@ Disparada às 17:37 de 16/10/2026 pela main (Opus 5.5), em paralelo com a A2b/A2
 | 18:06 | Roteiro curl contra a API (porta 8199, segredo só no processo) e o scheduler `--once` | `e630992` | feito |
 | 18:07 | 6. `SETUP_LOCAL.md` (simular webhook) | `a163585` | feito |
 | 18:08 | Verificação: backend 214/214, pgTAP 677/677, seed idêntico, `tsc` de contracts/ui/web ok; webhook do Mercado Pago usa o `data.id` assinado | `9b63813` | feito |
-| 18:10 | `S2e-relatorio.md` | este | feito |
+| 18:11 | `S2e-relatorio.md` | este | feito |
 
-**Fatia fechada às 18:10.** Relatório: `docs/parciais/S2e-relatorio.md`.
+**Fatia fechada às 18:11.** Relatório: `docs/parciais/S2e-relatorio.md`.
