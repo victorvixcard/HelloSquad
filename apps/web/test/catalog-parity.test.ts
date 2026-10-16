@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { createTranslator } from "next-intl";
 import { describe, expect, it } from "vitest";
 import { DEFAULT_LOCALE, LOCALES } from "@/i18n/config";
@@ -45,9 +46,11 @@ function shape(node: unknown, path = "", out = new Map<string, string>()): Map<s
 
 const SOURCE_LEAVES = new Map(leaves(SOURCE).map((l) => [l.path, l]));
 
-/** Textos que podem ficar iguais ao pt-BR: só nomes próprios, marcas, siglas, símbolos e argumentos. */
-const SAME_OK =
-  /^(?:[\s\d\p{P}\p{S}]|Nexo|Bia|Kaia|Otto|Kiwi|Max|Íris|HelloSquad|Hello|Squad|squad|CRM|Growth|Marketing|Instagram|WhatsApp|Google|PDF|CSV|\{[a-zA-Z]+\})*$/u;
+/**
+ * Marcas que só o português tem (espanhol e inglês não usam): texto com elas em en ou es ficou sem tradução. Texto
+ * igual ao pt-BR sem elas é legítimo ("Resultados", "Conectar" e "Semana" são espanhol; "Status" é inglês).
+ */
+const PORTUGUESE_ONLY = /[ãõçÃÕÇ]|\b(?:você|não|são|também|então|pra|um|uma|em|ainda|ao|aos|às)\b|(?:^|\s)(?:é|à)(?:\s|$)/i;
 
 describe.each(TRANSLATIONS)("catálogo %s (ADR-0010)", (locale) => {
   const catalog = CATALOGS[locale];
@@ -106,20 +109,19 @@ describe.each(TRANSLATIONS)("catálogo %s (ADR-0010)", (locale) => {
     expect(errors).toEqual([]);
   });
 
-  it("campos técnicos (ids de agente) ficam iguais; texto não fica em português", () => {
+  it("campos técnicos (ids de agente e nomes dos idiomas) ficam iguais; nenhum texto ficou em português", () => {
     ready();
     const technical: string[] = [];
-    const untranslated: string[] = [];
+    const portuguese: string[] = [];
     for (const leaf of leaves(catalog)) {
       const src = SOURCE_LEAVES.get(leaf.path);
-      if (!src) continue;
       if (leaf.technical) {
-        if (leaf.value !== src.value) technical.push(leaf.path);
-      } else if (typeof leaf.value === "string" && leaf.value === src.value && !SAME_OK.test(leaf.value)) {
-        untranslated.push(`${leaf.path}: ${leaf.value}`);
+        if (!src || leaf.value !== src.value) technical.push(leaf.path);
+      } else if (typeof leaf.value === "string" && PORTUGUESE_ONLY.test(leaf.value.replace(/\{[^}]*\}/g, ""))) {
+        portuguese.push(`${leaf.path}: ${leaf.value}`);
       }
     }
-    expect({ technical, untranslated }).toEqual({ technical: [], untranslated: [] });
+    expect({ technical, portuguese }).toEqual({ technical: [], portuguese: [] });
   });
 
   it("não usa apóstrofo reto (no ICU ele vira escape) e mantém os exemplos em .example", () => {
