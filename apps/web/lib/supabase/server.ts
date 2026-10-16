@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { supabasePublicEnv } from "../env";
-import { SESSION_COOKIE_OPTIONS } from "./session-cookie";
+import { isLocalHttp, SESSION_COOKIE_OPTIONS, sessionCookieOptions } from "./session-cookie";
 
 /**
  * Cliente da Auth no servidor (Server Components, Server Actions, Route Handlers), com a sessão
@@ -9,7 +9,8 @@ import { SESSION_COOKIE_OPTIONS } from "./session-cookie";
  * middleware, por isso o setAll ignora o erro nesse caso.
  */
 export async function createSupabaseServerClient() {
-  const cookieStore = await cookies();
+  const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
+  const local = isLocalHttp(requestHeaders.get("host"), requestHeaders.get("x-forwarded-proto"));
   const { url, publishableKey } = supabasePublicEnv();
   return createServerClient(url, publishableKey, {
     cookieOptions: SESSION_COOKIE_OPTIONS,
@@ -19,7 +20,7 @@ export async function createSupabaseServerClient() {
       },
       setAll(cookiesToSet) {
         try {
-          for (const { name, value, options } of cookiesToSet) cookieStore.set(name, value, options);
+          for (const { name, value, options } of cookiesToSet) cookieStore.set(name, value, sessionCookieOptions(options, local));
         } catch {
           // Server Component: o middleware renova a sessão na próxima requisição.
         }

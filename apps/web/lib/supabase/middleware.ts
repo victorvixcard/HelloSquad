@@ -1,18 +1,18 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { supabasePublicEnv } from "../env";
-import { SESSION_COOKIE_OPTIONS } from "./session-cookie";
+import { isAppPath, isLocalHttp, SESSION_COOKIE_OPTIONS, sessionCookieOptions } from "./session-cookie";
 
 const AUTH_PAGES = ["/entrar", "/criar-conta"];
-
-function isAppPath(pathname: string) {
-  return pathname === "/app" || pathname.startsWith("/app/");
-}
 
 /** Renova a sessão nos cookies e protege /app/*. */
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
   const { url, publishableKey } = supabasePublicEnv();
+  const local = isLocalHttp(
+    request.headers.get("host") ?? request.nextUrl.host,
+    request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol,
+  );
   const supabase = createServerClient(url, publishableKey, {
     cookieOptions: SESSION_COOKIE_OPTIONS,
     cookies: {
@@ -22,7 +22,7 @@ export async function updateSession(request: NextRequest) {
       setAll(cookiesToSet, headers) {
         for (const { name, value } of cookiesToSet) request.cookies.set(name, value);
         response = NextResponse.next({ request });
-        for (const { name, value, options } of cookiesToSet) response.cookies.set(name, value, options);
+        for (const { name, value, options } of cookiesToSet) response.cookies.set(name, value, sessionCookieOptions(options, local));
         for (const [key, value] of Object.entries(headers ?? {})) response.headers.set(key, value);
       },
     },
