@@ -172,7 +172,54 @@ Nenhuma jornada envia nada sozinha: cada uma só prepara a conversa certa com o 
 
 ## 10. Cruzamento com o banco e a API (S1a, S1b)
 
-<!-- §10 em redação -->
+Fonte do lado do banco: `docs/parciais/S1a-relatorio.md` §1–§2, `S1b-relatorio.md` §1 e as migrations commitadas até 16/10 09:00, só lidas (`20261016063500_core_schema.sql`, `…063600_work_item_state_machine.sql`, `…070000_create_conversation_and_deliveries_bucket.sql`). Legenda: **temos**, **parcial** (existe, mas falta campo ou regra), **falta**, **conflita** (o banco contradiz o protótipo).
+
+### 10.1 Conversas e mensagens
+
+| O protótipo mostra | No banco e na API | Situação |
+|---|---|---|
+| Sala do Squad: uma por negócio, com tópico ("Campanha de Natal", L6251) | `conversation_kind = squad_room`, uma ativa por workspace (índice único) | **temos**; o tópico da sala não tem coluna (**parcial**) |
+| Conversa direta com um especialista, várias por agente: "Nova conversa" cria outra (L6537–6545); histórico em "Minha Equipe & Conversas" | `agent_direct`; a API cria sempre uma nova; o dono confirmou em 16/10 08:55 | **temos** |
+| Conversa em grupo com 2 a 6 especialistas escolhidos no Início: "Conversa em grupo com …" e "Conversa em grupo demonstrativa: aqui, responde um especialista por vez." (L7059, L7130–7140) | não há tipo de grupo; `conversation_participants` poderia guardar os agentes | **falta** (o desenho é combinado; o modelo é decisão técnica) |
+| Conversa a partir de qualquer objeto: trabalho, peça e versão, projeto, post do calendário, indicador, "<Agente> percebeu", oportunidade, conhecimento da Memória, responsabilidade do Modo Autônomo, segmento do CRM, documento da Bia, capacidade ("O que você quer fazer com…") (§4) | `kind = object` aceita só `project`, `work_item` e `delivery` (`app.create_conversation`) | **falta** (os outros tipos de contexto) |
+| Cartão de contexto: tipo, origem, período, participantes; o handoff pede negócio, especialista, ambiente, tipo e id do objeto, período e participantes (README §E.2) | `context_type`, `context_id`, participantes; `GET /conversations/{id}` devolve título e estado do objeto | **parcial** (faltam período, ambiente e origem) |
+| Mensagens de cinco tipos: separador de dia, nota de sistema ("Você aprovou a v2 · 10:31", com marca de simulação), pessoa (com anexos), agente (com cartão) e sistema com agentes ("O Nexo chamou a Bia, a Kaia, o Otto e o Kiwi") (`M`, L6265–6271) | `author_type` `user`, `agent`, `system`; `body_format` só `markdown`; `attachments` jsonb | **parcial** (falta o cartão estruturado) |
+| 24 tipos de cartão dentro da mensagem do agente, com ações e estado (pendente, aprovado, outra direção): trabalho criado, material, opções, equipe, conceito, proposta de rotina, publicação, indicador, pílula do Modo Autônomo, orçamento, pedido de trabalho, documento, mensagens do CRM, autorização de envio, combinado da delegação, sugestão e plano da Memória… (`docs/parciais/x1/cartoes_da_conversa.txt`) | não existe; a decisão passa por `approvals` | **falta** (cartão tipado ligado a `approvals` e às ações) |
+| "Digitando", status vivo na conversa ("Kaia · criando a primeira versão"), aviso quando a pessoa está em outra tela | `run_events` (`message.created`, `run.progress`) pelo Realtime (S1a, S1c) | **parcial** (falta o texto de status por etapa) |
+| Conversa não lida e badge na barra (`unread`) | não há leitura por participante | **falta** |
+| A conversa abre nas mensagens mais recentes | dono, 16/10 08:55: a API ganha `before=` | **parcial** (pendente na S1b) |
+
+### 10.2 Trabalhos, projetos, entregas e aprovações
+
+| O protótipo mostra | No banco e na API | Situação |
+|---|---|---|
+| Família de status da V4.6 (`STK6`, L13856–13859): "Aguarda você" (e "Aguardando você", "Aguarda aprovação", "Aguarda a sua aprovação"), "Em andamento" (e "Em produção"), "Programado" ("Programada", "Planejado"), "Concluído" ("Concluída", "Entregue", "Publicado"), **"Aprovado" e "Aprovado por você" com o mesmo desenho de concluído**, "Pausado" ("Pausada") | `work_item_status`: `needs_you`, `in_progress`, `scheduled`, `approved`, `done`, `paused`, `blocked`, `failed`, `draft`, `cancelled` | **temos** o mapa `needs_you`→"Aguarda você", `in_progress`→"Em andamento", `scheduled`→"Programado", `approved`→"Aprovado", `done`→"Concluído", `paused`→"Pausado". `blocked`, `failed`, `draft` e `cancelled` **não têm rótulo nem desenho de trabalho na V4.6**: o comentário da L13856 cita "Bloqueado" e "Erro", mas nenhum trabalho os usa (§11) |
+| Colunas do Quadro: "Precisa de você", "Em andamento", "Programados", "Concluídos", cada uma com o seu vazio (L8875) | filtro `status` repetível em `GET /work-items` | **temos** |
+| Trabalho com frase de status ("Otto incluindo um bastidor no plano da semana 43"), próximo passo ("Aprovar a v2 até sex, 16/10"), prazo, resumo, documento, origem ("criado a partir de um insight da Íris · hoje", "execução PL-43") e histórico legível (agente, texto, hora, marca automática ou ok) (L7001–7003, L8011) | `title`, `briefing`, `delivery_type`, `primary_agent_id`, `collaborator_agent_ids`, `project_id`, `conversation_id`, `origin_message_id`; histórico em `audit_events` | **parcial** (faltam prazo, próximo passo, frase de status, origem tipada além da mensagem e o texto do histórico) |
+| Modalidades: entrega pontual ("Trabalho criado · entrega pontual"), projeto coordenado ("Projeto criado · Sala do Squad") e rotina (Modo Autônomo) (L8607) | `work_items` e `projects`; rotina não existe | **parcial** (a rotina falta, §10.3) |
+| Projeto com roadmap (janela de 21/09 a 27/12, L9675), marcos ("Próximos marcos"), faixa na cor de quem conduz, quem participa | `projects`: `name`, `objective`, `status`, `owner_agent_id` | **parcial** (faltam datas, marcos e participantes do projeto) |
+| Versões "vN" com o que mudou ("data em destaque"), "Substituída pela v2", "Aprovada por você", "Nova versão a caminho", "Comparar" com "Antes" e "Agora" (L8613–8615, L5009, L5559) | `deliveries`, `delivery_versions` (`version_no`, `change_note`, `status` `draft`/`approved`/`superseded`) | **temos** (`change_note` ↔ o que mudou; `superseded` ↔ "Substituída pela vN"); "Nova versão a caminho" sai do run em andamento |
+| Tipos de pendência `review`, `approve`, `auth`, `confirm`, `fix`, `answer` | `approval_kind`: `review`, `approve`, `authorize`, `confirm`, `reconnect`, `respond` | **temos** |
+| Pendência `decide` ("Para você decidir", tipo-reserva) e linha `next` ("Em seguida", marco que ainda não depende de você) | não existem | **conflita** (`decide` não tem tipo no banco; `next` não é aprovação, vem de marcos) |
+| "Agora não" na autorização deixa a decisão para depois: o trabalho mostra "Publicação ainda não autorizada." e "Decidir agora" (L6812–6814, L5017) | `approval_decision`: `approved`, `rejected`, `changes_requested`, `answered` | **conflita** se "Agora não" virar `rejected` (a pessoa precisa poder decidir de novo); a forma é decisão técnica, o comportamento é o do protótipo |
+| "Pedir ajuste" e "Outra direção" | `changes_requested` → trabalho `in_progress` | **temos** |
+| Rejeitar com duas saídas (cancelar ou pedir nova proposta) | dono, 16/10 08:55: `rejected` com `follow_up` `cancel` ou `revise` | **sem desenho na V4.6** (§11) |
+| Pendência com prazo e consequência ("sai sex, 16/10, 9h, se você aprovar") e quem pede | `approvals.due_at`, `requested_by_agent_id` | **temos** |
+| Uma decisora (Marina, "dona da Miolo") | dono, 16/10 08:55: só o owner decide | **temos** a regra; a interface de quem não é owner não existe (§11) |
+
+### 10.3 Memória, Modo Autônomo, conexões e o resto
+
+| O protótipo mostra | No banco e na API | Situação |
+|---|---|---|
+| Conhecimento da Memória com área ("Meu negócio", "Minha marca", "Conhecimento"), grupo, chave, valor, estado (`KST5`: "Confirmado", "Decisão sua", "Da fonte", "Observado", "Sugerido", "Desatualizado", "Descartado", "Em conflito", "Não usado"), fonte, agentes que usam, quem percebeu e histórico (§6) | nenhuma tabela de memória nas migrations commitadas (ADR-0009, embeddings, decidido) | **falta** |
+| Fontes com estado (`SRCST5`: "Declarado por você", "Conectada", "Desatualizada", "Precisa reconectar", "Não conectada", "Indisponível") e permissões ("Ler páginas", "Ler posts e métricas", "Publicar só com sua autorização") (L12804, L7913, L7924) | não existe | **falta** |
+| Responsabilidade (`RST5`: "Ativa", "Pausada", "Bloqueada por integração", "Falha na execução", "Encerrada", "Aguarda sua confirmação"), execução (`EXST5`: "Concluída", "Falhou", "Não executada", "Aguarda sua aprovação", "Aprovada por você", "Programada"), ciclo com código (PL-42, RS-42), frequência, próxima execução e níveis de autonomia (§7) | `run_kind = scheduled` e fila `runs_scheduled`, sem produtor nem consumidor | **falta** (Fase 3) |
+| "<Agente> percebeu" com agente, leitura, explicação, fonte e uma ação ("Conversar sobre isso", "Transformar em trabalho"), com estado aberto, visto e feito (L13843–13844, L7019, `ins`) | não existe | **falta** |
+| Status vivo do squad: modos `idle`, `work`, `wait`, `live`, `monitor`, `sleep`, com rótulos "disponível", "criando", "escrevendo", "pesquisando", "na estratégia", "trabalhando", "aguarda você", "coordenando", "acompanhando", "pausado" (L8049–8065) | não existe campo; dá para derivar de runs e approvals | **parcial** (derivado) |
+| Sino de notificações com novidade e avisos curtos | Realtime em `approvals` e `run_events` | **parcial** (falta notificação guardada e lida) |
+| Eventos que o protótipo dispara: trabalho e projeto criados, squad montado, versão entregue, aprovação, autorização, publicação agendada e confirmada, rotina ativada, pausada e retomada, memória sugerida, confirmada, corrigida e descartada, conexão lida, conectada e expirada | auditoria `work_item.created`, `work_item.status_changed`, `approval.decided`; Realtime `approval.created`, `approval.<status>`; `run_events` `message.created`, `run.progress`, `delivery.created`, `approval.requested` | **parcial** (faltam projeto, squad montado, publicação, rotina, memória e conexão) |
+| "Plano Squad · créditos do mês" com barra (64% na conta em uso, 4% no primeiro acesso), no menu da conta (L10548) | créditos com valor provisório (dono, 16/10) | **falta** (a tela de preço fica por último, por decisão do dono) |
+| "Adicionar um negócio" · "Outra marca na mesma conta" (L10546) | `workspaces` e `memberships` (uma pessoa em vários workspaces) | **temos** a base; falta o seletor na barra |
 
 ## 11. O que o protótipo não responde
 
