@@ -11,7 +11,7 @@
 | 2 | Web (alvos 6 e 7) | ✅ 4 achados (3🟡 1ℹ️), núcleo resistiu |
 | 3 | Diretrizes do dono (alvos 8 a 11) | ✅ conforme, sem achado |
 | 4 | Reprodutibilidade (alvos 12 e 13) | ✅ clone verde; 1 achado de doc |
-| 5 | Relatório `H0-relatorio.md` e limpeza (seed, portas, containers) | 🟡 em andamento |
+| 5 | Relatório `H0-relatorio.md` e limpeza (seed, portas, containers) | ✅ concluído |
 
 ## Ambiente no início
 
@@ -59,3 +59,7 @@ Achados:
 - **Alvo 12 (clone limpo).** `git clone` do GitHub em `/tmp/hellosquad-h0` (HEAD = local, `074b8b8`), `cp .env`, `make up && make seed && make test && make e2e`: **todos exit 0**. `make test`: pytest 45, Vitest 53 (9+44), pgTAP Files=7 Tests=98 PASS. `make e2e`: 5/5 Playwright, seed reaplicado. Clone apagado (tinha cópia do `.env`). O Supabase é um por máquina (project_id `hellosquad`): o `make up` do clone reusa os containers (migrations `applied:[]`).
   - **Achado H0-06 (🟡 doc):** a ordem documentada em `SETUP_LOCAL.md` ("Subir do zero") põe `make up` **antes** de `cp .env.example .env`, mas `make up` chama `make migrate` → `hellosquad-local-db roles`, que exige `DATABASE_URL`/`API_DATABASE_URL` do `.env`. Provado: sem `.env`, `make migrate` → exit 2 "erro: DATABASE_URL vazio no .env". Quem segue a doc ao pé da letra quebra no primeiro `make up`.
 - **Alvo 13 (aderência dos relatórios).** 15/15 afirmações conferidas no disco: **J0** (project_id `hellosquad`; edge_runtime `enabled=false`; `pnpm@12.11.2`; CI em `infra/github/workflows/` e sem `.github/`; `@types/node ^24`). **S0** (hellosquad_api noinherit+nobypassrls+nosuper; 4 migrations; pgTAP 00–06; `BeforeValidator` no slug; trigger do último owner). **A0** (primitivos Button/CommandField/StatePill/Agent/Icon/AgentDot; sem favicon de terceiro; `hs-kbd` no `shell.css`; 0 refs a fonts.googleapis/gstatic no build; rotas `/app/[workspace]`). Nenhuma divergência.
+
+## Encerramento
+
+Relatório final em `docs/parciais/H0-relatorio.md`. Contagem: **🔴 0 · 🟡 5 (H0-01..04, H0-06) · ℹ️ 1 (H0-05)**. Veredito: **Fase 0 pronta e reprodutível, sem bloqueante**. Máquina devolvida no estado do seed (workspaces=3, memberships=4, invitations=0, audit_events=0, auth.users=5, Pedro sem membership); portas 8100 e 3100 livres; 46 containers (11 `*_hellosquad`), igual ao início. Logs com chaves em `/tmp/h0_*` removidos.
