@@ -1,0 +1,23 @@
+# ambientes e segredos
+.env
+.env.*
+!.env.example
+*.pem
+# node
+node_modules/
+.next/
+dist/
+.turbo/
+# python
+__pycache__/
+.venv/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+# mobile
+.expo/
+# supabase local
+supabase/.branches/
+supabase/.temp/
+# os
+.DS_Store

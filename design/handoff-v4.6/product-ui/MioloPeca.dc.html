@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Miolo · peça de exemplo</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&amp;family=Young+Serif&amp;display=swap">
+<style>
+body{margin:0}
+.mp{position:relative;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;font-family:'Gabarito',sans-serif;-webkit-font-smoothing:antialiased;text-align:left}
+.mp *{box-sizing:border-box}
+.mp-top{display:flex;justify-content:space-between;align-items:center;gap:0.6em;min-height:1.9em}
+.mp-word{font-family:'Young Serif',Georgia,serif;font-size:0.8em;letter-spacing:0.14em;line-height:1}
+.mp-tag{font-size:0.78em;font-weight:600;white-space:nowrap}
+.mp-badge{display:inline-flex;align-items:center;height:2.1em;padding:0 0.85em;border-radius:999px;font-size:0.9em;font-weight:700;letter-spacing:0.02em;white-space:nowrap}
+.mp-il{display:flex;justify-content:center;align-items:center;flex:1;min-height:0;padding:0.3em 0}
+.mp-il svg{width:9.4em;height:auto;display:block;overflow:visible}
+.mp-title{font-family:'Young Serif',Georgia,serif;font-size:2.05em;line-height:1.04;white-space:pre-line}
+.mp-sub{margin-top:0.55em;font-size:0.8em;font-weight:500;line-height:1.35}
+.mp-band{margin:0.75em -1.6em -1.6em;padding:0.8em 1.6em;font-size:0.92em;font-weight:700;letter-spacing:-0.005em}
+.mp-cta{display:inline-flex;align-items:center;height:1.9em;padding:0 0.85em;border-radius:999px;font-size:0.78em;font-weight:600}
+</style>
+</helmet>
+<div class="mp" role="img" aria-label="{{alt}}" style="width: {{W}}px; height: {{H}}px; font-size: {{fs}}px; padding: 1.6em; background: {{p.bg}}; color: {{p.fg}}">
+<div class="mp-top">
+<span class="mp-word">MIOLO</span>
+<sc-if value="{{hasBadge}}" hint-placeholder-val="{{true}}"><span class="mp-badge" style="background: {{p.acc}}; color: {{p.bg}}">{{p.badge}}</span></sc-if>
+<sc-if value="{{hasTop}}" hint-placeholder-val="{{false}}"><span class="mp-tag" style="color: {{p.acc}}">{{p.top}}</span></sc-if>
+</div>
+<div class="mp-il">
+<sc-if value="{{il.loaf}}" hint-placeholder-val="{{true}}"><svg viewBox="0 0 120 110" aria-hidden="true"><ellipse cx="60" cy="100" rx="46" ry="4.5" style="fill: rgba(0,0,0,.1)"></ellipse><path d="M10 68 C10 44 36 30 62 30 C90 30 110 46 110 66 C110 86 88 97 60 97 C32 97 10 88 10 68 Z" style="fill: #9A5528"></path><path d="M12 74 C22 90 98 92 108 72 C104 88 84 97 60 97 C34 97 16 88 12 74 Z" style="fill: #6E3A1C"></path><path d="M27 63 C33 53 41 47 51 44" style="fill: none; stroke: #E6CFA2; stroke-width: 4.4; stroke-linecap: round"></path><path d="M45 71 C51 61 59 55 69 52" style="fill: none; stroke: #E6CFA2; stroke-width: 4.4; stroke-linecap: round"></path><path d="M63 77 C69 67 77 61 87 58" style="fill: none; stroke: #E6CFA2; stroke-width: 4.4; stroke-linecap: round"></path><circle cx="36" cy="80" r="1.4" style="fill: #E6CFA2"></circle><circle cx="84" cy="44" r="1.2" style="fill: #E6CFA2"></circle><circle cx="94" cy="56" r="1.4" style="fill: #E6CFA2"></circle></svg></sc-if>
+<sc-if value="{{il.panetone}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 120 110" aria-hidden="true"><path d="M22 60 C22 26 98 26 98 60 Z" style="fill: #6E3A1C"></path><path d="M36 44 C46 36 74 36 84 44" style="fill: none; stroke: #9A5528; stroke-width: 3.2; stroke-linecap: round"></path><path d="M46 34 C54 31 66 31 74 34" style="fill: none; stroke: #9A5528; stroke-width: 2.6; stroke-linecap: round"></path><rect x="25" y="56" width="70" height="40" rx="3" style="fill: #F4E9D4"></rect><path d="M34 58 V94" style="stroke: #E2CFAE; stroke-width: 1.6"></path><path d="M41 58 V94" style="stroke: #E2CFAE; stroke-width: 1.6"></path><path d="M48 58 V94" style="stroke: #E2CFAE; stroke-width: 1.6"></path><path d="M55 58 V94" style="stroke: #E2CFAE; stroke-width: 1.6"></path><path d="M62 58 V94" style="stroke: #E2CFAE; stroke-width: 1.6"></path><path d="M69 58 V94" style="stroke: #E2CFAE; stroke-width: 1.6"></path><path d="M76 58 V94" style="stroke: #E2CFAE; stroke-width: 1.6"></path><path d="M83 58 V94" style="stroke: #E2CFAE; stroke-width: 1.6"></path><rect x="25" y="72" width="70" height="7" style="fill: #D45A26"></rect><ellipse cx="60" cy="100" rx="40" ry="4" style="fill: rgba(0,0,0,.08)"></ellipse></svg></sc-if>
+<sc-if value="{{il.jar}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 120 110" aria-hidden="true"><ellipse cx="60" cy="102" rx="32" ry="4" style="fill: rgba(0,0,0,.16)"></ellipse><rect x="39" y="14" width="42" height="12" rx="4" style="fill: #D45A26"></rect><path d="M35 34 C35 29 39 27 43 27 H77 C81 27 85 29 85 34 V90 C85 96 81 99 75 99 H45 C39 99 35 96 35 90 Z" style="fill: rgba(244,233,212,.14); stroke: #E6CFA2; stroke-width: 3"></path><path d="M38 55 C49 49 71 49 82 55 V90 C82 94 79 96 75 96 H45 C41 96 38 94 38 90 Z" style="fill: #F4E9D4"></path><circle cx="50" cy="69" r="3.4" style="fill: #E2CFAE"></circle><circle cx="67" cy="77" r="4.4" style="fill: #E2CFAE"></circle><circle cx="56" cy="87" r="2.6" style="fill: #E2CFAE"></circle><circle cx="73" cy="63" r="2.4" style="fill: #E2CFAE"></circle><path d="M47 42 C51 39 55 39 59 42" style="fill: none; stroke: #E6CFA2; stroke-width: 2.4; stroke-linecap: round"></path></svg></sc-if>
+<sc-if value="{{il.pumpkin}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 120 110" aria-hidden="true"><ellipse cx="60" cy="101" rx="42" ry="4" style="fill: rgba(0,0,0,.09)"></ellipse><path d="M60 36 C88 36 106 52 106 70 C106 88 88 98 60 98 C32 98 14 88 14 70 C14 52 32 36 60 36 Z" style="fill: #D45A26"></path><path d="M60 38 C52 52 52 84 60 97" style="fill: none; stroke: #9A5528; stroke-width: 3; stroke-linecap: round"></path><path d="M60 38 C68 52 68 84 60 97" style="fill: none; stroke: #9A5528; stroke-width: 3; stroke-linecap: round"></path><path d="M39 43 C29 57 29 82 39 94" style="fill: none; stroke: #9A5528; stroke-width: 3; stroke-linecap: round"></path><path d="M81 43 C91 57 91 82 81 94" style="fill: none; stroke: #9A5528; stroke-width: 3; stroke-linecap: round"></path><path d="M58 37 C57 30 59 24 64 20" style="fill: none; stroke: #24402F; stroke-width: 4.5; stroke-linecap: round"></path><path d="M64 22 C70 17 77 19 80 24 C74 27 68 26 64 22 Z" style="fill: #24402F"></path></svg></sc-if>
+</div>
+<div>
+<div class="mp-title">{{p.title}}</div>
+<sc-if value="{{hasSub}}" hint-placeholder-val="{{true}}"><div class="mp-sub">{{p.sub}}</div></sc-if>
+<sc-if value="{{hasCta}}" hint-placeholder-val="{{false}}"><div style="margin-top: 0.8em"><span class="mp-cta" style="background: {{p.fg}}; color: {{p.bg}}">{{p.cta}}</span></div></sc-if>
+<sc-if value="{{hasBand}}" hint-placeholder-val="{{false}}"><div class="mp-band" style="background: {{p.acc}}; color: {{p.bg}}">{{p.band}}</div></sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"p":{"editor":null},"w":{"editor":"int","default":320,"min":40,"max":640},"$preview":{"width":320,"height":400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const D = { bg: '#F4E9D4', fg: '#6E3A1C', acc: '#D45A26', top: '', badge: 'SEX · 16/10', title: 'Hoje é Dia\nMundial do Pão.', sub: 'Sábado tem fornada especial. Encomende pelo site.', il: 'loaf', band: '', cta: '' };
+    const p = Object.assign({}, D, this.props.p || {});
+    const W = Math.max(40, Math.round(this.props.w || 320));
+    const H = Math.round(W * 1.25);
+    const il = p.il || 'none';
+    return {
+      p: p, W: W, H: H, fs: Math.round(W / 20 * 100) / 100,
+      hasBadge: !!p.badge, hasTop: !!p.top && !p.badge, hasSub: !!p.sub, hasCta: !!p.cta, hasBand: !!p.band,
+      il: { loaf: il === 'loaf', panetone: il === 'panetone', jar: il === 'jar', pumpkin: il === 'pumpkin' },
+      alt: 'Peça da Miolo: ' + String(p.title).replace(/\n/g, ' ')
+    };
+  }
+}
+</script>
+</body>
+</html>
