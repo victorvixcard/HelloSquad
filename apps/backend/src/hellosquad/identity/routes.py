@@ -8,6 +8,7 @@ from psycopg import errors
 from hellosquad.api.deps import CurrentPrincipal, DatabaseDep
 from hellosquad.api.errors import ApiError, error_responses
 from hellosquad.credits.schemas import CreditBalance
+from hellosquad.i18n import t
 from hellosquad.identity.schemas import (
     Me,
     Membership,
@@ -114,10 +115,30 @@ async def list_workspaces(principal: CurrentPrincipal, db: DatabaseDep) -> Works
     return WorkspaceList(items=[Workspace(**row) for row in rows])
 
 
+async def start_welcome(conn, workspace: dict, full_name: str | None) -> None:
+    """Primeira fala do Nexo no negócio novo (V4.6 "Boas-vindas"), no idioma do negócio, pelo
+    catálogo do backend; o banco grava como mensagem do Nexo na conversa direta com ele."""
+    locale, brand = workspace["locale"], workspace["name"]
+    first_name = (full_name or "").split()[0] if (full_name or "").strip() else None
+    body = (
+        t(locale, "welcome.nexo", name=first_name, brand=brand)
+        if first_name
+        else t(locale, "welcome.nexo_anonymous", brand=brand)
+    )
+    await conn.execute(
+        "select id from app.start_welcome(%s, %s, %s)",
+        (workspace["id"], t(locale, "welcome.title"), body),
+    )
+
+
 @router.post(
     "/workspaces",
     status_code=status.HTTP_201_CREATED,
-    summary="Cria um workspace; quem cria vira owner",
+    summary="Cria um workspace; quem cria vira owner e recebe as boas-vindas do Nexo",
+    description=(
+        "Na mesma transação: o negócio, o idioma (`locale`, opcional) e a conversa direta "
+        '"Boas-vindas" com a primeira fala do Nexo e a pergunta do objetivo, no idioma do negócio.'
+    ),
     responses=error_responses(401, 409, 422, 503),
 )
 async def create_workspace(
@@ -127,6 +148,12 @@ async def create_workspace(
         async with db.transaction_as(principal) as conn:
             cursor = await conn.execute(CREATE_WORKSPACE, (payload.name, payload.slug))
             row = await cursor.fetchone()
+            if payload.locale is not None and payload.locale != row["locale"]:
+                await conn.execute(
+                    "select app.set_workspace_locale(%s, %s)", (row["id"], payload.locale)
+                )
+                row = {**row, "locale": payload.locale}
+            await start_welcome(conn, row, principal.full_name)
     except errors.UniqueViolation as exc:
         if exc.diag.constraint_name == "workspaces_slug_key":
             raise ApiError(

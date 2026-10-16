@@ -207,5 +207,11 @@
   "environment.suggestion.iris.2": "O que mais trouxe encomendas?",
   "environment.suggestion.iris.3": "O que devo acompanhar no Natal?",
   "data.missing.contacts": "Ainda não tenho a base de clientes da {brand} para trabalhar. Importe a planilha de contatos, com a origem e o consentimento de cada um, e me avise por aqui. Nada é enviado sem consentimento e sem a sua autorização.",
-  "data.missing.metrics": "Ainda não tenho números da {brand} para ler. Conecte o Instagram ou envie a planilha de encomendas e me avise por aqui. Nada aparece antes de existir um dado real."
+  "data.missing.metrics": "Ainda não tenho números da {brand} para ler. Conecte o Instagram ou envie a planilha de encomendas e me avise por aqui. Nada aparece antes de existir um dado real.",
+  "welcome.title": "Boas-vindas",
+  "welcome.nexo": "Oi, {name}. Eu sou o Nexo e coordeno o squad de {brand}. Você pode pedir qualquer coisa por aqui ou falar direto com um especialista. Para começar: qual é o objetivo mais importante de {brand} agora?",
+  "welcome.nexo_anonymous": "Oi. Eu sou o Nexo e coordeno o squad de {brand}. Você pode pedir qualquer coisa por aqui ou falar direto com um especialista. Para começar: qual é o objetivo mais importante de {brand} agora?",
+  "welcome.objective_noted": "Anotei na Memória da Marca: “{objective}”. Já dá para pedir a primeira entrega.",
+  "memory.objective_topic": "Objetivos",
+  "memory.objective_key": "Objetivo atual"
 }

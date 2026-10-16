@@ -1,6 +1,7 @@
 """Catálogo de mensagens do backend por idioma (ADR-0010).
 
-pt-BR agora; en e es caem no pt-BR até a tradução.
+pt-BR completo; en e es têm as falas já traduzidas (boas-vindas do Nexo) e o resto cai no pt-BR
+até a tradução.
 """
 
 import json

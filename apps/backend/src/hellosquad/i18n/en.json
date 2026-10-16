@@ -1,0 +1,8 @@
+{
+  "welcome.title": "Welcome",
+  "welcome.nexo": "Hi, {name}. I’m Nexo, and I coordinate the {brand} squad. You can ask for anything here or talk directly to a specialist. To start: what’s the most important goal for {brand} right now?",
+  "welcome.nexo_anonymous": "Hi. I’m Nexo, and I coordinate the {brand} squad. You can ask for anything here or talk directly to a specialist. To start: what’s the most important goal for {brand} right now?",
+  "welcome.objective_noted": "Noted in Brand Memory: “{objective}”. You can already ask for the first delivery.",
+  "memory.objective_topic": "Goals",
+  "memory.objective_key": "Current goal"
+}

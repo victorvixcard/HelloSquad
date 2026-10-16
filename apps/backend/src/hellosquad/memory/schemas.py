@@ -260,6 +260,22 @@ class BrandFactCreate(BaseModel):
     key: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] | (
         None
     ) = Field(default=None, description='Chave; sem ela, "Contado por você".')
+    kind: Literal["objective"] | None = Field(
+        default=None,
+        description=(
+            "`objective`: o objetivo contado ao Nexo no primeiro acesso. A API nomeia assunto e "
+            'chave no idioma do negócio ("Objetivos" · "Objetivo atual") e o Nexo responde na '
+            "conversa de boas-vindas. Vale só em `business`, sem `topic` nem `key`."
+        ),
+    )
+
+    @model_validator(mode="after")
+    def objective_names_itself(self) -> "BrandFactCreate":
+        if self.kind == "objective" and (
+            self.area != "business" or self.topic is not None or self.key is not None
+        ):
+            raise ValueError("O objetivo vai em Meu negócio, sem assunto nem chave.")
+        return self
 
 
 class BrandProfile(BaseModel):

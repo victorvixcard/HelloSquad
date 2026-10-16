@@ -1,0 +1,8 @@
+{
+  "welcome.title": "Bienvenida",
+  "welcome.nexo": "Hola, {name}. Soy Nexo y coordino el squad de {brand}. Puedes pedir cualquier cosa por aquí o hablar directo con un especialista. Para empezar: ¿cuál es el objetivo más importante de {brand} ahora?",
+  "welcome.nexo_anonymous": "Hola. Soy Nexo y coordino el squad de {brand}. Puedes pedir cualquier cosa por aquí o hablar directo con un especialista. Para empezar: ¿cuál es el objetivo más importante de {brand} ahora?",
+  "welcome.objective_noted": "Anotado en la Memoria de Marca: “{objective}”. Ya puedes pedir la primera entrega.",
+  "memory.objective_topic": "Objetivos",
+  "memory.objective_key": "Objetivo actual"
+}

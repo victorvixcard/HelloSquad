@@ -481,7 +481,8 @@ async def change_fact_state(
     description=(
         'Entra como Confirmado na fonte "Declarado por você" e todo o squad passa a usar. Sem '
         'assunto, vai para o primeiro assunto da área; sem chave, "Contado por você" (no '
-        "idioma do workspace)."
+        "idioma do workspace). Com `kind: objective`, a API nomeia o assunto e a chave do "
+        "objetivo e o Nexo responde na conversa de boas-vindas."
     ),
     responses=error_responses(401, 403, 404, 422, 503),
 )
@@ -493,18 +494,29 @@ async def add_fact(
 ) -> BrandFact:
     async with db.transaction_as(principal) as conn:
         locale = await ensure_workspace_locale(conn, workspace_id)
+        objective = payload.kind == "objective"
+        topic = t(locale, "memory.objective_topic") if objective else payload.topic
+        key = t(locale, "memory.objective_key") if objective else payload.key
         row = await (
             await conn.execute(
                 "select id from app.add_fact(%s, %s::public.memory_area, %s, %s, %s)",
                 (
                     workspace_id,
                     payload.area,
-                    payload.topic or t(locale, f"memory.default_topic.{payload.area}"),
-                    payload.key or t(locale, "memory.added_key"),
+                    topic or t(locale, f"memory.default_topic.{payload.area}"),
+                    key or t(locale, "memory.added_key"),
                     payload.content,
                 ),
             )
         ).fetchone()
+        if objective:
+            await conn.execute(
+                "select app.note_objective(%s, %s)",
+                (
+                    row["id"],
+                    t(locale, "welcome.objective_noted", objective=payload.content),
+                ),
+            )
         return await load_fact(conn, row["id"])
 
 

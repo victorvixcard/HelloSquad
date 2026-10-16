@@ -39,6 +39,13 @@ class WorkspaceCreate(BaseModel):
         ),
         examples=["miolo"],
     )
+    locale: Literal["pt-BR", "en", "es"] | None = Field(
+        default=None,
+        description=(
+            "Idioma do negócio desde o começo (os agentes respondem nele e a fala de boas-vindas "
+            "do Nexo sai nele). Sem ele, pt-BR, como antes."
+        ),
+    )
 
 
 Locale = Literal["pt-BR", "en", "es"]
