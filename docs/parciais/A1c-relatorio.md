@@ -89,16 +89,15 @@ O que decidi e por quê:
 ## 2. Verificação geral
 
 ```
-make test-web (14:33, depois da última mudança de código):
+make test-web (14:35, árvore final; ESLint, tipos e Vitest):
   packages/contracts  Test Files 1 passed · Tests 9 passed
   packages/ui         Test Files 5 passed · Tests 49 passed
-  apps/web            Test Files 17 passed · Tests 131 passed      EXIT=0
-make e2e (14:31:44 → 14:32:16, build de produção, worker simulado):
+  apps/web            Test Files 17 passed · Tests 131 passed      EXIT=0   (eram 121 na H1; +10 da A1c)
+make e2e (14:31:44 → 14:32:16, build de produção com o último código do produto, worker simulado):
   10 passed (17.2s)   EXIT=0   (a1b 3, auth-shell 5, live 2: o Realtime pega o token em /app)
 ```
 
-Depois da correção do teste do papel (só o teste), `vitest run test/ConversationPanel.test.tsx` deu 16 de 16, sem
-aviso de `act`. O `next dev` da 3100 foi derrubado para o `make e2e` e subiu de novo às 14:33 com `setsid make dev-web`,
+Depois do `make e2e` só mudou um teste de unidade (`3ca82a7`, o do papel espera a conversa carregar). O `next dev` da 3100 foi derrubado para o `make e2e` e subiu de novo às 14:33 com `setsid make dev-web`,
 desacoplado da minha sessão (log em `/tmp/hellosquad-dev-web.log`, `GET /entrar` 200). A API da 8100 não foi tocada.
 
 ## 3. O que ficou de fora
