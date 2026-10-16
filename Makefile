@@ -8,9 +8,13 @@ SHELL := /bin/bash
 
 SUPABASE := pnpm exec supabase
 BACKEND_DIR := apps/backend
-# Trava: alvos que mexem no banco local (testes de integração, pgTAP, seed, e2e) nunca rodam em paralelo.
-# Duas sessões rodando make test ao mesmo tempo colidiam (uma reaplicava o seed no meio da outra). Espera até 30 min.
-DB_LOCK := flock -w 1800 /tmp/hellosquad-db.lock
+# Trava: alvos que mexem no banco local (up, migrate, testes de integração, pgTAP, seed, e2e) nunca rodam em paralelo.
+# Duas sessões rodando make test ao mesmo tempo colidiam (uma reaplicava o seed no meio da outra).
+# -o: o descritor da trava não passa aos processos que o alvo sobe (o worker do make e2e); a trava acaba com o alvo,
+# mesmo que sobre um órfão. Espera até 10 min; quem está com ela: lsof /tmp/hellosquad-db.lock.
+DB_LOCK := flock -o -w 600 /tmp/hellosquad-db.lock
+# make status e make up não imprimem chaves nem a senha da URL do banco (valores: pnpm exec supabase status -o env).
+MASK_KEYS := sed -E -f infra/mask-keys.sed
 
 # Portas lidas do .env, se existir (só estas duas chaves; segredos não entram no make).
 env_value = $(shell sed -n 's/^$(1)=//p' .env 2>/dev/null | tail -n 1)
@@ -28,26 +32,24 @@ install: ## Instala dependências JS (pnpm) e Python (uv) a partir dos lockfiles
 	pnpm install --frozen-lockfile
 	cd $(BACKEND_DIR) && uv sync --locked
 
-up: install ## Sobe o Supabase local (projeto hellosquad), aplica migrations e grava a senha do hellosquad_api
-	$(SUPABASE) start
-	$(SUPABASE) migration up --local
-	cd $(BACKEND_DIR) && uv run hellosquad-local-db roles --optional
+up: install ## Sobe o Supabase local (projeto hellosquad), aplica migrations e grava a senha do hellosquad_api (com trava)
+	$(DB_LOCK) bash -o pipefail -c '$(SUPABASE) start 2>&1 | $(MASK_KEYS) && $(SUPABASE) migration up --local \
+		&& cd $(BACKEND_DIR) && uv run hellosquad-local-db roles --optional'
 	@echo "Supabase local no ar. Chaves locais: pnpm exec supabase status -o env (PUBLISHABLE_KEY e SECRET_KEY vão para o .env)."
 
 down: ## Para o Supabase local do HelloSquad (os dados ficam no volume Docker)
 	$(SUPABASE) stop
 
 status: ## Estado do Supabase local, da API (:8100) e da web (:3100)
-	$(SUPABASE) status
+	$(SUPABASE) status -o pretty 2>&1 | $(MASK_KEYS)
 	@curl -fsS --max-time 2 http://127.0.0.1:$(API_PORT)/health && echo \
 		|| echo "API fora do ar em :$(API_PORT) (make dev-api)"
 	@curl -fsS -o /dev/null --max-time 5 http://127.0.0.1:$(WEB_PORT) \
 		&& echo "Web no ar em http://127.0.0.1:$(WEB_PORT)" \
 		|| echo "Web fora do ar em :$(WEB_PORT) (make dev-web)"
 
-migrate: ## Aplica migrations pendentes e grava a senha do papel hellosquad_api (API_DATABASE_URL do .env)
-	$(SUPABASE) migration up --local
-	cd $(BACKEND_DIR) && uv run hellosquad-local-db roles
+migrate: ## Aplica migrations pendentes e grava a senha do papel hellosquad_api (API_DATABASE_URL do .env; com trava)
+	$(DB_LOCK) bash -c '$(SUPABASE) migration up --local && cd $(BACKEND_DIR) && uv run hellosquad-local-db roles'
 
 seed: ## Dados fictícios de docs/DADOS_FICTICIOS.md no banco local (idempotente)
 	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run hellosquad-local-db seed ../../supabase/seed.sql'
@@ -58,7 +60,7 @@ test-backend: ## Backend: ruff (lint e formato) e pytest (integração usa o ban
 	cd $(BACKEND_DIR) && uv run ruff check . && uv run ruff format --check .
 	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run pytest'
 
-test-web: ## Web e pacotes: ESLint, checagem de tipos e testes de componente (Vitest)
+test-web: ## Web e pacotes: ESLint do web, checagem de tipos e Vitest (os testes de componente do web e os dos pacotes)
 	pnpm --filter web lint
 	pnpm -r --if-present typecheck
 	pnpm -r --if-present test
