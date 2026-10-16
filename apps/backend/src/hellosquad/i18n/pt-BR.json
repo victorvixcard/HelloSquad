@@ -354,6 +354,8 @@
   "error.csv.missing_columns": "Faltam colunas no cabeçalho: {columns}.",
   "error.csv.too_many_rows": "O arquivo passa de {max_rows} linhas.",
   "error.csv.no_rows": "O arquivo não tem nenhuma linha de contato.",
+  "error.contact.invalid_phone": "Telefone inválido.",
+  "error.contact.missing_address": "Informe o e-mail ou o telefone do contato.",
   "error.project_not_found": "Projeto não encontrado.",
   "error.milestone_not_found": "Marco não encontrado.",
   "error.field_empty": "{field} não pode ficar vazio.",

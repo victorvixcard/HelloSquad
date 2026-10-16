@@ -354,6 +354,8 @@
   "error.csv.missing_columns": "Columns missing from the header: {columns}.",
   "error.csv.too_many_rows": "The file has more than {max_rows} rows.",
   "error.csv.no_rows": "The file has no contact rows.",
+  "error.contact.invalid_phone": "Invalid phone number.",
+  "error.contact.missing_address": "Enter the contact’s email or phone number.",
   "error.project_not_found": "Project not found.",
   "error.milestone_not_found": "Milestone not found.",
   "error.field_empty": "{field} cannot be empty.",

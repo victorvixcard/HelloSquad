@@ -411,9 +411,9 @@ async def revoke_consent(
     email = (payload.email or "").strip().lower() or None
     phone = _phone(payload.phone) if payload.phone else None
     if payload.phone and phone is None:
-        raise ApiError(422, "invalid_phone", "Telefone inválido.")
+        raise ApiError(422, "invalid_phone", "error.contact.invalid_phone")
     if email is None and phone is None:
-        raise ApiError(422, "missing_address", "Informe o e-mail ou o telefone do contato.")
+        raise ApiError(422, "missing_address", "error.contact.missing_address")
     async with db.transaction_as(principal) as conn:
         await ensure_workspace(conn, workspace_id)
         row = await (
