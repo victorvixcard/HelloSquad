@@ -641,7 +641,7 @@ Fonte do lado do banco: `docs/parciais/S1a-relatorio.md` §1–§2, `S1b-relator
 | 24 tipos de cartão dentro da mensagem do agente, com ações e estado (pendente, aprovado, outra direção): trabalho criado, material, opções, equipe, conceito, proposta de rotina, publicação, indicador, pílula do Modo Autônomo, orçamento, pedido de trabalho, documento, mensagens do CRM, autorização de envio, combinado da delegação, sugestão e plano da Memória… (`docs/parciais/x1/cartoes_da_conversa.txt`) | não existe; a decisão passa por `approvals` | **falta** (cartão tipado ligado a `approvals` e às ações) |
 | "Digitando", status vivo na conversa ("Kaia · criando a primeira versão"), aviso quando a pessoa está em outra tela | `run_events` (`message.created`, `run.progress`) pelo Realtime (S1a, S1c) | **parcial** (falta o texto de status por etapa) |
 | Conversa não lida e badge na barra (`unread`) | não há leitura por participante | **falta** |
-| A conversa abre nas mensagens mais recentes | dono, 16/10 08:55: a API ganha `before=` | **parcial** (pendente na S1b) |
+| A conversa abre nas mensagens mais recentes | dono, 16/10 08:55; S1c entregou `before=latest` e `before=<cursor>` em `GET /conversations/{id}/messages` (commit `810d11e`) | **temos** |
 
 ### 10.2 Trabalhos, projetos, entregas e aprovações
 
