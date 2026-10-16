@@ -513,6 +513,9 @@ do $seed_s2b$
 declare
   v_miolo uuid := (select id from public.workspaces where slug = 'miolo');
 begin
+  delete from public.audit_events a using public.workspaces s
+  where s.id = a.workspace_id and s.slug in ('miolo', 'vitta', 'trilha')
+    and a.action in ('contacts.imported', 'workspace.locale_changed');
   delete from public.contacts c using public.workspaces s where s.id = c.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.contact_imports i using public.workspaces s where s.id = i.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.metrics_daily m using public.workspaces s where s.id = m.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
