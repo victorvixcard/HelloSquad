@@ -17,7 +17,7 @@ env_value = $(shell sed -n 's/^$(1)=//p' .env 2>/dev/null | tail -n 1)
 API_PORT ?= $(or $(call env_value,API_PORT),8100)
 WEB_PORT ?= $(or $(call env_value,WEB_PORT),3100)
 
-.PHONY: help install up down status migrate seed test test-backend test-web test-db e2e build \
+.PHONY: help install up down status migrate seed test test-backend test-web test-db test-infra e2e build \
 	openapi dev dev-api dev-web worker scheduler
 
 help: ## Lista os alvos disponíveis
@@ -52,7 +52,7 @@ migrate: ## Aplica migrations pendentes e grava a senha do papel hellosquad_api 
 seed: ## Dados fictícios de docs/DADOS_FICTICIOS.md no banco local (idempotente)
 	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run hellosquad-local-db seed ../../supabase/seed.sql'
 
-test: test-backend test-web test-db ## Roda todos os testes locais (backend, web e banco); os que usam o banco esperam a trava
+test: test-backend test-web test-db test-infra ## Roda todos os testes locais (backend, web, banco e infra); os que usam o banco esperam a trava
 
 test-backend: ## Backend: ruff (lint e formato) e pytest (integração usa o banco: com trava)
 	cd $(BACKEND_DIR) && uv run ruff check . && uv run ruff format --check .
@@ -69,6 +69,9 @@ e2e: ## Ponta a ponta (Playwright, Chromium) no ambiente local: build do web, wo
 
 test-db: ## Banco: testes pgTAP de supabase/tests (exige make up; com trava)
 	$(DB_LOCK) $(SUPABASE) test db
+
+test-infra: ## Infra: guarda de segredo do autosave, num repositório temporário em /tmp (sem banco)
+	bash infra/tests/git-autosave-guard.sh
 
 build: ## Build de produção do web (o mesmo que o CI roda)
 	pnpm --filter web build

@@ -25,13 +25,21 @@ if [ -z "$(git status --porcelain)" ]; then
   exit 0
 fi
 
-# Guarda contra segredo: se algo parecido com chave aparecer no diff, NÃO commita e avisa no log.
-if git diff HEAD --unified=0 -- . ':!*.png' ':!*.jpg' 2>/dev/null | grep -E '^\+' | grep -qE 'sk-ant-[A-Za-z0-9_-]{10,}|sb_secret_[A-Za-z0-9_-]{10,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY'; then
-  echo "$(date '+%F %T') [$REPO] POSSÍVEL SEGREDO no diff; autosave NÃO commitou. Conferir à mão." >> "$LOG"; exit 2
-fi
-# Arquivos novos também passam pela guarda.
-if git ls-files --others --exclude-standard -z | xargs -0 -r grep -lE 'sk-ant-[A-Za-z0-9_-]{10,}|sb_secret_[A-Za-z0-9_-]{10,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY' 2>/dev/null | grep -q .; then
-  echo "$(date '+%F %T') [$REPO] POSSÍVEL SEGREDO em arquivo novo; autosave NÃO commitou. Conferir à mão." >> "$LOG"; exit 2
+# Guarda contra segredo (o push vai para um repositório público): o mesmo padrão vale para as linhas novas dos
+# arquivos versionados e para os arquivos novos. Chave da Anthropic, chaves do Supabase com valor, JWT, cookie de
+# sessão do Supabase com valor (`sb-…-auth-token=…` ou o `base64-eyJ…` do @supabase/ssr), ANTHROPIC_API_KEY
+# preenchida e chave privada. O nome do cookie sozinho (sem valor) não conta: aparece nos relatórios de QA.
+SECRET_RE='sk-ant-[A-Za-z0-9_-]{10,}|sb_secret_[A-Za-z0-9_-]{10,}|sb_publishable_[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.|sb-[a-z0-9-]+-auth-token(\.[0-9]+)?=[A-Za-z0-9%_+/=-]{20,}|base64-eyJ[A-Za-z0-9_+/=-]{20,}|ANTHROPIC_API_KEY=["'"'"']?[A-Za-z0-9_-]{16,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY'
+suspects() {
+  git diff HEAD --name-only -z -- . ':!*.png' ':!*.jpg' 2>/dev/null | while IFS= read -r -d '' f; do
+    git diff HEAD --unified=0 -- "$f" 2>/dev/null | grep -E '^\+' | grep -qE "$SECRET_RE" && printf '%s\n' "$f"
+  done
+  git ls-files --others --exclude-standard -z | xargs -0 -r grep -lE "$SECRET_RE" 2>/dev/null
+}
+FOUND="$(suspects | sort -u | tr '\n' ' ')"
+if [ -n "$FOUND" ]; then
+  MSG="$(date '+%F %T') [$REPO] POSSÍVEL SEGREDO (chave, token ou cookie de sessão com valor) em: ${FOUND% }. Autosave NÃO commitou nada. Tire o valor do arquivo (ou ponha o arquivo no .gitignore); o próximo ciclo commita."
+  echo "$MSG" >> "$LOG"; echo "$MSG" >&2; exit 2
 fi
 
 git add -A
