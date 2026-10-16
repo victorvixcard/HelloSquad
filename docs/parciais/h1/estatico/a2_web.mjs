@@ -64,7 +64,8 @@ function realtimeJoin(token, wsId, isPrivate = true) {
 async function uiLogin(ctx, email, nextRaw, tamper) {
   const page = await ctx.newPage();
   const url = nextRaw === undefined ? `${BASE}/entrar` : `${BASE}/entrar?next=${nextRaw}`;
-  await page.goto(url, { waitUntil: "networkidle", timeout: 90000 });
+  await page.goto(url, { waitUntil: "load", timeout: 90000 });
+  await page.waitForSelector('input[name="email"]', { timeout: 60000 });
   const hidden = await page.locator('input[name="next"]').getAttribute("value").catch(() => null);
   if (tamper !== undefined) {
     await page.evaluate((v) => {
@@ -78,7 +79,7 @@ async function uiLogin(ctx, email, nextRaw, tamper) {
   await page.fill('input[name="password"]', PASS);
   await page.click('button[type="submit"]');
   await page.waitForURL((u) => !u.pathname.startsWith("/entrar"), { timeout: 30000 }).catch(() => {});
-  await page.waitForLoadState("networkidle", { timeout: 30000 }).catch(() => {});
+  await page.waitForLoadState("load", { timeout: 30000 }).catch(() => {});
   return { page, hidden };
 }
 
@@ -116,7 +117,7 @@ try {
     });
     setTimeout(() => resolve(false), 30000);
   });
-  await pM.goto(`${BASE}/app/miolo`, { waitUntil: "networkidle", timeout: 90000 });
+  await pM.goto(`${BASE}/app/miolo`, { waitUntil: "load", timeout: 90000 });
   R.cases.realtimeJoinedInBrowser = await wsSeen;
   R.cases.wsLog = wsLog;
   R.cases.cspViolationsEvent = await pM.evaluate(() => window.__csp);
@@ -199,14 +200,26 @@ try {
     };
   }
 
+  fs.writeFileSync("/tmp/h1_est_a2_result.json", JSON.stringify(R, null, 1));
+  { const c = R.cases;
+    log("login final:", c.loginFinalUrl, "| realtime no browser (phx_reply ok em workspace:*):", c.realtimeJoinedInBrowser);
+    log("ws:", JSON.stringify(c.wsLog).slice(0, 400));
+    log("violacoes CSP (evento):", JSON.stringify(c.cspViolationsEvent), "| console CSP:", JSON.stringify(c.consoleCsp).slice(0, 300));
+    log("cookies sb-*:", JSON.stringify(c.sbCookies));
+    log("document.cookie:", JSON.stringify(c.documentCookie));
+    log("acao do token:", JSON.stringify(c.tokenAction));
+    log("acao chamadas:", JSON.stringify(c.action, null, 0).slice(0, 2500));
+    log("claims do token:", JSON.stringify(c.tokenClaims), "| ids:", JSON.stringify(c.ids));
+    log("realtime joins:", JSON.stringify(c.realtime).slice(0, 1500));
+    log("alcance do token:", JSON.stringify(c.alcance).slice(0, 1500)); }
   // ---------- 4: noindex (logado, Marina) ----------
   const routes = ["/app", "/app/miolo", "/app/miolo/equipe", "/app/miolo/modo-autonomo", "/app/miolo/memoria-da-marca", "/app/miolo/sala-do-squad", "/app/miolo/squad/nexo", "/app/inexistente", "/app/novo-workspace"];
-  await pM.goto(`${BASE}/app/miolo/squad/nexo`, { waitUntil: "networkidle", timeout: 90000 });
+  await pM.goto(`${BASE}/app/miolo/squad/nexo`, { waitUntil: "load", timeout: 90000 });
   const deep = await pM.locator('a[href*="/trabalho/"]').first().getAttribute("href").catch(() => null);
   if (deep) routes.push(deep);
   R.cases.noindex = [];
   for (const r of routes) {
-    const resp = await pM.goto(`${BASE}${r}`, { waitUntil: "networkidle", timeout: 90000 });
+    const resp = await pM.goto(`${BASE}${r}`, { waitUntil: "load", timeout: 90000 });
     const metas = await pM.$$eval('meta[name="robots"]', (ms) => ms.map((m) => m.content));
     const h = resp.headers();
     R.cases.noindex.push({ r, final: new URL(pM.url()).pathname, status: resp.status(), xrt: h["x-robots-tag"] ?? null, metas, csp: Boolean(h["content-security-policy"]), cspWs: /ws:\/\/127\.0\.0\.1:56321/.test(h["content-security-policy"] ?? "") });
@@ -215,7 +228,7 @@ try {
   R.cases.consoleCspAposRotas = consoleCsp.slice(0, 10);
 
   // /sair com next: sair sempre volta a /entrar
-  await pM.goto(`${BASE}/sair?next=https://evil.example`, { waitUntil: "networkidle", timeout: 90000 });
+  await pM.goto(`${BASE}/sair?next=https://evil.example`, { waitUntil: "load", timeout: 90000 });
   const metasSair = await pM.$$eval('meta[name="robots"]', (ms) => ms.map((m) => m.content));
   await pM.click('form button[type="submit"]');
   await pM.waitForURL((u) => u.pathname !== "/sair", { timeout: 30000 }).catch(() => {});
@@ -225,10 +238,14 @@ try {
   // /entrar deslogado: meta robots
   const ctxA = await browser.newContext();
   const pA = await ctxA.newPage();
-  const rE = await pA.goto(`${BASE}/entrar`, { waitUntil: "networkidle", timeout: 90000 });
+  const rE = await pA.goto(`${BASE}/entrar`, { waitUntil: "load", timeout: 90000 });
   R.cases.entrarAnon = { xrt: rE.headers()["x-robots-tag"] ?? null, metas: await pA.$$eval('meta[name="robots"]', (ms) => ms.map((m) => m.content)) };
   await ctxA.close();
 
+  fs.writeFileSync("/tmp/h1_est_a2_result.json", JSON.stringify(R, null, 1));
+  log("noindex:"); for (const n of R.cases.noindex ?? []) log("  ", JSON.stringify(n));
+  log("CSP apos rotas:", JSON.stringify(R.cases.cspViolationsAposRotas), JSON.stringify(R.cases.consoleCspAposRotas).slice(0, 300));
+  log("sair:", JSON.stringify(R.cases.sair), "| entrar anon:", JSON.stringify(R.cases.entrarAnon));
   // ---------- 3: ?next= ----------
   const nexts = [
     ["//evil.example", "//evil.example"], ["https://evil.example", "https://evil.example"], ["/\\evil.example", "/%5Cevil.example"],
@@ -238,39 +255,33 @@ try {
     ["%09//evil.example", "%09//evil.example"], ["/app\\@evil.example", "/app%5C@evil.example"],
   ];
   R.cases.next = [];
-  for (const [label, raw] of nexts) {
-    const ctx = await browser.newContext();
-    const { page, hidden } = await uiLogin(ctx, "marina@miolo.example", raw);
-    const u = new URL(page.url());
-    const html = await page.content();
-    R.cases.next.push({ caso: label, hiddenNext: hidden, final: `${u.origin}${u.pathname}${u.search}`, foraDoSite: u.origin !== BASE, vazaVitta: Boolean(vitta && html.includes(vitta)) || /Rafael|Carla/.test(html), titulo: await page.title() });
-    await ctx.close();
-  }
-  // Formulário adulterado (POST direto com next malicioso): o servidor revalida
-  for (const v of ["//evil.example", "https://evil.example", "/\\evil.example", "javascript:alert(1)", "/app@evil.example"]) {
-    const ctx = await browser.newContext();
-    const { page } = await uiLogin(ctx, "marina@miolo.example", undefined, v);
-    const u = new URL(page.url());
-    R.cases.next.push({ caso: `adulterado ${v}`, final: `${u.origin}${u.pathname}`, foraDoSite: u.origin !== BASE });
-    await ctx.close();
+  const jobs = [
+    ...nexts.map(([label, raw]) => async () => {
+      const ctx = await browser.newContext();
+      try {
+        const { page, hidden } = await uiLogin(ctx, "marina@miolo.example", raw);
+        const u = new URL(page.url());
+        const html = await page.content();
+        return { caso: label, hiddenNext: hidden, final: `${u.origin}${u.pathname}${u.search}`, foraDoSite: u.origin !== BASE, vazaVitta: Boolean(vitta && html.includes(vitta)) || /Rafael|Carla/.test(html), titulo: await page.title() };
+      } catch (e) { return { caso: label, erro: String(e).slice(0, 120) }; } finally { await ctx.close(); }
+    }),
+    ...["//evil.example", "https://evil.example", "/\\evil.example", "javascript:alert(1)", "/app@evil.example"].map((v) => async () => {
+      const ctx = await browser.newContext();
+      try {
+        const { page } = await uiLogin(ctx, "marina@miolo.example", undefined, v);
+        const u = new URL(page.url());
+        return { caso: `adulterado ${v}`, final: `${u.origin}${u.pathname}`, foraDoSite: u.origin !== BASE };
+      } catch (e) { return { caso: `adulterado ${v}`, erro: String(e).slice(0, 120) }; } finally { await ctx.close(); }
+    }),
+  ];
+  for (let i = 0; i < jobs.length; i += 5) {
+    const res = await Promise.all(jobs.slice(i, i + 5).map((j) => j()));
+    for (const r of res) { R.cases.next.push(r); log("  next", JSON.stringify(r)); }
+    fs.writeFileSync("/tmp/h1_est_a2_result.json", JSON.stringify(R, null, 1));
   }
 } finally {
   await browser.close();
 }
 
 fs.writeFileSync("/tmp/h1_est_a2_result.json", JSON.stringify(R, null, 1));
-const c = R.cases;
-log("login final:", c.loginFinalUrl, "| realtime no browser (phx_reply ok em workspace:*):", c.realtimeJoinedInBrowser);
-log("ws:", JSON.stringify(c.wsLog).slice(0, 400));
-log("violacoes CSP (evento):", JSON.stringify(c.cspViolationsEvent), "| console CSP:", JSON.stringify(c.consoleCsp).slice(0, 300));
-log("cookies sb-*:", JSON.stringify(c.sbCookies));
-log("document.cookie:", JSON.stringify(c.documentCookie));
-log("acao do token:", JSON.stringify(c.tokenAction));
-log("acao chamadas:", JSON.stringify(c.action, null, 0).slice(0, 2500));
-log("claims do token:", JSON.stringify(c.tokenClaims), "| ids:", JSON.stringify(c.ids));
-log("realtime joins:", JSON.stringify(c.realtime).slice(0, 1500));
-log("alcance do token:", JSON.stringify(c.alcance).slice(0, 1500));
-log("noindex:"); for (const n of c.noindex ?? []) log("  ", JSON.stringify(n));
-log("CSP apos rotas:", JSON.stringify(c.cspViolationsAposRotas), JSON.stringify(c.consoleCspAposRotas).slice(0, 300));
-log("sair:", JSON.stringify(c.sair), "| entrar anon:", JSON.stringify(c.entrarAnon));
-log("next:"); for (const n of c.next ?? []) log("  ", JSON.stringify(n));
+log("fim");
