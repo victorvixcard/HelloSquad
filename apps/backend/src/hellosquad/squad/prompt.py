@@ -14,7 +14,7 @@ from typing import Any
 
 from hellosquad.llm.base import ChatMessage, SystemBlock
 from hellosquad.squad.loader import Skill, SquadPrompt
-from hellosquad.squad.memory import MemoryFact, render_fact
+from hellosquad.squad.memory import AgentLearning, MemoryFact, render_fact, render_learning
 
 BRAND_NAME_PLACEHOLDER = "{{marca.nome}}"
 
@@ -39,6 +39,8 @@ class RunContext:
     memory: list[MemoryFact] = field(default_factory=list)
     # Última decisão da pessoa que devolveu o trabalho ao squad (ajuste, nova proposta, resposta).
     feedback: dict[str, Any] | None = None
+    # Aprendizados promovidos deste cliente com o agente (camada 3), já dentro do orçamento.
+    learnings: list[AgentLearning] = field(default_factory=list)
 
 
 def text(value: str) -> str:
@@ -108,8 +110,10 @@ def feedback_block(ctx: RunContext) -> list[str]:
 def context_block(ctx: RunContext) -> list[str]:
     delivery = f' delivery="{escape(ctx.delivery_type)}"' if ctx.delivery_type else ""
     relevant = facts_block(ctx, "search")
+    learned = "\n".join(render_learning(item) for item in ctx.learnings)
     return [
         f"<trabalho{delivery}>{text(ctx.work_title)}</trabalho>",
+        *([f"<aprendizados>\n{learned}\n</aprendizados>"] if learned else []),
         *([f"<memoria_relevante>\n{relevant}\n</memoria_relevante>"] if relevant else []),
         history_block(ctx),
         f"<pedido>{text(ctx.request)}</pedido>",

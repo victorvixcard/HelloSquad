@@ -22,7 +22,12 @@ from psycopg_pool import AsyncConnectionPool
 
 from hellosquad.llm.base import Usage
 from hellosquad.squad.loader import SquadPrompt
-from hellosquad.squad.memory import MemoryFact, select_memory
+from hellosquad.squad.memory import (
+    AgentLearning,
+    LearningQuery,
+    MemoryFact,
+    select_memory,
+)
 from hellosquad.squad.prompt import HistoryMessage
 
 FINISHED_RUN = {"succeeded", "failed", "cancelled", "waiting_approval"}
@@ -454,16 +459,29 @@ class RunStore:
             ],
         )
 
-    async def recall_memory(self, *, locale: str, text: str, budget: int) -> list[MemoryFact]:
-        """Memória da Marca do run (essenciais + busca sob orçamento), registrada em
-        run_context_items na mesma transação. Retentativa do run não duplica o registro."""
+    async def recall_memory(
+        self,
+        *,
+        locale: str,
+        text: str,
+        budget: int,
+        learnings: LearningQuery | None = None,
+    ) -> tuple[list[MemoryFact], list[AgentLearning]]:
+        """Memória do run (essenciais, aprendizados do agente com este cliente e busca, sob
+        orçamento), registrada em run_context_items na mesma transação. Retentativa do run não
+        duplica o registro."""
         async with self.pool.connection() as conn, conn.transaction():
             await self._fence(conn)
-            facts = await select_memory(
-                conn, workspace_id=self.workspace_id, locale=locale, text=text, budget=budget
+            facts, taken = await select_memory(
+                conn,
+                workspace_id=self.workspace_id,
+                locale=locale,
+                text=text,
+                budget=budget,
+                learnings=learnings,
             )
-            if facts:
-                async with conn.cursor() as cur:
+            async with conn.cursor() as cur:
+                if facts:
                     await cur.executemany(
                         """
                         insert into public.run_context_items (
@@ -483,7 +501,27 @@ class RunStore:
                             for fact in facts
                         ],
                     )
-        return facts
+                if taken:
+                    await cur.executemany(
+                        """
+                        insert into public.run_context_items (
+                          workspace_id, run_id, kind, learning_id, reason, rank, tokens
+                        ) values (%s, %s, 'learning', %s, %s, %s, %s)
+                        on conflict do nothing
+                        """,
+                        [
+                            (
+                                self.workspace_id,
+                                self.run_id,
+                                item.learning_id,
+                                item.reason,
+                                item.rank,
+                                item.tokens,
+                            )
+                            for item in taken
+                        ],
+                    )
+        return facts, taken
 
     async def approved_documents(
         self, delivery_types: list[str], project_id: UUID | None

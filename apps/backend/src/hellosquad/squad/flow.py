@@ -54,7 +54,7 @@ from hellosquad.squad.deliveries import (
     delivery_spec,
 )
 from hellosquad.squad.loader import AgentDefinition, SquadLoader
-from hellosquad.squad.memory import search_text
+from hellosquad.squad.memory import LearningQuery, search_text
 from hellosquad.squad.prompt import (
     RunContext,
     as_json,
@@ -155,6 +155,8 @@ class Squad:
     history_limit: int = 20
     memory_budget: int = 1500
     web_search: WebSearch = field(default_factory=DisabledWebSearch)
+    learning_top_k: int = 5
+    learning_review_days: int = 90
 
 
 def status_fields(locale: str, agent: AgentDefinition, mode: str, phrase: str) -> dict[str, str]:
@@ -360,12 +362,18 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     nexo, expert = nexo_prompt.agent, expert_prompt.agent
     nexo_version = await store.ensure_prompt_version(nexo_prompt)
     expert_version = await store.ensure_prompt_version(expert_prompt)
-    memory = await store.recall_memory(
+    memory, learnings = await store.recall_memory(
         locale=locale,
         text=search_text(
             data.request, item.title, item.briefing, expert_prompt.skill.meta.get("titulo")
         ),
         budget=squad.memory_budget,
+        learnings=LearningQuery(
+            agent_id=expert.id,
+            delivery_type=delivery_type,
+            top_k=squad.learning_top_k,
+            review_days=squad.learning_review_days,
+        ),
     )
     ctx = RunContext(
         locale=locale,
@@ -376,6 +384,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         briefing=item.briefing,
         history=data.history,
         memory=memory,
+        learnings=learnings,
         feedback=data.feedback,
     )
     calls = StepCaller(
@@ -881,7 +890,7 @@ async def run_reply(squad: Squad, store: RunStore) -> dict[str, Any]:
     prompt = squad.loader.reply_prompt(data.agent_id)
     agent = prompt.agent
     version = await store.ensure_prompt_version(prompt)
-    memory = await store.recall_memory(
+    memory, _ = await store.recall_memory(
         locale=data.locale,
         text=search_text(data.request, "", {}, None),
         budget=squad.memory_budget,
