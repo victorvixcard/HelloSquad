@@ -176,6 +176,9 @@ begin
     and a.entity_type in ('work_item', 'approval', 'run', 'conversation', 'message', 'delivery');
   -- S2a: o calendário editorial recomeça junto com o núcleo (o post sobreviveria ao trabalho apagado).
   delete from public.calendar_posts p using public.workspaces s where s.id = p.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  -- S2c: aprendizados por cliente recomeçam junto (a reflexão sai em cascata com o trabalho).
+  delete from public.run_context_items i using public.workspaces s where s.id = i.workspace_id and s.slug in ('miolo', 'vitta', 'trilha') and i.learning_id is not null;
+  delete from public.agent_learnings l using public.workspaces s where s.id = l.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.work_items w using public.workspaces s where s.id = w.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.runs r using public.workspaces s where s.id = r.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.conversations c using public.workspaces s where s.id = c.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
