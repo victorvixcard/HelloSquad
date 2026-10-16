@@ -8,6 +8,9 @@ SHELL := /bin/bash
 
 SUPABASE := pnpm exec supabase
 BACKEND_DIR := apps/backend
+# Trava: alvos que mexem no banco local (testes de integração, pgTAP, seed, e2e) nunca rodam em paralelo.
+# Duas sessões rodando make test ao mesmo tempo colidiam (uma reaplicava o seed no meio da outra). Espera até 30 min.
+DB_LOCK := flock -w 1800 /tmp/hellosquad-db.lock
 
 # Portas lidas do .env, se existir (só estas duas chaves; segredos não entram no make).
 env_value = $(shell sed -n 's/^$(1)=//p' .env 2>/dev/null | tail -n 1)
@@ -47,24 +50,25 @@ migrate: ## Aplica migrations pendentes e grava a senha do papel hellosquad_api 
 	cd $(BACKEND_DIR) && uv run hellosquad-local-db roles
 
 seed: ## Dados fictícios de docs/DADOS_FICTICIOS.md no banco local (idempotente)
-	cd $(BACKEND_DIR) && uv run hellosquad-local-db seed ../../supabase/seed.sql
+	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run hellosquad-local-db seed ../../supabase/seed.sql'
 
-test: test-backend test-web test-db ## Roda todos os testes locais (backend, web e banco)
+test: test-backend test-web test-db ## Roda todos os testes locais (backend, web e banco); os que usam o banco esperam a trava
 
-test-backend: ## Backend: ruff (lint e formato) e pytest
-	cd $(BACKEND_DIR) && uv run ruff check . && uv run ruff format --check . && uv run pytest
+test-backend: ## Backend: ruff (lint e formato) e pytest (integração usa o banco: com trava)
+	cd $(BACKEND_DIR) && uv run ruff check . && uv run ruff format --check .
+	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run pytest'
 
 test-web: ## Web e pacotes: ESLint, checagem de tipos e testes de componente (Vitest)
 	pnpm --filter web lint
 	pnpm -r --if-present typecheck
 	pnpm -r --if-present test
 
-e2e: ## Ponta a ponta (Playwright, Chromium) no ambiente local: build do web, fluxos da Marina e do Pedro, reaplica o seed
+e2e: ## Ponta a ponta (Playwright, Chromium) no ambiente local: build do web, fluxos da Marina e do Pedro, reaplica o seed (com trava)
 	pnpm --filter web build
-	pnpm --filter web e2e
+	$(DB_LOCK) pnpm --filter web e2e
 
-test-db: ## Banco: testes pgTAP de supabase/tests (exige make up)
-	$(SUPABASE) test db
+test-db: ## Banco: testes pgTAP de supabase/tests (exige make up; com trava)
+	$(DB_LOCK) $(SUPABASE) test db
 
 build: ## Build de produção do web (o mesmo que o CI roda)
 	pnpm --filter web build
