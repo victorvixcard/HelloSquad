@@ -1,0 +1,99 @@
+
+######## inicio
+  [heads] só no protótipo: Para o squad conhecer a Miolo
+  [heads] só no nosso:     Para o squad conhecer Miolo
+  [buttons] só no protótipo: [Kiwi, Growth, participa com o squad. Escolher só ele] ‖ [Criar um post para o Dia Mundial do Pão. Preenche o pedido; só a Kaia participa] Criar um post para o Dia Mundial do Pão ‖ [Preparar um lançamento. Preenche o pedido; Nexo, Bia e Kaia participam] Preparar um lançamento ‖ [Quero melhorar meu Instagram. Preenche o pedido; só o Otto participa] Quero melhorar meu Instagram ‖ [Trabalhos: Nada em andamento. Ver detalhes] Trabalhos Nada em andamento ‖ [O Squad percebeu: Nada para confirmar agora. Ver detalhes] O Squad percebeu Nada para confirmar agora ‖ [Modo Autônomo: Delegue o que se repete. Ver detalhes] Modo Autônomo Delegue o que se repete
+  [buttons] só no nosso:     [Kiwi, Growth Marketing, participa com o squad. Escolher só ela] ‖ [Analisar os resultados da semana. Preenche o pedido; só Íris participa] Analisar os resultados da semana ‖ [Revisar minha identidade visual. Preenche o pedido; só Kaia participa] Revisar minha identidade visual ‖ [Preparar um lançamento. Preenche o pedido; Nexo e Bia e Kaia participam] Preparar um lançamento ‖ [Reativar clientes que sumiram. Preenche o pedido; só Max participa] Reativar clientes que sumiram ‖ [Quero melhorar meu Instagram. Preenche o pedido; só Otto participa] Quero melhorar meu Instagram ‖ [Trabalhos: Nada em andamento, # aguarda você. Ver mais] Trabalhos Nada em andamento # aguarda você ‖ [O Squad percebeu: Nada para confirmar agora. Ver mais] O Squad percebeu Nada para confirmar agora ‖ [Modo Autônomo: Delegue o que se repete. Ver mais] Modo Autônomo Delegue o que se repete
+  [regions] só no protótipo: section:Resumos da Miolo
+  [regions] só no nosso:     section:Resumos de Miolo
+  [inputs] só no protótipo: | miolo.com.br
+  [inputs] só no nosso:     | seunegocio.com.br
+
+######## barra
+  [buttons] só no protótipo: DEMO ‖ [Projetos, com Nexo] Projetos Nexo ‖ [Memória da Marca] Memória da Marca ‖ [Minha Equipe & Conversas, mensagens novas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo · Pinheiros
+  [buttons] só no nosso:     [Projetos, com Nexo, # aguarda você] Projetos Nexo # ‖ [Memória da Marca, # informação para confirmar] Memória da Marca # ‖ [Minha Equipe & Conversas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo
+
+######## conta
+  [heads] só no protótipo: Para o squad conhecer a Miolo
+  [heads] só no nosso:     Para o squad conhecer Miolo
+  [buttons] só no protótipo: DEMO ‖ [Projetos, com Nexo] Projetos Nexo ‖ [Memória da Marca] Memória da Marca ‖ [Minha Equipe & Conversas, mensagens novas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo · Pinheiros ‖ M Miolo Padaria · Pinheiros ‖ Guia do protótipo ‖ [Kiwi, Growth, participa com o squad. Escolher só ele] ‖ [Criar um post para o Dia Mundial do Pão. Preenche o pedido; só a Kaia participa] Criar um post para o Dia Mundial do Pão ‖ [Preparar um lançamento. Preenche o pedido; Nexo, Bia e Kaia participam] Preparar um lançamento ‖ [Quero melhorar meu Instagram. Preenche o pedido; só o Otto participa] Quero melhorar meu Instagram ‖ [Trabalhos: Nada em andamento. Ver detalhes] Trabalhos Nada em andamento ‖ [O Squad percebeu: Nada para confirmar agora. Ver detalhes] O Squad percebeu Nada para confirmar agora ‖ [Modo Autônomo: Delegue o que se repete. Ver detalhes] Modo Autônomo Delegue o que se repete
+  [buttons] só no nosso:     Pular para o conteúdo ‖ [Projetos, com Nexo, # aguarda você] Projetos Nexo # ‖ [Memória da Marca, # informação para confirmar] Memória da Marca # ‖ [Minha Equipe & Conversas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo ‖ M Miolo ‖ [Kiwi, Growth Marketing, participa com o squad. Escolher só ela] ‖ [Analisar os resultados da semana. Preenche o pedido; só Íris participa] Analisar os resultados da semana ‖ [Revisar minha identidade visual. Preenche o pedido; só Kaia participa] Revisar minha identidade visual ‖ [Preparar um lançamento. Preenche o pedido; Nexo e Bia e Kaia participam] Preparar um lançamento ‖ [Reativar clientes que sumiram. Preenche o pedido; só Max participa] Reativar clientes que sumiram ‖ [Quero melhorar meu Instagram. Preenche o pedido; só Otto participa] Quero melhorar meu Instagram ‖ [Trabalhos: Nada em andamento, # aguarda você. Ver mais] Trabalhos Nada em andamento # aguarda você ‖ [O Squad percebeu: Nada para confirmar agora. Ver mais] O Squad percebeu Nada para confirmar agora ‖ [Modo Autônomo: Delegue o que se repete. Ver mais] Modo Autônomo Delegue o que se repete
+  [regions] só no protótipo: section:Resumos da Miolo
+  [regions] só no nosso:     section:Resumos de Miolo
+  [inputs] só no protótipo: | miolo.com.br
+  [inputs] só no nosso:     | seunegocio.com.br
+
+######## otto
+  [buttons] só no nosso:     [Otto · Para você revisar: Legenda do post de sábado: pão de fermentação longa. Revisar a legenda] OTTO · PARA VOCÊ REVISAR Legenda do post de sábado: pão de fermentação longa Legenda, versão #, aguarda a sua
+  [regions] só no nosso:     section:Precisa de você: #
+
+######## conversa
+  [buttons] só no protótipo: DEMO ‖ [Projetos, com Nexo] Projetos Nexo ‖ [Memória da Marca] Memória da Marca ‖ [Minha Equipe & Conversas, mensagens novas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo · Pinheiros ‖ Conteúdo
+  [buttons] só no nosso:     Pular para o conteúdo ‖ [Projetos, com Nexo, # aguarda você] Projetos Nexo # ‖ [Memória da Marca, # informação para confirmar] Memória da Marca # ‖ [Minha Equipe & Conversas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo ‖ [Otto · Para você revisar: Legenda do post de sábado: pão de fermentação longa. Revisar a legenda] Legenda do post de sábado: pão de fermentação longa Revisar a legenda ‖ [Abrir Conteúdo: Conteúdo] Conteúdo
+  [regions] só no nosso:     section:Precisa de você: #
+
+######## projetos
+  [heads] só no nosso:     Precisa de você ‖ Legenda do post de sábado: pão de fermentação longa ‖ Em andamento ‖ Programados ‖ Concluídos
+  [buttons] só no protótipo: [Mostrar só trabalhos com o Kiwi]
+  [buttons] só no nosso:     [Otto · Para você revisar: Legenda do post de sábado: pão de fermentação longa. Revisar a legenda] OTTO · PARA VOCÊ REVISAR Legenda do post de sábado: pão de fermentação longa Legenda, versão #, aguarda a sua ‖ [Mostrar só trabalhos com a Kiwi] ‖ [Legenda do post de sábado: pão de fermentação longa. Aguarda você: v# aguarda sua aprovação. Próximo passo: Revisar a legenda. Otto. Abrir o trabalho] ‖ [Revisar a legenda: Legenda do post de sábado: pão de fermentação longa] Revisar
+  [regions] só no nosso:     section:Precisa de você: # ‖ section:Precisa de você, # trabalho ‖ section:Em andamento, # trabalhos ‖ section:Programados, # trabalhos ‖ section:Concluídos, # trabalhos
+
+######## projetos-quadro
+  [heads] só no nosso:     Precisa de você ‖ Legenda do post de sábado: pão de fermentação longa ‖ Em andamento ‖ Programados ‖ Concluídos
+  [buttons] só no protótipo: [Mostrar só trabalhos com o Kiwi]
+  [buttons] só no nosso:     [Otto · Para você revisar: Legenda do post de sábado: pão de fermentação longa. Revisar a legenda] OTTO · PARA VOCÊ REVISAR Legenda do post de sábado: pão de fermentação longa Legenda, versão #, aguarda a sua ‖ [Mostrar só trabalhos com a Kiwi] ‖ [Legenda do post de sábado: pão de fermentação longa. Aguarda você: v# aguarda sua aprovação. Próximo passo: Revisar a legenda. Otto. Abrir o trabalho] ‖ [Revisar a legenda: Legenda do post de sábado: pão de fermentação longa] Revisar
+  [regions] só no nosso:     section:Precisa de você: # ‖ section:Precisa de você, # trabalho ‖ section:Em andamento, # trabalhos ‖ section:Programados, # trabalhos ‖ section:Concluídos, # trabalhos
+
+######## projetos-lista
+  [heads] só no nosso:     Precisa de você
+  [buttons] só no protótipo: [Mostrar só trabalhos com o Kiwi]
+  [buttons] só no nosso:     [Otto · Para você revisar: Legenda do post de sábado: pão de fermentação longa. Revisar a legenda] OTTO · PARA VOCÊ REVISAR Legenda do post de sábado: pão de fermentação longa Legenda, versão #, aguarda a sua ‖ [Mostrar só trabalhos com a Kiwi] ‖ [Legenda do post de sábado: pão de fermentação longa. Aguarda você: v# aguarda sua aprovação. Próximo passo: Revisar a legenda. Otto. Abrir o trabalho] Legenda do post de sábado: pão de fermentação longa ‖ [Revisar a legenda: Legenda do post de sábado: pão de fermentação longa] Revisar
+  [regions] só no nosso:     section:Precisa de você: # ‖ section:Precisa de você, #
+
+######## projetos-biblioteca
+  [buttons] só no protótipo: [Mostrar só trabalhos com o Kiwi]
+  [buttons] só no nosso:     [Otto · Para você revisar: Legenda do post de sábado: pão de fermentação longa. Revisar a legenda] OTTO · PARA VOCÊ REVISAR Legenda do post de sábado: pão de fermentação longa Legenda, versão #, aguarda a sua ‖ [Mostrar só trabalhos com a Kiwi]
+  [regions] só no nosso:     section:Precisa de você: #
+
+######## memoria
+  [heads] só no nosso:     Minha marca Identidade visual, tom de voz, posicionamento, preferências criativas e referências ‖ Meu público Quem compra, do que precisa e como se comporta ‖ Conhecimento e aprendizados Pesquisas, descobertas, decisões e orientações confirmadas
+  [buttons] só no protótipo: [Cadastro: Declarado por você. Ver as fontes] Você ‖ [Site: Não conectada. Ver as fontes] Site ‖ [Google Perfil: Não conectada. Ver as fontes] Google Perfil ‖ [Documentos: Não conectada. Ver as fontes] Documentos ‖ [Público: ainda não sabe. Contar agora] PÚBLICO Ainda não sabe · contar agora ‖ [Produtos: ainda não sabe. Contar agora] PRODUTOS Ainda não sabe · contar agora ‖ [Tom de comunicação: ainda não sabe. Contar agora] TOM DE COMUNICAÇÃO Ainda não sabe · contar agora ‖ [Ver o que o Kiwi consulta] ‖ [Nome: Miolo. Confirmado. Ver detalhes] Nome Miolo Confirmado Onboarding +# ‖ [Segmento: Padaria. Confirmado. Ver detalhes] Segmento Padaria Confirmado Onboarding +# ‖ [Cidade: São Paulo. Confirmado. Ver detalhes] Cidade São Paulo Confirmado Onboarding
+  [buttons] só no nosso:     [Squad · Para você confirmar: # sugestão. Revisar] SQUAD · PARA VOCÊ CONFIRMAR # sugestão Nada vira orientação do squad sem o seu ok. Revisar ‖ [Onboarding e o que você contou: Declarado por você. Ver as fontes] Você ‖ [Público: Moradores de Pinheiros e Vila Madalena, # a # anos. Abrir] PÚBLICO Moradores de Pinheiros e Vila Madalena, # a # anos ‖ [Produtos: Pão de fermentação longa. Abrir] PRODUTOS Pão de fermentação longa ‖ [Tom de comunicação: Acolhedor, direto, sem gíria. Abrir] TOM DE COMUNICAÇÃO Acolhedor, direto, sem gíria ‖ Confirmar ‖ Corrigir ‖ Descartar ‖ Você decidiu: não usar a palavra 'artesanal' nas legendas ‖ [Ver o que a Kiwi consulta] ‖ [Negócio: Padaria de fermentação natural, aberta em #. Confirmado. Ver detalhes] Negócio Padaria de fermentação natural, aberta em # Confirmado Onboarding +# ‖ [Produto âncora: Pão de fermentação longa. Confirmado. Ver detalhes] Produto âncora Pão de fermentação longa Confirmado Onboarding +# ‖ [Tom de voz: Acolhedor, direto, sem gíria. Confirmado. Ver detalhes] Tom de voz Acolhedor, direto, sem gíria Confirmado Onboarding +# ‖ [Palavra proibida: Não usar a palavra 'artesanal' nas legendas. Decisão sua. Ver detalhes] Palavra proibida Não usar a palavra 'artesanal' nas legendas Decisão sua Conversas +# ‖ [Público principal: Moradores de Pinheiros e Vila Madalena, # a # anos. Confirmado. Ver detalhes] Público principal Moradores de Pinheiros e Vila Madalena, # a # anos Confirmado Onboarding +# ‖ [Canais: Instagram e WhatsApp. Confirmado. Ver detalhes] Canais Instagram e WhatsApp Confirmado Onboarding +# ‖ [Bastidores: Posts com bastidores do forno têm mais salvamentos. Sugerido. Ver detalhes] Bastidores Posts com bastidores do forno têm mais salvamentos Sugerido Especialistas
+  [regions] só no nosso:     section:Precisa de você: #
+
+######## memoria-tudo
+  [heads] só no nosso:     Minha marca Identidade visual, tom de voz, posicionamento, preferências criativas e referências ‖ Meu público Quem compra, do que precisa e como se comporta ‖ Conhecimento e aprendizados Pesquisas, descobertas, decisões e orientações confirmadas
+  [buttons] só no protótipo: [Cadastro: Declarado por você. Ver as fontes] Você ‖ [Site: Não conectada. Ver as fontes] Site ‖ [Google Perfil: Não conectada. Ver as fontes] Google Perfil ‖ [Documentos: Não conectada. Ver as fontes] Documentos ‖ [Público: ainda não sabe. Contar agora] PÚBLICO Ainda não sabe · contar agora ‖ [Produtos: ainda não sabe. Contar agora] PRODUTOS Ainda não sabe · contar agora ‖ [Tom de comunicação: ainda não sabe. Contar agora] TOM DE COMUNICAÇÃO Ainda não sabe · contar agora ‖ [Ver o que o Kiwi consulta] ‖ [Nome: Miolo. Confirmado. Ver detalhes] Nome Miolo Confirmado Onboarding +# ‖ [Segmento: Padaria. Confirmado. Ver detalhes] Segmento Padaria Confirmado Onboarding +# ‖ [Cidade: São Paulo. Confirmado. Ver detalhes] Cidade São Paulo Confirmado Onboarding
+  [buttons] só no nosso:     [Squad · Para você confirmar: # sugestão. Revisar] SQUAD · PARA VOCÊ CONFIRMAR # sugestão Nada vira orientação do squad sem o seu ok. Revisar ‖ [Onboarding e o que você contou: Declarado por você. Ver as fontes] Você ‖ [Público: Moradores de Pinheiros e Vila Madalena, # a # anos. Abrir] PÚBLICO Moradores de Pinheiros e Vila Madalena, # a # anos ‖ [Produtos: Pão de fermentação longa. Abrir] PRODUTOS Pão de fermentação longa ‖ [Tom de comunicação: Acolhedor, direto, sem gíria. Abrir] TOM DE COMUNICAÇÃO Acolhedor, direto, sem gíria ‖ Confirmar ‖ Corrigir ‖ Descartar ‖ Você decidiu: não usar a palavra 'artesanal' nas legendas ‖ [Ver o que a Kiwi consulta] ‖ [Negócio: Padaria de fermentação natural, aberta em #. Confirmado. Ver detalhes] Negócio Padaria de fermentação natural, aberta em # Confirmado Onboarding +# ‖ [Produto âncora: Pão de fermentação longa. Confirmado. Ver detalhes] Produto âncora Pão de fermentação longa Confirmado Onboarding +# ‖ [Tom de voz: Acolhedor, direto, sem gíria. Confirmado. Ver detalhes] Tom de voz Acolhedor, direto, sem gíria Confirmado Onboarding +# ‖ [Palavra proibida: Não usar a palavra 'artesanal' nas legendas. Decisão sua. Ver detalhes] Palavra proibida Não usar a palavra 'artesanal' nas legendas Decisão sua Conversas +# ‖ [Público principal: Moradores de Pinheiros e Vila Madalena, # a # anos. Confirmado. Ver detalhes] Público principal Moradores de Pinheiros e Vila Madalena, # a # anos Confirmado Onboarding +# ‖ [Canais: Instagram e WhatsApp. Confirmado. Ver detalhes] Canais Instagram e WhatsApp Confirmado Onboarding +# ‖ [Bastidores: Posts com bastidores do forno têm mais salvamentos. Sugerido. Ver detalhes] Bastidores Posts com bastidores do forno têm mais salvamentos Sugerido Especialistas
+  [regions] só no nosso:     section:Precisa de você: #
+
+######## equipe
+
+######## equipe-conversas
+  [buttons] só no protótipo: Conteúdo Otto · Conteúdo · sobre o ambiente Otto: Ainda não cuido do calendário da Miolo. Posso planejar os co ‖ Boas-vindas Nexo · Projetos Nexo: Oi, Marina. Eu sou o Nexo e coordeno o squad da Miolo. Você pode pedir qualq ‖ Sala do Squad todos os especialistas Nexo: Esta é a Sala do Squad. Use para pedidos maiores, como uma campanha
+  [buttons] só no nosso:     Conversa com o Otto Otto · Conteúdo Você: Tom acolhedor e direto, sem gíria. E sem a palavra "artesanal", comb ‖ Sala do Squad todos os especialistas Você: Bom dia, squad! Nesta semana o foco é o pão de fermentação longa. #
+
+######## bia
+  [heads] só no protótipo: A Bia ainda não conhece a Miolo o bastante para propor uma direção.
+  [heads] só no nosso:     A Bia ainda não conhece Miolo o bastante para propor uma direção.
+
+######## kaia
+  [buttons] só no protótipo: Todas # ‖ Redes sociais # ‖ Carrosséis # ‖ Identidade # ‖ Promocionais # ‖ Imagens # ‖ Vídeo e motion #
+  [buttons] só no nosso:     [Todas: nenhuma criação] Todas # ‖ [Redes sociais: nenhuma criação] Redes sociais # ‖ [Carrosséis: nenhuma criação] Carrosséis # ‖ [Identidade: nenhuma criação] Identidade # ‖ [Promocionais: nenhuma criação] Promocionais # ‖ [Imagens: nenhuma criação] Imagens # ‖ [Vídeo e motion: nenhuma criação] Vídeo e motion #
+
+######## kiwi
+  [heads] só no protótipo: Mais encomendas pelo site no Natal, sem depender só do Instagram. ‖ Presença no Google
+  [heads] só no nosso:     Nenhum objetivo de crescimento combinado ainda.
+  [buttons] só no protótipo: [Ver o que dá para pedir ao Kiwi] O que pedir ao Kiwi ‖ [Conversar com Kiwi sobre Growth, ao lado] Conversar com Kiwi ‖ [Kiwi · Para você autorizar: Teste de anúncios perto da loja. Ver a proposta] KIWI · PARA VOCÊ AUTORIZAR Teste de anúncios perto da loja Até R$ # por dia, # dias. Nada é investido sem a s ‖ [Ver mais # pendência] +# ‖ Aquisição orgânica # oportunidades A busca trouxe #% das encomendas ‖ Campanhas pagas Nada no ar # proposta aguarda você ‖ Conversão e testes # teste rodando # planejado · # hipóteses na fila ‖ [panetone artesanal: Não aparece. Criar a página do panetone. Conversar com o Kiwi] Comece por aqui “panetone artesanal” Alto Não aparece Criar a página do panetone ‖ [padaria em pinheiros: No mapa, atrás de duas. Mais avaliações com foto. Conversar com o Kiwi] “padaria em pinheiros” Alto No mapa, atrás de duas Mais avaliações com foto ‖ [encomenda de panetone: Não aparece. Anúncio de busca no Natal. Conversar com o Kiwi] “encomenda de panetone” Médio Não aparece Anúncio de busca no Natal ‖ [pão de fermentação natural: Às vezes, pelo Perfil. Artigo no site. Conversar com o Kiwi] “pão de fermentação natural” Médio Às vezes, pelo Perfil Artigo no site
+  [buttons] só no nosso:     [Ver o que dá para pedir à Kiwi] O que pedir à Kiwi ‖ [Conversar com Kiwi sobre Growth Marketing, ao lado] Conversar com Kiwi ‖ Ver conexões ‖ Aquisição orgânica Sem dados nenhuma busca para mostrar ‖ Campanhas pagas Nada no ar nada é investido sem a sua autorização ‖ Conversão e testes Nenhum teste nenhuma hipótese na fila
+  [regions] só no protótipo: section:Precisa de você: #
+
+######## max
+  [buttons] só no protótipo: Importar ‖ Conectar ‖ Saber mais
+  [buttons] só no nosso:     [Importar a planilha de clientes] Importar ‖ [Conectar o e-mail] Conectar ‖ [Saber mais sobre o WhatsApp] Saber mais
+
+######## iris
+
+######## auto
+  [buttons] só no protótipo: [Delegar: Responder avaliações do Google] Responder avaliações do Google Respostas no tom da Miolo, para você aprovar.
+  [buttons] só no nosso:     [Delegar: Responder avaliações do Google] Responder avaliações do Google Respostas no tom de Miolo, para você aprovar.

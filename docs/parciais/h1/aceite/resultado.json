@@ -1,0 +1,64 @@
+{
+  "steps": [
+    {
+      "t": "16:33:10",
+      "name": "login",
+      "bar": "(sem barra)",
+      "needs": null
+    },
+    {
+      "t": "16:33:10",
+      "name": "painel-nexo-aberto",
+      "placeholder": "Mensagem para o Nexo…"
+    },
+    {
+      "t": "16:33:10",
+      "name": "pedido-enviado"
+    },
+    {
+      "t": "16:33:12",
+      "name": "entrega-v1-ao-vivo",
+      "semRecarregar": true,
+      "cartao": "Sábado tem pão de fermentação longa saindo do forno. Casca crocante, miolo macio e o tempo que a massa pede. Passe na Miolo de manhã e leve o seu ainda morno. MATERIAL · V1 Quero uma legenda para o In"
+    },
+    {
+      "t": "16:33:12",
+      "name": "revisao-aberta",
+      "workId": "5070ceac-0242-4734-b37f-834e61527eda"
+    },
+    {
+      "t": "16:33:13",
+      "name": "aprovado"
+    },
+    {
+      "t": "16:33:13",
+      "name": "historico",
+      "trecho": "Histórico Otto · legenda Sábado tem pão de fermentação longa saindo do forno. Casca crocante, miolo macio e o tempo que a massa pede. Passe na Miolo de manhã e leve o seu ainda morno."
+    },
+    {
+      "t": "16:33:13",
+      "name": "persistiu-apos-recarregar"
+    },
+    {
+      "t": "16:33:14",
+      "name": "projetos",
+      "aparece": true,
+      "trecho": "nga v1 aguarda sua aprovação Revisar Em andamento 0 Nada em produção Programados 0 Nada programado Concluídos 1 ENTREGA Quero uma legenda para o Instagram sobre o pão de centeio da semana Aprovado Aprovado"
+    },
+    {
+      "t": "16:33:14",
+      "name": "conversa-depois",
+      "cartao": "Sábado tem pão de fermentação longa saindo do forno. Casca crocante, miolo macio e o tempo que a massa pede. Passe na Miolo de manhã e leve o seu ainda morno. MATERIAL · V1 Quero uma legenda para o In"
+    },
+    {
+      "t": "16:33:45",
+      "name": "barra-creditos-depois",
+      "bar": "(sem barra)"
+    }
+  ],
+  "errors": [],
+  "console": [],
+  "workItemId": "5070ceac-0242-4734-b37f-834e61527eda",
+  "wsFramesSample": [],
+  "wsFrames": 0
+}
