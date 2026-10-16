@@ -1,0 +1,120 @@
+{
+  "bia": {
+    "kicker": "Strategic direction",
+    "firstTitle": "Bia doesn’t know {business} well enough yet to propose a direction.",
+    "firstText": "Start with an assessment: she uses what you share in the conversation and asks about whatever’s missing.",
+    "start": "Analyze my business",
+    "startAsk": "I want to analyze my business."
+  },
+  "kaia": {
+    "bench": "Kaia’s workbench",
+    "prod": "In production",
+    "prodTag": "In progress",
+    "prodSingle": "In production · one-off delivery",
+    "gallery": "Creations",
+    "gallerySub": "What Kaia has created for {business}, with what’s in production first. The same files as in the Library.",
+    "gallerySubCat": "To ask for more, use the last piece in this list.",
+    "filters": "Filter creations",
+    "catAria": "{label}: {count, plural, =0 {no creations} one {# creation} other {# creations}}",
+    "cats": {
+      "all": "All",
+      "social": "Social media",
+      "car": "Carousels",
+      "brand": "Identity",
+      "promo": "Promotional",
+      "img": "Images",
+      "vid": "Video and motion"
+    },
+    "new": {
+      "social": "New social media piece",
+      "car": "New carousel",
+      "brand": "Review the identity",
+      "promo": "New promotional material",
+      "img": "Edit images",
+      "vid": "New video"
+    },
+    "ask": {
+      "social": "I want to create a social media piece.",
+      "car": "I want to create a carousel.",
+      "brand": "I want to create or review the visual identity.",
+      "promo": "I want to create promotional materials.",
+      "img": "I want to edit and adapt images.",
+      "vid": "I want to produce a video."
+    },
+    "newKick": "New request",
+    "newMeta": "You share the idea; Kaia handles the brief.",
+    "newAria": "{label}: opens the conversation with Kaia",
+    "wip": "Kaia is creating",
+    "wipKick": "Creation",
+    "wipTag": "In production",
+    "wipAria": "{title}, in production. Open",
+    "emptyTitle": "No creations yet.",
+    "emptyText": "What Kaia produces for {business} shows up here. Choose a type above to make your first request."
+  },
+  "kiwi": {
+    "goalKicker": "Growth goal",
+    "emptyTitle": "No growth goal agreed on yet.",
+    "emptyText": "Connect your Google Business Profile or send the orders spreadsheet. Nothing shows up here until there’s real data.",
+    "connections": "View connections",
+    "lanes": "Growth levers",
+    "lane": {
+      "org": {
+        "label": "Organic acquisition",
+        "value": "No data",
+        "sub": "no searches to show",
+        "text": "Searches where {business} can show up more, in order of priority. Interest estimated by Kiwi.",
+        "action": "Request an SEO analysis",
+        "ask": "I want to analyze my brand’s organic growth opportunities.",
+        "empty": "No searches to show yet."
+      },
+      "paid": {
+        "label": "Paid campaigns",
+        "value": "Nothing live",
+        "sub": "nothing is spent without your authorization",
+        "text": "No ads live. Nothing is spent or turned on without your authorization.",
+        "action": "New campaign",
+        "ask": "I want to plan a paid campaign.",
+        "empty": "No campaigns yet."
+      },
+      "cro": {
+        "label": "Conversion and testing",
+        "value": "No tests",
+        "sub": "no hypotheses in the queue",
+        "text": "One hypothesis at a time, with what counts as a result agreed on beforehand.",
+        "action": "New test",
+        "ask": "I want to create a growth test.",
+        "empty": "No tests yet."
+      }
+    }
+  },
+  "max": {
+    "kicker": "Relationship hub",
+    "emptyTitle": "Your customer base isn’t here yet.",
+    "emptyText": "Max starts with the contacts you already have. Nothing is sent without consent and without your authorization.",
+    "sheet": "Customer spreadsheet",
+    "sheetState": "CSV or Excel · not imported yet",
+    "sheetAction": "Import",
+    "sheetAria": "Import the customer spreadsheet",
+    "store": "Store platform",
+    "storeState": "integration pending",
+    "email": "Email",
+    "emailState": "not connected",
+    "emailAction": "Connect",
+    "emailAria": "Connect email",
+    "wa": "WhatsApp",
+    "waState": "channel unavailable",
+    "waAction": "Learn more",
+    "waAria": "Learn more about WhatsApp"
+  },
+  "iris": {
+    "emptyTitle": "Íris doesn’t have numbers to read yet",
+    "emptyText": "Connect Instagram or send the orders spreadsheet. Nothing shows up here until there’s real data.",
+    "tracks": "What Íris will track",
+    "kpis": {
+      "orders": "Website orders",
+      "visits": "Visits from Instagram",
+      "reach": "Instagram reach"
+    },
+    "connections": "View connections"
+  }
+}

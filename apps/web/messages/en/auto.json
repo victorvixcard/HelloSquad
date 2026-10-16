@@ -1,0 +1,65 @@
+{
+  "title": "Autonomous Mode",
+  "sub": "Leave what repeats to the squad. You set the limits.",
+  "delegate": "Delegate a responsibility",
+  "resps": {
+    "title": "Responsibilities",
+    "sub": "what the squad does on its own, in cycles"
+  },
+  "empty": {
+    "title": "Nothing delegated yet.",
+    "text": "Start with what repeats most in your week. The squad talks it through with you, shows you what was agreed, and only turns it on after your OK.",
+    "cta": "Delegate your first responsibility"
+  },
+  "more": {
+    "title": "What else the squad can take on",
+    "sub": "every delegation starts with a conversation",
+    "aria": "Delegate: {title}"
+  },
+  "templates": {
+    "plan": {
+      "title": "Plan my content every week",
+      "text": "Topics, captions, and artwork, ready for you to approve."
+    },
+    "posts": {
+      "title": "Prepare posts every Monday",
+      "text": "The week’s pieces with captions, for you to review."
+    },
+    "opp": {
+      "title": "Let me know when an opportunity comes up",
+      "text": "Dates, the neighborhood, competitors, and your numbers."
+    },
+    "reviews": {
+      "title": "Reply to Google reviews",
+      "text": "Replies in {business}’s tone, for you to approve."
+    }
+  },
+  "levels": {
+    "title": "How autonomy works",
+    "sub": "three levels, each with its own limit",
+    "an": {
+      "k": "Analyze",
+      "d": "Researches, tracks, and interprets information, only in the accounts you’ve connected.",
+      "w": "Does it on its own"
+    },
+    "pr": {
+      "k": "Prepare",
+      "d": "Creates drafts, plans, pieces, and reports every cycle, without you asking again.",
+      "w": "Does it on its own · you approve what goes out"
+    },
+    "ex": {
+      "k": "Execute",
+      "d": "Publishing, sending messages, changing campaigns, and spending only happen with specific authorization for each action.",
+      "w": "Only with your authorization"
+    },
+    "foot": "Approving content doesn’t authorize publishing, sending messages, changing campaigns, or spending. Each of these actions needs its own authorization."
+  },
+  "next": {
+    "title": "Upcoming runs",
+    "empty": "Nothing scheduled. When you delegate something, the runs show up here."
+  },
+  "history": {
+    "title": "Run history",
+    "empty": "Every run is logged here, with what was done, what failed, and the work it created."
+  }
+}

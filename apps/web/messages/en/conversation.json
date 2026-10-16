@@ -18,6 +18,8 @@
   "loadError": "Couldn’t open the conversation right now. Try again in a moment.",
   "sendError": "The message wasn’t sent. Try again.",
   "sending": "Sending",
+  "sendAria": "Send request",
+  "sendHint": "send",
   "empty": "No messages in this conversation yet.",
   "you": "You",
   "yesterday": "Yesterday",
