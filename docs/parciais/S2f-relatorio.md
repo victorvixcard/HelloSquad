@@ -1,6 +1,6 @@
 # S2f — relatório (E-mail transacional atrás de `EmailProvider`, Mailpit local)
 
-Stark, 16/10/2026, 18:15 → 18:47 (32 min; alvo 45). Área: `apps/backend`, `supabase/`, `packages/contracts`
+Stark, 16/10/2026, 18:15 → 18:48 (33 min; alvo 45). Área: `apps/backend`, `supabase/`, `packages/contracts`
 (gerado), `.env.example`, `docs/SETUP_LOCAL.md` e os documentos da fatia. Nada em `apps/web`; nenhum `next build` nem
 `make e2e`. Progresso com hora e hash de cada commit: `docs/parciais/S2f-progresso.md`.
 
