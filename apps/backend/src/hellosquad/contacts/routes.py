@@ -307,7 +307,7 @@ async def import_contacts(
 @router.get(
     "/workspaces/{workspace_id}/contacts/summary",
     summary="Resumo da base: total, quem aceita mensagem por canal e de onde vieram os contatos",
-    responses=error_responses(401, 404, 503),
+    responses=error_responses(401, 404, 422, 503),
 )
 async def contact_summary(
     workspace_id: UUID, principal: CurrentPrincipal, db: DatabaseDep

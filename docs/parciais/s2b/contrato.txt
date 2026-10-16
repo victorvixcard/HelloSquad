@@ -1,0 +1,4 @@
+operações: 47 -> 51 | novas: [('get', '/workspaces/{workspace_id}/contacts/summary'), ('get', '/workspaces/{workspace_id}/metrics'), ('patch', '/workspaces/{workspace_id}'), ('post', '/workspaces/{workspace_id}/contacts/imports')] | removidas: []
+schemas: 121 -> 131 | novos: ['ConsentCounts', 'ContactImport', 'ContactImportRequest', 'ContactSource', 'ContactSummary', 'MetricPoint', 'MetricSeries', 'MetricsPage', 'RefusedLine', 'WorkspaceUpdate'] | removidos: []
+campos removidos: []
+obrigatórios novos (resposta): ['Workspace.locale', 'WorkspaceSummary.locale']

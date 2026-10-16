@@ -1,0 +1,35 @@
+cd apps/backend && uv run ruff check . && uv run ruff format --check .
+All checks passed!
+86 files already formatted
+flock -o -w 600 /tmp/hellosquad-db.lock bash -c 'cd apps/backend && uv run pytest'
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/vitao/projetos/hellosquad/apps/backend
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 185 items
+
+tests/test_auth.py ....................                                  [ 10%]
+tests/test_auth_session_policy.py ....                                   [ 12%]
+tests/test_conversation_complete.py .......                              [ 16%]
+tests/test_core_api.py ..............                                    [ 24%]
+tests/test_credits.py ...........                                        [ 30%]
+tests/test_environment_conversation.py ...                               [ 31%]
+tests/test_health.py ..                                                  [ 32%]
+tests/test_identity_api.py .......................                       [ 45%]
+tests/test_llm.py ...............                                        [ 53%]
+tests/test_local_db.py .......                                           [ 57%]
+tests/test_memory_actions.py .....                                       [ 60%]
+tests/test_memory_api.py ..........                                      [ 65%]
+tests/test_memory_runtime.py ....                                        [ 67%]
+tests/test_openapi.py .                                                  [ 68%]
+tests/test_rich_work.py .....                                            [ 70%]
+tests/test_s2a_deliveries.py ............                                [ 77%]
+tests/test_s2b_deliveries.py .....................                       [ 88%]
+tests/test_squad_prompt.py .....                                         [ 91%]
+tests/test_websearch.py .....                                            [ 94%]
+tests/test_worker.py ...........                                         [100%]
+
+============================= 185 passed in 37.85s =============================
