@@ -27,7 +27,103 @@ Na V4, cada especialista passa a ser apresentado pela especialidade do seu ambie
 
 ## 1. Mapa de telas e navegação
 
-<!-- §1 em redação -->
+Fonte: V4 (`ENVS`, L9597–9609; barra `_vSide`, L10501–10566), V4.1 a V4.5 (ambientes definitivos) e V4.6 (linguagem comum). Detalhe tela a tela em `docs/parciais/x1/notas_telas.md`.
+
+### 1.1 Barra lateral
+
+**Topo:** "HelloSquad" (wordmark em texto, provisório) · botão "Demo" (§3) · "Recolher a barra lateral" ou "Expandir a barra lateral" (L4541–4543, L10542). A barra tem 256 px aberta e 72 px recolhida (L10442) e recolhe sozinha abaixo de 1100 px de largura; recolhida, mostra ícone e dica.
+
+| Grupo | Item (ordem exata) | Leva a | Contador ou ponto (L10505–10538) |
+|---|---|---|---|
+| "Principal" | "Início" | Início | — |
+| | "Sala do Squad" | conversa `squad` em tela cheia (não é ambiente) | ponto de mensagem nova; dica "o squad está trabalhando" ou "todos os especialistas" |
+| "Seu squad" | "Projetos" · Nexo | Projetos | **número de decisões suas**; dica "1 aguarda você" ou "N aguardam você" |
+| | "Estratégia" · Bia | Estratégia | — |
+| | "Marca & Criação" · Kaia | Marca & Criação | — |
+| | "Conteúdo" · Otto | Conteúdo | — |
+| | "Growth" · Kiwi | Growth Marketing | — |
+| | "CRM" · Max | CRM | — |
+| | "Resultados" · Íris | Resultados | — |
+| "Gestão" | "Modo Autônomo" (desenho de interruptor no lugar do ícone) | Modo Autônomo | número suave de rotinas ativas; dica "N rotinas ativas, N pausada", "pausado", "um combinado aguarda você" ou "não configurado" |
+| | "Memória da Marca" | Memória da Marca | número suave de informações a confirmar; dica "N informações para confirmar" |
+| | "Minha Equipe & Conversas" | Minha Equipe & Conversas | ponto de mensagens novas fora da Sala; dica "mensagens novas" |
+
+Cada item de "Seu squad" leva o rosto pequeno e o nome do agente, com expressão de estado: "big" quando ele aguarda você, "sleep" quando está pausado, "oval" no resto. Na conta em uso, a Kaia aparece "big" e o Max "sleep" (L10525). Endereços antigos redirecionam: Trabalhos vai para Projetos, e Conversas vai para Minha Equipe & Conversas, na aba "Conversas" (L9725–9727).
+
+**Pé da barra** (L4554–4564, L10544–10563):
+
+- **Conta:** "Marina" · "Miolo · Pinheiros" abre "Conta, negócio e configurações", com "Marina" · "dona da Miolo". Na seção "Negócio", a "Miolo" aparece marcada e há "Adicionar um negócio" · "Outra marca na mesma conta" (só aviso "Vários negócios na mesma conta · demonstrativo").
+- **Créditos e menu:** "Plano Squad · créditos do mês" com a barra (64% na conta em uso, 4% no primeiro acesso) e os itens "Minha conta", "Configurações", "Guia do protótipo" e "Sair". Minha conta, Configurações e Sair só dão o aviso "… · demonstrativo neste protótipo".
+- **Sino:** "Notificações", com ", há novidades" e um ponto até ser aberto, só na conta em uso. A lista traz rosto, título, linha de apoio e hora, e cada item leva ao trabalho, ao Modo Autônomo, a Resultados ou à conversa. Não há número no sino, e o que acontece na sessão só gera avisos curtos.
+
+### 1.2 Cabeçalho de cada ambiente do squad (camada de identidade)
+
+Cada ambiente abre com rosto do especialista, título, a linha "<Nome> <descrição>" (`ENVS[].d`), o catálogo "O que pedir à Bia" (ou "ao Nexo", "à Kaia"…) e o botão "Conversar com <Nome>" (L10569–10572). Logo abaixo vem a faixa "Precisa de você" (§5).
+
+| Ambiente | Título | Linha de identidade |
+|---|---|---|
+| Projetos | "Projetos" | "Nexo organiza os projetos da Miolo e te chama quando a decisão é sua." |
+| Estratégia | "Estratégia" | "Bia encontra onde está a oportunidade da Miolo." |
+| Marca & Criação | "Marca & Criação" | "Kaia dá forma à marca da Miolo em cada peça." |
+| Conteúdo | "Conteúdo" | "Otto cuida do calendário, das legendas e do que a Miolo fala em cada canal." |
+| Growth | "Growth Marketing" (na barra, "Growth") | "Kiwi cuida do crescimento da Miolo: busca, anúncios e mais visitas virando encomendas." |
+| CRM | "CRM" | "Max cuida de quem já é cliente, sempre com consentimento." |
+| Resultados | "Resultados" | "Íris lê os números da Miolo e diz o que fazer com eles, sem inventar causa." |
+
+"Conversar com <Nome>" abre a conversa do ambiente, em painel a partir de 1080 px, com sugestões como "O que precisa de mim esta semana?", "Qual projeto pede mais atenção?" e "Quero começar um projeto novo." (Projetos, L9778).
+
+**Catálogo "O que você quer fazer com a Bia?"** (V4.2/V4.3, L11879–11930): diz "A Bia conduz o briefing na conversa, sem formulário.". Traz uma busca (ex.: "Buscar: diagnóstico, concorrentes…"), as capacidades agrupadas por finalidade e o estado de cada uma ("trabalho criado", "N trabalhos", "em conversa"). Vazio: "Nada com “…”. Escreva na conversa o que você precisa: a Bia entende." Rodapé: "Quando o pedido envolve outra especialidade, a Bia chama quem precisa na mesma conversa." Cada capacidade abre uma conversa de pedido (§4.7). As capacidades de cada agente (`CAPX_L`, L11346–11587) são:
+
+| Agente | Grupos e capacidades |
+|---|---|
+| Nexo | "Organizar o trabalho": "Começar um projeto novo", "Coordenar uma campanha", "Passar uma tarefa para o squad" · "Acompanhar": "Acompanhar as entregas", "Revisar o que espera minha aprovação" |
+| Bia | "Entender o negócio": "Analisar meu negócio", "Analisar o mercado e os concorrentes" · "Decidir o rumo": "Definir o posicionamento", "Montar um planejamento", "Encontrar oportunidades" |
+| Kaia | "Marca": "Criar ou revisar a identidade visual" · "Peças e materiais": "Criar uma peça para as redes", "Criar um carrossel", "Criar materiais promocionais" · "Imagem e vídeo": "Editar e adaptar imagens", "Produzir vídeos e motion" |
+| Otto | "Planejar": "Planejar os conteúdos", "Preparar o calendário editorial" · "Escrever": "Criar uma publicação", "Escrever textos e artigos", "Escrever para aparecer no Google" · "Publicar": "Programar os conteúdos" |
+| Kiwi | "Busca e orgânico": "Ver onde a Miolo pode aparecer no Google", "Trazer mais visitas sem anúncio" · "Anúncios": "Planejar uma campanha paga", "Otimizar uma campanha", "Revisar orçamento e públicos" · "Conversão": "Fazer mais visitas virarem encomendas", "Criar um teste de conversão" |
+| Max | "Conhecer os clientes": "Organizar meus públicos", "Segmentar clientes" · "Relacionamento": "Planejar uma campanha de relacionamento", "Criar uma jornada", "Preparar fluxos de mensagens" · "Captar e reativar": "Reativar clientes inativos", "Captar e reativar clientes" |
+| Íris | "Entender os números": "Analisar um indicador", "Comparar períodos", "Interpretar um resultado" · "Acompanhar": "Montar um relatório", "Investigar um problema", "Acompanhar uma oportunidade" |
+
+### 1.3 Telas
+
+| Tela | Visão protagonista e componentes | Conta em uso | Primeiro acesso (vazio honesto) |
+|---|---|---|---|
+| **Início** (V3 R1.2, aprovado e congelado; a V4.6 não toca) | palco com os sete agentes; "Hello, Marina."; "Com o que vamos trabalhar hoje?"; campo "Peça ao squad. O Nexo organiza quem faz…" com "Anexar" e "↵ enviar"; "Quem participa" ("Squad" + sete rostos; a legenda diz "Sala do Squad", "Conversa direta com a Kaia" ou "Bia, Kaia e Otto · conversa em grupo"); faixa de sugestões que só preenchem o campo; "Recolher resumos" e "Mostrar resumos"; quatro resumos, um aberto por vez | "Resultados" (indicador da semana com "Íris: …", "Abrir Resultados" e "Conversar com a Íris"), "Trabalhos", "O Squad percebeu" ("Aceitar" e "Recusar") e "Modo Autônomo" (interruptor por rotina: "Pausar esta rotina" ou "Reativar esta rotina") | "Para o squad conhecer a Miolo" ("N de 3": "Mande o site", "Conecte o Instagram", "Conte o resto ao Nexo") no lugar de Resultados; "Nada em produção agora. Peça algo ao squad e o Nexo organiza quem faz."; "Nada configurado ainda. Delegue o que se repete: o squad cuida sozinho e pede a sua aprovação quando precisa." com "Configurar uma rotina" |
+| **Sala do Squad** | conversa coletiva em tela cheia (§4) | Campanha de Natal em andamento | só a apresentação do Nexo |
+| **Projetos · Nexo** | "Roadmap de projetos" (§2.3); "Seu Squad está trabalhando"; "Próximos marcos"; "Todos os trabalhos" · "Projetos, entregas pontuais e ciclos do Modo Autônomo, pela situação de cada um." com "Quadro", "Lista" e "Biblioteca" (§2.1) | 5 projetos e 12 trabalhos | "Nenhum projeto ainda" · "Projetos são pedidos maiores, como uma campanha. O Nexo monta o squad, organiza as etapas e te chama quando a decisão é sua." · "Começar pela Campanha de Natal"; "Ninguém em produção agora. Peça algo e o Nexo organiza quem faz."; "Nenhum marco com data nos próximos dias." |
+| **Estratégia · Bia** | "Direção estratégica" ("Refinar com a Bia"); "Oportunidades identificadas" · "em ordem de relevância" (a primeira com "Bia percebeu" e a fonte); "Em análise" · "ainda sem conclusão"; "Planos e diagnósticos" · "documentos da Bia, com versões e aprovação", em leitura editorial com "Aprovar o direcionamento" ou "Aprovar o diagnóstico", "Pedir ajuste", "Baixar PDF", "Versões" e "Histórico" | direção, 5 oportunidades, 3 análises, 4 documentos | "A Bia ainda não conhece a Miolo o bastante para propor uma direção." · "Comece por um diagnóstico: ela usa o que você contar na conversa e pergunta o que faltar." · "Analisar meu negócio" |
+| **Marca & Criação · Kaia** (estúdio) | "Bancada da Kaia" (o que precisa de você e "Em produção") e "Criações" · "O que a Kaia criou para a Miolo, com o que está em produção primeiro. Os mesmos arquivos da Biblioteca.", com os filtros "Todas", "Redes sociais", "Carrosséis", "Identidade", "Promocionais", "Imagens", "Vídeo e motion"; com filtro ativo, o último quadro é o novo pedido ("Nova peça para as redes", "Novo carrossel"…) | bancada e galeria preenchidas | contador 0 e galeria vazia, sem texto próprio (lacuna do protótipo, §11) |
+| **Conteúdo · Otto** | "Calendário editorial", com "Semana", "Mês" e "Lista", "Semana anterior" e "Próxima semana", e "Hoje"; legenda "aguarda você", "agendado", "publicado"; o chip "Planejamento semanal"; o inspetor do item (estado, data, "Legenda do Otto", "Quem", "Origem", "Stories", "Desempenho", decisões e "Conversar com Otto sobre este conteúdo"); "Próximas publicações", "Desempenho orgânico" e "Otto percebeu" | 6 posts e planos das semanas 41 a 46 | "O Otto ainda não tem um calendário da Miolo" · "Ele pode planejar os conteúdos toda semana, no Modo Autônomo. Você aprova antes de qualquer publicação." · "Delegar o planejamento semanal" · "Pedir um post à Kaia" |
+| **Growth · Kiwi** | "Objetivo de crescimento" ("Mais encomendas pelo site no Natal, sem depender só do Instagram."); "Kiwi percebeu"; três números de base com "dados ilustrativos"; três frentes: "Aquisição orgânica" ("4 oportunidades", tabela de buscas, "Presença no Google"), "Campanhas pagas" ("Nada no ar", "Nenhum anúncio no ar. Nada é investido nem ativado sem a sua autorização.", "Revisar e autorizar"), "Conversão e testes" ("1 teste rodando", "Uma hipótese por vez, com o que conta como resultado combinado antes.") | completo | igual, só sem "Kiwi percebeu" (lacuna do protótipo, §11) |
+| **CRM · Max** | "Central de relacionamento": números, "Aceitam receber mensagens: 123 de 439 contatos", "Fontes e canais", "Segmentos" (painel "Público selecionado" com "Criar campanha para este público"), "Campanhas e jornadas" (estados "Rascunho", "Aguardando aprovação", "Programada", "Ativa", "Pausada", "Concluída"), "Max percebeu" e a jornada da reativação em cinco passos | completo | "Sua base de clientes ainda não está aqui." · "O Max começa pelos contatos que você já tem. Nada é enviado sem consentimento e sem a sua autorização." e quatro fontes ("Importar", "Conectar", "Saber mais") |
+| **Resultados · Íris** | "Semana", "Mês" ou "Trimestre" com a comparação, "dados ilustrativos" e as fontes; três indicadores ("Analisar com Íris"); "Custo por clique" · "sem dados" · "A Miolo não tem anúncios ativos, então não há número para ler."; gráfico de 12 semanas ("Ver tabela"); "Íris percebeu"; "Análises recentes"; "Desempenho por canal"; "Oportunidades" | completo | "A Íris ainda não tem números para ler" · "Conecte o Instagram ou envie a planilha de encomendas. Nada aparece aqui antes de existir um dado real." · "Ver conexões". Com o Instagram conectado: "A Íris começou a acompanhar o Instagram hoje" · "A primeira leitura chega na segunda, com uma semana de dados. A Íris não estima o que não mediu." |
+| **Modo Autônomo** | §7 | 4 responsabilidades | "Nada delegado ainda." |
+| **Memória da Marca** | §6 | 33 conhecimentos | só o cadastro |
+| **Minha Equipe & Conversas** | "Abrir a Sala do Squad"; abas "Equipe" (os sete; perfil com "agora", "Conversar com a Kaia", "Pedir algo" e as abas "Agora", "Competências", "Entregas", "Trabalha com") e "Conversas" (§4.4) | 9 conversas | 2 conversas (Nexo e Sala) |
+| **Detalhe do trabalho** (fora da barra; volta ao ambiente de origem) | §2.1 e §2.2 | — | "Nenhuma campanha ainda" · "Pedir na Sala do Squad"; "Ainda não há post" · "Peça à Kaia e acompanhe as versões aqui." · "Pedir à Kaia" (L5026) |
+
+### 1.4 Entrada pela landing (Landing V1 R32)
+
+Detalhe em `docs/parciais/x1/notas_landing_miolo.md`.
+
+**Hero:** "Você cuida do seu negócio." · "Seu squad de IA assume o marketing."; campo "Diga o que você precisa"; dez sugestões, cada uma com os especialistas que a atendem (ex.: "Criar uma campanha para o fim de semana", com Bia, Kaia e Kiwi). Ao enviar, a sequência é:
+
+1. "Pedido recebido"
+2. "Nexo" + "está montando seu squad" (ele chama os especialistas um a um)
+3. "<nomes> estão a postos" (ou "Kaia (Criação) está a postos")
+4. a volta em torno de "Veja o Squad trabalhando"
+
+Na landing, o Nexo nunca entra na lista: ele sempre coordena.
+
+**Modais** (um só, com dois modos, L1883–1897):
+
+| Modo | Título | Campo e botão | Ao enviar |
+|---|---|---|---|
+| Cadastro, com pedido guardado | "Seu pedido está guardado." · "Seu pedido" + o pedido · "Crie sua conta e o Nexo começa por ele." | "Seu e-mail" (`voce@seunegocio.com.br`) · "Criar conta grátis" | "Criando sua conta" → "Pronto" |
+| Cadastro, sem pedido | "Crie sua conta grátis." · "Diga o que você precisa e o squad começa por aí." | idem | idem |
+| Login | "Bem-vindo de volta." · "Entre para ver o que o seu squad fez desde a última vez." | "Seu e-mail" · "Entrar" | "Entrando" → "Pronto" |
+
+Depois de enviar, os dois modos mostram "Nesta versão, nenhuma conta foi criada e nada foi enviado." O pedido digitado na Hero fica em `sessionStorage` (`hs-landing-pedido`) e só o cadastro o mostra. No protótipo, a Hero grava também as sugestões que toca sozinha, de modo que quem abre o cadastro sem digitar vê uma sugestão automática como "Seu pedido". Não aparecem no protótipo: senha, nome, termos, "esqueci a senha", login social, mensagens de erro e o que acontece depois do cadastro (§11).
 
 ## 2. Objetos e estados visíveis
 
