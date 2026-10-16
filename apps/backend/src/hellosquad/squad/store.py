@@ -21,11 +21,13 @@ from psycopg.types.json import Jsonb
 from psycopg_pool import AsyncConnectionPool
 
 from hellosquad.llm.base import Usage
+from hellosquad.squad.coordination import CoordinationPlan
 from hellosquad.squad.loader import SquadPrompt
 from hellosquad.squad.memory import (
     AgentLearning,
     LearningQuery,
     MemoryFact,
+    estimate_tokens,
     select_memory,
 )
 from hellosquad.squad.prompt import HistoryMessage
@@ -81,6 +83,20 @@ class WorkItem:
 
 
 @dataclass(frozen=True)
+class WorkStep:
+    """Etapa planejada pelo Nexo (01.02) que este run executa."""
+
+    id: UUID
+    seq: int
+    title: str
+    agent_id: str
+    delivery_type: str
+    input: dict[str, Any]
+    depends_on: list[int]
+    total: int
+
+
+@dataclass(frozen=True)
 class RunData:
     agent_id: str
     attempts: int
@@ -91,6 +107,7 @@ class RunData:
     history: list[HistoryMessage]
     feedback: dict[str, Any] | None = None
     next_version: int = 1
+    step: WorkStep | None = None
 
 
 @dataclass(frozen=True)
@@ -144,6 +161,8 @@ class RunStore:
         self.run_id = run_id
         # Tentativa reivindicada por este worker: serve de ficha (fencing) nas escritas finais.
         self.attempt: int | None = None
+        # Etapa do trabalho coordenado que o run executa (load): a entrega e a pendência levam a etapa.
+        self.step_id: UUID | None = None
 
     # ------------------------------------------------------------------------------------------
     # Reivindicação e início
@@ -327,11 +346,12 @@ class RunStore:
                 """
                 select r.agent_id, r.attempts, w.id as work_item_id, w.status, w.title, w.briefing,
                        w.delivery_type, w.conversation_id, w.origin_message_id, w.project_id,
-                       s.name as workspace_name, s.locale, m.body as request,
+                       s.name as workspace_name, s.locale, m.body as request, r.step_id,
                        (select coalesce(max(v.version_no), 0) + 1
                         from public.delivery_versions v
                         join public.deliveries d on d.id = v.delivery_id
                         where d.work_item_id = w.id and d.workspace_id = r.workspace_id
+                          and d.step_id is not distinct from r.step_id
                        ) as next_version
                 from public.runs r
                 join public.work_items w
@@ -381,11 +401,30 @@ class RunStore:
                   on v.id = a.delivery_version_id and v.workspace_id = a.workspace_id
                 where a.workspace_id = %s and a.work_item_id = %s and a.status = 'decided'
                   and a.decision in ('changes_requested', 'rejected', 'answered')
+                  and a.step_id is not distinct from %s
                 order by a.decided_at desc, a.id desc
                 limit 1
                 """,
-                (self.workspace_id, row["work_item_id"]),
+                (self.workspace_id, row["work_item_id"], row["step_id"]),
             )
+            step = None
+            if row["step_id"] is not None:
+                step_row = await fetchone(
+                    conn,
+                    """
+                    select s.id, s.seq, s.title, s.agent_id::text, s.delivery_type, s.input,
+                           s.depends_on,
+                           (select count(*) from public.work_item_steps t
+                            where t.work_item_id = s.work_item_id and t.delivery_type is not null
+                           ) as total
+                    from public.work_item_steps s
+                    where s.id = %s and s.workspace_id = %s
+                    """,
+                    (row["step_id"], self.workspace_id),
+                )
+                if step_row is not None:
+                    step = WorkStep(**step_row)
+                    self.step_id = step.id
         item = WorkItem(
             id=row["work_item_id"],
             status=row["status"],
@@ -406,6 +445,7 @@ class RunStore:
             history=history,
             feedback=dict(feedback) if feedback else None,
             next_version=row["next_version"],
+            step=step,
         )
 
     async def load_reply(self, *, history_limit: int) -> ReplyData:
@@ -532,22 +572,76 @@ class RunStore:
             return await (
                 await conn.execute(
                     """
-                    select distinct on (w.delivery_type)
-                           w.delivery_type, w.title, v.id as delivery_version_id, v.version_no,
-                           v.content
+                    select distinct on (coalesce(s.delivery_type, w.delivery_type))
+                           coalesce(s.delivery_type, w.delivery_type) as delivery_type, w.title,
+                           v.id as delivery_version_id, v.version_no, v.content,
+                           s.id as step_id, s.seq as step_seq, s.agent_id::text as step_agent_id
                     from public.delivery_versions v
                     join public.deliveries d
                       on d.id = v.delivery_id and d.workspace_id = v.workspace_id
                     join public.work_items w
                       on w.id = d.work_item_id and w.workspace_id = d.workspace_id
+                    left join public.work_item_steps s
+                      on s.id = d.step_id and s.workspace_id = d.workspace_id
                     where v.workspace_id = %s and v.status = 'approved'
-                      and w.delivery_type = any(%s)
+                      and coalesce(s.delivery_type, w.delivery_type) = any(%s)
                       and (%s::uuid is null or w.project_id = %s::uuid)
-                    order by w.delivery_type, v.created_at desc, v.id desc
+                    order by coalesce(s.delivery_type, w.delivery_type), v.created_at desc, v.id desc
                     """,
                     (self.workspace_id, delivery_types, project_id, project_id),
                 )
             ).fetchall()
+
+    async def step_outputs(self, step: WorkStep, work_item_id: UUID) -> list[dict[str, Any]]:
+        """Handoff: a saída de cada etapa de que esta depende (a versão que fechou a etapa)."""
+        if not step.depends_on:
+            return []
+        async with self.pool.connection() as conn:
+            return await (
+                await conn.execute(
+                    """
+                    select s.delivery_type, w.title, v.id as delivery_version_id, v.version_no,
+                           v.content, s.id as step_id, s.seq as step_seq,
+                           s.agent_id::text as step_agent_id
+                    from public.work_item_steps s
+                    join public.work_items w
+                      on w.id = s.work_item_id and w.workspace_id = s.workspace_id
+                    join public.delivery_versions v
+                      on v.id = (s.output ->> 'delivery_version_id')::uuid
+                     and v.workspace_id = s.workspace_id
+                    where s.workspace_id = %s and s.work_item_id = %s and s.seq = any(%s)
+                      and s.status = 'done'
+                    order by s.seq
+                    """,
+                    (self.workspace_id, work_item_id, step.depends_on),
+                )
+            ).fetchall()
+
+    async def record_handoff(self, documents: list[dict[str, Any]]) -> None:
+        """O que veio de outra etapa entra em run_context_items (kind step, motivo handoff)."""
+        rows = [
+            (
+                self.workspace_id,
+                self.run_id,
+                d["step_id"],
+                d["delivery_version_id"],
+                estimate_tokens(json.dumps(d["content"], ensure_ascii=False)),
+            )
+            for d in documents
+            if d.get("step_id") is not None
+        ]
+        if not rows:
+            return
+        async with self.pool.connection() as conn, conn.cursor() as cur:
+            await cur.executemany(
+                """
+                insert into public.run_context_items (
+                  workspace_id, run_id, kind, step_id, delivery_version_id, reason, tokens
+                ) values (%s, %s, 'step', %s, %s, 'handoff', %s)
+                on conflict do nothing
+                """,
+                rows,
+            )
 
     async def calendar_window(self, start: date, end: date) -> list[dict[str, Any]]:
         """O que já está no calendário editorial no período (pauta e propostas em aberto)."""
@@ -757,9 +851,40 @@ class RunStore:
         return seq
 
     async def work_step(self, work_item_id: UUID, title: str, agent_id: str, status: str) -> None:
-        """Etapa do trabalho com o agente responsável. Repetir (nova tentativa) atualiza a mesma."""
+        """Etapa do trabalho com o agente responsável. Repetir (nova tentativa) atualiza a mesma.
+
+        Run de uma etapa planejada (01.02): as fases do run não viram etapas; só a etapa dele começa.
+        """
         async with self.pool.connection() as conn:
+            if self.step_id is not None:
+                if status == "in_progress":
+                    await self._plan_step(conn, "in_progress")
+                return
             await self._work_step(conn, work_item_id, title, agent_id, status)
+
+    async def _plan_step(
+        self,
+        conn: AsyncConnection[DictRow],
+        status: str,
+        *,
+        reason: str | None = None,
+        output: dict[str, Any] | None = None,
+    ) -> None:
+        await conn.execute(
+            """
+            update public.work_item_steps
+            set status = %s, started_at = coalesce(started_at, now()), status_reason = %s,
+                status_params = '{}'::jsonb, output = coalesce(%s, output)
+            where id = %s and workspace_id = %s
+            """,
+            (
+                status,
+                reason,
+                Jsonb(output) if output is not None else None,
+                self.step_id,
+                self.workspace_id,
+            ),
+        )
 
     async def _work_step(
         self,
@@ -837,18 +962,19 @@ class RunStore:
                 """
                 select id, current_version_id from public.deliveries
                 where workspace_id = %s and work_item_id = %s and kind = %s
+                  and step_id is not distinct from %s
                 order by created_at, id
                 limit 1
                 for update
                 """,
-                (self.workspace_id, work_item.id, kind),
+                (self.workspace_id, work_item.id, kind, self.step_id),
             )
             if delivery is None:
                 delivery = await fetchone(
                     conn,
-                    "insert into public.deliveries (workspace_id, work_item_id, kind) "
-                    "values (%s, %s, %s) returning id, current_version_id",
-                    (self.workspace_id, work_item.id, kind),
+                    "insert into public.deliveries (workspace_id, work_item_id, kind, step_id) "
+                    "values (%s, %s, %s, %s) returning id, current_version_id",
+                    (self.workspace_id, work_item.id, kind, self.step_id),
                 )
             version = await fetchone(
                 conn,
@@ -905,11 +1031,18 @@ class RunStore:
                 """
                 insert into public.approvals (
                   workspace_id, work_item_id, delivery_version_id, run_id, kind,
-                  requested_by_agent_id
-                ) values (%s, %s, %s, %s, 'review', %s)
+                  requested_by_agent_id, step_id
+                ) values (%s, %s, %s, %s, 'review', %s, %s)
                 returning id
                 """,
-                (self.workspace_id, work_item.id, version["id"], self.run_id, agent_id),
+                (
+                    self.workspace_id,
+                    work_item.id,
+                    version["id"],
+                    self.run_id,
+                    agent_id,
+                    self.step_id,
+                ),
             )
             await self._card(
                 conn,
@@ -930,7 +1063,23 @@ class RunStore:
             )
             suggestions = await self._suggest(conn, work_item, agent_id, observations or [])
             await transition(conn, work_item.id, "needs_you", "agent", agent_id, "in_progress")
-            await self._work_step(conn, work_item.id, work_step_title, agent_id, "done")
+            if self.step_id is not None:
+                # A etapa espera a decisão do dono; o marco dela vira "decisão sua" com a pendência.
+                await self._plan_step(
+                    conn,
+                    "needs_you",
+                    output={
+                        "delivery_version_id": str(version["id"]),
+                        "version_no": version["version_no"],
+                    },
+                )
+                await conn.execute(
+                    "update public.project_milestones set approval_id = %s "
+                    "where step_id = %s and workspace_id = %s and done_at is null",
+                    (approval_id, self.step_id, self.workspace_id),
+                )
+            else:
+                await self._work_step(conn, work_item.id, work_step_title, agent_id, "done")
             # Entregou: cobra a reserva antes do succeeded (run concluído sem captura libera tudo).
             await conn.execute(
                 """
@@ -1055,11 +1204,11 @@ class RunStore:
                 conn,
                 """
                 insert into public.approvals (
-                  workspace_id, work_item_id, run_id, kind, requested_by_agent_id
-                ) values (%s, %s, %s, 'respond', %s)
+                  workspace_id, work_item_id, run_id, kind, requested_by_agent_id, step_id
+                ) values (%s, %s, %s, 'respond', %s, %s)
                 returning id
                 """,
-                (self.workspace_id, work_item.id, self.run_id, agent_id),
+                (self.workspace_id, work_item.id, self.run_id, agent_id, self.step_id),
             )
             await self._card(
                 conn,
@@ -1074,11 +1223,233 @@ class RunStore:
                 {"approval_id": approval_id, "kind": "respond", **(status or {})},
             )
             await transition(conn, work_item.id, "needs_you", "agent", agent_id, "in_progress")
+            if self.step_id is not None:
+                await self._plan_step(conn, "needs_you")
             totals = await self._succeed(conn, model=model, prompt_version=None)
             await self._event(
                 conn, "finished", {"status": "succeeded", "work_item_status": "needs_you"}
             )
         return {"message_id": message_id, "approval_id": approval_id, **totals}
+
+    async def coordinate(
+        self,
+        *,
+        work_item: WorkItem,
+        plan: CoordinationPlan,
+        tool_data: dict[str, Any],
+        model: str,
+        prompt_version: str,
+        live: "WorkLive | None" = None,
+    ) -> dict[str, Any]:
+        """Equipe montada (01.02): projeto, participantes, etapas por agente ligadas aos marcos do
+        roadmap, cartão `team` do Nexo na conversa e a primeira etapa na fila (um especialista por
+        vez). A coordenação não entrega versão: não captura créditos (a reserva é liberada)."""
+        agents = list(dict.fromkeys(step.agente for step in plan.etapas))
+        responsibilities: dict[str, list[str]] = {}
+        for step in plan.etapas:
+            responsibilities.setdefault(step.agente, []).append(step.responsabilidade)
+        team = [
+            {"agent_id": agent, "responsibility": " · ".join(dict.fromkeys(responsibilities[agent]))}
+            for agent in agents
+        ]
+        async with self.pool.connection() as conn, conn.transaction():
+            await self._fence(conn)
+            project_id = work_item.project_id
+            if project_id is None and plan.projeto is not None:
+                project_id = await fetchval(
+                    conn,
+                    """
+                    insert into public.projects (
+                      workspace_id, name, objective, owner_agent_id, created_by, starts_at
+                    )
+                    select %s, %s, %s, 'nexo', w.created_by, now()
+                    from public.work_items w where w.id = %s and w.workspace_id = %s
+                    returning id
+                    """,
+                    (
+                        self.workspace_id,
+                        plan.projeto.nome,
+                        plan.projeto.objetivo,
+                        work_item.id,
+                        self.workspace_id,
+                    ),
+                )
+                await self._start_step(
+                    conn,
+                    "tool_call",
+                    None,
+                    {"tool": "projetos.criar", "agent_id": "nexo", "project_id": project_id},
+                    status="succeeded",
+                )
+            if project_id is not None:
+                async with conn.cursor() as cur:
+                    await cur.executemany(
+                        """
+                        insert into public.project_participants (
+                          workspace_id, project_id, agent_id, responsibility
+                        ) values (%s, %s, %s, %s)
+                        on conflict (project_id, agent_id)
+                        do update set responsibility = excluded.responsibility
+                        """,
+                        [
+                            (self.workspace_id, project_id, m["agent_id"], m["responsibility"][:120])
+                            for m in team
+                        ],
+                    )
+            await conn.execute(
+                """
+                update public.work_items
+                set project_id = %s, collaborator_agent_ids = %s::public.agent_id[],
+                    briefing = briefing || %s
+                where id = %s and workspace_id = %s
+                """,
+                (
+                    project_id,
+                    agents,
+                    Jsonb(plan.briefing.model_dump()),
+                    work_item.id,
+                    self.workspace_id,
+                ),
+            )
+            step_ids = []
+            for seq, step in enumerate(plan.etapas, start=1):
+                step_id = await fetchval(
+                    conn,
+                    """
+                    insert into public.work_item_steps (
+                      workspace_id, work_item_id, seq, title, agent_id, delivery_type, depends_on,
+                      input
+                    ) values (%s, %s, %s, %s, %s, %s, %s, %s)
+                    returning id
+                    """,
+                    (
+                        self.workspace_id,
+                        work_item.id,
+                        seq,
+                        step.titulo,
+                        step.agente,
+                        step.delivery,
+                        step.depende_de,
+                        Jsonb(
+                            {
+                                "instrucao": step.instrucao,
+                                "responsabilidade": step.responsabilidade,
+                                "briefing": plan.briefing.model_dump(),
+                            }
+                        ),
+                    ),
+                )
+                step_ids.append(step_id)
+                if project_id is not None:
+                    await conn.execute(
+                        """
+                        insert into public.project_milestones (
+                          workspace_id, project_id, title, summary, agent_id, needs_you, planned,
+                          work_item_id, step_id
+                        ) values (%s, %s, %s, %s, %s, true, true, %s, %s)
+                        """,
+                        (
+                            self.workspace_id,
+                            project_id,
+                            step.titulo,
+                            step.responsabilidade[:300],
+                            step.agente,
+                            work_item.id,
+                            step_id,
+                        ),
+                    )
+            await self._start_step(
+                conn,
+                "tool_call",
+                None,
+                tool_data | {"project_id": project_id, "step_ids": step_ids},
+                status="succeeded",
+            )
+            await conn.execute(
+                """
+                insert into public.work_item_history (
+                  workspace_id, work_item_id, actor_type, actor_agent_id, kind, params, mark
+                ) values (%s, %s, 'agent', 'nexo', 'team', %s, 'automatic')
+                """,
+                (
+                    self.workspace_id,
+                    work_item.id,
+                    Jsonb({"agents": agents, "project_id": str(project_id) if project_id else None}),
+                ),
+            )
+            message_id = await self._agent_message(
+                conn, work_item.conversation_id, "nexo", plan.mensagem, []
+            )
+            await self._card(
+                conn,
+                message_id,
+                {
+                    "type": "team",
+                    "members": team,
+                    "project_id": str(project_id) if project_id else None,
+                    "actions": [],
+                },
+                work_item_id=work_item.id,
+            )
+            if live is not None:
+                await conn.execute(
+                    "update public.work_items set status_label = %s, next_step = %s "
+                    "where id = %s and workspace_id = %s",
+                    (live.status_label, live.next_step, work_item.id, self.workspace_id),
+                )
+            advanced = await fetchval(conn, "select app.advance_work_steps(%s)", (work_item.id,))
+            await self._event(
+                conn,
+                "work.planned",
+                {"project_id": project_id, "steps": len(step_ids), "agents": agents},
+            )
+            totals = await self._succeed(conn, model=model, prompt_version=prompt_version)
+            await self._event(
+                conn, "finished", {"status": "succeeded", "work_item_status": "in_progress"}
+            )
+        return {
+            "project_id": project_id,
+            "step_ids": step_ids,
+            "message_id": message_id,
+            "advanced": advanced,
+            **totals,
+        }
+
+    async def wait_engine(
+        self,
+        *,
+        work_item: WorkItem,
+        agent_id: str,
+        message: str,
+        tool_data: dict[str, Any],
+        reason: str,
+        status: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
+        """Etapa de imagem sem motor: aguarda o motor do dono (waiting_engine). Não falha, não
+        cobra (sem captura, a reserva é liberada) e a próxima etapa que não depende dela segue."""
+        async with self.pool.connection() as conn, conn.transaction():
+            await self._fence(conn)
+            await self._start_step(conn, "tool_call", None, tool_data, status="succeeded")
+            await self._plan_step(conn, "waiting_engine", reason=reason)
+            message_id = await self._agent_message(
+                conn, work_item.conversation_id, agent_id, message, []
+            )
+            await self._event(
+                conn,
+                "step.waiting_engine",
+                {"step_id": self.step_id, "agent_id": agent_id, "reason": reason, **(status or {})},
+            )
+            advanced = await fetchval(conn, "select app.advance_work_steps(%s)", (work_item.id,))
+            work_status = await fetchval(
+                conn,
+                "select status::text from public.work_items where id = %s and workspace_id = %s",
+                (work_item.id, self.workspace_id),
+            )
+            totals = await self._succeed(conn, model=None, prompt_version=None)
+            await self._event(
+                conn, "finished", {"status": "succeeded", "work_item_status": work_status}
+            )
+        return {"message_id": message_id, "advanced": advanced, "work_status": work_status, **totals}
 
     async def reply(
         self, *, conversation_id: UUID, agent_id: str, body: str, model: str, prompt_version: str
@@ -1252,7 +1623,7 @@ class RunStore:
         )
 
     async def _succeed(
-        self, conn: AsyncConnection[DictRow], *, model: str, prompt_version: str | None
+        self, conn: AsyncConnection[DictRow], *, model: str | None, prompt_version: str | None
     ) -> dict[str, Any]:
         totals = await self._totals(conn)
         await conn.execute(
