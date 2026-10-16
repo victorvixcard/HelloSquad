@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { signIn, snap } from "./helpers";
+import { grantLocalCredits, signIn, snap } from "./helpers";
 
 // A2b (Otto): o pedido "Preparar o calendário editorial" do catálogo "O que pedir ao Otto" vira o trabalho da 04.02;
 // o worker simulado do e2e entrega a v1 (fixture `04.02/otto.produce.json`, posts de 19 a 23/10/2026) e os posts
@@ -19,6 +19,7 @@ async function enterAsMarina(page: Page, path: string) {
 
 test.describe("Conteúdo · Otto (A2b)", () => {
   test("Preparar o calendário editorial vira a pauta proposta no calendário, aprovada pela Marina", async ({ page }) => {
+    grantLocalCredits("miolo", 10, "a2b-otto");
     test.setTimeout(120_000);
     await enterAsMarina(page, CONTENT);
     await expect(page.getByRole("heading", { level: 1, name: "Conteúdo" })).toBeVisible();

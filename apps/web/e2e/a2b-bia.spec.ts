@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { signIn, snap } from "./helpers";
+import { grantLocalCredits, signIn, snap } from "./helpers";
 
 // A2b (Bia): o pedido "Analisar meu negócio" do catálogo "O que pedir à Bia" vira o trabalho do diagnóstico (02.01),
 // o worker simulado do e2e entrega a v1, a Marina (owner) lê o documento, aprova o diagnóstico e o encontra na
@@ -16,6 +16,7 @@ async function enterAsMarina(page: Page, path: string) {
 
 test.describe("Estratégia · Bia (A2b)", () => {
   test("Analisar meu negócio vira o diagnóstico em documento, aprovado e na prateleira", async ({ page }) => {
+    grantLocalCredits("miolo", 10, "a2b-bia");
     await enterAsMarina(page, "/app/miolo/squad/bia");
     await expect(page.getByRole("heading", { level: 1, name: "Estratégia" })).toBeVisible();
 

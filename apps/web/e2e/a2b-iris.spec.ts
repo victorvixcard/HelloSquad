@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { signIn, snap } from "./helpers";
+import { grantLocalCredits, signIn, snap } from "./helpers";
 
 // A2b (Íris): Resultados com as séries do seed da S2b (90 dias até ontem, origem "fonte de teste", buraco de 3 dias nas
 // sessões da Miolo). O pedido "Montar um relatório" do catálogo "O que pedir à Íris" vira o relatório do período
@@ -16,6 +16,7 @@ async function enterAsMarina(page: Page, path: string) {
 
 test.describe("Resultados · Íris (A2b)", () => {
   test("indicadores com número e origem; Montar um relatório vira o relatório do período em documento", async ({ page }) => {
+    grantLocalCredits("miolo", 10, "a2b-iris");
     await enterAsMarina(page, "/app/miolo/squad/iris");
     await expect(page.getByRole("heading", { level: 1, name: "Resultados" })).toBeVisible();
 

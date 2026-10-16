@@ -29,6 +29,15 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
+      testIgnore: /a2b-.*\.spec\.ts$/,
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+    },
+    // A2b: os fluxos das entregas novas pedem entregas (créditos), aprovam e importam contatos; rodam depois dos fluxos
+    // que contam com o seed intacto (contagens da barra, créditos da Miolo). O teardown reaplica o seed no fim.
+    {
+      name: "chromium-a2b",
+      testMatch: /a2b-.*\.spec\.ts$/,
+      dependencies: ["chromium"],
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
     },
   ],
