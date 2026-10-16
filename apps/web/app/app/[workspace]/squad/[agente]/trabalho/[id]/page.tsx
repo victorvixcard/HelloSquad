@@ -165,6 +165,7 @@ export default async function TrabalhoPage({ params }: Params) {
       envLabel: tc(`areas.${agente}`),
       steps,
       history: apiHistory.length ? apiHistory.reverse() : history,
+      cancelled: item.status === "cancelled",
     };
     return <CoordinatedWork key={`${item.status}:${item.updated_at}`} data={coordinated} />;
   }

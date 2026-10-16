@@ -159,6 +159,28 @@ describe("tela do projeto coordenado", () => {
     expect(kaia).toHaveTextContent("Aguardando o motor de imagem");
   });
 
+  it("rejeitar tem as duas saídas na etapa: nova proposta ou cancelar o trabalho", async () => {
+    const decide = vi.fn().mockResolvedValue({ ok: true, data: { decision: "rejected" } });
+    const data = { ...BASE, steps: [STEP({ status: "needs_you", version: { no: 1, excerpt: "Estratégia." }, approvalId: "ap-bia" })] };
+    renderWithShell(<CoordinatedWork data={data} decide={decide} />);
+    await userEvent.click(screen.getByRole("button", { name: "Pedir nova proposta" }));
+    expect(decide).toHaveBeenCalledWith("ap-bia", "rejected", undefined, "revise");
+    await userEvent.click(screen.getByRole("button", { name: "Cancelar trabalho" }));
+    expect(decide).toHaveBeenCalledWith("ap-bia", "rejected", undefined, "cancel");
+  });
+
+  it("cancelado: nenhuma decisão e o aviso de trabalho cancelado", () => {
+    const data = {
+      ...BASE,
+      cancelled: true,
+      steps: [STEP({ status: "skipped" }), STEP({ seq: 2, title: "Peças", agent: "kaia", status: "skipped" })],
+    };
+    renderWithShell(<CoordinatedWork data={data} decide={vi.fn()} />);
+    expect(screen.queryAllByRole("button", { name: /^Aprovar v\d$/ })).toHaveLength(0);
+    expect(screen.getByText("Trabalho cancelado")).toBeInTheDocument();
+    expect(screen.getByRole("listitem", { name: /^Etapa 2 · Peças · Kaia/ })).toHaveAccessibleName("Etapa 2 · Peças · Kaia · Não feita");
+  });
+
   it("pedir ajuste abre a conversa do pedido (Sala do Squad) com o texto do ajuste", async () => {
     const openConversation = vi.fn();
     const shell = makeShell({ openConversation });

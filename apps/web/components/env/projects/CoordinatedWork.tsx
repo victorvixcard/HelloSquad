@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, type CSSProperties } from "react";
-import { decideApprovalAction } from "@/app/app/[workspace]/actions";
+import { decideApprovalAction, type FollowUp } from "@/app/app/[workspace]/actions";
 import { useShell } from "@/components/product/shell-context";
 
 export type StepStatus = "pending" | "in_progress" | "needs_you" | "waiting_engine" | "blocked" | "done" | "failed" | "skipped";
@@ -41,6 +41,8 @@ export type CoordinatedWorkData = {
   envLabel: string;
   steps: CoordinatedStep[];
   history: Array<{ agent: AgentId | null; text: string; at: string }>;
+  /** O trabalho foi cancelado por você (as etapas abertas ficam "não feitas", S2d). */
+  cancelled?: boolean;
 };
 
 type Tab = "deliveries" | "decisions" | "squad" | "history";
@@ -101,11 +103,12 @@ export function CoordinatedWork({ data, decide = decideApprovalAction }: { data:
     }
   };
 
-  async function approve(s: CoordinatedStep) {
+  // Aprovar, pedir nova proposta ou cancelar o trabalho (decisão do dono de 16/10 08:55: rejeitar tem as duas saídas).
+  async function run(s: CoordinatedStep, kind: "approve" | FollowUp) {
     if (!s.approvalId || busy || !shell.canDecide) return;
-    setBusy(s.approvalId);
+    setBusy(`${s.approvalId}:${kind}`);
     setError(false);
-    const result = await decide(s.approvalId, "approved");
+    const result = kind === "approve" ? await decide(s.approvalId, "approved") : await decide(s.approvalId, "rejected", undefined, kind);
     setBusy(null);
     if (!result.ok) {
       setError(true);
@@ -128,7 +131,9 @@ export function CoordinatedWork({ data, decide = decideApprovalAction }: { data:
   const waiting = data.steps.find((s) => s.status === "needs_you" && s.approvalId);
   const running = data.steps.find((s) => s.status === "in_progress");
   const allDone = data.steps.length > 0 && data.steps.every((s) => s.status === "done" || s.status === "waiting_engine" || s.status === "skipped");
-  const next = waiting
+  const next = data.cancelled
+    ? { agent: "nexo" as AgentId, t: tw("cancelled"), s: tw("cancelledText", { agent: getAgent("nexo").name }) }
+    : waiting
     ? { agent: waiting.agent, t: t("next.approve", { step: waiting.title }), s: t("next.approveSub", { version: waiting.version?.no ?? 1 }) }
     : running
       ? { agent: running.agent, t: t("next.none"), s: t("next.working", { name: getAgent(running.agent).name, step: running.title }) }
@@ -219,11 +224,24 @@ export function CoordinatedWork({ data, decide = decideApprovalAction }: { data:
                   {s.status === "needs_you" && s.approvalId ? (
                     shell.canDecide ? (
                       <div className="ps-dec-a">
-                        <Button variant="primary" size="s" icon="check" state={busy === s.approvalId ? "loading" : "rest"} loadingLabel={tw("approving")} onClick={() => approve(s)}>
+                        <Button
+                          variant="primary"
+                          size="s"
+                          icon="check"
+                          state={busy === `${s.approvalId}:approve` ? "loading" : "rest"}
+                          loadingLabel={tw("approving")}
+                          onClick={() => run(s, "approve")}
+                        >
                           {tw("approve", { version: s.version?.no ?? 1 })}
                         </Button>
                         <Button variant="soft" size="s" icon={null} onClick={() => adjust(s)}>
                           {tw("adjust")}
+                        </Button>
+                        <Button variant="soft" size="s" icon={null} state={busy === `${s.approvalId}:revise` ? "loading" : "rest"} onClick={() => run(s, "revise")}>
+                          {tw("newProposal")}
+                        </Button>
+                        <Button variant="soft" size="s" icon={null} state={busy === `${s.approvalId}:cancel` ? "loading" : "rest"} onClick={() => run(s, "cancel")}>
+                          {tw("cancelWork")}
                         </Button>
                       </div>
                     ) : (

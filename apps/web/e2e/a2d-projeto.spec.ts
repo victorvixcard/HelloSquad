@@ -141,5 +141,19 @@ test.describe("Projeto coordenado (A2d, H2-01), com o worker do squad em modo si
     await expect(team).toBeVisible({ timeout: 45_000 });
     await expect(team.locator(".ps-team-r")).toHaveCount(3);
     await snap(page, "a2d-nexo-catalogo-equipe");
+
+    // Rejeitar tem as duas saídas (dono, 16/10 08:55): aqui, cancelar o trabalho na etapa da Bia. As etapas abertas
+    // ficam não feitas e nada mais roda (o resto da suíte não herda pendência nem run deste projeto).
+    await team.getByRole("button", { name: "Abrir o projeto" }).click();
+    await expect(page).toHaveURL(/\/app\/miolo\/squad\/nexo\/trabalho\/[0-9a-f-]{36}$/);
+    const workId = new URL(page.url()).pathname.split("/").pop() as string;
+    const main = page.getByRole("main");
+    await expect(stage(main, 1, "Estratégia", "Bia")).toHaveAccessibleName(/v1 aguarda você$/, { timeout: 45_000 });
+    await main.locator('.ps-ent[data-step="1"]').getByRole("button", { name: "Cancelar trabalho" }).click();
+    await expect(main.locator(".ps-nextd")).toContainText("Trabalho cancelado", { timeout: 30_000 });
+    await expect(main.getByRole("button", { name: /^Aprovar v\d$/ })).toHaveCount(0);
+    await expect(stage(main, 3, "Textos", "Otto")).toHaveAccessibleName(/Não feita$/);
+    expect(sql(`select status from public.work_items where id = '${workId}'`)).toBe("cancelled");
+    expect(sql(`select count(*) from public.runs where work_item_id = '${workId}' and status in ('queued', 'running')`)).toBe("0");
   });
 });
