@@ -1,0 +1,18 @@
+# Passos do SETUP_LOCAL no clone /tmp/h1_clone (commit b090f2e), exit code e tempo
+corepack enable pnpm exit=0 0s
+cp .env.example .env exit=0 0s
+openssl rand -hex 24 exit=0 len=48 (gerada, NAO usada por restricao do ambiente compartilhado)
+formato da URL principal: scheme=postgresql user=hellosquad_api host=127.0.0.1 port=56322 db=/postgres senha_len=48
+API_DATABASE_URL do clone == do principal (sha256 iguais)
+make up (sob flock) exit=0 tempo=4s
+supabase status -o env exit=0 tempo=1s
+PUBLISHABLE_KEY prefixo=sb_publishable_ len=46; SECRET_KEY prefixo=sb_secret_ len=41; API_URL=http://127.0.0.1:56321; DB_URL_igual_ao_example=True
+variaveis preenchidas no .env do clone: 3
+make migrate (sob flock) exit=0 tempo=1s
+make seed exit=0 tempo=1s
+make test exit=0 tempo=41s fim=13:32:01
+worker (flock + timeout -s TERM 25) exit=124 tempo=914s
+make -C /tmp/h1_clone seed (final) exit=0 tempo=0s fim=13:48:12
+repo principal: flock ... uv run hellosquad-local-db roles exit=0 tempo=1s
+health: {"status":"ok","version":"0.1.0","environment":"local"}
+q_runs_interactive=0 workspaces=miolo,trilha,vitta

@@ -1,0 +1,15 @@
+# make migrate (sob flock) e make seed
+pnpm exec supabase migration up --local
+Connecting to local database...
+{"applied": [], "message": "Migrations applied"}
+cd apps/backend && uv run hellosquad-local-db roles
+senha do papel hellosquad_api definida a partir de API_DATABASE_URL
+---
+flock -w 1800 /tmp/hellosquad-db.lock bash -c 'cd apps/backend && uv run hellosquad-local-db seed ../../supabase/seed.sql'
+  miolo    owner           marina@miolo.example
+  trilha   owner           juliana@trilha.example
+  vitta    editor          carla@vitta.example
+  vitta    owner           rafael@vitta.example
+  -        sem membership  pedro@semconta.example
+seed aplicado: ../../supabase/seed.sql
+senha do papel hellosquad_api definida a partir de API_DATABASE_URL

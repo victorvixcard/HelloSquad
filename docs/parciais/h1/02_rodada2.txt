@@ -1,0 +1,16 @@
+OK    T2 mesmo run 3x na fila, 2 workers ao mesmo tempo: mensagens=3; saídas=[['delivered', 'busy', 'busy'], []]+['finished', 'finished']; run={'status': 'succeeded', 'attempts': 1, 'credits_charged': Decimal('10.00')}; extrato={'capture': (1, -10.0), 'hold': (1, 0.0)}; versões=1; fila depois=0; saldo 336.0->326.0
+run cea2c2e9-18df-4c66-a881-903c5b39317e: llm_unavailable na tentativa 1; nova tentativa em 0.0s
+OK    T3 falha passageira depois de produzir, retry e sucesso: ['retry']->{'status': 'queued', 'attempts': 1} reserva no meio=[{'state': 'held', 'estimate': Decimal('10.00')}]; ['delivered']->{'status': 'succeeded', 'attempts': 2, 'credits_charged': Decimal('10.00')}; reservas=1; extrato={'capture': (1, -10.0), 'hold': (1, 0.0)}; saldo 326.0->316.0
+OK    T4 reenfileirar run concluído: app.enqueue_run recusou (55000); mensagem duplicada crua -> saída=['finished']; extrato antes={'capture': (1, -10.0), 'hold': (1, 0.0)} depois={'capture': (1, -10.0), 'hold': (1, 0.0)}; versões=1
+run 2561aef0-3e83-4d42-9764-ac2908bb3557 falhou (llm_refusal, tentativa 1); trabalho em failed; mensagem 966 arquivada
+OK    T5 falha definitiva libera a reserva: ['failed']; run={'status': 'failed', 'attempts': 1, 'credits_charged': Decimal('0.00'), 'code': 'llm_refusal'}; trabalho=failed; reserva=[{'state': 'released'}]; extrato={'hold': (1, 0.0), 'release': (1, 0.0)}; saldo 316.0->316.0; reservado nos grants=[0.0, 0.0]
+run a759c7ef-06e9-45ad-aef1-f4f5a38556a1: llm_unavailable na tentativa 1; nova tentativa em 0.0s
+run a759c7ef-06e9-45ad-aef1-f4f5a38556a1: llm_unavailable na tentativa 2; nova tentativa em 0.0s
+run a759c7ef-06e9-45ad-aef1-f4f5a38556a1 falhou (llm_unavailable, tentativa 3); trabalho em failed; mensagem 967 arquivada
+OK    T5b falha passageira esgota tentativas e libera: ['retry', 'retry', 'failed']; run={'status': 'failed', 'attempts': 3}; extrato={'hold': (1, 0.0), 'release': (1, 0.0)}; saldo=316.0
+OK    T6 pergunta (respond) não cobra; a resposta gera a entrega cobrada uma vez: ['asked']->['delivered']; pendência respond=True; extrato após a pergunta={'hold': (1, 0.0), 'release': (1, 0.0)}; após a entrega={'capture': (1, -10.0), 'hold': (2, 0.0), 'release': (1, 0.0)}; saldo 316.0->316.0->306.0; estimativa=10.0 revisão=False
+OK    T7 estimativa = cobrado (primeira versão e ajuste): estimativas=10.0/10.0 (revisão=True); cobrado por run=[10.0, 10.0]
+OK    T11 teto por workspace (3) com 2 workers de concorrência 4: picos={'miolo': 3, 'vitta': 3, 'total': 6}; runs={'succeeded': 9, 'waiting_approval': 1}
+OK    T12 SIGTERM no meio do run: exit=0; logo após o sinal={'status': 'queued', 'attempts': 0}; depois=['delivered'] {'status': 'succeeded', 'attempts': 1, 'credits_charged': Decimal('10.00')}; extrato={'capture': (1, -10.0), 'hold': (1, 0.0)}; versões=1; saldo 136.0->126.0
+OK    T12 SIGKILL no meio do run: exit=-9; logo após o sinal={'status': 'running', 'attempts': 1}; depois=['delivered'] {'status': 'succeeded', 'attempts': 2, 'credits_charged': Decimal('10.00')}; extrato={'capture': (1, -10.0), 'hold': (1, 0.0)}; versões=1; saldo 126.0->116.0
+RESUMO: 10 de 10 OK

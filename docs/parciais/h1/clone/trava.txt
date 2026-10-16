@@ -1,0 +1,12 @@
+# Trava /tmp/hellosquad-db.lock presa por worker orfao (13:32:07 a 13:47:11). Coleta das 13:42 as 13:46.
+fuser -v /tmp/hellosquad-db.lock (13:46:23):
+  vitao 88195 f.... uv               <- uv run hellosquad-worker (repo principal, setsid, PPid=276 systemd --user)
+  vitao 88201 f.... hellosquad-work  <- python do worker; fd 1/2 -> /tmp/h1_worker_aceite.log; fd 3 -> /tmp/hellosquad-db.lock
+  vitao 88362 f.... flock            <- este passo 4, esperando desde 13:32:22
+  vitao 91838 f.... flock            <- 02_idempotencia_creditos_worker.py da outra auditoria, esperando desde 13:36:39 (-w 900)
+ultimas linhas do log do worker orfao (/tmp/h1_worker_aceite.log):
+2026-10-16 13:32:08,564 INFO hellosquad.worker: worker no ar: fila runs_interactive, concorrência 4, teto por workspace 3, LLM simulated
+2026-10-16 13:33:11,815 INFO hellosquad.worker: run <id> concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 347
+2026-10-16 13:47:11,006 INFO hellosquad.worker: sinal de encerramento recebido: parando de ler a fila
+2026-10-16 13:47:11,006 INFO hellosquad.worker: worker encerrado
+# padrao igual no fluxo oficial: apps/web/e2e/global-setup.ts -> spawn('uv', ['run','hellosquad-worker'], {detached: true}) + child.unref() dentro do make e2e (que segura a trava)

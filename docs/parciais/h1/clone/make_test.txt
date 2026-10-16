@@ -1,0 +1,60 @@
+# make test: contagens (grep) e tail -n 40
+inicio make test: 13:31:20
+make test exit=0 tempo=41s fim=13:32:01
+All checks passed!
+71 files already formatted
+collected 133 items
+============================= 133 passed in 25.86s =============================
+$ eslint
+packages/contracts typecheck: Done
+packages/ui typecheck: Done
+apps/web typecheck: Done
+packages/contracts test:  Test Files  1 passed (1)
+packages/contracts test:       Tests  9 passed (9)
+packages/ui test:  Test Files  5 passed (5)
+packages/ui test:       Tests  49 passed (49)
+apps/web test:  Test Files  16 passed (16)
+apps/web test:       Tests  121 passed (121)
+Files=21, Tests=489,  1 wallclock secs ( 0.05 usr  0.02 sys +  0.09 cusr  0.09 csys =  0.25 CPU)
+Result: PASS
+--- tail -n 40 ---
+apps/web test$ vitest run
+apps/web test: (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+apps/web test:   - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+apps/web test: Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+apps/web test: 
+apps/web test:  RUN  v5.0.4 /tmp/h1_clone/apps/web
+apps/web test: 
+apps/web test: 
+apps/web test:  Test Files  16 passed (16)
+apps/web test:       Tests  121 passed (121)
+apps/web test:    Start at  13:31:55
+apps/web test:    Duration  3.12s (tests 45%, environment 29%, transform 14%, setup 7%, import 4%)
+apps/web test: 
+apps/web test: Done
+flock -w 1800 /tmp/hellosquad-db.lock pnpm exec supabase test db
+Connecting to local database...
+/tmp/h1_clone/supabase/tests/database/00_extensions.test.sql ............. ok
+/tmp/h1_clone/supabase/tests/database/01_rls_coverage.test.sql ........... ok
+/tmp/h1_clone/supabase/tests/database/02_workspace_isolation.test.sql .... ok
+/tmp/h1_clone/supabase/tests/database/03_membership_management.test.sql .. ok
+/tmp/h1_clone/supabase/tests/database/04_invitations.test.sql ............ ok
+/tmp/h1_clone/supabase/tests/database/05_audit_events.test.sql ........... ok
+/tmp/h1_clone/supabase/tests/database/06_create_workspace.test.sql ....... ok
+/tmp/h1_clone/supabase/tests/database/07_reserved_slugs.test.sql ......... ok
+/tmp/h1_clone/supabase/tests/database/08_core_isolation.test.sql ......... ok
+/tmp/h1_clone/supabase/tests/database/09_messages.test.sql ............... ok
+/tmp/h1_clone/supabase/tests/database/10_work_item_transitions.test.sql .. ok
+/tmp/h1_clone/supabase/tests/database/11_approvals.test.sql .............. ok
+/tmp/h1_clone/supabase/tests/database/12_run_queues.test.sql ............. ok
+/tmp/h1_clone/supabase/tests/database/13_realtime_broadcast.test.sql ..... ok
+/tmp/h1_clone/supabase/tests/database/14_create_conversation.test.sql .... ok
+/tmp/h1_clone/supabase/tests/database/15_squad_runtime.test.sql .......... ok
+/tmp/h1_clone/supabase/tests/database/16_brand_memory.test.sql ........... ok
+/tmp/h1_clone/supabase/tests/database/17_credits.test.sql ................ ok
+/tmp/h1_clone/supabase/tests/database/18_complete_conversation.test.sql .. ok
+/tmp/h1_clone/supabase/tests/database/19_memory_actions.test.sql ......... ok
+/tmp/h1_clone/supabase/tests/database/20_rich_work.test.sql .............. ok
+All tests successful.
+Files=21, Tests=489,  1 wallclock secs ( 0.05 usr  0.02 sys +  0.09 cusr  0.09 csys =  0.25 CPU)
+Result: PASS

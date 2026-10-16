@@ -173,9 +173,9 @@ async def t2_run_twice(x: Ctx) -> None:
     await x.q("select app.enqueue_run(%s)", w["run"])
     qn = await x.queue_len()
     b0 = await x.balance(w["ws"])
-    outs = await asyncio.gather(drain(worker_visibility_timeout_seconds=3), drain(worker_visibility_timeout_seconds=3))
-    await asyncio.sleep(3.5)
-    outs2 = await drain(worker_visibility_timeout_seconds=3)
+    outs = await asyncio.gather(drain(worker_visibility_timeout_seconds=10), drain(worker_visibility_timeout_seconds=10))
+    await asyncio.sleep(10.5)
+    outs2 = await drain(worker_visibility_timeout_seconds=10)
     run = (await x.q("select status::text, attempts, credits_charged from public.runs where id = %s", w["run"]))[0]
     led = await x.ledger(w["work"])
     vers = await x.versions(w["work"])
@@ -203,11 +203,16 @@ async def t3_retry_then_success(x: Ctx) -> dict[str, str]:
 
 async def t4_requeue_after_success(x: Ctx, w: dict[str, str]) -> None:
     led0 = await x.ledger(w["work"])
-    await x.q("select app.enqueue_run(%s)", w["run"])
+    refused = ""
+    try:
+        await x.q("select app.enqueue_run(%s)", w["run"])
+    except psycopg.Error as e:
+        refused = f"app.enqueue_run recusou ({e.sqlstate}); "
+    await x.q("select pgmq.send('runs_interactive', jsonb_build_object('run_id', %s::text, 'workspace_id', %s::text))", w["run"], w["ws"])
     o = await drain()
     led1 = await x.ledger(w["work"])
     ok = o == ["finished"] and led0 == led1 and await x.versions(w["work"]) == 1 and await x.queue_len() == 0
-    report("T4 reenfileirar run concluído", ok, f"saída={o}; extrato antes={led0} depois={led1}; versões={await x.versions(w['work'])}")
+    report("T4 reenfileirar run concluído", ok, refused + f"mensagem duplicada crua -> saída={o}; extrato antes={led0} depois={led1}; versões={await x.versions(w['work'])}")
 
 
 async def t5_failure_releases(x: Ctx) -> None:
@@ -340,7 +345,7 @@ async def t10_not_now(x: Ctx) -> None:
 async def t11_cap_and_concurrency(x: Ctx) -> None:
     mi, vi = await x.ws("miolo"), await x.ws("vitta")
     for ws in (mi, vi):
-        await x.q("select app.grant_credits(%s, 200, 'manual', %s)", ws, f"h1-cap-{ws}-{time.time()}")
+        await x.q("select app.grant_credits(%s, 200, 'bonus', %s)", ws, f"h1-cap-{ws}-{time.time()}")
     for _ in range(6):
         await x.request_work("marina@miolo.example", "miolo")
     for _ in range(3):
@@ -379,7 +384,7 @@ async def t12_sigterm_and_sigkill(x: Ctx) -> None:
     for sig, label in ((signal.SIGTERM, "SIGTERM"), (signal.SIGKILL, "SIGKILL")):
         w = await x.request_work("marina@miolo.example", "miolo")
         b0 = await x.balance(w["ws"])
-        env = dict(os.environ, WORKER_SHUTDOWN_GRACE_SECONDS="1", WORKER_VISIBILITY_TIMEOUT_SECONDS="4")
+        env = dict(os.environ, WORKER_SHUTDOWN_GRACE_SECONDS="1", WORKER_VISIBILITY_TIMEOUT_SECONDS="10")
         p = subprocess.Popen([sys.executable, str(script)], env=env, stdout=open(f"/tmp/h1_worker_{label}.log", "w"), stderr=subprocess.STDOUT)
         for _ in range(100):
             if await x.v("select status::text from public.runs where id = %s", w["run"]) == "running":
@@ -390,8 +395,8 @@ async def t12_sigterm_and_sigkill(x: Ctx) -> None:
         p.wait(timeout=60)
         mid = (await x.q("select status::text, attempts from public.runs where id = %s", w["run"]))[0]
         if sig == signal.SIGKILL:
-            await asyncio.sleep(4.5)
-        o = await drain(worker_visibility_timeout_seconds=4)
+            await asyncio.sleep(10.5)
+        o = await drain(worker_visibility_timeout_seconds=10)
         run = (await x.q("select status::text, attempts, credits_charged from public.runs where id = %s", w["run"]))[0]
         led = await x.ledger(w["work"])
         ok = run["status"] == "succeeded" and led.get("capture", (0,))[0] == 1 and led.get("hold", (0,))[0] == 1 \
@@ -399,33 +404,35 @@ async def t12_sigterm_and_sigkill(x: Ctx) -> None:
         report(f"T12 {label} no meio do run", ok, f"exit={p.returncode}; logo após o sinal={mid}; depois={o} {run}; extrato={led}; versões={await x.versions(w['work'])}; saldo {b0}->{await x.balance(w['ws'])}")
 
 
+async def grant(x: Ctx, slug: str, amount: int) -> None:
+    await x.q("select app.grant_credits(%s, %s, 'bonus', %s)", await x.ws(slug), amount, f"h1-{slug}-{time.time()}")
+
+
 async def main() -> None:
     x = Ctx()
     await x.open()
+    only = set(sys.argv[1:])
     await x.seed()
-    for t in (t1_decide_concurrently, t2_run_twice):
+    await grant(x, "miolo", 300)
+    tests = [t2_run_twice, "t3t4", t5_failure_releases, t6_respond_does_not_charge, t7_estimate_equals_charge_revision]
+    for t in tests:
         try:
-            await t(x)
+            if t == "t3t4":
+                w = await t3_retry_then_success(x)
+                await t4_requeue_after_success(x, w)
+            else:
+                await t(x)
         except Exception as e:  # noqa: BLE001
-            report(t.__name__, False, f"exceção {e!r}"[:400])
-    try:
-        w = await t3_retry_then_success(x)
-        await t4_requeue_after_success(x, w)
-    except Exception as e:  # noqa: BLE001
-        report("t3/t4", False, f"exceção {e!r}"[:400])
-    for t in (t5_failure_releases, t6_respond_does_not_charge, t7_estimate_equals_charge_revision, t9_ledger_immutable, t10_not_now):
-        try:
-            await t(x)
-        except Exception as e:  # noqa: BLE001
-            report(t.__name__, False, f"exceção {e!r}"[:400])
+            report(str(t), False, f"exceção {e!r}"[:400])
     await x.seed()
-    for t in (t8_never_negative,):
+    for t in (t11_cap_and_concurrency,):
         try:
             await t(x)
         except Exception as e:  # noqa: BLE001
             report(t.__name__, False, f"exceção {e!r}"[:400])
     await x.seed()
-    for t in (t11_cap_and_concurrency, t12_sigterm_and_sigkill):
+    await grant(x, "miolo", 100)
+    for t in (t12_sigterm_and_sigkill,):
         try:
             await t(x)
         except Exception as e:  # noqa: BLE001

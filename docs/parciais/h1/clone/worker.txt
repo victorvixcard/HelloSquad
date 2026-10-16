@@ -1,0 +1,13 @@
+# Worker do clone: flock -w 1800 /tmp/hellosquad-db.lock timeout -s TERM 25 make -C /tmp/h1_clone worker
+# comando iniciado 13:32:22; trava liberada 13:47:11 (worker orfao da outra auditoria encerrado); worker no ar 13:47:11,713; SIGTERM 13:47:36
+antes: q_runs_interactive=0
+worker (flock + timeout -s TERM 25) exit=124 tempo=914s
+make: Entering directory '/tmp/h1_clone'
+cd apps/backend && uv run hellosquad-worker
+2026-10-16 13:47:11,707 WARNING hellosquad.llm: LLM_PROVIDER=anthropic sem ANTHROPIC_API_KEY: usando o modo simulado (fixtures, sem custo)
+2026-10-16 13:47:11,713 INFO hellosquad.worker: worker no ar: fila runs_interactive, concorrência 4, teto por workspace 3, LLM simulated
+2026-10-16 13:47:36,088 INFO hellosquad.worker: sinal de encerramento recebido: parando de ler a fila
+2026-10-16 13:47:36,088 INFO hellosquad.worker: worker encerrado
+depois: q_runs_interactive=0
+
+# exit 124 = codigo do timeout ao expirar (o worker saiu sozinho no SIGTERM: 'worker encerrado'); 914 s = ~889 s esperando a trava + 25 s de worker

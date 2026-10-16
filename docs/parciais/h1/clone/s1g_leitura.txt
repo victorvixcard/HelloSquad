@@ -1,0 +1,19 @@
+# Roteiro S1g (passos 1, 2 e 5, so leitura) contra a API do dono em :8100, login da Marina
+login marina: jwt_len=782
+WS(items.0)=6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2 slug=miolo
+## 1. work-item 301
+{'status': 'needs_you', 'status_label': 'v1 aguarda sua aprovação', 'next_step': 'Aprovar a v1', 'awaiting_you': True}
+origin: {'type': 'message', 'conversation_kind': 'agent_direct', 'agent_id': 'otto'}
+history: [('Você pediu na conversa com o Otto', None), ('v1 entregue', 'automático')]
+## 2. needs
+{'count': 1, 'deferred_count': 0, 'items_types': ['review']}
+## 5. squad/status
+['workspace_id', 'agents']
+agents keys: ['agent_id', 'mode', 'status_short', 'status_label', 'run_id', 'work_item_id', 'conversation_id', 'approval_id']
+nexo live 'coordenando' 'Nexo · coordenando'
+bia idle 'disponível' None
+kaia idle 'disponível' None
+otto wait 'aguarda você' 'Otto · aguarda sua aprovação'
+kiwi idle 'disponível' None
+max idle 'disponível' None
+iris idle 'disponível' None

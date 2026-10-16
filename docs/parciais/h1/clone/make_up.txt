@@ -1,0 +1,41 @@
+# make up (sob flock), tail -n 40; JSON do supabase start com chaves mascaradas
+ + httpx==0.28.1
+ + httpx2==2.13.1
+ + idna==3.20
+ + iniconfig==2.3.1
+ + jiter==0.17.0
+ + opentelemetry-api==1.45.1
+ + packaging==26.3
+ + pluggy==1.7.0
+ + psycopg==3.3.6
+ + psycopg-binary==3.3.6
+ + psycopg-pool==3.3.3
+ + pycparser==3.11
+ + pydantic==2.14.1
+ + pydantic-core==2.50.1
+ + pydantic-settings==2.16.0
+ + pygments==2.21.0
+ + pyjwt==2.15.1
+ + pytest==9.1.1
+ + pytest-asyncio==1.4.0
+ + python-dotenv==1.2.4
+ + pyyaml==6.0.3
+ + ruff==0.17.1
+ + sniffio==1.3.1
+ + starlette==1.8.0
+ + truststore==0.10.5
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+ + uvicorn==0.54.0
+ + uvloop==0.23.0
+ + watchfiles==1.3.0
+ + websockets==17.2
+pnpm exec supabase start
+Stopped services: [supabase_imgproxy_hellosquad supabase_edge_runtime_hellosquad supabase_pooler_hellosquad]
+{"DB_URL": "postgresql://postgres:postgres@127.0.0.1:56322/postgres", "API_URL": "http://127.0.0.1:56321", "REST_URL": "http://127.0.0.1:56321/rest/v1", "GRAPHQL_URL": "http://127.0.0.1:56321/graphql/v1", "MCP_URL": "http://127.0.0.1:56321/mcp", "STUDIO_URL": "http://127.0.0.1:56323", "PUBLISHABLE_KEY": "<mascarado>", "SECRET_KEY": "<mascarado>", "JWT_SECRET": "<mascarado>", "ANON_KEY": "<mascarad
+pnpm exec supabase migration up --local
+Connecting to local database...
+{"applied": [], "message": "Migrations applied"}
+cd apps/backend && uv run hellosquad-local-db roles --optional
+senha do papel hellosquad_api definida a partir de API_DATABASE_URL
+Supabase local no ar. Chaves locais: pnpm exec supabase status -o env (PUBLISHABLE_KEY e SECRET_KEY vão para o .env).

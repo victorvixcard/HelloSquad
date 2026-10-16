@@ -14,9 +14,13 @@ h1_psql() {
 
 # Sobe o worker do squad (o mesmo do `make worker`) em modo simulado, num grupo de processos próprio.
 # h1_worker_start LOG [VAR=valor ...]; espera "worker no ar". Grava o PID do grupo em /tmp/h1_worker.pid.
+# O bash de dentro grava o próprio PID (líder da sessão = grupo) e faz exec: o PID gravado é o do worker.
+# 3>&- fecha o descritor da trava herdado do flock (sem isso o worker segura a trava depois do script).
+# Correção feita na H1: a primeira versão gravava $! do setsid, que bifurca; o worker do aceite sobreviveu
+# ao "stop" e segurou a trava por 14 min (matei o grupo com SIGTERM às 13:47; saiu limpo).
 h1_worker_start() {
   local log="$1"; shift
-  (cd "$H1_ROOT/apps/backend" && env LLM_PROVIDER=simulated "$@" setsid uv run hellosquad-worker >"$log" 2>&1 & echo $! >/tmp/h1_worker.pid)
+  (cd "$H1_ROOT/apps/backend" && setsid bash -c 'echo $$ >/tmp/h1_worker.pid; exec env LLM_PROVIDER=simulated "$@" uv run hellosquad-worker' _ "$@" >"$log" 2>&1 3>&- &)
   for _ in $(seq 1 120); do
     grep -q "worker no ar" "$log" 2>/dev/null && return 0
     sleep 0.5

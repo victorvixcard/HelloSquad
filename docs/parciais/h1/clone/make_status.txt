@@ -1,0 +1,7 @@
+# make status no clone (saida do supabase status sai em JSON numa linha, com as chaves; aqui mascaradas)
+pnpm exec supabase status
+Stopped services: [supabase_imgproxy_hellosquad supabase_edge_runtime_hellosquad supabase_pooler_hellosquad]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+{"linked_project": null, "DB_URL": "postgresql://postgres:postgres@127.0.0.1:56322/postgres", "API_URL": "http://127.0.0.1:56321", "REST_URL": "http://127.0.0.1:56321/rest/v1", "GRAPHQL_URL": "http://127.0.0.1:56321/graphql/v1", "MCP_URL": "http://127.0.0.1:56321/mcp", "STUDIO_URL": "http://127.0.0.1:56323", "PUBLISHABLE_KEY": "<mascarado>", "SECRET_KEY": "<mascarado>", "JWT_SECRET": "<mascarado>", "ANON_KEY": "<mascarado>", "SERVICE_ROLE_KEY": "<mascarado>", "MAILPIT_URL": "http://127.0.0.1:56324", "INBUCKET_URL": "http://127.0.0.1:56324", "STORAGE_S3_URL": "http://127.0.0.1:56321/storage/v1/
+{"status": "ok", "version": "0.1.0", "environment": "local"}
+Web no ar em http://127.0.0.1:3100

@@ -21,6 +21,7 @@ const PUB = env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const mask = (t) => (t ? `${String(t).slice(0, 10)}***(${String(t).length})` : t);
 const claims = (jwt) => JSON.parse(Buffer.from(jwt.split(".")[1], "base64url").toString());
 const R = { cases: {} };
+const norm = (raw) => { const d = JSON.parse(raw); return Array.isArray(d) ? { join_ref: d[0], ref: d[1], topic: d[2], event: d[3], payload: d[4] } : d; };
 const log = (...a) => console.log(...a);
 
 async function authLogin(email) {
@@ -109,10 +110,10 @@ try {
       const entry = { url: ws.url().replace(/apikey=[^&]+/, "apikey=***"), joins: [], replies: [] };
       wsLog.push(entry);
       ws.on("framesent", (f) => {
-        try { const d = JSON.parse(f.payload); if (d.event === "phx_join") entry.joins.push({ topic: d.topic, ref: d.ref, private: d.payload?.config?.private, hasToken: Boolean(d.payload?.access_token) }); } catch {}
+        try { const d = norm(f.payload); if (d.event === "phx_join") entry.joins.push({ topic: d.topic, ref: d.ref, private: d.payload?.config?.private, hasToken: Boolean(d.payload?.access_token) }); } catch {}
       });
       ws.on("framereceived", (f) => {
-        try { const d = JSON.parse(f.payload); if (d.event === "phx_reply" && d.topic !== "phoenix") { entry.replies.push({ topic: d.topic, status: d.payload?.status }); if (d.payload?.status === "ok" && /workspace:/.test(d.topic)) resolve(true); } } catch {}
+        try { const d = norm(f.payload); if (d.event === "phx_reply" && d.topic !== "phoenix") { entry.replies.push({ topic: d.topic, status: d.payload?.status }); if (d.payload?.status === "ok" && /workspace:/.test(d.topic)) resolve(true); } } catch {}
       });
     });
     setTimeout(() => resolve(false), 30000);
@@ -132,7 +133,8 @@ try {
   for (const a of actions) {
     const resp = await a.req.response().catch(() => null);
     const body = resp ? await resp.text().catch(() => "") : "";
-    if (/"token":"eyJ/.test(body)) { tokenAction = { id: a.id, url: a.url, body: a.body, respHeaders: resp.headers() }; break; }
+    (R.cases.actionsSeen ??= []).push({ id: a.id.slice(0, 8), url: a.url, body: a.body, status: resp?.status(), len: body.length, hasToken: /token/.test(body), snippet: body.replace(/eyJ[A-Za-z0-9._-]+/g, "eyJ***").slice(0, 100) });
+    if (/"token":"eyJ/.test(body) || /eyJ[A-Za-z0-9_-]{20,}\./.test(body)) { tokenAction = { id: a.id, url: a.url, body: a.body, respHeaders: resp.headers() }; break; }
   }
   R.cases.tokenAction = tokenAction ? { id: tokenAction.id, url: tokenAction.url, body: tokenAction.body, cacheControl: tokenAction.respHeaders["cache-control"] ?? null, acao: tokenAction.respHeaders["access-control-allow-origin"] ?? null, contentType: tokenAction.respHeaders["content-type"] } : null;
 
@@ -207,11 +209,11 @@ try {
     log("violacoes CSP (evento):", JSON.stringify(c.cspViolationsEvent), "| console CSP:", JSON.stringify(c.consoleCsp).slice(0, 300));
     log("cookies sb-*:", JSON.stringify(c.sbCookies));
     log("document.cookie:", JSON.stringify(c.documentCookie));
-    log("acao do token:", JSON.stringify(c.tokenAction));
-    log("acao chamadas:", JSON.stringify(c.action, null, 0).slice(0, 2500));
+    log("acao do token:", JSON.stringify(c.tokenAction)); log("acoes vistas:", JSON.stringify(c.actionsSeen ?? []).slice(0, 1200));
+    log("acao chamadas:", String(JSON.stringify(c.action ?? null)).slice(0, 2500));
     log("claims do token:", JSON.stringify(c.tokenClaims), "| ids:", JSON.stringify(c.ids));
-    log("realtime joins:", JSON.stringify(c.realtime).slice(0, 1500));
-    log("alcance do token:", JSON.stringify(c.alcance).slice(0, 1500)); }
+    log("realtime joins:", String(JSON.stringify(c.realtime ?? null)).slice(0, 1500));
+    log("alcance do token:", String(JSON.stringify(c.alcance ?? null)).slice(0, 1500)); }
   // ---------- 4: noindex (logado, Marina) ----------
   const routes = ["/app", "/app/miolo", "/app/miolo/equipe", "/app/miolo/modo-autonomo", "/app/miolo/memoria-da-marca", "/app/miolo/sala-do-squad", "/app/miolo/squad/nexo", "/app/inexistente", "/app/novo-workspace"];
   await pM.goto(`${BASE}/app/miolo/squad/nexo`, { waitUntil: "load", timeout: 90000 });

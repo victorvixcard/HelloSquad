@@ -1,0 +1,28 @@
+OK    T1 decidir 12x em paralelo (3 decisões diferentes): códigos=[200]; respostas iguais=True {('approved', None)}; gravada={'decision': 'approved', 'follow_up': None}; auditoria=1; runs=1 (esperado 1)
+OK    T1b repetir com decisão diferente depois: HTTP 200, decisão devolvida=approved, trabalho=approved
+FALHA t2_run_twice: exceção 1 validation error for Settings
+worker_visibility_timeout_seconds
+  Input should be greater than or equal to 10 [type=greater_than_equal, input_value=3, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.14/v/greater_than_equal
+run af8a203a-c83b-4450-a210-b8979ef8d4e0: llm_unavailable na tentativa 1; nova tentativa em 0.0s
+run d0150a2c-0272-4df9-9249-9220a759532e: llm_unavailable na tentativa 1; nova tentativa em 0.0s
+OK    T3 falha passageira depois de produzir, retry e sucesso: ['retry', 'busy', 'busy', 'retry']->{'status': 'queued', 'attempts': 1} reserva no meio=[{'state': 'held', 'estimate': Decimal('10.00')}]; ['delivered', 'delivered']->{'status': 'succeeded', 'attempts': 2, 'credits_charged': Decimal('10.00')}; reservas=1; extrato={'capture': (1, -10.0), 'hold': (1, 0.0)}; saldo 26.0->6.0
+FALHA t3/t4: exceção ObjectNotInPrerequisiteState('Só run em queued entra na fila; este está em succeeded.\nCONTEXT:  PL/pgSQL function app.enqueue_run(uuid) line 11 at RAISE')
+run 18446f86-dc83-46a1-8489-164c2c3e95f0 falhou (insufficient_credits, tentativa 1); trabalho em failed; mensagem 951 arquivada
+OK    T5 falha definitiva libera a reserva: ['failed']; run={'status': 'failed', 'attempts': 1, 'credits_charged': Decimal('0.00'), 'code': 'insufficient_credits'}; trabalho=failed; reserva=[]; extrato={}; saldo 6.0->6.0; reservado nos grants=[0.0]
+run 0264fa11-d05f-4bab-a22d-668f824c48bf falhou (insufficient_credits, tentativa 1); trabalho em failed; mensagem 952 arquivada
+FALHA T5b falha passageira esgota tentativas e libera: ['failed']; run={'status': 'failed', 'attempts': 1}; extrato={}; saldo=6.0
+run 48c39e86-cc2c-4a65-a4d4-13545dc10cee falhou (insufficient_credits, tentativa 1); trabalho em failed; mensagem 953 arquivada
+FALHA T6 pergunta (respond) não cobra; a resposta gera a entrega cobrada uma vez: ['failed']->[]; pendência respond=False; extrato após a pergunta={}; após a entrega={}; saldo 6.0->6.0->6.0; estimativa=10.0 revisão=False
+run afc170cd-74d8-4078-bf4a-386b7f10487f falhou (insufficient_credits, tentativa 1); trabalho em failed; mensagem 954 arquivada
+FALHA T7 estimativa = cobrado (primeira versão e ajuste): estimativas=10.0/10.0 (revisão=False); cobrado por run=[0.0]
+OK    T9 extrato imutável: postgres update: recusado (42501); postgres delete: recusado (42501); postgres TRUNCATE: recusado (42501); hellosquad_api update: recusado (42501); hellosquad_api delete: recusado (42501); hellosquad_api truncate: recusado (42501); hellosquad_api insert: recusado (42501); Data API PATCH: HTTP 403; Data API DELETE: HTTP 403
+OK    T10 "Agora não" não cobra nem rejeita: defer=200/200; aprovação={'status': 'pending', 'decision': None, 'd': True}; na faixa pendente=False; Rafael=404; defer de review=422 {'error': {'code': 'invalid_parameter', 'message': '“Agora não” vale só para aut; trabalho needs_you->needs_you; extrato 10->10; runs 8->8
+run 1ef3e931-cd1b-49ca-a34c-c8ee0e97d6e7 falhou (insufficient_credits, tentativa 1); trabalho em failed; mensagem 956 arquivada
+OK    T8 saldo nunca negativo (Vitta 20 créditos, 5 pedidos, 2 workers): saldo 20.0->0.0; runs=['succeeded', 'failed', 'queued', 'queued', 'succeeded']; erros=[None, 'insufficient_credits', None, None, None]; grants: menor restante=0.00, menor disponível=0.00, reservado=0.00; saídas=[['delivered', 'failed', 'capped', 'capped'], ['delivered']]
+FALHA t11_cap_and_concurrency: exceção InvalidTextRepresentation('invalid input value for enum credit_grant_origin: "manual"\nLINE 1: select app.grant_credits($1, 200, \'manual\', $2)\n                                          ^')
+FALHA t12_sigterm_and_sigkill: exceção 1 validation error for Settings
+worker_visibility_timeout_seconds
+  Input should be greater than or equal to 10 [type=greater_than_equal, input_value=4, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.14/v/greater_than_equal
+RESUMO: 7 de 14 OK

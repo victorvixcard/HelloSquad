@@ -1,0 +1,5 @@
+# hellosquad-local-db roles sem .env no clone (nao conecta no banco)
+aviso: .env ausente ou sem DATABASE_URL e API_DATABASE_URL; a senha do hellosquad_api não foi gravada. Preencha o .env (docs/SETUP_LOCAL.md) e rode make migrate.
+roles --optional sem .env exit=0
+erro: DATABASE_URL vazio no .env (usuário postgres do Supabase local).
+roles sem .env exit=1
