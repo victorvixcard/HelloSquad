@@ -1,15 +1,20 @@
 from datetime import datetime
-from typing import Annotated, Any
+from decimal import Decimal
+from typing import Annotated, Any, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from hellosquad.domain import (
     AgentId,
+    ApprovalDecision,
+    ApprovalStatus,
     ContextType,
     ConversationKind,
+    DeliveryVersionStatus,
     MessageAuthorType,
     PrincipalType,
+    WorkItemStatus,
 )
 
 ContextText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
@@ -249,6 +254,58 @@ class MessageCreate(BaseModel):
     ] = Field(description="Texto da mensagem (markdown), de 1 a 20.000 caracteres.")
 
 
+CardType = Literal["work_created", "material", "approval", "question", "options", "team", "budget"]
+
+
+class CardAction(BaseModel):
+    id: str = Field(
+        description=(
+            "Botão do cartão, traduzido pelo catálogo do web (`approve`, `request_changes`, "
+            "`answer`, `choose`, `open`)."
+        ),
+        examples=["approve"],
+    )
+    decision: ApprovalDecision | None = Field(
+        default=None, description="Decisão que o botão manda em `POST /approvals/{id}/decision`."
+    )
+
+
+class CardOption(BaseModel):
+    id: str
+    label: str = Field(examples=["Nos dois"])
+
+
+class MessageCard(BaseModel):
+    """Cartão dentro da mensagem do agente (FLUXOS_DA_V46.md §4.5), sempre ligado ao objeto."""
+
+    model_config = ConfigDict(extra="ignore")
+
+    type: CardType = Field(
+        description=(
+            "`work_created` (Trabalho criado), `material` (Material · vN), `approval` (pedido de "
+            "aprovação ou autorização), `question` (pergunta), `options` (escolher uma opção), "
+            "`team` (equipe montada), `budget` (orçamento em créditos)."
+        )
+    )
+    actions: list[CardAction] = Field(default_factory=list)
+    work_item_id: UUID | None = None
+    delivery_version_id: UUID | None = None
+    approval_id: UUID | None = None
+    version_no: int | None = None
+    options: list[CardOption] | None = None
+    agent_ids: list[AgentId] | None = None
+    credits: Decimal | None = None
+    approval_status: ApprovalStatus | None = Field(
+        default=None, description="Estado atual da pendência ligada."
+    )
+    decision: ApprovalDecision | None = Field(
+        default=None, description="Decisão já tomada (o web marca a escolhida e desabilita)."
+    )
+    answer: str | None = Field(default=None, description="Resposta escrita ou opção escolhida.")
+    version_status: DeliveryVersionStatus | None = None
+    work_item_status: WorkItemStatus | None = None
+
+
 class Message(BaseModel):
     id: UUID
     conversation_id: UUID
@@ -260,6 +317,7 @@ class Message(BaseModel):
     body_format: str = Field(examples=["markdown"])
     attachments: list[Any]
     created_at: datetime
+    card: MessageCard | None = Field(default=None, description="Só em mensagem de agente.")
 
 
 class MessagePage(BaseModel):

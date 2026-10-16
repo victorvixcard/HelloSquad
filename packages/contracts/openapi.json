@@ -3650,6 +3650,55 @@
         ],
         "title": "BrandFactState"
       },
+      "CardAction": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Botão do cartão, traduzido pelo catálogo do web (`approve`, `request_changes`, `answer`, `choose`, `open`).",
+            "examples": [
+              "approve"
+            ]
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovalDecision"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Decisão que o botão manda em `POST /approvals/{id}/decision`."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "CardAction"
+      },
+      "CardOption": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "examples": [
+              "Nos dois"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "CardOption"
+      },
       "ContextRef": {
         "properties": {
           "type": {
@@ -6166,6 +6215,17 @@
             "type": "string",
             "format": "date-time",
             "title": "Created At"
+          },
+          "card": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MessageCard"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Só em mensagem de agente."
           }
         },
         "type": "object",
@@ -6191,6 +6251,177 @@
           "system"
         ],
         "title": "MessageAuthorType"
+      },
+      "MessageCard": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "work_created",
+              "material",
+              "approval",
+              "question",
+              "options",
+              "team",
+              "budget"
+            ],
+            "title": "Type",
+            "description": "`work_created` (Trabalho criado), `material` (Material · vN), `approval` (pedido de aprovação ou autorização), `question` (pergunta), `options` (escolher uma opção), `team` (equipe montada), `budget` (orçamento em créditos)."
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/CardAction"
+            },
+            "type": "array",
+            "title": "Actions"
+          },
+          "work_item_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Id"
+          },
+          "delivery_version_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Version Id"
+          },
+          "approval_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Id"
+          },
+          "version_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version No"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CardOption"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "agent_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AgentId"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Ids"
+          },
+          "credits": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credits"
+          },
+          "approval_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovalStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Estado atual da pendência ligada."
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovalDecision"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Decisão já tomada (o web marca a escolhida e desabilita)."
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer",
+            "description": "Resposta escrita ou opção escolhida."
+          },
+          "version_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DeliveryVersionStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "work_item_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkItemStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "MessageCard",
+        "description": "Cartão dentro da mensagem do agente (FLUXOS_DA_V46.md §4.5), sempre ligado ao objeto."
       },
       "MessageCreate": {
         "properties": {

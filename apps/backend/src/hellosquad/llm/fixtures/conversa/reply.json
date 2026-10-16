@@ -1,0 +1,13 @@
+{
+  "delivery_type": "conversa",
+  "step": "reply",
+  "cases": [
+    {
+      "name": "padrao",
+      "usage": {"input_tokens": 920, "output_tokens": 48},
+      "output": {
+        "mensagem": "Anotei o que você escreveu. Sigo com isso por aqui e te chamo quando precisar de uma decisão sua."
+      }
+    }
+  ]
+}

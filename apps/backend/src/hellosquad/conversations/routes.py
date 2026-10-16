@@ -20,6 +20,7 @@ from hellosquad.conversations.schemas import (
     ConversationPage,
     ConversationRead,
     Message,
+    MessageCard,
     MessageCreate,
     MessagePage,
     Participant,
@@ -145,9 +146,23 @@ m.id, m.conversation_id, m.author_type::text, m.author_user_id, m.author_agent_i
 m.body, m.body_format, m.attachments, m.created_at
 """
 
+# Cartão do agente com o estado vivo do objeto ligado (pendência, versão, trabalho).
+CARD_COLUMNS = """
+m.card, m.work_item_id, m.delivery_version_id, m.approval_id, a.status::text as approval_status,
+a.decision::text as approval_decision, a.note as approval_note, v.status::text as version_status,
+w.status::text as work_item_status
+"""
+
+CARD_JOINS = """
+left join public.approvals a on a.id = m.approval_id
+left join public.delivery_versions v on v.id = m.delivery_version_id
+left join public.work_items w on w.id = m.work_item_id
+"""
+
 LIST_MESSAGES = f"""
-select {MESSAGE_COLUMNS}
+select {MESSAGE_COLUMNS}, {CARD_COLUMNS}
 from public.messages m
+{CARD_JOINS}
 where m.conversation_id = %(conversation_id)s
   and (%(cursor_at)s::timestamptz is null
        or (m.created_at, m.id) > (%(cursor_at)s, %(cursor_id)s::uuid))
@@ -157,8 +172,9 @@ limit %(limit)s
 
 # Para trás: lê das mais novas para as mais antigas; a rota devolve a página cronológica.
 LIST_MESSAGES_BEFORE = f"""
-select {MESSAGE_COLUMNS}
+select {MESSAGE_COLUMNS}, {CARD_COLUMNS}
 from public.messages m
+{CARD_JOINS}
 where m.conversation_id = %(conversation_id)s
   and (%(cursor_at)s::timestamptz is null
        or (m.created_at, m.id) < (%(cursor_at)s, %(cursor_id)s::uuid))
@@ -182,6 +198,24 @@ BeforeQuery = Annotated[
 ]
 
 POST_MESSAGE = f"select {MESSAGE_COLUMNS} from app.post_message(%s, %s) m"
+
+
+def message_from_row(row: dict) -> Message:
+    card = None
+    if row.get("card") is not None:
+        card = MessageCard(
+            **row["card"],
+            work_item_id=row["work_item_id"],
+            delivery_version_id=row["delivery_version_id"],
+            approval_id=row["approval_id"],
+            approval_status=row["approval_status"],
+            decision=row["approval_decision"],
+            answer=row["approval_note"] if row["approval_decision"] == "answered" else None,
+            version_status=row["version_status"],
+            work_item_status=row["work_item_status"],
+        )
+    fields = {k: row[k] for k in Message.model_fields if k in row and k != "card"}
+    return Message(**fields, card=card)
 
 
 async def load_conversation(conn: AsyncConnection[DictRow], conversation_id: UUID) -> dict:
@@ -397,7 +431,7 @@ async def list_messages(
     page, next_cursor = split_page(rows, limit, "created_at")
     if before is not None:
         page = page[::-1]
-    return MessagePage(items=[Message(**row) for row in page], next_cursor=next_cursor)
+    return MessagePage(items=[message_from_row(row) for row in page], next_cursor=next_cursor)
 
 
 @router.post(

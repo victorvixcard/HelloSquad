@@ -120,6 +120,18 @@ def user_message(parts: list[str]) -> list[ChatMessage]:
     return [ChatMessage(role="user", content="\n".join(parts))]
 
 
+def reply_messages(ctx: RunContext) -> list[ChatMessage]:
+    relevant = facts_block(ctx, "search")
+    return user_message(
+        [
+            *([f"<memoria_relevante>\n{relevant}\n</memoria_relevante>"] if relevant else []),
+            history_block(ctx),
+            f"<mensagem_da_pessoa>{text(ctx.request)}</mensagem_da_pessoa>",
+            "<etapa>resposta</etapa>",
+        ]
+    )
+
+
 def triage_messages(ctx: RunContext, target: Skill) -> list[ChatMessage]:
     return user_message(
         [

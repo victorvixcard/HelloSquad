@@ -24,7 +24,7 @@ from hellosquad.i18n import DEFAULT_LOCALE, catalog, t
 from hellosquad.llm.base import LLMClient, LLMError
 from hellosquad.llm.factory import build_llm_client
 from hellosquad.runtime import configure_logging
-from hellosquad.squad.flow import FlowError, Squad, run_flow
+from hellosquad.squad.flow import FlowError, Squad, run_flow, run_reply
 from hellosquad.squad.loader import SquadLoader
 from hellosquad.squad.store import Claim, RunLost, RunStore, redact
 
@@ -185,7 +185,8 @@ class Worker:
         )
         heartbeat = asyncio.create_task(self.heartbeat(store, msg_id))
         try:
-            result = await run_flow(self.squad, store)
+            flow = run_reply if claim.work_item_id is None else run_flow
+            result = await flow(self.squad, store)
         except asyncio.CancelledError:
             await asyncio.shield(self.release(store, msg_id))
             raise
@@ -332,6 +333,8 @@ def summary(result: dict[str, Any]) -> str:
         f"{result['cache_read_tokens']} lidos e {result['cache_write_tokens']} gravados no cache, "
         f"US$ {result['cost_usd']}"
     )
+    if result["outcome"] == "replied":
+        return f"{result['agent_id']} respondeu na conversa; {cost}"
     if result["outcome"] == "asked":
         missing = ", ".join(result["missing"])
         return f"briefing incompleto ({missing}); pergunta enviada, trabalho em needs_you; {cost}"

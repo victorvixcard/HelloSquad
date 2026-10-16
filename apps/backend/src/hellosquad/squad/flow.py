@@ -27,6 +27,7 @@ from hellosquad.squad.prompt import (
     RunContext,
     check_messages,
     production_messages,
+    reply_messages,
     revision_messages,
     system_blocks,
     triage_messages,
@@ -34,9 +35,11 @@ from hellosquad.squad.prompt import (
 from hellosquad.squad.schemas import (
     CHECK_SCHEMA,
     PRODUCTION_SCHEMA,
+    REPLY_SCHEMA,
     TRIAGE_SCHEMA,
     CheckResult,
     ProductionResult,
+    ReplyResult,
     StepOutput,
     TriageResult,
 )
@@ -44,6 +47,9 @@ from hellosquad.squad.store import RunStore
 
 COORDINATOR = "nexo"
 TRIAGE_SKILL = "01.01"
+REPLY_STEP = "reply"
+# Rótulo curto do squad com o agente trabalhando (V4.6 _shortNow, L8064); os outros, "trabalhando".
+SHORT_AT_WORK = {"bia": "researching", "kaia": "creating", "otto": "writing"}
 TRIAGE_THINKING_BUDGET = 1024
 TRIAGE_MAX_TOKENS = 4096
 
@@ -70,6 +76,24 @@ class Squad:
     memory_budget: int = 1500
 
 
+def status_fields(locale: str, agent: AgentDefinition, mode: str, phrase: str) -> dict[str, str]:
+    """Status por etapa (FLUXOS_DA_V46.md §10.3): modo da V4.6, rótulo curto e a frase da conversa
+    ("Otto · criando a primeira versão"), no idioma do workspace."""
+    short = SHORT_AT_WORK.get(agent.id, "working") if mode == "work" else mode
+    return {
+        "status_mode": mode,
+        "status_short": t(locale, f"status.short.{short}"),
+        "status_label": t(
+            locale, "status.label", agent=agent.name, phrase=t(locale, f"status.phrase.{phrase}")
+        ),
+    }
+
+
+def production_phrase(feedback: dict[str, Any] | None) -> str:
+    decision = (feedback or {}).get("decisao")
+    return "adjusting" if decision in ("changes_requested", "rejected") else "creating_first"
+
+
 def require_tool(agent: AgentDefinition, tool: str) -> None:
     if not agent.allows(tool):
         raise FlowError("tool_not_allowed", {"agent_id": agent.id, "tool": tool})
@@ -93,11 +117,22 @@ def change_note_key(feedback: dict[str, Any] | None, revisions: int) -> str:
 
 
 class StepCaller:
-    def __init__(self, squad: Squad, store: RunStore, delivery_type: str, attempt: int) -> None:
+    def __init__(
+        self,
+        squad: Squad,
+        store: RunStore,
+        delivery_type: str,
+        attempt: int,
+        *,
+        locale: str,
+        conversation_id: Any = None,
+    ) -> None:
         self.squad = squad
         self.store = store
         self.delivery_type = delivery_type
         self.attempt = attempt
+        self.locale = locale
+        self.conversation_id = conversation_id
         self.last_model: str | None = None
 
     async def llm(
@@ -112,11 +147,17 @@ class StepCaller:
         system: list[SystemBlock],
         messages: list[ChatMessage],
         schema: dict[str, Any],
+        phrase: str,
         effort: Any = None,
         thinking_budget: int | None = None,
         max_tokens: int = 16000,
     ) -> Output:
-        await self.store.event("agent.thinking", {"agent_id": agent.id, "step": step})
+        await self.store.thinking(
+            agent.id,
+            step,
+            status_fields(self.locale, agent, "work", phrase),
+            self.conversation_id,
+        )
         step_id, seq = await self.store.start_step(
             kind,
             model,
@@ -227,7 +268,14 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         memory=memory,
         feedback=data.feedback,
     )
-    calls = StepCaller(squad, store, delivery_type, data.attempts)
+    calls = StepCaller(
+        squad,
+        store,
+        delivery_type,
+        data.attempts,
+        locale=locale,
+        conversation_id=item.conversation_id,
+    )
 
     triage_title = t(locale, "work_item_step.nexo.triage")
     await store.work_step(item.id, triage_title, nexo.id, "in_progress")
@@ -241,6 +289,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         system=system_blocks(nexo_prompt, ctx),
         messages=triage_messages(ctx, expert_prompt.skill),
         schema=TRIAGE_SCHEMA,
+        phrase="organizing",
         thinking_budget=TRIAGE_THINKING_BUDGET,
         max_tokens=TRIAGE_MAX_TOKENS,
     )
@@ -258,6 +307,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
             question=question,
             tool_data={"tool": "conversas.perguntar", "agent_id": nexo.id, "faltam": missing},
             model=calls.last_model or nexo.model["triagem"],
+            status=status_fields(locale, nexo, "wait", "wait_answer"),
         )
         return {"outcome": "asked", "missing": missing, **result}
 
@@ -284,6 +334,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         "model": expert.model["padrao"],
         "system": system,
         "effort": expert.model.get("effort"),
+        "phrase": production_phrase(data.feedback),
     }
     production = await calls.llm(
         ProductionResult,
@@ -347,7 +398,61 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         model=calls.last_model or expert.model["padrao"],
         prompt_version=expert_version,
         observations=[o.model_dump() for o in observations.values()],
+        status=status_fields(locale, expert, "wait", "wait_approval"),
     )
     return {"outcome": "delivered", "revisions": revisions, "check_approved": review.approved} | (
         result
     )
+
+
+async def run_reply(squad: Squad, store: RunStore) -> dict[str, Any]:
+    """Run de resposta: um especialista responde à mensagem da pessoa na conversa, sem trabalho."""
+    data = await store.load_reply(history_limit=squad.history_limit)
+    prompt = squad.loader.reply_prompt(data.agent_id)
+    agent = prompt.agent
+    version = await store.ensure_prompt_version(prompt)
+    memory = await store.recall_memory(
+        locale=data.locale,
+        text=search_text(data.request, "", {}, None),
+        budget=squad.memory_budget,
+    )
+    ctx = RunContext(
+        locale=data.locale,
+        brand_name=data.workspace_name,
+        request=data.request,
+        work_title="",
+        delivery_type=None,
+        briefing={},
+        history=data.history,
+        memory=memory,
+    )
+    calls = StepCaller(
+        squad,
+        store,
+        prompt.skill.delivery_type,
+        data.attempts,
+        locale=data.locale,
+        conversation_id=data.conversation_id,
+    )
+    reply = await calls.llm(
+        ReplyResult,
+        agent=agent,
+        version=version,
+        step=REPLY_STEP,
+        kind="llm_call",
+        model=agent.model["padrao"],
+        system=system_blocks(prompt, ctx),
+        messages=reply_messages(ctx),
+        schema=REPLY_SCHEMA,
+        phrase="writing",
+        effort=agent.model.get("effort"),
+        max_tokens=4096,
+    )
+    result = await store.reply(
+        conversation_id=data.conversation_id,
+        agent_id=agent.id,
+        body=reply.mensagem,
+        model=calls.last_model or agent.model["padrao"],
+        prompt_version=version,
+    )
+    return {"outcome": "replied", "agent_id": agent.id} | result

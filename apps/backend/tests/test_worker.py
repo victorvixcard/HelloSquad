@@ -175,10 +175,13 @@ async def test_request_becomes_delivery_in_needs_you_with_events_steps_and_cost(
     assert await event_types(admin_db, run_id) == [
         "started",
         "agent.thinking",
+        "conversation.typing",
         "step.done",
         "agent.thinking",
+        "conversation.typing",
         "step.done",
         "agent.thinking",
+        "conversation.typing",
         "step.done",
         "delivery.created",
         "message.created",
@@ -192,7 +195,7 @@ async def test_request_becomes_delivery_in_needs_you_with_events_steps_and_cost(
         f"workspace:{miolo}",
         run_id,
     )
-    assert broadcast == 11
+    assert broadcast == 14
 
     version = await one(
         admin_db,
@@ -337,6 +340,7 @@ async def test_incomplete_briefing_asks_before_calling_otto(
     assert await event_types(admin_db, run_id) == [
         "started",
         "agent.thinking",
+        "conversation.typing",
         "step.done",
         "message.created",
         "approval.requested",

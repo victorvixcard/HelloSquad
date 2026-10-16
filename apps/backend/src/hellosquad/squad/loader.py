@@ -16,6 +16,8 @@ import yaml
 REPO_SQUAD_DIR = Path(__file__).resolve().parents[5] / "squad"
 SHARED_RULES_HEADING = "## Regras que todos os agentes compartilham"
 FRONT_MATTER = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
+# Resposta na conversa (run sem trabalho): squad/conversa.md no lugar da skill.
+REPLY_SKILL = "conversa"
 
 
 class SquadDefinitionError(RuntimeError):
@@ -73,6 +75,13 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def parse_skill(delivery_type: str, raw: str) -> Skill:
+    match = FRONT_MATTER.match(raw)
+    meta = (yaml.safe_load(match.group(1)) or {}) if match else {}
+    body = raw[match.end() :] if match else raw
+    return Skill(delivery_type=delivery_type, meta=meta, body=body.strip())
+
+
 class SquadLoader:
     def __init__(self, squad_dir: Path | None = None) -> None:
         self.squad_dir = squad_dir or REPO_SQUAD_DIR
@@ -109,10 +118,7 @@ class SquadLoader:
         raw = self._read(
             f"{agent_id}/skills/{delivery_type}.md", files if files is not None else {}
         )
-        match = FRONT_MATTER.match(raw)
-        meta = (yaml.safe_load(match.group(1)) or {}) if match else {}
-        body = raw[match.end() :] if match else raw
-        return Skill(delivery_type=delivery_type, meta=meta, body=body.strip())
+        return parse_skill(delivery_type, raw)
 
     def has_skill(self, agent_id: str, delivery_type: str) -> bool:
         return (self.squad_dir / agent_id / "skills" / f"{delivery_type}.md").is_file()
@@ -122,6 +128,19 @@ class SquadLoader:
         shared = self.shared_rules(files)
         agent = self.agent(agent_id, files)
         skill = self.skill(agent_id, delivery_type, files)
+        return self._assemble(agent, skill, shared, files)
+
+    def reply_prompt(self, agent_id: str) -> SquadPrompt:
+        """Resposta na conversa: as instruções de squad/conversa.md fazem o papel da skill."""
+        files: dict[str, str] = {}
+        shared = self.shared_rules(files)
+        agent = self.agent(agent_id, files)
+        skill = parse_skill(REPLY_SKILL, self._read(f"{REPLY_SKILL}.md", files))
+        return self._assemble(agent, skill, shared, files)
+
+    def _assemble(
+        self, agent: AgentDefinition, skill: Skill, shared: str, files: dict[str, str]
+    ) -> SquadPrompt:
         manifest = "".join(f"{path}\n{digest}\n" for path, digest in sorted(files.items()))
         return SquadPrompt(
             agent=agent,

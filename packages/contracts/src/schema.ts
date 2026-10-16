@@ -792,6 +792,27 @@ export interface components {
          * @enum {string}
          */
         BrandFactState: "confirmed" | "decision" | "from_source" | "observed" | "suggested" | "outdated" | "discarded" | "conflicting" | "unused";
+        /** CardAction */
+        CardAction: {
+            /**
+             * Id
+             * @description Botão do cartão, traduzido pelo catálogo do web (`approve`, `request_changes`, `answer`, `choose`, `open`).
+             * @example approve
+             */
+            id: string;
+            /** @description Decisão que o botão manda em `POST /approvals/{id}/decision`. */
+            decision?: components["schemas"]["ApprovalDecision"] | null;
+        };
+        /** CardOption */
+        CardOption: {
+            /** Id */
+            id: string;
+            /**
+             * Label
+             * @example Nos dois
+             */
+            label: string;
+        };
         /** ContextRef */
         ContextRef: {
             /** @description Tipo do objeto de onde a conversa foi aberta. */
@@ -1861,12 +1882,53 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** @description Só em mensagem de agente. */
+            card?: components["schemas"]["MessageCard"] | null;
         };
         /**
          * MessageAuthorType
          * @enum {string}
          */
         MessageAuthorType: "user" | "agent" | "system";
+        /**
+         * MessageCard
+         * @description Cartão dentro da mensagem do agente (FLUXOS_DA_V46.md §4.5), sempre ligado ao objeto.
+         */
+        MessageCard: {
+            /**
+             * Type
+             * @description `work_created` (Trabalho criado), `material` (Material · vN), `approval` (pedido de aprovação ou autorização), `question` (pergunta), `options` (escolher uma opção), `team` (equipe montada), `budget` (orçamento em créditos).
+             * @enum {string}
+             */
+            type: "work_created" | "material" | "approval" | "question" | "options" | "team" | "budget";
+            /** Actions */
+            actions?: components["schemas"]["CardAction"][];
+            /** Work Item Id */
+            work_item_id?: string | null;
+            /** Delivery Version Id */
+            delivery_version_id?: string | null;
+            /** Approval Id */
+            approval_id?: string | null;
+            /** Version No */
+            version_no?: number | null;
+            /** Options */
+            options?: components["schemas"]["CardOption"][] | null;
+            /** Agent Ids */
+            agent_ids?: components["schemas"]["AgentId"][] | null;
+            /** Credits */
+            credits?: string | null;
+            /** @description Estado atual da pendência ligada. */
+            approval_status?: components["schemas"]["ApprovalStatus"] | null;
+            /** @description Decisão já tomada (o web marca a escolhida e desabilita). */
+            decision?: components["schemas"]["ApprovalDecision"] | null;
+            /**
+             * Answer
+             * @description Resposta escrita ou opção escolhida.
+             */
+            answer?: string | null;
+            version_status?: components["schemas"]["DeliveryVersionStatus"] | null;
+            work_item_status?: components["schemas"]["WorkItemStatus"] | null;
+        };
         /**
          * MessageCreate
          * @example {

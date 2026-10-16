@@ -77,6 +77,25 @@ class RunData:
     feedback: dict[str, Any] | None = None
 
 
+@dataclass(frozen=True)
+class ReplyData:
+    agent_id: str
+    attempts: int
+    conversation_id: UUID
+    workspace_name: str
+    locale: str
+    request: str
+    history: list[HistoryMessage]
+
+
+# Botões do cartão (o web traduz pelo catálogo); a decisão vai por POST /approvals/{id}/decision.
+MATERIAL_ACTIONS = [
+    {"id": "approve", "decision": "approved"},
+    {"id": "request_changes", "decision": "changes_requested"},
+]
+QUESTION_ACTIONS = [{"id": "answer", "decision": "answered"}]
+
+
 def redact(value: Any) -> Any:
     """Tira de payload e erro qualquer chave com cara de segredo, em qualquer profundidade."""
     if isinstance(value, dict):
@@ -120,7 +139,8 @@ class RunStore:
             run = await fetchone(
                 conn,
                 """
-                select r.status, r.attempts, r.agent_id, r.work_item_id, s.locale,
+                select r.status, r.attempts, r.agent_id, r.work_item_id, r.message_id,
+                       r.conversation_id, s.locale,
                        r.updated_at < now() - make_interval(secs => %s) as stale
                 from public.runs r
                 join public.workspaces s on s.id = r.workspace_id
@@ -156,6 +176,9 @@ class RunStore:
             )
             if running >= workspace_cap:
                 return Claim("capped", run["attempts"])
+
+            if run["work_item_id"] is None and run["message_id"] is not None:
+                return await self._begin_reply(conn, run, lease_seconds)
 
             item = None
             if run["work_item_id"] is not None:
@@ -205,6 +228,37 @@ class RunStore:
             if refused is not None:
                 return Claim("unbillable", *claim, error=refused)
             return Claim("claimed", *claim)
+
+    async def _begin_reply(
+        self, conn: AsyncConnection[DictRow], run: DictRow, lease_seconds: int
+    ) -> Claim:
+        """Run de resposta: sem trabalho, sem reserva (crédito é por entrega). Um especialista por
+        vez: com outro run em execução na mesma conversa, espera a vez como no teto."""
+        speaking = await fetchval(
+            conn,
+            """
+            select count(*) from public.runs
+            where workspace_id = %s and conversation_id = %s and id <> %s and status = 'running'
+              and updated_at >= now() - make_interval(secs => %s)
+            """,
+            (self.workspace_id, run["conversation_id"], self.run_id, lease_seconds),
+        )
+        if speaking:
+            return Claim("capped", run["attempts"])
+        attempts = await fetchval(
+            conn,
+            """
+            update public.runs
+            set status = 'running', attempts = attempts + 1,
+                started_at = coalesce(started_at, now()), finished_at = null
+            where id = %s and workspace_id = %s
+            returning attempts
+            """,
+            (self.run_id, self.workspace_id),
+        )
+        self.attempt = attempts
+        await self._event(conn, "started", {"agent_id": run["agent_id"], "attempt": attempts})
+        return Claim("claimed", attempts, run["agent_id"], None, run["locale"])
 
     async def _reserve(self, conn: AsyncConnection[DictRow]) -> dict[str, Any] | None:
         """Reserva a estimativa do run (preço vigente da delivery do trabalho) ao começar.
@@ -322,6 +376,57 @@ class RunStore:
             feedback=dict(feedback) if feedback else None,
         )
 
+    async def load_reply(self, *, history_limit: int) -> ReplyData:
+        async with self.pool.connection() as conn:
+            row = await fetchone(
+                conn,
+                """
+                select r.agent_id, r.attempts, r.conversation_id, m.id as message_id,
+                       m.created_at as message_at, m.body as request, s.name as workspace_name,
+                       s.locale
+                from public.runs r
+                join public.messages m on m.id = r.message_id and m.workspace_id = r.workspace_id
+                join public.workspaces s on s.id = r.workspace_id
+                where r.id = %s and r.workspace_id = %s
+                """,
+                (self.run_id, self.workspace_id),
+            )
+            if row is None:
+                raise LookupError(
+                    f"run {self.run_id} sem mensagem no workspace {self.workspace_id}"
+                )
+            rows = await (
+                await conn.execute(
+                    """
+                    select author_type::text, author_agent_id::text, body
+                    from public.messages
+                    where workspace_id = %s and conversation_id = %s
+                      and (created_at, id) < (%s, %s)
+                    order by created_at desc, id desc
+                    limit %s
+                    """,
+                    (
+                        self.workspace_id,
+                        row["conversation_id"],
+                        row["message_at"],
+                        row["message_id"],
+                        history_limit,
+                    ),
+                )
+            ).fetchall()
+        return ReplyData(
+            agent_id=row["agent_id"],
+            attempts=row["attempts"],
+            conversation_id=row["conversation_id"],
+            workspace_name=row["workspace_name"],
+            locale=row["locale"],
+            request=row["request"],
+            history=[
+                HistoryMessage(r["author_type"], r["author_agent_id"], r["body"])
+                for r in reversed(rows)
+            ],
+        )
+
     async def recall_memory(self, *, locale: str, text: str, budget: int) -> list[MemoryFact]:
         """Memória da Marca do run (essenciais + busca sob orçamento), registrada em
         run_context_items na mesma transação. Retentativa do run não duplica o registro."""
@@ -375,6 +480,21 @@ class RunStore:
     # ------------------------------------------------------------------------------------------
     # Etapas, eventos e etapas do trabalho
     # ------------------------------------------------------------------------------------------
+
+    async def thinking(
+        self, agent_id: str, step: str, status: dict[str, str], conversation_id: UUID | None
+    ) -> None:
+        """Etapa começando: status por etapa e, na conversa, quem está escrevendo."""
+        async with self.pool.connection() as conn:
+            await self._event(
+                conn, "agent.thinking", {"agent_id": agent_id, "step": step, **status}
+            )
+            if conversation_id is not None:
+                await self._event(
+                    conn,
+                    "conversation.typing",
+                    {"conversation_id": conversation_id, "agent_id": agent_id, **status},
+                )
 
     async def event(self, type_: str, data: dict[str, Any]) -> None:
         async with self.pool.connection() as conn:
@@ -534,6 +654,7 @@ class RunStore:
         model: str,
         prompt_version: str,
         observations: list[dict[str, str]] | None = None,
+        status: dict[str, str] | None = None,
     ) -> dict[str, Any]:
         """Entrega pronta: versão, mensagem do agente, revisão pedida, trabalho em needs_you e o que
         o agente percebeu como sugestão "<Agente> percebeu" (nunca conhecimento confirmado)."""
@@ -600,7 +721,7 @@ class RunStore:
             await self._event(conn, "delivery.created", ids)
             message_id = await self._agent_message(
                 conn,
-                work_item,
+                work_item.conversation_id,
                 agent_id,
                 message,
                 [{"type": "delivery_version", **{k: str(v) for k, v in ids.items()}}],
@@ -616,8 +737,22 @@ class RunStore:
                 """,
                 (self.workspace_id, work_item.id, version["id"], self.run_id, agent_id),
             )
+            await self._card(
+                conn,
+                message_id,
+                {
+                    "type": "material",
+                    "version_no": version["version_no"],
+                    "actions": MATERIAL_ACTIONS,
+                },
+                work_item_id=work_item.id,
+                delivery_version_id=version["id"],
+                approval_id=approval_id,
+            )
             await self._event(
-                conn, "approval.requested", {"approval_id": approval_id, "kind": "review"}
+                conn,
+                "approval.requested",
+                {"approval_id": approval_id, "kind": "review", **(status or {})},
             )
             suggestions = await self._suggest(conn, work_item, agent_id, observations or [])
             await transition(conn, work_item.id, "needs_you", "agent", agent_id, "in_progress")
@@ -690,6 +825,7 @@ class RunStore:
         question: str,
         tool_data: dict[str, Any],
         model: str,
+        status: dict[str, str] | None = None,
     ) -> dict[str, Any]:
         """Briefing incompleto: o agente pergunta, a resposta fica pedida e o trabalho espera.
 
@@ -699,7 +835,9 @@ class RunStore:
         async with self.pool.connection() as conn, conn.transaction():
             await self._fence(conn)
             await self._start_step(conn, "tool_call", None, tool_data, status="succeeded")
-            message_id = await self._agent_message(conn, work_item, agent_id, question, [])
+            message_id = await self._agent_message(
+                conn, work_item.conversation_id, agent_id, question, []
+            )
             approval_id = await fetchval(
                 conn,
                 """
@@ -710,8 +848,17 @@ class RunStore:
                 """,
                 (self.workspace_id, work_item.id, self.run_id, agent_id),
             )
+            await self._card(
+                conn,
+                message_id,
+                {"type": "question", "actions": QUESTION_ACTIONS},
+                work_item_id=work_item.id,
+                approval_id=approval_id,
+            )
             await self._event(
-                conn, "approval.requested", {"approval_id": approval_id, "kind": "respond"}
+                conn,
+                "approval.requested",
+                {"approval_id": approval_id, "kind": "respond", **(status or {})},
             )
             await transition(conn, work_item.id, "needs_you", "agent", agent_id, "in_progress")
             totals = await self._succeed(conn, model=model, prompt_version=None)
@@ -719,6 +866,17 @@ class RunStore:
                 conn, "finished", {"status": "succeeded", "work_item_status": "needs_you"}
             )
         return {"message_id": message_id, "approval_id": approval_id, **totals}
+
+    async def reply(
+        self, *, conversation_id: UUID, agent_id: str, body: str, model: str, prompt_version: str
+    ) -> dict[str, Any]:
+        """Resposta na conversa: a mensagem do especialista e o run concluído, juntos."""
+        async with self.pool.connection() as conn, conn.transaction():
+            await self._fence(conn)
+            message_id = await self._agent_message(conn, conversation_id, agent_id, body, [])
+            totals = await self._succeed(conn, model=model, prompt_version=prompt_version)
+            await self._event(conn, "finished", {"status": "succeeded"})
+        return {"message_id": message_id, **totals}
 
     async def retry_later(self, error: dict[str, Any]) -> None:
         async with self.pool.connection() as conn:
@@ -801,19 +959,19 @@ class RunStore:
     async def _agent_message(
         self,
         conn: AsyncConnection[DictRow],
-        work_item: WorkItem,
+        conversation_id: UUID | None,
         agent_id: str,
         body: str,
         attachments: list[dict[str, Any]],
     ) -> UUID | None:
-        if work_item.conversation_id is None:
+        if conversation_id is None:
             return None
         message_id = await fetchval(
             conn,
             "select (app.post_agent_message(%s, %s, %s, %s, %s, %s)).id",
             (
                 self.workspace_id,
-                work_item.conversation_id,
+                conversation_id,
                 agent_id,
                 self.run_id,
                 body,
@@ -823,13 +981,38 @@ class RunStore:
         await self._event(
             conn,
             "message.created",
-            {
-                "message_id": message_id,
-                "conversation_id": work_item.conversation_id,
-                "agent_id": agent_id,
-            },
+            {"message_id": message_id, "conversation_id": conversation_id, "agent_id": agent_id},
         )
         return message_id
+
+    async def _card(
+        self,
+        conn: AsyncConnection[DictRow],
+        message_id: UUID | None,
+        card: dict[str, Any],
+        *,
+        work_item_id: UUID | None = None,
+        delivery_version_id: UUID | None = None,
+        approval_id: UUID | None = None,
+    ) -> None:
+        """Cartão na mensagem do agente, ligado ao objeto (a pendência nasce depois da mensagem)."""
+        if message_id is None:
+            return
+        await conn.execute(
+            """
+            update public.messages
+            set card = %s, work_item_id = %s, delivery_version_id = %s, approval_id = %s
+            where id = %s and workspace_id = %s and author_type = 'agent'
+            """,
+            (
+                Jsonb(card),
+                work_item_id,
+                delivery_version_id,
+                approval_id,
+                message_id,
+                self.workspace_id,
+            ),
+        )
 
     async def _totals(self, conn: AsyncConnection[DictRow]) -> dict[str, Any]:
         """Tokens e custo do run = soma das etapas (todas as tentativas: é o que foi gasto)."""
