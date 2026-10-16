@@ -36,7 +36,7 @@ describe("barra lateral V4.6", () => {
       "Estratégia",
       "Marca & Criação",
       "Conteúdo",
-      "Growth Marketing",
+      "Growth",
       "CRM",
       "Resultados",
       "Modo Autônomo",

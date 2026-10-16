@@ -18,6 +18,15 @@
     "mem": "Memória da Marca",
     "team": "Minha Equipe & Conversas"
   },
+  "areas": {
+    "nexo": "Projetos",
+    "bia": "Estratégia",
+    "kaia": "Marca & Criação",
+    "otto": "Conteúdo",
+    "kiwi": "Growth",
+    "max": "CRM",
+    "iris": "Resultados"
+  },
   "itemAria": "{label}, com {agent}",
   "itemAriaSay": "{label}, com {agent}, {say}",
   "itemAriaSayOnly": "{label}, {say}",

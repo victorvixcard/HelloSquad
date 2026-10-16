@@ -41,7 +41,7 @@ test.describe("área logada", () => {
       "Estratégia, com Bia",
       "Marca & Criação, com Kaia",
       "Conteúdo, com Otto",
-      "Growth Marketing, com Kiwi",
+      "Growth, com Kiwi",
       "CRM, com Max",
       "Resultados, com Íris",
     ]) {
@@ -54,7 +54,7 @@ test.describe("área logada", () => {
     await expect(page.getByRole("textbox", { name: "Pedido para a Sala do Squad" })).toBeEnabled();
     await snap(page, "02-marina-shell");
 
-    await squad.getByRole("link", { name: "Growth Marketing, com Kiwi" }).click();
+    await squad.getByRole("link", { name: "Growth, com Kiwi" }).click();
     await expect(page).toHaveURL(/\/app\/miolo\/squad\/kiwi$/);
     await expect(page.getByRole("heading", { level: 1, name: "Growth Marketing" })).toBeVisible();
 

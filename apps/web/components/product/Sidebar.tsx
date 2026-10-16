@@ -112,7 +112,7 @@ export function Sidebar({ slug, current, min, onToggle, needsCount, agentExpress
         const n = id === "proj" ? needsCount : 0;
         return {
           id,
-          label: tc(`areas.${member.id}`),
+          label: t(`areas.${member.id}`),
           href: `${base}/squad/${member.id}`,
           agent: member.id,
           n,
