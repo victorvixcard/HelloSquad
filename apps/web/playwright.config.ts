@@ -3,7 +3,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 // Fluxos ponta a ponta contra o ambiente LOCAL: Supabase do HelloSquad (make up && make seed),
 // API FastAPI na 8100 e o build de produção do web na 3100. Nada aqui fala com nuvem.
-// Rode com `make e2e` (faz o build antes). O teardown reaplica o seed (remove o workspace do Pedro).
+// Rode com `make e2e` (faz o build antes). O setup sobe o worker do squad em modo simulado (fluxo ao vivo, A1a);
+// o teardown para o worker e reaplica o seed (remove o workspace do Pedro e o trabalho do fluxo ao vivo).
 const WEB_PORT = Number(process.env.WEB_PORT || 3100);
 const API_PORT = Number(process.env.API_PORT || 8100);
 const repoRoot = path.resolve(__dirname, "../..");
@@ -17,6 +18,7 @@ export default defineConfig({
   retries: 0,
   reporter: [["list"]],
   outputDir: "./test-results",
+  globalSetup: "./e2e/global-setup.ts",
   globalTeardown: "./e2e/global-teardown.ts",
   use: {
     baseURL: `http://127.0.0.1:${WEB_PORT}`,

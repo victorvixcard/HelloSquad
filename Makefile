@@ -63,9 +63,9 @@ test-web: ## Web e pacotes: ESLint, checagem de tipos e testes de componente (Vi
 	pnpm -r --if-present typecheck
 	pnpm -r --if-present test
 
-e2e: ## Ponta a ponta (Playwright, Chromium) no ambiente local: build do web, fluxos da Marina e do Pedro, reaplica o seed (com trava)
+e2e: ## Ponta a ponta (Playwright, Chromium) no ambiente local: build do web, worker simulado, fluxos da Marina e do Pedro, reaplica o seed (com trava)
 	pnpm --filter web build
-	$(DB_LOCK) pnpm --filter web e2e
+	$(DB_LOCK) env HELLOSQUAD_DB_LOCK_HELD=1 pnpm --filter web e2e
 
 test-db: ## Banco: testes pgTAP de supabase/tests (exige make up; com trava)
 	$(DB_LOCK) $(SUPABASE) test db
