@@ -32,7 +32,7 @@ limit %s
 async def load_run(conn, run_id: UUID) -> dict:
     row = await (await conn.execute(GET_RUN, (run_id,))).fetchone()
     if row is None:
-        raise ApiError(404, "not_found", "Run não encontrado.")
+        raise ApiError(404, "not_found", "error.run_not_found")
     return row
 
 

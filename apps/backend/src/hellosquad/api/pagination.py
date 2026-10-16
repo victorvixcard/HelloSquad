@@ -39,7 +39,7 @@ def decode_cursor(cursor: str | None) -> tuple[datetime | None, UUID | None]:
             raise ValueError("cursor sem fuso")
         return parsed, UUID(item_id)
     except (binascii.Error, UnicodeDecodeError, ValueError) as exc:
-        raise ApiError(422, "invalid_cursor", "Cursor de paginação inválido.") from exc
+        raise ApiError(422, "invalid_cursor", "error.invalid_cursor") from exc
 
 
 def split_page(rows: list[dict], limit: int, moment_key: str) -> tuple[list[dict], str | None]:

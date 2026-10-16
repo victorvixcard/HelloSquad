@@ -117,7 +117,7 @@ async def load_learning(conn: AsyncConnection[DictRow], learning_id: UUID) -> Ag
         )
     ).fetchone()
     if row is None:
-        raise ApiError(404, "not_found", "Aprendizado não encontrado.")
+        raise ApiError(404, "not_found", "error.learning_not_found")
     return AgentLearning(**row)
 
 

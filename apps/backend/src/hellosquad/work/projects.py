@@ -96,7 +96,7 @@ REQUIRED_PROJECT_FIELDS = ("name", "status", "owner_agent_id")
 async def load_project(conn: AsyncConnection[DictRow], project_id: UUID) -> ProjectDetail:
     row = await (await conn.execute(PROJECT, (project_id,))).fetchone()
     if row is None:
-        raise ApiError(404, "not_found", "Projeto não encontrado.")
+        raise ApiError(404, "not_found", "error.project_not_found")
     participants = await (await conn.execute(PARTICIPANTS, (project_id,))).fetchall()
     milestones = await (await conn.execute(MILESTONES, (project_id,))).fetchall()
     owner = await (await conn.execute(OWNER, (project_id,))).fetchone()
@@ -116,7 +116,7 @@ async def load_project(conn: AsyncConnection[DictRow], project_id: UUID) -> Proj
 async def load_milestone(conn: AsyncConnection[DictRow], milestone_id: UUID) -> ProjectMilestone:
     row = await (await conn.execute(GET_MILESTONE, (milestone_id,))).fetchone()
     if row is None:
-        raise ApiError(404, "not_found", "Marco não encontrado.")
+        raise ApiError(404, "not_found", "error.milestone_not_found")
     return ProjectMilestone(**row)
 
 
@@ -179,7 +179,7 @@ async def update_project(
         field for field in REQUIRED_PROJECT_FIELDS if field in patch and patch[field] is None
     ]
     if cleared:
-        raise ApiError(422, "validation_error", f"{cleared[0]} não pode ficar vazio.")
+        raise ApiError(422, "validation_error", "error.field_empty", field=cleared[0])
     async with db.transaction_as(principal) as conn:
         await conn.execute(UPDATE_PROJECT, (project_id, Jsonb(patch)))
         return await load_project(conn, project_id)
@@ -240,7 +240,7 @@ async def update_milestone(
 ) -> ProjectMilestone:
     patch = payload.model_dump(mode="json", exclude_unset=True)
     if "title" in patch and patch["title"] is None:
-        raise ApiError(422, "validation_error", "title não pode ficar vazio.")
+        raise ApiError(422, "validation_error", "error.field_empty", field="title")
     async with db.transaction_as(principal) as conn:
         await conn.execute(UPDATE_MILESTONE, (milestone_id, Jsonb(patch)))
         return await load_milestone(conn, milestone_id)

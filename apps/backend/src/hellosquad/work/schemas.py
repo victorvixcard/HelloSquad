@@ -236,7 +236,7 @@ class WorkItemCreate(BaseModel):
     @classmethod
     def limit_briefing_size(cls, value: dict[str, Any]) -> dict[str, Any]:
         if len(json.dumps(value, ensure_ascii=False)) > BRIEFING_MAX_CHARS:
-            raise ValueError("O briefing passou de 20.000 caracteres.")
+            raise ValueError("error.validation.briefing_too_long")
         return value
 
 

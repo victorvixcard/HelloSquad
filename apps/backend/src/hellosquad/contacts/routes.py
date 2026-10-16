@@ -189,12 +189,12 @@ def parse_rows(content: str, *, today: date, local: bool) -> tuple[int, list[dic
     try:
         header = next(reader)
     except StopIteration:
-        raise ApiError(422, "invalid_csv", "O arquivo está vazio.") from None
+        raise ApiError(422, "invalid_csv", "error.csv.empty") from None
     columns = [HEADER_ALIASES.get(_key(h)) for h in header]
     missing = sorted(REQUIRED_HEADERS - set(columns))
     if missing or ("email" not in columns and "telefone" not in columns):
         missing += [] if ("email" in columns or "telefone" in columns) else ["email ou telefone"]
-        raise ApiError(422, "invalid_csv", f"Faltam colunas no cabeçalho: {', '.join(missing)}.")
+        raise ApiError(422, "invalid_csv", "error.csv.missing_columns", columns=", ".join(missing))
 
     accepted: list[dict] = []
     refused: list[dict] = []
@@ -205,7 +205,7 @@ def parse_rows(content: str, *, today: date, local: bool) -> tuple[int, list[dic
             continue
         total += 1
         if total > MAX_ROWS:
-            raise ApiError(422, "invalid_csv", f"O arquivo passa de {MAX_ROWS} linhas.")
+            raise ApiError(422, "invalid_csv", "error.csv.too_many_rows", max_rows=MAX_ROWS)
         row = {c: v.strip() for c, v in zip(columns, values, strict=False) if c}
         reason, parsed = validate_row(row, today=today, local=local)
         keys = [k for k in (parsed.get("email"), parsed.get("phone")) if k]
@@ -285,7 +285,7 @@ async def import_contacts(
     local = get_settings().app_env in LOCAL_ENVS
     total, accepted, refused = parse_rows(payload.csv, today=date.today(), local=local)
     if total == 0:
-        raise ApiError(422, "invalid_csv", "O arquivo não tem nenhuma linha de contato.")
+        raise ApiError(422, "invalid_csv", "error.csv.no_rows")
     async with db.transaction_as(principal) as conn:
         await ensure_workspace(conn, workspace_id)
         row = await (

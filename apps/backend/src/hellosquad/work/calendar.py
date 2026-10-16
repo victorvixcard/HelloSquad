@@ -79,7 +79,7 @@ async def list_calendar(
     end: Annotated[date, Query(alias="to", description="Último dia, até 92 dias depois.")],
 ) -> CalendarPage:
     if end < start or (end - start).days > MAX_DAYS:
-        raise ApiError(422, "invalid_period", "O período vai de 1 a 92 dias, do início ao fim.")
+        raise ApiError(422, "invalid_period", "error.invalid_period", max_days=92)
     async with db.transaction_as(principal) as conn:
         await ensure_workspace(conn, workspace_id)
         found = await (await conn.execute(LIST_CALENDAR, (workspace_id, start, end))).fetchall()

@@ -63,7 +63,7 @@ async def list_metrics(
     metric: Annotated[str | None, Query(max_length=40)] = None,
 ) -> MetricsPage:
     if end < start or (end - start).days > MAX_DAYS:
-        raise ApiError(422, "invalid_period", "O período vai de 1 a 366 dias, do início ao fim.")
+        raise ApiError(422, "invalid_period", "error.invalid_period", max_days=366)
     async with db.transaction_as(principal) as conn:
         await ensure_workspace(conn, workspace_id)
         rows = await (

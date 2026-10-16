@@ -30,7 +30,7 @@ UNSAFE_NAME = re.compile(r"[\x00-\x1f\x7f-\x9f\u200e\u200f\u202a-\u202e\u2066-\u
 
 def check_display_name(value: str) -> str:
     if UNSAFE_NAME.search(value):
-        raise ValueError("O nome não pode ter quebra de linha, caracteres de controle nem < ou >.")
+        raise ValueError("error.validation.display_name")
     return value
 
 

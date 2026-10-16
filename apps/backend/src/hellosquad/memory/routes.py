@@ -189,14 +189,14 @@ async def fetchall(
 async def load_suggestion(conn: AsyncConnection[DictRow], suggestion_id: UUID) -> MemorySuggestion:
     row = await (await conn.execute(GET_SUGGESTION, (suggestion_id,))).fetchone()
     if row is None:
-        raise ApiError(404, "not_found", "Sugestão não encontrada.")
+        raise ApiError(404, "not_found", "error.suggestion_not_found")
     return MemorySuggestion(**row)
 
 
 async def load_fact(conn: AsyncConnection[DictRow], fact_id: UUID) -> BrandFact:
     row = await (await conn.execute(GET_FACT, (fact_id,))).fetchone()
     if row is None:
-        raise ApiError(404, "not_found", "Conhecimento não encontrado.")
+        raise ApiError(404, "not_found", "error.knowledge_not_found")
     return BrandFact(**row)
 
 
@@ -353,7 +353,7 @@ async def fact_history(
     async with db.transaction_as(principal) as conn:
         versions = [BrandFact(**row) for row in await fetchall(conn, FACT_LINEAGE, {"id": fact_id})]
         if not versions:
-            raise ApiError(404, "not_found", "Conhecimento não encontrado.")
+            raise ApiError(404, "not_found", "error.knowledge_not_found")
         suggestions = await fetchall(
             conn,
             f"{SUGGESTION_SELECT} where s.resulting_fact_id = any(%s) order by s.created_at desc",
@@ -385,7 +385,7 @@ async def search_memory(
 ) -> MemorySearchResult:
     query = q.strip()
     if not query:
-        raise ApiError(422, "validation_error", "Escreva o que quer buscar.")
+        raise ApiError(422, "validation_error", "error.search_query_empty")
     async with db.transaction_as(principal) as conn:
         await ensure_workspace(conn, workspace_id)
         rows = await fetchall(
@@ -448,7 +448,7 @@ async def resolve_conflict(
         )
         row = await (await conn.execute(GET_CONFLICT, (conflict_id,))).fetchone()
         if row is None:
-            raise ApiError(404, "not_found", "Conflito não encontrado.")
+            raise ApiError(404, "not_found", "error.memory_conflict_not_found")
         return (await conflicts_from_rows(conn, [row]))[0]
 
 

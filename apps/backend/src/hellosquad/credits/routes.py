@@ -48,7 +48,7 @@ async def estimate_credits(
                 await conn.execute(WORK_ITEM, (payload.work_item_id, payload.workspace_id))
             ).fetchone()
             if found is None:
-                raise ApiError(404, "work_item_not_found", "Trabalho não encontrado.")
+                raise ApiError(404, "work_item_not_found", "error.work_item_not_found")
         row = await (
             await conn.execute(
                 ESTIMATE,
@@ -60,5 +60,5 @@ async def estimate_credits(
             )
         ).fetchone()
     if row is None:
-        raise ApiError(404, "price_not_found", "Esta entrega ainda não tem preço em créditos.")
+        raise ApiError(404, "price_not_found", "error.price_not_found")
     return CreditEstimate(**row, sufficient=row["available"] >= row["credits"])

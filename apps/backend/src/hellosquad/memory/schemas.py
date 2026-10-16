@@ -148,9 +148,9 @@ class MemorySuggestionDecisionCreate(BaseModel):
     @model_validator(mode="after")
     def content_only_when_correcting(self) -> "MemorySuggestionDecisionCreate":
         if self.decision == MemorySuggestionDecision.correct and not self.content:
-            raise ValueError("Ao corrigir, escreva como deve ficar.")
+            raise ValueError("error.validation.correction_text_required")
         if self.decision != MemorySuggestionDecision.correct and self.content is not None:
-            raise ValueError("O texto só vale ao corrigir.")
+            raise ValueError("error.validation.text_only_when_correcting")
         return self
 
 
@@ -219,7 +219,7 @@ class MemoryConflictResolve(BaseModel):
     @model_validator(mode="after")
     def one_way_out(self) -> "MemoryConflictResolve":
         if (self.keep_fact_id is None) == (self.content is None):
-            raise ValueError("Escolha a versão que vale ou escreva a correção, uma das duas.")
+            raise ValueError("error.validation.conflict_resolution_choice")
         return self
 
 
@@ -274,7 +274,7 @@ class BrandFactCreate(BaseModel):
         if self.kind == "objective" and (
             self.area != "business" or self.topic is not None or self.key is not None
         ):
-            raise ValueError("O objetivo vai em Meu negócio, sem assunto nem chave.")
+            raise ValueError("error.validation.goal_without_topic")
         return self
 
 

@@ -156,16 +156,12 @@ async def create_workspace(
             await start_welcome(conn, row, principal.full_name)
     except errors.UniqueViolation as exc:
         if exc.diag.constraint_name == "workspaces_slug_key":
-            raise ApiError(
-                409, "slug_taken", "Já existe um workspace com esse endereço (slug)."
-            ) from exc
+            raise ApiError(409, "slug_taken", "error.slug_taken") from exc
         raise
     except errors.CheckViolation as exc:
         # A lista de reservados fica só no banco (app.reserved_workspace_slugs).
         if exc.diag.constraint_name == "workspaces_slug_not_reserved":
-            raise ApiError(
-                422, "slug_reserved", "Esse endereço é reservado. Escolha outro."
-            ) from exc
+            raise ApiError(422, "slug_reserved", "error.slug_reserved") from exc
         raise
     response.headers["Location"] = f"/workspaces/{row['id']}"
     return Workspace(**row, role=WorkspaceRole.owner)
@@ -183,7 +179,7 @@ async def get_workspace(
         row = await (await conn.execute(MY_WORKSPACE, (principal.user_id, workspace_id))).fetchone()
     if row is None:
         # Inexistente e alheio respondem igual: não revela que o workspace existe.
-        raise ApiError(404, "workspace_not_found", "Workspace não encontrado.")
+        raise ApiError(404, "workspace_not_found", "error.workspace_not_found")
     return Workspace(**row)
 
 

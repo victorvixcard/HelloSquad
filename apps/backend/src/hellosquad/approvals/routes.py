@@ -71,7 +71,7 @@ def approval_from_row(row: dict) -> Approval:
 async def load_approval(conn: AsyncConnection[DictRow], approval_id: UUID) -> Approval:
     row = await (await conn.execute(GET_APPROVAL, (approval_id,))).fetchone()
     if row is None:
-        raise ApiError(404, "not_found", "Aprovação não encontrada.")
+        raise ApiError(404, "not_found", "error.approval_not_found")
     return approval_from_row(row)
 
 

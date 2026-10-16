@@ -227,7 +227,7 @@ async def load_conversation(conn: AsyncConnection[DictRow], conversation_id: UUI
     row = await (await conn.execute(GET_CONVERSATION, (conversation_id,))).fetchone()
     if row is None:
         # Inexistente e de outro workspace respondem igual.
-        raise ApiError(404, "not_found", "Conversa não encontrada.")
+        raise ApiError(404, "not_found", "error.conversation_not_found")
     return row
 
 
@@ -419,7 +419,7 @@ async def list_messages(
     limit: Annotated[int, limit_query(100)] = 50,
 ) -> MessagePage:
     if cursor and before:
-        raise ApiError(422, "invalid_cursor", "Use cursor ou before, não os dois.")
+        raise ApiError(422, "invalid_cursor", "error.cursor_and_before")
     if before is None:
         query, (cursor_at, cursor_id) = LIST_MESSAGES, decode_cursor(cursor)
     else:

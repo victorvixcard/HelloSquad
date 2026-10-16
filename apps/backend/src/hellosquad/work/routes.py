@@ -339,7 +339,7 @@ async def create_work_item(
             raise ApiError(
                 409,
                 "idempotency_key_reused",
-                "Esta chave de idempotência já foi usada em outro pedido.",
+                "error.idempotency_key_reused",
             )
         row = await (await conn.execute(GET_WORK_ITEM, (created["id"],))).fetchone()
         run = await (await conn.execute(START_RUN, (created["id"],))).fetchone()
@@ -397,7 +397,7 @@ async def get_work_item(
     async with db.transaction_as(principal) as conn:
         item = await (await conn.execute(GET_WORK_ITEM, (work_item_id,))).fetchone()
         if item is None:
-            raise ApiError(404, "not_found", "Trabalho não encontrado.")
+            raise ApiError(404, "not_found", "error.work_item_not_found")
         briefing = await (await conn.execute(BRIEFING, (work_item_id,))).fetchone()
         history = await (await conn.execute(HISTORY, (work_item_id,))).fetchall()
         steps = await (await conn.execute(STEPS, (work_item_id,))).fetchall()

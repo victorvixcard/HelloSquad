@@ -74,9 +74,7 @@ async def receive_webhook(
     try:
         adapter = build_provider(provider, get_settings(), http)
     except PaymentProviderError as exc:
-        raise ApiError(
-            404, "provider_not_available", "Provedor de pagamento indisponível neste ambiente."
-        ) from exc
+        raise ApiError(404, "provider_not_available", "error.provider_not_available") from exc
     body = await request.body()
     try:
         event = await adapter.parse_webhook(
@@ -84,16 +82,12 @@ async def receive_webhook(
         )
     except InvalidWebhookSignature as exc:
         log.warning("webhook de %s recusado: %s", provider, exc)
-        raise ApiError(401, "invalid_signature", "Assinatura do webhook inválida.") from exc
+        raise ApiError(401, "invalid_signature", "error.invalid_signature") from exc
     except InvalidWebhookPayload as exc:
-        raise ApiError(
-            422, "invalid_payload", "Corpo do webhook fora do formato do provedor."
-        ) from exc
+        raise ApiError(422, "invalid_payload", "error.invalid_payload") from exc
     except PaymentProviderError as exc:
         log.warning("webhook de %s: consulta ao provedor falhou (%s)", provider, exc.code)
-        raise ApiError(
-            503, "provider_unavailable", "Não foi possível consultar o provedor agora."
-        ) from exc
+        raise ApiError(503, "provider_unavailable", "error.provider_unavailable") from exc
     async with db.transaction_as_billing() as conn:
         row = await (await conn.execute(APPLY_EVENT, (provider, Jsonb(event.as_json())))).fetchone()
     log.info(
@@ -110,7 +104,7 @@ async def receive_webhook(
 async def _ensure_owner(conn, workspace_id: UUID) -> None:
     await ensure_workspace(conn, workspace_id)
     if not (await (await conn.execute(IS_OWNER, (workspace_id,))).fetchone())["owner"]:
-        raise ApiError(403, "owner_only", "Só o dono da conta vê a assinatura e os pagamentos.")
+        raise ApiError(403, "owner_only", "error.billing_owner_only")
 
 
 @router.get(
