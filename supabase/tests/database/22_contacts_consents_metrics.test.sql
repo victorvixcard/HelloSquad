@@ -6,7 +6,7 @@ begin;
 set local client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
-select plan(34);
+select plan(35);
 
 create temporary table fx as
 select
@@ -58,9 +58,9 @@ select throws_ok(
   $$insert into public.consents (workspace_id, contact_id, channel, status, source, given_at) values ((select miolo from fx), (select ana from fx), 'email', 'revoked', 'teste', current_date)$$,
   '42501', null, 'membro não grava consentimento direto'
 );
-select is_empty(
-  $$update public.metrics_daily set value = 0 where workspace_id = (select miolo from fx) returning 1$$,
-  'membro não altera métrica (nenhuma linha muda)'
+select throws_ok(
+  $$update public.metrics_daily set value = 0 where workspace_id = (select miolo from fx)$$,
+  '42501', null, 'membro não altera métrica'
 );
 
 select pg_temp.act_as((select rafael from fx));
