@@ -33,10 +33,12 @@ contexto, Kaia, e2e final e relatório.
 |---|---|---|---|
 | 0 | H1-04: "Conversar com <Nome>" abre a conversa do ambiente (primeira fala e sugestões da API) | feito, Vitest verde | `f5a8cb5`, `c476936`, `250920b` |
 | 1 | Bia: 02.01, 02.02, 02.03, 02.04, 02.07 como documentos revisáveis | feito pela frente da Bia (Vitest 9/9) | `7ab6e20`, `e4e294a`, `c34b60b`, `13e37f4` |
-| 2 | Otto: calendário 04.02 e posts multicanal 04.03 | em andamento (frente do Otto) | — |
-| 3 | Kiwi 05.01/05.02 e Max (CSV, segmentos, campanha, sequências) | em andamento (frente Kiwi + Max) | — |
-| 4 | Íris 07.02/07.03/07.04 e cartão `metric` | em andamento (frente da Íris) | — |
+| 2 | Otto: calendário 04.02 e posts multicanal 04.03 | feito pela frente do Otto; e2e verde | `518ff0f`, `f6f7d03`, `54eef67` |
+| 3 | Kiwi 05.01/05.02 e Max (CSV, segmentos, campanha, sequências) | feito pela frente Kiwi + Max; e2e do CSV verde | `24eb3bd`, `d2871a8`, `ebd553f`, `da67e20` |
+| 4 | Íris 07.02/07.03/07.04 e cartão `metric` | feito pela frente da Íris; e2e verde | `7be70d3`, `c5ba3aa`, `d0ad1cb` |
 | 5 | Kaia "aguardando o motor" e cartões de contexto novos (pedido, publicação, indicador, oportunidade, segmento, documento) | feito | `c470380`, `f5a8cb5`, `c34b60b` |
-| 6 | Vitest, e2e por ambiente, build, relatório | Vitest por item; e2e escritos; `make e2e` no fim | — |
+| 6 | Vitest, e2e por ambiente, build, relatório | `make test-web` verde (229 testes no web), `make e2e` verde (19, build de produção), relatório | `a7a21e9`, `358eb24`, `5db6a0d` e o do relatório |
 
 Lado a lado das partes comuns em `docs/parciais/a2b/` (catálogo, conversa do ambiente, Kaia): `4fcd617`.
+
+Fechada às 17:30. Relatório: `docs/parciais/A2b-relatorio.md`.
