@@ -55,8 +55,8 @@ echo "2. Marina aprova a estratégia da Bia"
 echo "  decisão: $(decidir $(pendente $WORK))"
 worker
 etapas $WORK
-echo "  handoff no contexto do Otto (run_context_items kind = step):"
-sql "select '    ' || i.kind || ' · ' || i.reason || ' · etapa ' || s.seq || ' (' || s.agent_id || ') · versão ' || v.version_no from public.run_context_items i join public.work_item_steps s on s.id = i.step_id join public.delivery_versions v on v.id = i.delivery_version_id where i.kind = 'step' and i.run_id in (select id from public.runs where work_item_id = '$WORK')"
+echo "  handoff no contexto de cada etapa seguinte (run_context_items kind = step):"
+sql "select '    run da ' || r.agent_id || ' recebeu ' || i.kind || ' · ' || i.reason || ' · etapa ' || s.seq || ' (' || s.agent_id || ') · versão ' || v.version_no from public.run_context_items i join public.runs r on r.id = i.run_id join public.work_item_steps s on s.id = i.step_id join public.delivery_versions v on v.id = i.delivery_version_id where i.kind = 'step' and r.work_item_id = '$WORK' order by r.created_at"
 echo "  mensagem da Kaia:"
 sql "select '    ' || body from public.messages where conversation_id = '$ROOM' and author_agent_id = 'kaia'"
 

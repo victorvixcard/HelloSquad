@@ -52,8 +52,9 @@ m.updated_at, m.step_id
 MILESTONES = f"""
 select {MILESTONE_COLUMNS}
 from public.project_milestones m
+left join public.work_item_steps s on s.id = m.step_id
 where m.project_id = %s
-order by m.due_at nulls last, m.created_at, m.id
+order by m.due_at nulls last, m.created_at, s.seq nulls last, m.id
 """
 
 GET_MILESTONE = f"""

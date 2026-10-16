@@ -206,6 +206,7 @@ async def test_coordinated_campaign_closes_with_one_owner_per_step(
     texts = [h["text"] for h in body["history"]]
     assert "Nexo montou a equipe: Bia, Kaia e Otto" in texts
     assert "Bia começou a etapa 1 · Estratégia" in texts
+    assert "Etapa 1 · Estratégia concluída" not in texts
 
     # O dono aprova a estratégia: a etapa fecha, a Kaia aguarda o motor e o Otto segue.
     await approve(api, access_token, strategy["id"])
@@ -310,6 +311,11 @@ async def test_coordinated_campaign_closes_with_one_owner_per_step(
     assert project.json()["status"] == "done"
     assert project.json()["owner"]["role"] == "owner"
     final_detail = (await api.get(f"/work-items/{work_id}", headers=headers)).json()
+    final_texts = [h["text"] for h in final_detail["history"]]
+    assert "Etapa 1 · Estratégia concluída" in final_texts
+    assert "Etapa 2 · Peças: aguardando o motor de imagem" in final_texts
+    assert "Etapa 3 · Textos concluída" in final_texts
+    assert [m["title"] for m in project.json()["milestones"]] == ["Estratégia", "Peças", "Textos"]
     assert [
         (s["agent_id"], s["status"], s.get("status_reason_label")) for s in final_detail["steps"]
     ] == [
