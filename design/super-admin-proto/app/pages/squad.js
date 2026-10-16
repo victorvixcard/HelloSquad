@@ -4,7 +4,7 @@
   'use strict';
   var SA = window.SA, h = SA.h, HS = SA.HS, D = SA.D, fmt = SA.fmt;
   var MODELO = { 'claude-opus-5-5': 'Opus 5.5', 'claude-haiku-4-5': 'Haiku 4.5', 'claude-sonnet-5-5': 'Sonnet 5.5' };
-  var AUTON = { analisar: 'Analisa', preparar: 'Prepara', executar: 'Executa com permissão' };
+  var AUTON = { analisar: 'Analisa', preparar: 'Prepara', executar: 'Executa' };
   var SIZE = 88, GAP = 30;
 
   function App() {
@@ -15,12 +15,12 @@
     var cols = [
       { k: 'nome', l: 'Agente', render: function (a) {
         return h('div', { className: 'sa-cell-a' }, h(HS.Agent, { agent: a.forma, size: 34 }),
-          h('div', { className: 'sa-cell-m' }, h('a', { className: 'sa-rowlink', href: 'agente.html?a=' + a.id }, a.name), h('small', null, a.papel_completo + ' · ' + a.area_ui)));
+          h('div', { className: 'sa-cell-m' }, h('a', { className: 'sa-rowlink', href: 'agente.html?a=' + a.id }, a.name), h('small', null, a.papel_completo)));
       } },
       { k: 'cor', l: 'Cor e forma', nw: true, render: function (a) {
         return h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 8 } },
-          h('span', { 'aria-hidden': true, style: { width: 14, height: 14, borderRadius: 5, background: a.cor, boxShadow: 'inset 0 0 0 1px var(--hs-l1)' } }),
-          h('span', { className: 'sa-mono' }, a.cor.toUpperCase() + ' · ' + a.forma));
+          h('span', { 'aria-hidden': true, style: { width: 14, height: 14, flex: 'none', borderRadius: 5, background: a.cor, boxShadow: 'inset 0 0 0 1px var(--hs-l1)' } }),
+          h('span', { className: 'sa-cell-m' }, h('span', { className: 'sa-mono' }, a.cor.toUpperCase()), h('small', { className: 'sa-mono' }, 'forma ' + a.forma)));
       } },
       { k: 'modelo', l: 'Modelo e esforço', render: function (a) {
         return h('div', { className: 'sa-cell-m' }, h('span', null, MODELO[a.modelo.padrao] + ' · ' + a.modelo.effort),
@@ -55,7 +55,7 @@
         { l: 'Entregas em 30 dias', v: fmt.int(entregas), d: 'cenário fictício' },
         { l: 'Prompts', v: 'v1', d: 'todas as SOULs de ' + fmt.date(ags[0].soul.data) }
       ] }),
-      h(SA.Card, { title: 'Os sete', sub: 'cor, forma e nome são oficiais (DS); o resto vem do agent.yaml', style: { marginTop: 16 } },
+      h(SA.Card, { title: 'Os sete', sub: 'cor, forma e nome são oficiais (DS); o resto vem do agent.yaml. Quem executa, executa só com permissão registrada.', style: { marginTop: 16 } },
         h('div', { style: { margin: '0 -20px -18px' } }, h(SA.Table, { caption: 'Agentes do squad', cols: cols, rows: ags, onRow: function (a) { location.href = 'agente.html?a=' + a.id; } }))),
       h(SA.Note, { label: 'Regra', style: { marginTop: 16 } }, 'Mudança em SOUL, skill ou agent.yaml gera versão nova, nunca edição silenciosa. Cada run registra a versão que usou; voltar versão é trocar a versão ativa.'));
   }
