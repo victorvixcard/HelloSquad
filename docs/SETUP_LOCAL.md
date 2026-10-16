@@ -57,7 +57,7 @@ Conferir: `make status` mostra o Supabase, a API (`/health`) e a web. `curl http
 
 O web lê este mesmo `.env` da raiz (`apps/web/next.config.ts`); não existe `.env` dentro de `apps/web`. Variáveis `NEXT_PUBLIC_*` entram no build: depois de mudar uma delas, rode o build de novo (`make build`) ou reinicie o `make dev-web`. Só valores públicos ganham o prefixo `NEXT_PUBLIC_`; a `SUPABASE_SECRET_KEY` nunca.
 
-As chaves legadas `ANON_KEY` e `SERVICE_ROLE_KEY` (JWT) não são usadas pelo código. A chave da Anthropic (`ANTHROPIC_API_KEY`) fica vazia até a Fase 1; o dono fornece.
+As chaves legadas `ANON_KEY` e `SERVICE_ROLE_KEY` (JWT) não são usadas pelo código. A chave da Anthropic (`ANTHROPIC_API_KEY`) fica vazia até o dono fornecer; sem ela o worker roda em modo simulado (seção "Worker do squad").
 
 **Papel da API (`hellosquad_api`).** A migration cria o papel sem senha. Gere uma senha local (`openssl rand -hex 24`) e preencha:
 
@@ -104,7 +104,8 @@ As portas do Supabase ficam em `supabase/config.toml`; os alvos `make dev-api` e
 | `make openapi` | Exporta o contrato da API para `packages/contracts/openapi.json`. |
 | `make build` | Build de produção do web (o mesmo do CI). |
 | `make dev` | API e web juntas; Ctrl+C encerra as duas. Separadas: `make dev-api`, `make dev-web`. |
-| `make worker` / `make scheduler` | Processos de fundo (placeholders até a Fase 1). |
+| `make worker` | Worker do squad: consome a fila `runs_interactive` e leva o pedido até "Precisa de você" (seção "Worker do squad"). Ctrl+C encerra. |
+| `make scheduler` | Processo de rotinas (placeholder até o Modo Autônomo). |
 
 Banco:
 
@@ -173,7 +174,7 @@ Rotas da S0: `GET /health`, `GET /me`, `GET /workspaces`, `POST /workspaces`, `G
 
 ### Pedido → trabalho → aprovação (S1b)
 
-Com o `JWT` da Marina (bloco acima). `field` lê um campo do JSON (`items.0.id` = primeiro item). O run fica em `queued` até a S1c ligar o worker; a aprovação decidida no fim é a do seed (`make seed` a devolve para pendente).
+Com o `JWT` da Marina (bloco acima). `field` lê um campo do JSON (`items.0.id` = primeiro item). O run fica em `queued` até um worker consumir a fila (`make worker`, seção seguinte); a aprovação decidida no fim é a do seed (`make seed` a devolve para pendente).
 
 ```bash
 API=http://127.0.0.1:8100; AUTH="Authorization: Bearer $JWT"; JSON='Content-Type: application/json'
@@ -214,6 +215,30 @@ curl -s $API/work-items/$(field work_item.id < /tmp/ap.json) -H "$AUTH" | field 
 
 Rotas da S1b: `GET|POST /workspaces/{id}/conversations`, `GET /conversations/{id}`, `GET|POST /conversations/{id}/messages`, `POST /messages/{id}/work-items`, `GET /workspaces/{id}/work-items`, `GET /work-items/{id}`, `GET /workspaces/{id}/approvals`, `POST /approvals/{id}/decision`, `GET /workspaces/{id}/projects`, `GET /projects/{id}`, `GET /runs/{id}`, `GET /runs/{id}/events?after=`. Erros das funções do banco: `not_found` 404, `forbidden` 403, `invalid_parameter`/`invalid_value` 422, `invalid_state` 409, `transition_not_allowed`/`status_changed` 409.
 
+## Worker do squad (S1c)
+
+`make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
+
+```bash
+make worker                                   # fica no ar; Ctrl+C (ou SIGTERM) encerra limpo
+cd apps/backend && uv run hellosquad-worker --drain   # processa o que estiver na fila e sai
+```
+
+Com o `make dev-api` no ar, o pedido do bloco anterior (passos 1 a 3) entra na fila e o worker o leva até a revisão. O log mostra cada run:
+
+```
+LLM_PROVIDER=anthropic sem ANTHROPIC_API_KEY: usando o modo simulado (fixtures, sem custo)
+worker no ar: fila runs_interactive, concorrência 4, teto por workspace 3, LLM simulated
+run <id> (workspace <id>, otto): tentativa 1 de 3
+run <id> concluído: entrega v1; revisão pedida, trabalho em needs_you; … US$ 0.037860
+```
+
+Depois, pela API: `GET /work-items/<id>` (entrega e versões), `GET /workspaces/<id>/approvals?status=pending` (a revisão), `GET /conversations/<id>/messages` (a mensagem do Otto) e `GET /runs/<id>/events`.
+
+**Modo simulado e modo real.** Sem `ANTHROPIC_API_KEY`, o worker responde com as fixtures de `apps/backend/src/hellosquad/llm/fixtures/<delivery>/<etapa>.json` (determinísticas, com `usage` fictício para o custo) e avisa no log. Para o modo real, sem mudar código: preencha `ANTHROPIC_API_KEY` no `.env`, deixe `LLM_PROVIDER=anthropic` e reinicie o worker; o log passa a dizer `LLM em modo real: Anthropic (chave configurada)`. `LLM_PROVIDER=simulated` força o simulado mesmo com chave. A chave nunca aparece em log, em `run_steps` nem em `runs.error`. No modo real cada run custa de verdade (preços em `LLM_PRICES`, padrão em `apps/backend/src/hellosquad/llm/pricing.py`).
+
+**Configuração** (`.env`): `WORKER_CONCURRENCY` (runs simultâneos no processo, padrão 4), `WORKER_WORKSPACE_CAP` (runs simultâneos por workspace, padrão 3; o excedente volta à fila em 5 s, sem erro), `WORKER_MAX_ATTEMPTS` (padrão 3) e `WORKER_RETRY_BASE_SECONDS` (backoff 5 s, 10 s, 20 s) para falhas passageiras do provedor; `WORKER_VISIBILITY_TIMEOUT_SECONDS` (padrão 120; o batimento estende enquanto o run roda; run sem batimento além disso é retomado por outro worker). Falha definitiva (ou tentativas esgotadas): run `failed` com `error` legível, trabalho em `failed`, mensagem arquivada (`pgmq.a_runs_interactive`). Encerramento por sinal: para de ler, espera até `WORKER_SHUTDOWN_GRACE_SECONDS` (30) e devolve à fila o run que não terminou, sem gastar tentativa.
+
 ## Como parar
 
 - Servidores de desenvolvimento: Ctrl+C no terminal do `make dev`.
@@ -248,4 +273,6 @@ O mesmo conjunto de verificações roda local com `make test` e `make build`.
 | Área logada mostra "Não deu para carregar o seu squad agora." | API fora do ar | `make dev-api` e "Tentar de novo". |
 | `make e2e` falha com "Executable doesn't exist" | Chromium do Playwright não instalado | `pnpm --filter web exec playwright install chromium`. |
 | `make test-db` falha em "Pedro sem membership" depois de testar o cadastro de workspace à mão | Workspace de teste do Pedro | `make seed`. |
-| Quer ver o que está nas filas de execução (pgmq: `runs_interactive`, `runs_scheduled`, `external_actions`, `memory_reflect`) | Só o papel privilegiado lê as filas; a Data API e o usuário logado não enxergam o schema `pgmq` | `docker exec -it supabase_db_hellosquad psql -U postgres -c "select * from pgmq.metrics_all()"` (tamanho de cada fila) e `... -c "select msg_id, read_ct, message from pgmq.q_runs_interactive"` (mensagens). `make seed` esvazia as quatro. |
+| Quer ver o que está nas filas de execução (pgmq: `runs_interactive`, `runs_scheduled`, `external_actions`, `memory_reflect`) | Só o papel privilegiado lê as filas; a Data API e o usuário logado não enxergam o schema `pgmq` | `docker exec -it supabase_db_hellosquad psql -U postgres -c "select * from pgmq.metrics_all()"` (tamanho de cada fila) e `... -c "select msg_id, read_ct, message from pgmq.q_runs_interactive"` (mensagens). `make seed` esvazia as quatro e os arquivos (`pgmq.a_*`). |
+| Run parado em `queued` | Nenhum worker no ar | `make worker` (ou `uv run hellosquad-worker --drain` em `apps/backend`). |
+| Worker avisa `sem ANTHROPIC_API_KEY: usando o modo simulado` | Chave vazia no `.env` | Esperado até o dono fornecer a chave; ver "Worker do squad". |

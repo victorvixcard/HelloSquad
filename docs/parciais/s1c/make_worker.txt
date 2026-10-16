@@ -1,0 +1,44 @@
+# S1c — make worker contra a fila local (16/10/2026)
+
+## Pedido da Marina pela API (make dev-api), na conversa com o Otto do seed
+POST /conversations/5eed…102/messages 201 ("É para o Instagram. Quero levar clientes à loja no sábado de manhã.")
+POST /messages/<id>/work-items 201 → trabalho a8ee5154-49f9-4394-bf63-4a7c33c0f133 draft, run 003dc178-4beb-4f87-b4c0-52074a4d7bd6
+fila runs_interactive: msg 59, read_ct 0, agent_id otto
+
+## Log do make worker (modo simulado; SIGTERM no fim)
+```
+08:54:41,363 WARNING hellosquad.llm: LLM_PROVIDER=anthropic sem ANTHROPIC_API_KEY: usando o modo simulado (fixtures, sem custo)
+08:54:41,370 INFO hellosquad.worker: worker no ar: fila runs_interactive, concorrência 4, teto por workspace 3, LLM simulated
+08:54:41,384 INFO hellosquad.worker: run 003dc178-4beb-4f87-b4c0-52074a4d7bd6 (workspace 6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2, otto): tentativa 1 de 3
+08:54:41,438 INFO hellosquad.worker: run 003dc178-4beb-4f87-b4c0-52074a4d7bd6 concluído: entrega v1; revisão pedida, trabalho em needs_you; 3470 tokens de entrada, 880 de saída, 2900 lidos e 2900 gravados no cache, US$ 0.037860
+08:54:42,811 INFO hellosquad.worker: sinal de encerramento recebido: parando de ler a fila
+08:54:42,812 INFO hellosquad.worker: worker encerrado
+```
+
+## Conferência pela API com o JWT da Marina
+```
+GET /work-items/<id> 200: status=needs_you, responsável=otto
+  etapas: [('Qualificar o pedido', 'nexo', 'done'), ('Escrever o texto', 'otto', 'done')]
+  entrega caption v1 (draft, por otto): canal=instagram, 2 versões
+  1ª versão: Sábado tem pão de fermentação longa saindo do forno. / Casca crocante, miolo macio e o tempo que a massa pede. / Passe na Miolo de manhã e leve o seu ainda morno.
+  aprovações: [('review', 'pending', 'otto')]
+GET /workspaces/<id>/approvals?status=pending 200: [('review', 'Legenda do post de sábado: pão de fermentação longa'), ('review', 'Legenda do sábado no Instagram')]
+GET /conversations/<id>/messages 200: 4 mensagens; última de agent/otto: Escrevi duas versões da legenda de sábado para o Instagram: uma destaca a fermentação longa e a outra o ritual do sábado de manhã. As duas chamam para a loja. Agora é com você: aprove uma ou peça ajuste.
+GET /runs/<id> 200: status=succeeded
+GET /runs/<id>/events 200: ['started', 'agent.thinking', 'step.done', 'agent.thinking', 'step.done', 'agent.thinking', 'step.done', 'delivery.created', 'message.created', 'approval.requested', 'finished']
+```
+
+## run_steps e totais do run (papel postgres)
+```
+seq | kind | etapa | modelo | entrada | saída | cache lido | cache gravado | US$ | status
+1 | llm_call | nexo.triage | claude-haiku-4-5 | 1850 | 210 | 0 | 0 | 0.002900 | succeeded
+2 | tool_call | squad.delegar | - | 0 | 0 | 0 | 0 | 0.000000 | succeeded
+3 | llm_call | otto.produce | claude-opus-5-5 | 640 | 520 | 0 | 2900 | 0.027460 | succeeded
+4 | check | otto.check | claude-opus-5-5 | 980 | 150 | 2900 | 0 | 0.007500 | succeeded
+5 | tool_call | entregas.criar_versao | - | 0 | 0 | 0 | 0 | 0.000000 | succeeded
+
+run: status | tentativas | modelo | prompt_version | entrada | saída | cache lido | cache gravado | US$
+succeeded | 1 | claude-opus-5-5 | 012bd891a51c | 3470 | 880 | 2900 | 2900 | 0.037860
+```
+
+Payload das etapas com sk-ant, api_key ou authorization: 0. Fila depois: 0 mensagens, 0 arquivadas.

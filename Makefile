@@ -81,7 +81,7 @@ dev-api: ## API FastAPI com reload em http://127.0.0.1:8100
 dev-web: ## Web Next.js em http://127.0.0.1:3100
 	pnpm --filter web exec next dev --turbopack --port $(WEB_PORT)
 
-worker: ## Worker (placeholder até a fila existir)
+worker: ## Worker do squad: consome a fila runs_interactive (LLM simulado sem ANTHROPIC_API_KEY; Ctrl+C encerra)
 	cd $(BACKEND_DIR) && uv run hellosquad-worker
 
 scheduler: ## Scheduler (placeholder até as rotinas existirem)
