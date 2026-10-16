@@ -95,6 +95,13 @@ async def create_workspace(
                 409, "slug_taken", "Já existe um workspace com esse endereço (slug)."
             ) from exc
         raise
+    except errors.CheckViolation as exc:
+        # A lista de reservados fica só no banco (app.reserved_workspace_slugs).
+        if exc.diag.constraint_name == "workspaces_slug_not_reserved":
+            raise ApiError(
+                422, "slug_reserved", "Esse endereço é reservado. Escolha outro."
+            ) from exc
+        raise
     response.headers["Location"] = f"/workspaces/{row['id']}"
     return Workspace(**row, role=WorkspaceRole.owner)
 

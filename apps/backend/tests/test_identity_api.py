@@ -163,6 +163,28 @@ async def test_taken_slug_is_a_conflict(api, access_token) -> None:
     }
 
 
+async def test_reserved_slugs_are_refused(api, access_token, admin_db) -> None:
+    reserved = await scalar(admin_db, "select app.reserved_workspace_slugs()")
+    headers = bearer(access_token(PEDRO))
+
+    for slug in [*reserved, " Novo-Workspace "]:
+        response = await api.post(
+            "/workspaces", headers=headers, json={"name": "Reservado", "slug": slug}
+        )
+        assert response.status_code == 422, slug
+        assert response.json()["error"] == {
+            "code": "slug_reserved",
+            "message": "Esse endereço é reservado. Escolha outro.",
+            "details": [],
+        }
+
+    assert "novo-workspace" in reserved
+    leftovers = await scalar(
+        admin_db, "select count(*) from public.workspaces where slug = any (%s)", reserved
+    )
+    assert leftovers == 0
+
+
 async def test_invalid_payload_gets_validation_error_in_portuguese(api, access_token) -> None:
     response = await api.post(
         "/workspaces",

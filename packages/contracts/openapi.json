@@ -490,7 +490,7 @@
             "maxLength": 48,
             "minLength": 3,
             "title": "Slug",
-            "description": "Endereço único: letras minúsculas, números e hífen (3 a 48).",
+            "description": "Endereço único: letras minúsculas, números e hífen (3 a 48). Endereço reservado (rotas do app) responde 422 slug_reserved.",
             "examples": [
               "miolo"
             ]

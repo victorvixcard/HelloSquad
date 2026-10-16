@@ -175,7 +175,7 @@ export interface components {
             name: string;
             /**
              * Slug
-             * @description Endereço único: letras minúsculas, números e hífen (3 a 48).
+             * @description Endereço único: letras minúsculas, números e hífen (3 a 48). Endereço reservado (rotas do app) responde 422 slug_reserved.
              * @example miolo
              */
             slug: string;
