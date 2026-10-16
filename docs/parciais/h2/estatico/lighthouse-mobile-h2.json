@@ -1,0 +1,49 @@
+{
+ "quando": "2026-10-16T22:06:14.818Z",
+ "lighthouse": "13.5.0",
+ "chromium": "Chrome/156.0.8078.4",
+ "perfil": "mobile padrão (Moto G Power emulado, throttling simulado)",
+ "base": "next start do build de bc58140 em 127.0.0.1:3198",
+ "rotas": [
+  {
+   "rota": "/como-funciona",
+   "url": "http://127.0.0.1:3198/como-funciona",
+   "perf": 99,
+   "a11y": 100,
+   "seo": 100,
+   "bestPractices": 96,
+   "FCP": "1.1 s",
+   "LCP": "2.0 s",
+   "TBT": "70 ms",
+   "CLS": "0",
+   "falhas": {
+    "a11y": [],
+    "seo": [],
+    "bestPractices": [
+     "errors-in-console"
+    ]
+   },
+   "formFactor": "mobile",
+   "relatorio": "/tmp/h2_est_p2_lh_como-funciona.json"
+  },
+  {
+   "rota": "/es/squad/kiwi",
+   "url": "http://127.0.0.1:3198/es/squad/kiwi",
+   "perf": 99,
+   "a11y": 100,
+   "seo": 100,
+   "bestPractices": 100,
+   "FCP": "1.1 s",
+   "LCP": "2.0 s",
+   "TBT": "50 ms",
+   "CLS": "0",
+   "falhas": {
+    "a11y": [],
+    "seo": [],
+    "bestPractices": []
+   },
+   "formFactor": "mobile",
+   "relatorio": "/tmp/h2_est_p2_lh_es_squad_kiwi.json"
+  }
+ ]
+}

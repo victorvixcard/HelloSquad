@@ -34,7 +34,7 @@ VISIBLE_ATTRS = r"(?:aria-label|aria-description|aria-roledescription|aria-value
 RE_ATTR = re.compile(VISIBLE_ATTRS + r"""\s*=\s*(?:\{\s*)?(["'`])((?:(?!\1).)*?[""" + LETTERS + r"""](?:(?!\1).)*?)\1""")
 RE_JSX_TEXT = re.compile(r">\s*([^<>{}\n]*[" + LETTERS + r"]{2,}[^<>{}\n]*?)\s*(?=<|\{|$)")
 RE_ERR = re.compile(r"""(?:new\s+Error|toast(?:\.\w+)?|setError|setMessage|setStatus|notFound|alert|confirm|redirect\w*)\s*\(\s*(["'`])((?:(?!\1).)+)\1""")
-RE_ERRPROP = re.compile(r"""\b(?:error|message|msg|detail|title|description|label|text|hint|name|heading|subtitle|alt|placeholder|cta|summary)\s*:\s*(["'`])((?:(?!\1).)+)\1""")
+RE_ERRPROP = re.compile(r"""\b(?:error|message|msg|detail|title|description|label|text|hint|name|heading|subtitle|alt|placeholder|cta|summary|topic|key)\s*:\s*(["'`])((?:(?!\1).)+)\1""")
 RE_STRING = re.compile(r"""(["'`])((?:(?!\1)[^\\\n]|\\.)*)\1""")
 
 PT_WORDS = re.compile(r"\b(?:de|do|da|dos|das|para|com|sem|sua|seu|você|não|uma|um|que|em|no|na|ao|à|e|ou|o|a|os|as)\b\s+\w")
@@ -140,7 +140,8 @@ def scan(path: Path):
                 continue
             if (special or "/og/" in rel or "metadata" in raw.lower()) and is_texty(v):
                 hits.add(("literal", v))
-            elif is_texty(v) and (ACCENT.search(v) or PT_WORDS.search(v) or EN_WORDS.search(v)):
+            elif is_texty(v) and (ACCENT.search(v) or PT_WORDS.search(v) or EN_WORDS.search(v)
+                                  or re.match(r"^[A-ZÀ-Ý][a-zà-ÿ]+ [a-zà-ÿ]{2,}", v)):
                 hits.add(("literal-frase", v))
         if is_tsx and RE_TEXT_LINE.match(st) and len(re.findall(f"[{LETTERS}]{{2,}}", st)) >= 2 \
                 and not any(st == h[1] for h in hits):
