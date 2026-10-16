@@ -8,6 +8,9 @@ provisórios, reserva/captura/liberação no worker, saldo e estimativa na API, 
 | Hora | Item | Estado | Commit |
 |---|---|---|---|
 | 10:37 | PASSO 0 lido (diretrizes, Arquitetura §6, ADR-0007/0008, FLUXOS §1.1/§9/§10.3/§11, plano, Super Admin §2–§3, S1c §1–§2, S1d §1, Makefile com trava, Documento Mestre §13 e Anexo A, catálogo CSV) | ✅ | este |
+| 10:42 | Migration `20261016133000_credits.sql` (contas, grants, reservas, extrato somente inserção, plano Free provisório, reserva/captura/liberação, conta no `create_workspace`) | ✅ | `5b740c8` |
+| 10:45 | Seed dos créditos (46 preços provisórios, plano Squad fictício, contas e grants com ids fixos) salvo pelo autosave quando a sessão caiu por cota | ✅ (conferido na retomada) | `42a056b` (wip) |
+| 11:25 | Retomada (sessão 2): PASSO 0 relido; `make migrate` sem pendência (`applied: []`); pgTAP `17_credits` (48): RLS forçada, isolamento, extrato recusa UPDATE/DELETE/TRUNCATE, `idempotency_key` única, preço versionado, Free no workspace novo, reserva única, captura uma vez, liberação em falha e na pergunta | ✅ 48/48 | este |
 
 ## Notas do levantamento
 
