@@ -120,4 +120,26 @@ test.describe("Projeto coordenado (A2d, H2-01), com o worker do squad em modo si
     await expect(card.locator(".wk-t")).toHaveText("Campanha de Natal");
     await snap(page, "a2d-projetos-quadro");
   });
+
+  test("Coordenar uma campanha (catálogo do Nexo) abre o Nexo, ele pergunta antes de montar a equipe e a resposta monta o projeto", async ({ page }) => {
+    test.setTimeout(120_000);
+    grantLocalCredits("miolo", 10, "a2d-catalogo");
+    await enterAsMarina(page, "/app/miolo/squad/nexo");
+    await page.locator("button.cap-trig").and(page.getByRole("button", { name: "Ver o que dá para pedir ao Nexo" })).click();
+    await page.getByRole("dialog").getByRole("button", { name: "Coordenar uma campanha" }).click();
+    // Antes da A2d, este pedido abria a conversa da Bia (02.04); agora é o Nexo que coordena (V4.6 `ag: 'coord'`).
+    const panel = page.getByRole("region", { name: "Conversa" });
+    const field = panel.getByRole("textbox", { name: "Mensagem para o Nexo…" });
+    await expect(field).toHaveValue("Quero coordenar uma campanha.");
+    await field.press("Enter");
+    // Sem tema nem objetivo, o Nexo pergunta antes de montar a equipe (S2d, caso "campanha sem tema").
+    await expect(panel.locator(".ps-msg").filter({ hasText: "Antes de montar o time" }).first()).toBeVisible({ timeout: 45_000 });
+    await expect(panel.locator(".ps-card").filter({ hasText: "Squad da campanha" })).toHaveCount(0);
+    await field.fill("É para o Natal: vender mais panetones.");
+    await field.press("Enter");
+    const team = panel.locator(".ps-card").filter({ hasText: "Squad da campanha · o Nexo coordena" });
+    await expect(team).toBeVisible({ timeout: 45_000 });
+    await expect(team.locator(".ps-team-r")).toHaveCount(3);
+    await snap(page, "a2d-nexo-catalogo-equipe");
+  });
 });
