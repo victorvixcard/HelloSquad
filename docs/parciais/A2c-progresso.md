@@ -33,4 +33,8 @@
 
 | # | Item | Estado | Commit |
 |---|---|---|---|
-| 0 | PASSO 0 e progresso aberto | feito | — |
+| 0 | PASSO 0 e progresso aberto | feito | `d1deb3b` |
+| 1a | Gerador `scripts/site-content.mjs` (Markdown da N2a → `content/site/<idioma>.json`, `--check`) | feito | `f0c3d09` |
+| 1b | Rotas por idioma (`lib/site-routes.ts`), leitura do conteúdo, marcação de linha, textos de interface nos 3 catálogos (paridade 12/12) | feito | `febc554` |
+| 1c–3 | 15 rotas novas (pt-BR estáticas; en/es pelo middleware com prefixo), `SitePage`, landing com as seções da R32, Metadata API e JSON-LD por rota | feito | `c990c74` |
+| 4 | sitemap (36 URLs + cadastro, alternates), `robots.txt` da N2a (Disallow antes de Allow, `/admin`), `llms.txt` da N2a com links absolutos, `X-Robots-Tag` em `/admin`, imagem OG por rota e logo | feito | `fc38f0f` (**entrou no commit da S2e do Stark**: o índice é compartilhado e ele commitou com os meus arquivos no stage; nada se perdeu, está no remoto. Daqui em diante: `git commit -- <caminhos>` num comando só) |
