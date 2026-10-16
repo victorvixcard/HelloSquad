@@ -13,3 +13,12 @@
 .ps .sb-acc-l form .sb-acc-i { width: 100%; }
 /* Estado vazio honesto das notificações (a V4.6 não desenha a lista vazia): mesmo texto de apoio dos cartões. */
 .ps .ps-pop-e { margin: 0; padding: 4px 12px 12px; font-size: 13px; line-height: 1.45; color: #6E6B80; }
+/* Entrega só de texto (legenda 04.01): a V4.6 só desenha a peça visual na mesa; a legenda entra num cartão
+   Branco com a mesma sombra da peça (pergunta registrada no relatório da A1f). */
+.ps .ps-frame.ps-capf {
+  width: min(460px, 100%);
+  padding: 26px 28px;
+  line-height: 1.6;
+  background: #fff;
+}
+.ps .ps-capf .ps-tags { margin-top: 10px; color: #6E6B80; }

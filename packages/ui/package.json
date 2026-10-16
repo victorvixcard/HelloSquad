@@ -13,7 +13,8 @@
     "./styles.css": "./src/styles.css",
     "./tokens.css": "./src/tokens.css",
     "./fonts/*": "./src/fonts/*",
-    "./product-ui.css": "./src/generated/product-ui.css"
+    "./product-ui.css": "./src/generated/product-ui.css",
+    "./ds-bundle.css": "./src/generated/ds-bundle.css"
   },
   "scripts": {
     "build:tokens": "node scripts/build-tokens.ts",

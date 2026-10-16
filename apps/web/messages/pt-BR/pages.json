@@ -33,12 +33,20 @@
       "max": "cuida de quem já é cliente, sempre com consentimento.",
       "iris": "lê os números de {business} e diz o que fazer com eles, sem inventar causa."
     },
-    "provisional": "Este ambiente ainda está em construção. Por enquanto, converse com {name} pelo painel ao lado."
+    "provisional": "Este ambiente ainda está em construção. Por enquanto, converse com {name} pelo painel ao lado.",
+    "askTo": " {article, select, a {à} other {ao}} {name}",
+    "askAria": "Ver o que dá para pedir {article, select, a {à} other {ao}} {name}"
   },
   "room": {
     "title": "Sala do Squad"
   },
-  "auto": { "title": "Modo Autônomo" },
-  "mem": { "title": "Memória da Marca" },
-  "team": { "title": "Minha Equipe & Conversas" }
+  "auto": {
+    "title": "Modo Autônomo"
+  },
+  "mem": {
+    "title": "Memória da Marca"
+  },
+  "team": {
+    "title": "Minha Equipe & Conversas"
+  }
 }

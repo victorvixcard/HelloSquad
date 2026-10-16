@@ -97,9 +97,9 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     return () => document.removeEventListener("keydown", onKey);
   }, [open, shell]);
 
-  const cls = "ps-conv" + (mode === "full" ? " is-full" : mode === "panel" ? " is-panel" : " is-off");
+  const baseCls = "ps-conv" + (mode === "full" ? " is-full" : mode === "panel" ? " is-panel" : " is-off");
   if (!open || !target) {
-    return <section className={cls} style={{ width: 0 }} aria-label={t("label")} aria-hidden="true" />;
+    return <section className={baseCls} style={{ width: 0 }} aria-label={t("label")} aria-hidden="true" />;
   }
 
   const room = !!target.room;
@@ -142,6 +142,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     setLoaded((prev) => (prev && prev.key === key ? { ...prev, messages: [...prev.messages, result.data] } : prev));
   }
 
+  const cls = baseCls + (suggestions.length ? " has-sug" : "");
   const today = now ?? new Date();
   let lastDay = "";
 
@@ -333,6 +334,22 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                 </svg>
               </button>
             </div>
+            {agent ? (
+              <div className="cap-cw">
+                <button
+                  type="button"
+                  className="ps-attb cap-cb"
+                  aria-label={t("capAria", { article: agent.article, name: agent.name })}
+                  title={t("capAria", { article: agent.article, name: agent.name })}
+                  aria-expanded={false}
+                  onClick={() => shell.toast(tc("unavailable"), agent.id)}
+                >
+                  <svg className="ps-ic" viewBox="0 0 18 18" aria-hidden="true">
+                    <path d={PRODUCT_ICONS.capa} />
+                  </svg>
+                </button>
+              </div>
+            ) : null}
             <CommandField
               value={input}
               onChange={setInput}

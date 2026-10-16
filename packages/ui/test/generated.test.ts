@@ -61,6 +61,12 @@ describe("CSS da Product UI V4.6", () => {
     expect(readFileSync(OUT_CSS, "utf8")).toBe(buildProductUiCss(readFileSync(PRODUCT_UI, "utf8")));
   });
 
+  it("src/generated/ds-bundle.css está em dia com o bundle.css do DS", async () => {
+    const { buildBundleCss, BUNDLE_CSS, OUT_BUNDLE_CSS } = await import("../scripts/extract-product-ui-css");
+    expect(readFileSync(OUT_BUNDLE_CSS, "utf8")).toBe(buildBundleCss(readFileSync(BUNDLE_CSS, "utf8")));
+    expect(readFileSync(OUT_BUNDLE_CSS, "utf8")).not.toMatch(/'(Gabarito|JetBrains Mono)'|fonts\.googleapis/);
+  });
+
   it("usa as fontes locais do DS, nunca o nome da família do Google Fonts", () => {
     const css = readFileSync(path.join(OUT_DIR, "product-ui.css"), "utf8");
     expect(css).not.toMatch(/'(Gabarito|JetBrains Mono)'/);

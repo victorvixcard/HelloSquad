@@ -23,8 +23,21 @@
   "yesterday": "Ontem",
   "today": "Hoje",
   "suggestions": {
-    "nexo": ["O que precisa de mim esta semana?", "Qual projeto pede mais atenção?", "Quero começar um projeto novo."],
-    "otto": ["Como está o plano da próxima semana?", "Que conteúdos funcionaram melhor?", "Quero melhorar meu Instagram."],
-    "iris": ["Como foi a última semana?", "O que mais trouxe encomendas?", "O que devo acompanhar no Natal?"]
-  }
+    "nexo": [
+      "O que precisa de mim esta semana?",
+      "Qual projeto pede mais atenção?",
+      "Quero começar um projeto novo."
+    ],
+    "otto": [
+      "Como está o plano da próxima semana?",
+      "Que conteúdos funcionaram melhor?",
+      "Quero melhorar meu Instagram."
+    ],
+    "iris": [
+      "Como foi a última semana?",
+      "O que mais trouxe encomendas?",
+      "O que devo acompanhar no Natal?"
+    ]
+  },
+  "capAria": "O que mais pedir {article, select, a {à} other {ao}} {name}"
 }

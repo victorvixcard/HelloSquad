@@ -5,6 +5,7 @@ import { ApiUnavailable } from "@/components/ApiUnavailable";
 import { ProductShell, SIDEBAR_COOKIE } from "@/components/product/ProductShell";
 import { loadMe } from "@/lib/api";
 import { loadWorkspaceCore } from "@/lib/core";
+import "@hellosquad/ui/ds-bundle.css";
 import "@hellosquad/ui/product-ui.css";
 import "./product.css";
 

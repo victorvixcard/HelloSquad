@@ -127,7 +127,14 @@ export function ProductShell(props: ProductShellProps) {
 
   return (
     <ShellContext.Provider value={api}>
-      <div className={layout.rootClassName} style={layout.rootStyle as React.CSSProperties}>
+      <div
+        className={
+          layout.rootClassName +
+          // V4.6: com a conversa do próprio especialista ao lado, a página sabe que ela está aberta.
+          (mode === "panel" && target?.agent && where.agent === target.agent ? " is-cvh" : "")
+        }
+        style={layout.rootStyle as React.CSSProperties}
+      >
         <a className="hs-skip" href="#conteudo">
           {t("skipToContent")}
         </a>

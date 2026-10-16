@@ -1,1 +1,84 @@
-{}
+{
+  "calendar": "Calendário editorial",
+  "viewsLabel": "Visualização do calendário",
+  "views": {
+    "week": "Semana",
+    "month": "Mês",
+    "list": "Lista"
+  },
+  "prevWeek": "Semana anterior",
+  "nextWeek": "Próxima semana",
+  "thisWeek": "esta semana",
+  "rangeSame": "{from} a {to} {month}",
+  "rangeCross": "{from} {monthFrom} a {to} {month}",
+  "empty": {
+    "title": "{article, select, a {A} other {O}} {agent} ainda não tem um calendário de {business}",
+    "text": "Ele pode planejar os conteúdos toda semana, no Modo Autônomo. Você aprova antes de qualquer publicação.",
+    "delegate": "Delegar o planejamento semanal",
+    "askKaia": "Pedir um post à Kaia"
+  },
+  "next": {
+    "title": "Próximas publicações",
+    "talk": "Conversar com Otto sobre as próximas publicações",
+    "talkTip": "Conversar com Otto",
+    "empty": "Nada agendado por enquanto."
+  },
+  "perf": {
+    "title": "Desempenho orgânico",
+    "talk": "Analisar o desempenho com Íris",
+    "talkTip": "Analisar com Íris",
+    "empty": "A Íris ainda não tem números do Instagram para ler."
+  },
+  "noticed": {
+    "title": "Otto percebeu",
+    "talk": "Explorar oportunidades com Otto",
+    "talkTip": "Explorar com Otto",
+    "empty": "As oportunidades aparecem quando o Otto conhecer {business} e a Íris tiver os primeiros números."
+  },
+  "work": {
+    "back": "Conteúdo",
+    "tag": "entrega pontual",
+    "origin": "pedido na conversa com {agent} · {date}",
+    "steps": "Etapas: preparação, revisão, publicação e confirmação",
+    "prep": "Preparação",
+    "prepSub": "{agent} preparou a versão {version}",
+    "review": "Sua revisão",
+    "reviewSub": "v{version} aguarda você",
+    "reviewDone": "v{version} aprovada por você",
+    "publish": "Publicação",
+    "publishSub": "só com autorização sua",
+    "confirm": "Confirmação",
+    "confirmSub": "quando o canal confirmar",
+    "versions": "Versões",
+    "waits": "{agent} aguarda você",
+    "waitsText": "A versão {version} da legenda está pronta para a sua revisão.",
+    "facts": {
+      "format": "Formato",
+      "channel": "Canal",
+      "publication": "Publicação",
+      "notIncluded": "não incluída"
+    },
+    "approve": "Aprovar v{version}",
+    "approving": "Aprovando",
+    "adjust": "Pedir ajuste",
+    "adjustNote": "O ajuste abre a conversa com {agent} ao lado, com a legenda à vista.",
+    "approved": "Aprovada por você",
+    "approvedText": "Aprovar não publica: a publicação pede autorização própria.",
+    "decideError": "Não foi possível registrar a sua decisão agora. Tente de novo.",
+    "tabs": {
+      "caption": "Legenda",
+      "brief": "Briefing",
+      "history": "Histórico"
+    },
+    "captionBy": "· legenda",
+    "brief": {
+      "canal": "Canal",
+      "objetivo": "Objetivo",
+      "tom": "Tom",
+      "restricoes": "Restrições"
+    },
+    "talk": "Conversar com {name}",
+    "notFound": "Este trabalho não existe mais ou não é deste negócio."
+  },
+  "today": "Hoje"
+}

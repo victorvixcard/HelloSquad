@@ -12,17 +12,33 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "../../..");
 export const PRODUCT_UI = path.join(root, "design/handoff-v4.6/product-ui/ProductUIV4.dc.html");
 export const OUT_CSS = path.resolve(here, "../src/generated/product-ui.css");
+export const BUNDLE_CSS = path.join(root, "design/handoff-v4.6/product-ui/ds/hellosquad/components/bundle.css");
+export const OUT_BUNDLE_CSS = path.resolve(here, "../src/generated/ds-bundle.css");
+
+function localFonts(css: string): string {
+  return css
+    .replaceAll("font-family:'Gabarito',sans-serif", "font-family:var(--hs-font-display)")
+    .replaceAll("font-family:'JetBrains Mono',monospace", "font-family:var(--hs-font-mono)")
+    .replaceAll(" 'Gabarito',sans-serif", " var(--hs-font-display)")
+    .replaceAll(" 'JetBrains Mono',monospace", " var(--hs-font-mono)");
+}
+
+/** O bundle.css do DS, como o protótipo o carrega, sem o @import do Google Fonts (as fontes são locais). */
+export function buildBundleCss(css: string): string {
+  const body = localFonts(css.replace(/^@import url\([^)]*\);\n/m, ""));
+  return [
+    "/* Gerado por packages/ui/scripts/extract-product-ui-css.ts a partir de ds/hellosquad/components/bundle.css.",
+    "   Não edite à mão: rode pnpm --filter @hellosquad/ui extract:css. */",
+    body.trim(),
+    "",
+  ].join("\n");
+}
 
 export function buildProductUiCss(html: string): string {
   const start = html.indexOf("<style>");
   const end = html.indexOf("</style>", start);
   if (start < 0 || end < 0) throw new Error("ProductUIV4.dc.html sem <style>");
-  const css = html
-    .slice(start + "<style>".length, end)
-    .trim()
-    .replaceAll("font-family:'Gabarito',sans-serif", "font-family:var(--hs-font-display)")
-    .replaceAll("font-family:'JetBrains Mono',monospace", "font-family:var(--hs-font-mono)")
-    .replaceAll(" 'Gabarito',sans-serif", " var(--hs-font-display)");
+  const css = localFonts(html.slice(start + "<style>".length, end).trim());
   const header = [
     "/* Gerado por packages/ui/scripts/extract-product-ui-css.ts a partir de product-ui/ProductUIV4.dc.html (<style>).",
     "   Não edite à mão: rode pnpm --filter @hellosquad/ui extract:css. */",
@@ -33,5 +49,6 @@ export function buildProductUiCss(html: string): string {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   writeFileSync(OUT_CSS, buildProductUiCss(readFileSync(PRODUCT_UI, "utf8")));
-  console.log(`gerado ${path.relative(root, OUT_CSS)}`);
+  writeFileSync(OUT_BUNDLE_CSS, buildBundleCss(readFileSync(BUNDLE_CSS, "utf8")));
+  console.log(`gerado ${path.relative(root, OUT_CSS)} e ${path.relative(root, OUT_BUNDLE_CSS)}`);
 }
