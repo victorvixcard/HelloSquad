@@ -7,7 +7,7 @@
       "planned": "previsto",
       "you": "decisão sua"
     },
-    "sub": "{active, plural, one {# ativo} other {# ativos}}{paused, plural, =0 {} one { · # pausado} other { · # pausados}}",
+    "sub": "{active, plural, =1 {# ativo} other {# ativos}}{paused, plural, =0 {} =1 { · # pausado} other { · # pausados}}",
     "emptyTitle": "Nenhum projeto ainda",
     "emptyText": "Projetos são pedidos maiores, como uma campanha. O Nexo monta o squad, organiza as etapas e te chama quando a decisão é sua.",
     "emptyStart": "Começar pela Campanha de Natal",
@@ -31,7 +31,7 @@
   },
   "working": {
     "title": "Seu Squad está trabalhando",
-    "sum": "{count, plural, one {# trabalho em andamento} other {# trabalhos em andamento}}",
+    "sum": "{count, plural, =1 {# trabalho em andamento} other {# trabalhos em andamento}}",
     "talk": "Conversar com Nexo sobre quem está trabalhando",
     "talkTip": "Conversar com Nexo",
     "empty": "Ninguém em produção agora. Peça algo e o Nexo organiza quem faz.",
@@ -105,7 +105,7 @@
     "prog": "Nada programado",
     "done": "Nada concluído ainda"
   },
-  "colAria": "{col}, {count, plural, one {# trabalho} other {# trabalhos}}",
+  "colAria": "{col}, {count, plural, =1 {# trabalho} other {# trabalhos}}",
   "groupAria": "{col}, {count}",
   "listCols": {
     "situation": "Situação",
