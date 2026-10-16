@@ -1,0 +1,107 @@
+cd apps/backend && uv run ruff check . && uv run ruff format --check .
+All checks passed!
+71 files already formatted
+flock -w 1800 /tmp/hellosquad-db.lock bash -c 'cd apps/backend && uv run pytest'
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/vitao/projetos/hellosquad/apps/backend
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 133 items
+
+tests/test_auth.py ....................                                  [ 15%]
+tests/test_conversation_complete.py .......                              [ 20%]
+tests/test_core_api.py ..............                                    [ 30%]
+tests/test_credits.py ...........                                        [ 39%]
+tests/test_health.py ..                                                  [ 40%]
+tests/test_identity_api.py .......................                       [ 57%]
+tests/test_llm.py ..........                                             [ 65%]
+tests/test_local_db.py .....                                             [ 69%]
+tests/test_memory_actions.py .....                                       [ 72%]
+tests/test_memory_api.py ..........                                      [ 80%]
+tests/test_memory_runtime.py ....                                        [ 83%]
+tests/test_openapi.py .                                                  [ 84%]
+tests/test_rich_work.py .....                                            [ 87%]
+tests/test_squad_prompt.py .....                                         [ 91%]
+tests/test_worker.py ...........                                         [100%]
+
+============================= 133 passed in 23.88s =============================
+pnpm --filter web lint
+$ eslint
+pnpm -r --if-present typecheck
+packages/contracts typecheck$ tsc --noEmit
+packages/ui typecheck$ tsc --noEmit
+packages/contracts typecheck: Done
+packages/ui typecheck: Done
+apps/web typecheck$ tsc --noEmit
+apps/web typecheck: Done
+pnpm -r --if-present test
+Scope: 3 of 4 workspace projects
+packages/contracts test$ vitest run
+packages/ui test$ vitest run
+packages/contracts test: 
+packages/contracts test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/packages/contracts
+packages/contracts test: 
+packages/ui test: 
+packages/ui test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/packages/ui
+packages/ui test: 
+packages/contracts test: 
+packages/contracts test:  Test Files  1 passed (1)
+packages/contracts test:       Tests  9 passed (9)
+packages/contracts test:    Start at  13:15:30
+packages/contracts test:    Duration  464ms (import 60%, tests 36%, transform 3%, worker 1%)
+packages/contracts test: 
+packages/contracts test: Done
+packages/ui test: 
+packages/ui test:  Test Files  5 passed (5)
+packages/ui test:       Tests  49 passed (49)
+packages/ui test:    Start at  13:15:30
+packages/ui test:    Duration  686ms (environment 67%, tests 16%, setup 11%, import 3%, transform 2%, worker 1%)
+packages/ui test: 
+packages/ui test: Done
+apps/web test$ vitest run
+apps/web test: (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+apps/web test:   - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+apps/web test: Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+apps/web test: 
+apps/web test:  RUN  v5.0.4 /home/vitao/projetos/hellosquad/apps/web
+apps/web test: 
+apps/web test: 
+apps/web test:  Test Files  16 passed (16)
+apps/web test:       Tests  121 passed (121)
+apps/web test:    Start at  13:15:31
+apps/web test:    Duration  3.05s (tests 49%, environment 33%, setup 8%, import 4%, transform 4%, worker 1%)
+apps/web test: 
+apps/web test:     Isolate  16 workers spawned · ~566ms startup each (spawn + environment, per file)
+apps/web test:              at least ~257ms faster with isolate: false — reuses workers across files instead of one per file
+apps/web test: 
+apps/web test: Done
+flock -w 1800 /tmp/hellosquad-db.lock pnpm exec supabase test db
+Connecting to local database...
+/home/vitao/projetos/hellosquad/supabase/tests/database/00_extensions.test.sql ............. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/01_rls_coverage.test.sql ........... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/02_workspace_isolation.test.sql .... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/03_membership_management.test.sql .. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/04_invitations.test.sql ............ ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/05_audit_events.test.sql ........... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/06_create_workspace.test.sql ....... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/07_reserved_slugs.test.sql ......... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/08_core_isolation.test.sql ......... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/09_messages.test.sql ............... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/10_work_item_transitions.test.sql .. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/11_approvals.test.sql .............. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/12_run_queues.test.sql ............. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/13_realtime_broadcast.test.sql ..... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/14_create_conversation.test.sql .... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/15_squad_runtime.test.sql .......... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/16_brand_memory.test.sql ........... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/17_credits.test.sql ................ ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/18_complete_conversation.test.sql .. ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/19_memory_actions.test.sql ......... ok
+/home/vitao/projetos/hellosquad/supabase/tests/database/20_rich_work.test.sql .............. ok
+All tests successful.
+Files=21, Tests=489,  1 wallclock secs ( 0.06 usr  0.02 sys +  0.12 cusr  0.06 csys =  0.26 CPU)
+Result: PASS
+exit 0
