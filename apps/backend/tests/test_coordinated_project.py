@@ -414,3 +414,63 @@ async def test_vague_campaign_gets_a_question_before_the_team(api, access_token,
         "nexo",
         None,
     )
+
+
+async def test_answer_with_the_theme_unlocks_the_plan(api, access_token, admin_db) -> None:
+    """H2-14: a resposta da pessoa à pergunta do Nexo destrava o plano (antes, ele perguntava de
+    novo porque só lia o pedido original)."""
+    miolo = await workspace(admin_db, "miolo")
+    headers = bearer(access_token(MARINA))
+    room = await api.post(
+        f"/workspaces/{miolo}/conversations", headers=headers, json={"kind": "squad_room"}
+    )
+    room_id = room.json()["id"]
+    message = await api.post(
+        f"/conversations/{room_id}/messages",
+        headers=headers,
+        json={"body": "Vamos planejar uma campanha"},
+    )
+    work = await api.post(
+        f"/messages/{message.json()['id']}/work-items",
+        headers=headers,
+        json={"delivery_type": "01.02", "title": "Campanha"},
+    )
+    assert work.status_code == 201, work.text
+    work_id = work.json()["id"]
+    assert await drain() == ["asked"]
+    question = await pending(admin_db, work_id)
+    assert (question["kind"], question["agent_id"]) == ("respond", "nexo")
+
+    # Como a conversa faz: a mensagem da pessoa fica no histórico e é a resposta da pergunta.
+    answer = "Fim de ano. Quero vender mais encomendas de presente."
+    posted = await api.post(
+        f"/conversations/{room_id}/messages", headers=headers, json={"body": answer}
+    )
+    assert posted.status_code == 201, posted.text
+    decided = await api.post(
+        f"/approvals/{question['id']}/decision",
+        headers=headers,
+        json={"decision": "answered", "note": answer},
+    )
+    assert decided.status_code == 200, decided.text
+
+    assert await drain() == ["planned", "delivered"]
+    planned = await steps(admin_db, work_id)
+    assert [(s["seq"], s["agent_id"], s["delivery_type"], s["status"]) for s in planned] == [
+        (1, "bia", "02.04", "needs_you"),
+        (2, "kaia", "03.01", "pending"),
+        (3, "otto", "04.03", "pending"),
+    ]
+    assert await scalar(
+        admin_db,
+        "select p.name from public.work_items w join public.projects p on p.id = w.project_id "
+        "where w.id = %s",
+        work_id,
+    ) == ("Campanha de fim de ano")
+    strategy = await pending(admin_db, work_id)
+    assert (strategy["kind"], strategy["agent_id"]) == ("review", "bia")
+    assert await scalar(
+        admin_db,
+        "select count(*) from public.approvals where work_item_id = %s and kind = 'respond'",
+        work_id,
+    ) == (1)
