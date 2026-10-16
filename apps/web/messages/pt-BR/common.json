@@ -42,5 +42,10 @@
     "todayUpper": "Hoje",
     "yesterday": "ontem"
   },
-  "ownerDecides": "Quem decide é o dono da conta"
+  "ownerDecides": "Quem decide é o dono da conta",
+  "localeNames": {
+    "pt-BR": "Português (Brasil)",
+    "en": "English",
+    "es": "Español"
+  }
 }

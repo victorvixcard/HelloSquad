@@ -19,7 +19,7 @@ const PILOT_AGENTS: AgentId[] = ["nexo", "otto", "iris"];
 
 export type ProductShellProps = {
   workspace: { id: string; slug: string; name: string };
-  account: Omit<AccountMenuProps, "onUnavailable">;
+  account: Omit<AccountMenuProps, "onUnavailable" | "onNotice">;
   needsCount: number;
   /** Sugestões da Memória à espera do seu ok: número suave na barra (V4.6). */
   memoryCount?: number;
@@ -203,7 +203,7 @@ function Shell(props: ProductShellProps) {
           memoryCount={memoryCount}
           agentExpression={expression}
           roomLive={roomLive}
-          account={{ ...account, onUnavailable: () => toast(tc("unavailable")) }}
+          account={{ ...account, onUnavailable: () => toast(tc("unavailable")), onNotice: (text) => toast(text) }}
         />
         <div className="ps-stage">
           <main className="ps-main" id="conteudo" aria-label={t("mainLabel")} tabIndex={-1}>

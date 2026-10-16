@@ -2,9 +2,12 @@
 
 import { Icon, PRODUCT_ICONS } from "@hellosquad/ui";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { useRef, useState, useTransition } from "react";
+import { LOCALES, type Locale } from "@/i18n/config";
 import { signOut } from "@/lib/auth-actions";
+import { setUserLocaleAction, type LocaleActionResult } from "@/lib/locale-actions";
 import { usePopoverDismiss } from "./Popover";
 
 export type AccountMenuProps = {
@@ -15,6 +18,10 @@ export type AccountMenuProps = {
   /** "Plano Squad · créditos do mês" (V4.6 L4559) a partir de `GET /me` (S1e): valores provisórios, sem preço. */
   credits?: { plan: string | null; used: number; total: number } | null;
   onUnavailable: () => void;
+  /** Aviso curto (o toast da casca). */
+  onNotice?: (text: string) => void;
+  /** Guarda o idioma da pessoa (padrão: `setUserLocaleAction`, na conta da Auth). */
+  setLocale?: (locale: Locale) => Promise<LocaleActionResult>;
 };
 
 /** Parte do ciclo já usada, em % inteiro (a barra da V4.6: 64% na conta em uso, 4% no primeiro acesso). */
@@ -23,19 +30,45 @@ export function creditsPercent(used: number, total: number): number {
   return Math.min(100, Math.max(0, Math.round((used / total) * 100)));
 }
 
-export function initials(text: string): string {
-  return (text.trim()[0] ?? "?").toLocaleUpperCase("pt-BR");
+export function initials(text: string, locale: string = "pt-BR"): string {
+  return (text.trim()[0] ?? "?").toLocaleUpperCase(locale);
 }
 
 /** Conta, negócio e configurações: um único lugar, no pé da barra (V4.6). */
-export function AccountMenu({ name, role, business, businesses, credits = null, onUnavailable }: AccountMenuProps) {
+export function AccountMenu({
+  name,
+  role,
+  business,
+  businesses,
+  credits = null,
+  onUnavailable,
+  onNotice,
+  setLocale = setUserLocaleAction,
+}: AccountMenuProps) {
   const t = useTranslations("shell.account");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+  const router = useRouter();
+  const [pendingLocale, setPendingLocale] = useState<Locale | null>(null);
+  const [, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   usePopoverDismiss(open, () => setOpen(false), button, panel);
-  const ini = initials(name);
-  const bizIni = initials(business.name);
+  const ini = initials(name, locale);
+  const bizIni = initials(business.name, locale);
+
+  // Idioma da tela (ADR-0010): guarda na conta e relê a página no servidor, que já responde no idioma novo.
+  function chooseLocale(next: Locale) {
+    if (next === locale || pendingLocale) return;
+    setPendingLocale(next);
+    startTransition(async () => {
+      const result = await setLocale(next);
+      if (result.ok) router.refresh();
+      else onNotice?.(t("languageError"));
+      setPendingLocale(null);
+    });
+  }
   return (
     <div className="sb-acw">
       <button
@@ -93,6 +126,18 @@ export function AccountMenu({ name, role, business, businesses, credits = null, 
                 <small>{t("addBusinessSub")}</small>
               </span>
             </Link>
+            {/* Idioma do negócio: a API ainda não guarda nem devolve (pedido à S2b); por ora, o aviso padrão. */}
+            <button type="button" className="sb-bz" onClick={() => { setOpen(false); onUnavailable(); }}>
+              <span className="sb-bz-ic" aria-hidden="true">
+                <svg className="sb-ic" viewBox="0 0 18 18">
+                  <path d={PRODUCT_ICONS.globe} />
+                </svg>
+              </span>
+              <span className="sb-bz-t">
+                <b>{t("businessLanguage")}</b>
+                <small>{t("businessLanguageSub")}</small>
+              </span>
+            </button>
           </div>
           {credits ? (
             <div className="sb-cred">
@@ -105,6 +150,34 @@ export function AccountMenu({ name, role, business, businesses, credits = null, 
               </div>
             </div>
           ) : null}
+          <div className="sb-acc-s" id="sb-acc-lang">
+            {t("language")}
+          </div>
+          <div className="sb-biz-l" role="group" aria-labelledby="sb-acc-lang">
+            {LOCALES.map((l) => {
+              const on = l === (pendingLocale ?? locale);
+              return (
+                <button
+                  key={l}
+                  type="button"
+                  lang={l}
+                  className="sb-bz"
+                  aria-pressed={on}
+                  aria-label={t("languageOption", { language: tc(`localeNames.${l}`) })}
+                  disabled={Boolean(pendingLocale)}
+                  onClick={() => chooseLocale(l)}
+                >
+                  <span className="sb-bz-ic" aria-hidden="true">
+                    {l.slice(0, 2).toUpperCase()}
+                  </span>
+                  <span className="sb-bz-t">
+                    <b>{tc(`localeNames.${l}`)}</b>
+                  </span>
+                  {on ? <Icon name="check" size={16} strokeWidth={2.2} /> : null}
+                </button>
+              );
+            })}
+          </div>
           <div className="sb-acc-l">
             <button type="button" className="sb-acc-i" onClick={() => { setOpen(false); onUnavailable(); }}>
               <svg className="sb-ic" viewBox="0 0 18 18" aria-hidden="true">
