@@ -90,6 +90,8 @@ test.describe("Ao vivo (A1a), com o worker do squad em modo simulado", () => {
     await expect(card.getByText("Material · v1")).toBeVisible({ timeout: 20_000 });
     await expect(card.getByText(TITLE)).toBeVisible();
     await expect(card.getByText("Aguarda sua aprovação")).toBeVisible();
+    // Com a conversa aberta, a entrega não vira aviso curto (V4.6 `_notifyIfAway`).
+    await expect(page.locator(".ps-toast")).toHaveCount(0);
     await expect(panel.getByText("Otto está escrevendo")).toHaveCount(0);
     // O status vivo da conversa passa de trabalho a espera: "Otto · aguarda sua aprovação" (V4.6, modo `wait`).
     await expect(panel.locator(".ps-cstat")).toContainText("aguarda sua aprovação");
@@ -145,8 +147,13 @@ test.describe("Ao vivo (A1a), com o worker do squad em modo simulado", () => {
     await expect(panel.locator(".ps-cstat")).toContainText("ajustando a versão");
     await expect(panel.getByText("Otto está escrevendo")).toBeVisible();
 
-    // A v2 chega: cartão novo aguardando a decisão; a v1 fica substituída. Aprovar pelo cartão.
+    // A pessoa fecha a conversa: a v2 chega como aviso curto (V4.6 `_notifyIfAway`); reabrir mostra o cartão.
+    await panel.getByRole("button", { name: "Fechar a conversa" }).click();
     channel.release();
+    await expect(page.locator(".ps-toast")).toContainText("O Otto entregou a v2", { timeout: 20_000 });
+    await page.locator("button.v4-talk").click();
+
+    // A v2 chega: cartão novo aguardando a decisão; a v1 fica substituída. Aprovar pelo cartão.
     const v2 = panel.locator(".ps-mat").filter({ hasText: title }).filter({ hasText: "Material · v2" });
     await expect(v2.getByText("Aguarda sua aprovação")).toBeVisible({ timeout: 20_000 });
     await expect(v1.getByText("Substituída pela v2")).toBeVisible();

@@ -43,7 +43,15 @@ export type LiveRun = {
   workItemId: string | null;
   /** A pessoa pediu ajuste ou nova proposta: o especialista refaz uma versão (texto "ajustando"). */
   revision: boolean;
+  /** Número da versão entregue neste run (`delivery.created`), para o aviso "O Otto entregou a v1". */
+  versionNo: number | null;
 };
+
+/**
+ * Aviso curto de entrega (V4.6 `_notifyIfAway`, L6591): "A Kaia entregou a v1 do post", só quando a pessoa não está
+ * na conversa do run. Nasce no `approval.requested` de revisão, quando a conversa do run já é conhecida.
+ */
+export type LiveNotice = { seq: number; agent: AgentId; version: number; conversationId: string | null };
 
 export type PendingApproval = { id: string; agent: AgentId; kind: string; workItemId: string };
 
@@ -58,6 +66,8 @@ export type LiveState = {
   messages: Record<string, number>;
   /** Sobe quando o servidor tem dado novo para a casca (faixa, badge, resumo de Trabalhos). */
   version: number;
+  /** Último aviso de entrega (a casca mostra se a conversa não estiver aberta). */
+  notice: LiveNotice | null;
 };
 
 export type LiveAction =
@@ -84,13 +94,25 @@ export function initialLiveState(workspaceId: string, pending: PendingApproval[]
     decided: {},
     messages: {},
     version: 0,
+    notice: null,
   };
 }
 
 const agentOf = (value: unknown): AgentId | null => (typeof value === "string" && isAgentId(value) ? value : null);
 
 function blankRun(id: string): LiveRun {
-  return { id, owner: null, agent: null, step: null, status: "queued", lastSeq: 0, conversationId: null, workItemId: null, revision: false };
+  return {
+    id,
+    owner: null,
+    agent: null,
+    step: null,
+    status: "queued",
+    lastSeq: 0,
+    conversationId: null,
+    workItemId: null,
+    revision: false,
+    versionNo: null,
+  };
 }
 
 /** Eventos que mudam o que o servidor mostra: a casca relê a API (faixa, badge, Trabalhos, detalhe). */
@@ -127,12 +149,21 @@ function applyRunEvent(state: LiveState, event: RunEventPayload): LiveState {
     case "message.created":
       if (typeof data.conversation_id === "string") run.conversationId = run.conversationId ?? data.conversation_id;
       break;
+    case "delivery.created": {
+      const no = Number(data.version_no);
+      if (Number.isFinite(no) && no > 0) run.versionNo = no;
+      break;
+    }
     default:
       break;
   }
   const next: LiveState = { ...state, runs: { ...state.runs, [run.id]: run } };
   if (event.type === "message.created" && typeof data.conversation_id === "string") {
     next.messages = { ...state.messages, [data.conversation_id]: (state.messages[data.conversation_id] ?? 0) + 1 };
+  }
+  if (event.type === "approval.requested" && data.kind === "review" && run.versionNo) {
+    const agent = run.agent ?? run.owner;
+    if (agent) next.notice = { seq: (state.notice?.seq ?? 0) + 1, agent, version: run.versionNo, conversationId: run.conversationId };
   }
   if (event.type === "approval.requested" && typeof data.approval_id === "string" && run.workItemId) {
     const agent = run.agent ?? run.owner;

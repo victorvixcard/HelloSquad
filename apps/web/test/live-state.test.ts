@@ -151,3 +151,24 @@ describe("reducer dos eventos ao vivo", () => {
     expect(conversationLive(state, CONV)).toMatchObject({ lead: "otto", detail: "adjusting" });
   });
 });
+
+describe("aviso de entrega (V4.6 _notifyIfAway)", () => {
+  it("o approval.requested de revisão gera um aviso com quem entregou, a versão e a conversa; repetir não gera outro", () => {
+    const events = deliveryRun();
+    const state = reduce(initialLiveState(WS), events.map((e) => runEvent(e)));
+    expect(state.notice).toEqual({ seq: 1, agent: "otto", version: 1, conversationId: CONV });
+    // O canal repete o run inteiro (reconexão + fallback): nada muda.
+    expect(reduce(state, events.map((e) => runEvent(e)))).toBe(state);
+  });
+
+  it("pergunta do agente (respond) não vira aviso de entrega", () => {
+    seq = 0;
+    const state = reduce(initialLiveState(WS), [
+      runEvent(ev("started", { agent_id: "otto", attempt: 1 })),
+      runEvent(ev("agent.thinking", { agent_id: "nexo", step: "nexo.triage" })),
+      runEvent(ev("message.created", { message_id: "m-1", conversation_id: CONV, agent_id: "nexo" })),
+      runEvent(ev("approval.requested", { approval_id: "ap-1", kind: "respond" })),
+    ]);
+    expect(state.notice).toBeNull();
+  });
+});

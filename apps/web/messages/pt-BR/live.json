@@ -20,6 +20,5 @@
   },
   "lost": "Conexão perdida",
   "lostDetail": "tentando de novo",
-  "toastDelivered": "{name} entregou a v{version}",
-  "toastAsked": "{name} tem uma pergunta para você"
+  "toastDelivered": "{who} entregou a v{version}"
 }

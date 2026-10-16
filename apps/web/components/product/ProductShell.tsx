@@ -1,6 +1,6 @@
 "use client";
 
-import { Agent, type AgentExpression, type AgentId } from "@hellosquad/ui";
+import { Agent, getAgent, type AgentExpression, type AgentId } from "@hellosquad/ui";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -79,6 +79,7 @@ function Shell(props: ProductShellProps) {
   const live = useLive();
   const t = useTranslations("shell");
   const tc = useTranslations("common");
+  const tl = useTranslations("live");
   const pathname = usePathname();
   const router = useRouter();
   const { vw, vh } = useViewport();
@@ -124,6 +125,21 @@ function Shell(props: ProductShellProps) {
     toastTimer.current = setTimeout(() => setToastState(null), 3200);
   }, []);
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
+
+  // V4.6 `_notifyIfAway` (L6591): entrega nova vira aviso curto ("O Otto entregou a v1") só se a pessoa não está na
+  // conversa do run (painel fechado ou outra conversa aberta).
+  const notice = live.state.notice;
+  const convRef = useRef(conv);
+  convRef.current = conv;
+  useEffect(() => {
+    if (!notice) return;
+    const open = convRef.current;
+    if (open.mode !== "off" && notice.conversationId && open.target?.conversationId === notice.conversationId) return;
+    const m = getAgent(notice.agent);
+    const who = `${m.article === "a" ? "A" : "O"} ${m.name}`;
+    toast(tl("toastDelivered", { who, version: notice.version }), notice.agent);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- um aviso por entrega (seq)
+  }, [notice?.seq]);
 
   const openConversation = useCallback<ShellApi["openConversation"]>((next, nextMode = "panel") => {
     setConv({ mode: nextMode, target: next });
