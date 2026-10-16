@@ -45,10 +45,16 @@ export async function siteMetadata(locale: Locale, key: SitePageKey): Promise<Me
 export function blocksText(blocks: SiteBlock[]): string {
   return blocks
     .flatMap((block) => {
-      if (block.type === "p") return [plainText(block.text)];
-      if (block.type === "ul" || block.type === "ol") return block.items.map(plainText);
-      if (block.type === "table") return block.rows.map((row) => row.map(plainText).join(": "));
-      return [plainText(block.question), blocksText(block.answer)];
+      switch (block.type) {
+        case "p":
+          return [plainText(block.text)];
+        case "table":
+          return block.rows.map((row) => row.map(plainText).join(": "));
+        case "qa":
+          return [plainText(block.question), blocksText(block.answer)];
+        default:
+          return block.items.map(plainText);
+      }
     })
     .join(" ");
 }
@@ -96,7 +102,7 @@ export async function siteJsonLd(locale: Locale, key: SitePageKey): Promise<Node
         logo: { "@type": "ImageObject", url: `${url}/logo-hellosquad.png`, width: 512, height: 512 },
         description: t("orgDescription"),
         slogan: `${ts("home.heroLine1")} ${ts("home.heroLine2")}`,
-        knowsAbout: ["k1", "k2", "k3", "k4", "k5", "k6", "k7"].map((k) => t(`knowsAbout.${k}`)),
+        knowsAbout: (["k1", "k2", "k3", "k4", "k5", "k6", "k7"] as const).map((k) => t(`knowsAbout.${k}`)),
       },
       {
         "@type": "WebSite",
@@ -117,7 +123,7 @@ export async function siteJsonLd(locale: Locale, key: SitePageKey): Promise<Node
         inLanguage: [...LOCALES],
         description: t("appDescription"),
         audience,
-        featureList: ["f1", "f2", "f3", "f4", "f5", "f6"].map((f) => t(`features.${f}`)),
+        featureList: (["f1", "f2", "f3", "f4", "f5", "f6"] as const).map((f) => t(`features.${f}`)),
         publisher: { "@id": ids.organization },
       },
     );

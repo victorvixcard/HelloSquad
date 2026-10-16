@@ -6,8 +6,10 @@ import type { SiteBlock } from "@/lib/site-content";
 function render(nodes: InlineNode[]): ReactNode {
   return nodes.map((node, i) => {
     if (node.kind === "text") return <Fragment key={i}>{node.text}</Fragment>;
-    if (node.kind === "strong") return <strong key={i}>{render(node.children)}</strong>;
-    if (node.kind === "em") return <em key={i}>{render(node.children)}</em>;
+    if (node.kind !== "link") {
+      const Tag = node.kind;
+      return <Tag key={i}>{render(node.children)}</Tag>;
+    }
     return node.href.startsWith("/") ? (
       <Link key={i} href={node.href}>
         {render(node.children)}

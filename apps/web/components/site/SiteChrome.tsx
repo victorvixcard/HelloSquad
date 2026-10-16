@@ -7,12 +7,12 @@ import { sitePath, type SitePageKey } from "@/lib/site-routes";
 // Cabeçalho, rodapé, migalhas e JSON-LD comuns às páginas públicas (landing incluída). Classes hm-* da landing (home.css)
 // e st-* do site (site.css).
 
-const NAV: [SitePageKey, string][] = [
+const NAV = [
   ["como-funciona", "nav.howItWorks"],
   ["squad", "nav.squad"],
   ["faq", "nav.faq"],
   ["sobre", "nav.about"],
-];
+] as const satisfies readonly (readonly [SitePageKey, string])[];
 
 export async function SiteHeader({ locale, current }: { locale: Locale; current: SitePageKey }) {
   const t = await getTranslations({ locale, namespace: "site" });

@@ -272,6 +272,17 @@
   font-weight: 600;
   text-underline-offset: 3px;
 }
+.st-squad-lead {
+  margin: -16px 0 28px;
+  max-width: 64ch;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--hs-tinta-suave);
+}
+.lp-agent {
+  color: inherit;
+  text-underline-offset: 3px;
+}
 .lp-band {
   border-radius: 40px;
   background: var(--hs-tinta);
