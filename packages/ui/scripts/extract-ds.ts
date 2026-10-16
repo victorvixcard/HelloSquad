@@ -93,6 +93,8 @@ type ProductUiData = {
   statusGlyphs: Record<string, { fill: string; mark: string; ring: boolean }>;
   navIcons: Record<string, string[]>;
   panelIcon: string;
+  /** Ícones de traço da Product UI (objeto IC e reatribuições IC.x = '...'), grade 18. */
+  icons: Record<string, string>;
 };
 
 export function readProductUiData(file = SOURCES.productUi): ProductUiData {
@@ -120,7 +122,11 @@ export function readProductUiData(file = SOURCES.productUi): ProductUiData {
   const navIcons = { ...baseNav, ...extraNav, ...overrides };
   const panel = /\bpanel: '([^']+)'/.exec(html);
   if (!panel) throw new Error("Ícone panel não encontrado");
-  return { statusGlyphs, navIcons, panelIcon: panel[1] };
+  const icBlock = sliceObjectLiteral(html, "const IC = {");
+  const icons: Record<string, string> = {};
+  for (const m of icBlock.matchAll(/^  (\w+): '([^']+)',?$/gm)) icons[m[1]] = m[2];
+  for (const m of html.matchAll(/^IC\.(\w+) = '([^']+)';$/gm)) icons[m[1]] = m[2];
+  return { statusGlyphs, navIcons, panelIcon: panel[1], icons };
 }
 
 type SquadMember = {
@@ -207,6 +213,11 @@ export function renderProductUi(data: ProductUiData): string {
     `export const NAV_ICONS = ${lit(data.navIcons)} as const;`,
     "",
     `export const PANEL_ICON = ${JSON.stringify(data.panelIcon)};`,
+    "",
+    "/** Ícones de traço da Product UI V4.6 (objeto IC do protótipo), grade 18, um path cada. */",
+    `export const PRODUCT_ICONS = ${lit(data.icons)} as const;`,
+    "",
+    "export type ProductIconName = keyof typeof PRODUCT_ICONS;",
     "",
   ].join("\n");
 }

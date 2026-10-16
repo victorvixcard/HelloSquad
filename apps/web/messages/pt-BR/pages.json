@@ -1,1 +1,44 @@
-{}
+{
+  "needs": {
+    "label": "Precisa de você",
+    "labelCount": "Precisa de você: {count}",
+    "itemAria": "{who} · {kind}: {title}. {cta}",
+    "sub": "{type}, versão {version}, aguarda a sua revisão",
+    "subNoVersion": "Aguarda você",
+    "cta": {
+      "review": "Revisar {object}",
+      "approve": "Aprovar {object}",
+      "authorize": "Autorizar {object}",
+      "confirm": "Confirmar {object}",
+      "reconnect": "Reconectar {object}",
+      "respond": "Responder {object}"
+    },
+    "object": {
+      "d0401": "a legenda",
+      "default": "o trabalho"
+    },
+    "more": "Ver mais {count, plural, one {# pendência} other {# pendências}}",
+    "less": "Recolher as outras pendências"
+  },
+  "env": {
+    "talk": "Conversar com {name}",
+    "talkAria": "Conversar com {name} sobre {area}, ao lado",
+    "ask": "O que pedir",
+    "describe": {
+      "nexo": "organiza os projetos de {business} e te chama quando a decisão é sua.",
+      "bia": "encontra onde está a oportunidade de {business}.",
+      "kaia": "dá forma à marca de {business} em cada peça.",
+      "otto": "cuida do calendário, das legendas e do que {business} fala em cada canal.",
+      "kiwi": "planeja anúncios com critério, dentro do teto que você autorizar.",
+      "max": "cuida de quem já é cliente, sempre com consentimento.",
+      "iris": "lê os números de {business} e diz o que fazer com eles, sem inventar causa."
+    },
+    "provisional": "Este ambiente ainda está em construção. Por enquanto, converse com {name} pelo painel ao lado."
+  },
+  "room": {
+    "title": "Sala do Squad"
+  },
+  "auto": { "title": "Modo Autônomo" },
+  "mem": { "title": "Memória da Marca" },
+  "team": { "title": "Minha Equipe & Conversas" }
+}

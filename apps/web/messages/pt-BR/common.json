@@ -1,1 +1,44 @@
-{}
+{
+  "brand": "HelloSquad",
+  "close": "Fechar",
+  "unavailable": "Ainda não disponível nesta versão.",
+  "areas": {
+    "nexo": "Projetos",
+    "bia": "Estratégia",
+    "kaia": "Marca & Criação",
+    "otto": "Conteúdo",
+    "kiwi": "Growth Marketing",
+    "max": "CRM",
+    "iris": "Resultados"
+  },
+  "agentWith": "{article, select, a {com a} other {com o}} {name}",
+  "agentTo": "{article, select, a {para a} other {para o}} {name}",
+  "states": {
+    "draft": "Rascunho",
+    "in_progress": "Em andamento",
+    "needs_you": "Aguarda você",
+    "scheduled": "Programado",
+    "done": "Concluído",
+    "paused": "Pausado",
+    "blocked": "Bloqueado",
+    "failed": "Erro",
+    "cancelled": "Cancelado",
+    "approved": "Aprovado"
+  },
+  "approvalKinds": {
+    "review": "Para você revisar",
+    "approve": "Para você aprovar",
+    "authorize": "Para você autorizar",
+    "confirm": "Para você confirmar",
+    "reconnect": "Para você reconectar",
+    "respond": "Para você responder"
+  },
+  "deliveryTypes": {
+    "d0401": "Legenda"
+  },
+  "time": {
+    "today": "hoje",
+    "todayUpper": "Hoje",
+    "yesterday": "ontem"
+  }
+}

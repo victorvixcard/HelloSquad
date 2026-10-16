@@ -1,0 +1,15 @@
+/* Adaptações mínimas do CSS da V4.6 (packages/ui/src/generated/product-ui.css) ao produto, sem mudar o desenho:
+   os destinos da barra e os negócios são links (navegação real), então herdam o desenho dos botões do protótipo. */
+.ps a.sb-ni,
+.ps a.sb-bz,
+.ps a.cx-sub-v {
+  text-decoration: none;
+  color: inherit;
+}
+.ps a.sb-ni { color: #4A4760; }
+.ps a.sb-ni:hover,
+.ps a.sb-ni.is-on { color: #0F0D22; }
+.ps form { margin: 0; }
+.ps .sb-acc-l form .sb-acc-i { width: 100%; }
+/* Estado vazio honesto das notificações (a V4.6 não desenha a lista vazia): mesmo texto de apoio dos cartões. */
+.ps .ps-pop-e { margin: 0; padding: 4px 12px 12px; font-size: 13px; line-height: 1.45; color: #6E6B80; }

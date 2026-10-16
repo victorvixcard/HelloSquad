@@ -29,6 +29,8 @@ const nextConfig: NextConfig = {
   turbopack: { root: repoRoot },
   outputFileTracingRoot: repoRoot,
   poweredByHeader: false,
+  // O indicador do modo dev cobre o pé da barra lateral (conta da pessoa) nas capturas.
+  devIndicators: false,
   // Mantém o host dos redirecionamentos do middleware (127.0.0.1 não vira localhost).
   skipMiddlewareUrlNormalize: true,
   async headers() {

@@ -29,5 +29,5 @@ export {
   type SquadMember,
 } from "./squad";
 export { cssVar, tokens, type ColorToken, type TokenName, type TypeStyleName } from "./tokens";
-export { NAV_ICONS, PANEL_ICON, STATUS_GLYPHS } from "./generated/product-ui";
+export { NAV_ICONS, PANEL_ICON, PRODUCT_ICONS, STATUS_GLYPHS, type ProductIconName } from "./generated/product-ui";
 export { SQUAD_STAGE_SVG, SquadStageEngine } from "./generated/squad-stage";

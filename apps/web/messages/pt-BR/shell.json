@@ -1,1 +1,56 @@
-{}
+{
+  "skipToContent": "Pular para o conteúdo",
+  "navLabel": "HelloSquad",
+  "mainLabel": "Conteúdo",
+  "toggle": {
+    "collapse": "Recolher a barra lateral",
+    "expand": "Expandir a barra lateral"
+  },
+  "groups": {
+    "main": "Principal",
+    "squad": "Seu squad",
+    "mgmt": "Gestão"
+  },
+  "items": {
+    "home": "Início",
+    "room": "Sala do Squad",
+    "auto": "Modo Autônomo",
+    "mem": "Memória da Marca",
+    "team": "Minha Equipe & Conversas"
+  },
+  "itemAria": "{label}, com {agent}",
+  "itemAriaSay": "{label}, com {agent}, {say}",
+  "itemAriaSayOnly": "{label}, {say}",
+  "itemTip": "{label} · {agent}",
+  "itemTipSay": "{label} · {say}",
+  "say": {
+    "roomAll": "todos os especialistas",
+    "needs": "{count, plural, one {# aguarda você} other {# aguardam você}}",
+    "autoNone": "não configurado",
+    "memPending": "{count, plural, one {# informação para confirmar} other {# informações para confirmar}}",
+    "unread": "mensagens novas"
+  },
+  "account": {
+    "aria": "Conta, negócio e configurações. {name}, {business}",
+    "tip": "{name} · {business}",
+    "dialog": "Conta, negócio e configurações",
+    "business": "Negócio",
+    "addBusiness": "Adicionar um negócio",
+    "addBusinessSub": "Outra marca na mesma conta",
+    "myAccount": "Minha conta",
+    "settings": "Configurações",
+    "signOut": "Sair",
+    "roles": {
+      "owner": "Titular",
+      "admin": "Administração",
+      "editor": "Edição",
+      "viewer": "Leitura"
+    }
+  },
+  "notifications": {
+    "label": "Notificações",
+    "aria": "Notificações",
+    "ariaNew": "Notificações, há novidades",
+    "empty": "Nada novo por aqui. Quando o squad precisar de você, aparece aqui."
+  }
+}

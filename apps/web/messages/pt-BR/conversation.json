@@ -1,1 +1,30 @@
-{}
+{
+  "label": "Conversa",
+  "roomTitle": "Sala do Squad",
+  "roomStatus": "Os sete especialistas",
+  "about": "Conversando sobre",
+  "openContext": "Abrir {name}",
+  "expand": "Expandir a conversa",
+  "expandTip": "Expandir",
+  "collapse": "Abrir ao lado da tela",
+  "collapseTip": "Abrir ao lado",
+  "close": "Fechar a conversa",
+  "closeTip": "Fechar",
+  "attach": "Anexar",
+  "placeholder": "Mensagem {to}…",
+  "placeholderRoom": "Mensagem para o squad…",
+  "ask": "Pergunte {article, select, a {à} other {ao}} {name}",
+  "loading": "Abrindo a conversa",
+  "loadError": "Não foi possível abrir a conversa agora. Tente de novo em instantes.",
+  "sendError": "A mensagem não foi enviada. Tente de novo.",
+  "sending": "Enviando",
+  "empty": "Ainda não há mensagens nesta conversa.",
+  "you": "Você",
+  "yesterday": "Ontem",
+  "today": "Hoje",
+  "suggestions": {
+    "nexo": ["O que precisa de mim esta semana?", "Qual projeto pede mais atenção?", "Quero começar um projeto novo."],
+    "otto": ["Como está o plano da próxima semana?", "Que conteúdos funcionaram melhor?", "Quero melhorar meu Instagram."],
+    "iris": ["Como foi a última semana?", "O que mais trouxe encomendas?", "O que devo acompanhar no Natal?"]
+  }
+}
