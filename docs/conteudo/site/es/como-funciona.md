@@ -64,7 +64,7 @@ Sin datos conectados, Íris no muestra números: te dice qué falta conectar.
 |---|---|---|
 | **Entrega puntual** | Empieza y termina: una pieza, un diagnóstico, un informe. | Trilha Urbana le pide a Bia un diagnóstico de marketing. |
 | **Proyecto coordinado** | Varias especialidades, etapas y aprobaciones para un objetivo mayor. | Miolo pide la campaña de fin de año: Bia, Kaia, Otto y Kiwi en el mismo proyecto. |
-| **Responsabilidad continua** | Algo que se repite, delegado con frecuencia y límites, en el Modo Autónomo. | Vitta Estética le delega a Otto la pauta semanal de publicaciones. |
+| **Responsabilidad continua** | Algo que se repite, delegado con frecuencia y límites, en el Modo Autónomo. | Vitta Estética le delega a Otto la planificación semanal de publicaciones. |
 
 ## Qué significa "Necesita de ti"
 
