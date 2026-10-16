@@ -145,20 +145,33 @@ def parse_day(value: object) -> date | None:
         return None
 
 
+def safe_url(value: object) -> bool:
+    """Só link http(s): o resultado de fora vira link na tela (nada de `javascript:`)."""
+    return isinstance(value, str) and value.lower().startswith(("https://", "http://"))
+
+
 class BraveWebSearch:
     provider = "brave"
     enabled = True
 
-    def __init__(self, api_key: str, *, timeout: float = 10.0) -> None:
+    def __init__(
+        self,
+        api_key: str,
+        *,
+        timeout: float = 10.0,
+        transport: httpx.AsyncBaseTransport | None = None,
+    ) -> None:
         self._api_key = api_key
         self._timeout = timeout
+        self._transport = transport
 
     async def search(
         self, query: str, *, locale: str, max_results: int = MAX_RESULTS
     ) -> SearchResponse:
         lang, country = BRAVE_LANG.get(locale, BRAVE_LANG["pt-BR"])
         try:
-            async with httpx.AsyncClient(timeout=self._timeout) as client:
+            client = httpx.AsyncClient(timeout=self._timeout, transport=self._transport)
+            async with client:
                 response = await client.get(
                     BRAVE_URL,
                     params={
@@ -182,7 +195,7 @@ class BraveWebSearch:
                 published_at=parse_day(item.get("page_age")),
             )
             for item in items[:max_results]
-            if item.get("url")
+            if safe_url(item.get("url"))
         ]
         return SearchResponse(
             provider=self.provider,
