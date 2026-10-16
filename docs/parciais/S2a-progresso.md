@@ -12,4 +12,6 @@
 | 15:04 | 3. Bia 02.07: `research/websearch.py` (desligado por padrão, mock determinístico, Brave atrás de env); fontes saem da busca, achado sem fonte coletada vira sugestão | feito | `33a0b3b`, `ca96004` |
 | 15:07 | 4. Otto 04.02 (`calendar_posts`: rascunho → pauta na aprovação; `GET /workspaces/{id}/calendar`; post como objeto pelo id) e 04.03 (versões por canal, roteiro, estratégia aprovada) | feito | `55e0d5c`, `33a0b3b`, `cb17d52` |
 | 15:07 | 5. Preços provisórios (10, `provisional`, já no seed da S1e), cartão `material`, `status_label` por etapa ("Bia · pesquisando na web"), reserva/captura: conferidos no pytest de cada delivery | feito | `cb17d52` |
-| | 6. Testes, contrato, `SETUP_LOCAL.md`, relatório | pendente | |
+| 15:14 | 6. pytest (`test_s2a_deliveries` 12, `test_environment_conversation` 3, `test_websearch` 5; backend 164/164), pgTAP 519/519 (`21` com 30), contrato (+1 rota, +3 schemas, nada removido), `SETUP_LOCAL.md` §"Bia e Otto (S2a)", curl contra a API no ar, `S2a-relatorio.md` | feito | `c259727`, `f1f8044`, `57517f4`, `490c4e9`, este |
+
+**Fatia fechada às 15:14.** Relatório: `docs/parciais/S2a-relatorio.md`.

@@ -1,0 +1,14 @@
+$ make test-web   # 16/10 15:10, com o contrato da S2a; apps/web e packages/ui em mudança pela A2a
+6:packages/contracts typecheck: Done
+7:packages/ui typecheck: Done
+9:apps/web typecheck: Done
+21:packages/contracts test:  Test Files  1 passed (1)
+22:packages/contracts test:       Tests  9 passed (9)
+28:packages/ui test:  Test Files  5 passed (5)
+29:packages/ui test:       Tests  49 passed (49)
+57:apps/web test: ⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+59:apps/web test:  FAIL  test/catalog-parity.test.ts > catálogo en (ADR-0010) > existe, com os mesmos arquivos de área do pt-BR
+137:apps/web test:  FAIL  test/catalog-parity.test.ts > catálogo es (ADR-0010) > existe, com os mesmos arquivos de área do pt-BR
+216:apps/web test:  Test Files  1 failed | 20 passed (21)
+217:apps/web test:       Tests  12 failed | 160 passed (172)
+232:web exit=2
