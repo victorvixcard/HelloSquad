@@ -58,18 +58,21 @@ describe("Precisa de você", () => {
     expect(screen.getByText(/Aprovar não publica/)).toBeInTheDocument();
   });
 
-  it("Pedir ajuste registra changes_requested e abre a conversa ao lado sobre o trabalho", async () => {
+  it("Pedir ajuste abre a conversa com o texto do protótipo no campo; a decisão só vai no envio", async () => {
     const user = userEvent.setup();
     const decide = vi.fn(async () => approval("changes_requested"));
     const shell = makeShell();
     renderWithShell(<DeliveryDetail data={DATA} decide={decide} />, shell);
     await user.click(screen.getByRole("button", { name: "Pedir ajuste" }));
-    await waitFor(() => expect(decide).toHaveBeenCalledWith("ap-1", "changes_requested"));
     expect(shell.openConversation).toHaveBeenCalledWith({
       conversationId: "otto-1",
       agent: "otto",
       context: { kind: "work_item", label: DATA.title },
+      draft: "Quero pedir um ajuste nesta versão.",
+      adjust: { approvalId: "ap-1", workItemId: DATA.workItemId, version: 1 },
     });
+    // Dono, 16/10 10:20: é o envio da mensagem que registra changes_requested (ConversationPanel.test).
+    expect(decide).not.toHaveBeenCalled();
   });
 
   it("falha da API aparece em português, sem perder a revisão", async () => {
@@ -104,11 +107,12 @@ describe("Precisa de você", () => {
     expect(screen.getByText("Otto não segue com esta entrega.")).toBeInTheDocument();
   });
 
-  it("depois de pedir ajuste, a decisão mostra o agente trabalhando na nova versão", async () => {
-    const user = userEvent.setup();
-    renderWithShell(<DeliveryDetail data={DATA} decide={vi.fn(async () => approval("changes_requested"))} />);
-    await user.click(screen.getByRole("button", { name: "Pedir ajuste" }));
-    expect(await screen.findByText("Otto ajustando a versão 1")).toBeInTheDocument();
+  it("depois de pedir ajuste (o servidor já registrou), a decisão mostra o agente trabalhando na nova versão", () => {
+    const data = { ...DATA, approval: { id: "ap-1", status: "decided" as const, decision: "changes_requested" } };
+    renderWithShell(<DeliveryDetail data={data} />);
+    expect(screen.getByText("Otto ajustando a versão 1")).toBeInTheDocument();
+    expect(screen.getByText("Você recebe a nova versão aqui e na conversa.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Aprovar v1/ })).toBeNull();
   });
 
   it("quem não é o dono da conta vê a pendência em modo leitura, sem botões de decisão", () => {

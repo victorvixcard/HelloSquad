@@ -20,6 +20,10 @@ export type ConversationTarget = {
   context?: ConversationContextRef;
   /** "Nova conversa" com o especialista: rascunho que vira conversa na API com a primeira mensagem. */
   fresh?: boolean;
+  /** Texto já escrito no campo ao abrir ("Quero pedir um ajuste nesta versão.", V4.6 `_postAdjAsk`). */
+  draft?: string;
+  /** "Pedir ajuste" (dono, 16/10 10:20): o envio desta conversa registra `changes_requested` com a nota = texto. */
+  adjust?: { approvalId: string; workItemId: string; version: number };
 };
 
 /** Conversa direta anterior com um especialista (seletor "Conversas com…" do cabeçalho, V4.6). */

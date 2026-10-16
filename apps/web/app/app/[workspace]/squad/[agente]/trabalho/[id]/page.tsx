@@ -35,7 +35,11 @@ export default async function TrabalhoPage({ params }: Params) {
   const delivery = item.deliveries[0];
   const versions = delivery?.versions ?? [];
   const current = versions.find((x) => x.id === delivery?.current_version_id) ?? versions[versions.length - 1];
-  const content = (current?.content ?? {}) as { legenda?: unknown; hashtags?: unknown; canal?: unknown };
+  const raw = (current?.content ?? {}) as { legenda?: unknown; hashtags?: unknown; canal?: unknown; versoes?: unknown };
+  // Dois formatos de legenda: o do seed (`legenda`, `hashtags`) e o da skill 04.01 do worker (`versoes[]` com
+  // `texto` e `hashtags`, S1c). Da skill, a mesa mostra a primeira versão.
+  const first = Array.isArray(raw.versoes) ? ((raw.versoes[0] ?? {}) as { texto?: unknown; hashtags?: unknown }) : null;
+  const content = first ? { legenda: first.texto, hashtags: first.hashtags, canal: raw.canal } : raw;
   const approval = item.approvals.find((a) => a.status === "pending") ?? item.approvals[item.approvals.length - 1] ?? null;
   const typeKey = deliveryTypeKey(item.delivery_type);
   const brief = item.briefing as Record<string, unknown>;
@@ -72,5 +76,7 @@ export default async function TrabalhoPage({ params }: Params) {
       at: shortTime(s.finished_at ?? s.started_at ?? item.created_at, locale),
     })),
   };
-  return <DeliveryDetail data={data} />;
+  // A decisão e a versão nova chegam pelo Realtime (router.refresh): a chave remonta o detalhe com o estado do servidor.
+  const key = `${approval?.id ?? "-"}:${approval?.status ?? "-"}:${current?.id ?? "-"}`;
+  return <DeliveryDetail key={key} data={data} />;
 }

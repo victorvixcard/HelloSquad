@@ -5,15 +5,22 @@ import type { components } from "@hellosquad/contracts";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useRouter } from "next/navigation";
 import {
   createDirectConversationAction,
+  createWorkItemAction,
+  decideApprovalAction,
   loadConversationAction,
   loadOlderMessagesAction,
   sendMessageAction,
 } from "@/app/app/[workspace]/actions";
+import { conversationLive, shortNowKey } from "@/lib/live/live-state";
+import { deliveryForRequest, workTitleFrom } from "@/lib/live/request";
 import { dayKey, dayLabel, shortTime, threadAt, threadTitleFrom } from "./conversation-format";
+import { useLive } from "./live";
 import { usePopoverDismiss } from "./Popover";
 import { useShell, type ConversationTarget } from "./shell-context";
+import { SquadStatus, type SquadStatusKind } from "./SquadStatus";
 
 type Message = components["schemas"]["Message"];
 
@@ -22,6 +29,8 @@ export type ConversationActions = {
   older: typeof loadOlderMessagesAction;
   send: typeof sendMessageAction;
   create: typeof createDirectConversationAction;
+  createWork: typeof createWorkItemAction;
+  decide: typeof decideApprovalAction;
 };
 
 const DEFAULT_ACTIONS: ConversationActions = {
@@ -29,7 +38,12 @@ const DEFAULT_ACTIONS: ConversationActions = {
   older: loadOlderMessagesAction,
   send: sendMessageAction,
   create: createDirectConversationAction,
+  createWork: createWorkItemAction,
+  decide: decideApprovalAction,
 };
+
+/** Mensagem da pessoa antes da API confirmar (aparece na hora; some se o envio falhar). */
+const TEMP = "tmp-";
 
 /** Perto do topo (px), a rolagem traz as mensagens anteriores (`before=`). */
 const OLDER_AT = 48;
@@ -50,8 +64,11 @@ function targetKey(target: ConversationTarget | null): string {
 export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?: ConversationActions; now?: Date }) {
   const t = useTranslations("conversation");
   const tc = useTranslations("common");
+  const tl = useTranslations("live");
   const locale = useLocale();
   const shell = useShell();
+  const live = useLive();
+  const router = useRouter();
   const { mode, target } = shell.conversation;
   const open = mode !== "off" && !!target;
   const [loaded, setLoaded] = useState<Loaded | null>(null);
@@ -70,6 +87,36 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const lastWidth = useRef(shell.layout.panelW);
   if (shell.layout.convW) lastWidth.current = shell.layout.convW;
   usePopoverDismiss(threadsOpen, () => setThreadsOpen(false), threadsBtn, threadsPop);
+
+  // "Pedir ajuste": a conversa abre com o texto do protótipo no campo; o envio registra o pedido de ajuste.
+  const draft = open ? target?.draft : undefined;
+  const adjust = open ? (target?.adjust ?? null) : null;
+  useEffect(() => {
+    if (draft) setInput(draft);
+  }, [draft, key]);
+
+  // Mensagem nova de agente nesta conversa (Realtime `message.created`): busca a última página e junta.
+  const conversationId = open ? (target?.conversationId ?? null) : null;
+  const arrivals = conversationId ? (live.state.messages[conversationId] ?? 0) : 0;
+  useEffect(() => {
+    if (!conversationId || !arrivals) return;
+    let alive = true;
+    actions.load(conversationId).then((result) => {
+      if (!alive || !result.ok) return;
+      setLoaded((prev) => {
+        if (!prev || prev.key !== key) return prev;
+        const fresh = result.data.messages;
+        const known = new Set(fresh.map((m) => m.id));
+        // Mantém as anteriores já carregadas e a mensagem otimista que ainda não voltou da API.
+        const kept = prev.messages.filter((m) => !known.has(m.id) && (m.id.startsWith(TEMP) || Date.parse(m.created_at) < Date.parse(fresh[0]?.created_at ?? "")));
+        return { ...prev, messages: [...kept.filter((m) => !m.id.startsWith(TEMP)), ...fresh, ...kept.filter((m) => m.id.startsWith(TEMP))] };
+      });
+    });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reage a cada mensagem nova da conversa aberta
+  }, [conversationId, arrivals]);
 
   // Abriu: guarda quem abriu (o foco volta para ele) e leva o foco ao campo. Trocar de conversa pelo
   // seletor não troca quem abriu.
@@ -174,6 +221,45 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const sameMode = mode === "full" ? "full" : "panel";
   const today = now ?? new Date();
 
+  // Status vivo da conversa (V4.6 L8511 e `.ps-cstat`): run em curso (trabalho), pendência desta conversa (espera)
+  // ou conexão perdida (estado técnico). "<Nome> está escrevendo" enquanto um agente está numa etapa.
+  const convLive = conversationLive(live.state, target.conversationId);
+  const waitHere = target.conversationId
+    ? Object.values(live.state.pending).find((p) => shell.workConversations[p.workItemId] === target.conversationId)
+    : undefined;
+  const lost = live.state.connection === "lost";
+  const st: { kind: SquadStatusKind; lead: AgentId | null; m: string; d: string } | null = convLive
+    ? {
+        kind: "work",
+        lead: convLive.lead,
+        m: getAgent(convLive.lead).name,
+        d: convLive.detail === "adjusting" ? tl("detail.adjustingNext") : tl(`detail.${convLive.detail}`),
+      }
+    : waitHere
+      ? {
+          kind: "wait",
+          lead: waitHere.agent,
+          m: getAgent(waitHere.agent).name,
+          d: waitHere.kind === "respond" ? tl("detail.waitAnswer") : tl("detail.waitApproval"),
+        }
+      : null;
+  const typingAgent = convLive?.typing ?? null;
+  const md = agent ? live.modes[agent.id] : "idle";
+  const headStatus = room
+    ? st
+      ? `${st.m} · ${st.d}`
+      : t("roomStatus")
+    : agent
+      ? typingAgent === agent.id
+        ? tl("typingStatus")
+        : st && st.lead === agent.id
+          ? st.d
+          : tl(`short.${shortNowKey(agent.id, md)}`)
+      : "";
+  const headLive = st?.kind === "work" || md === "work";
+  const headExpr = st && st.kind === "wait" && agent && st.lead === agent.id ? "big" : "oval";
+  const headThink = !!agent && ((st?.kind === "work" && st.lead === agent.id) || typingAgent === agent.id);
+
   // Seletor "Conversas" da V4.6: só na conversa direta (sem objeto); lista as conversas com o mesmo especialista.
   const direct = !room && !!agent && !target.context;
   const threads = agent ? (shell.directThreads[agent.id] ?? []) : [];
@@ -213,40 +299,90 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     items[next]?.focus();
   }
 
+  /**
+   * Envio (A1a): a mensagem aparece na hora; depois, conforme a conversa,
+   * (1) "Pedir ajuste" registra `changes_requested` com a nota = texto (dono, 16/10 10:20);
+   * (2) com uma pergunta do agente pendente nesta conversa, o texto é a resposta (`answered`, V4.6 §5 "Responder");
+   * (3) pedido de uma entrega que o squad executa vira trabalho com run na fila (`POST /messages/{id}/work-items`);
+   * senão fica só a mensagem. O que o squad faz chega pelo Realtime.
+   */
   async function send(body: string) {
     if (!target || sending) return;
     setSending(true);
     setSendError(false);
+    const tempId = `${TEMP}${Date.now()}`;
+    const temp: Message = {
+      id: tempId,
+      conversation_id: target.conversationId ?? "",
+      author_type: "user",
+      author_user_id: null,
+      author_agent_id: null,
+      run_id: null,
+      body,
+      body_format: "markdown",
+      attachments: [],
+      created_at: new Date().toISOString(),
+    };
+    setInput("");
+    setLoaded((prev) => (prev && prev.key === key ? { ...prev, messages: [...prev.messages, temp] } : { key, messages: [temp], older: null, error: false }));
+    const drop = () => {
+      setLoaded((prev) => (prev ? { ...prev, messages: prev.messages.filter((m) => m.id !== tempId) } : prev));
+      setInput(body);
+      setSending(false);
+      setSendError(true);
+    };
+
     let conversationId = target.conversationId;
     let created: string | null = null;
     if (!conversationId && target.agent) {
       const made = await actions.create(shell.workspace.id, target.agent, threadTitleFrom(body));
       if (made.ok) conversationId = created = made.data.id;
     }
-    if (!conversationId) {
-      setSending(false);
-      setSendError(true);
-      return;
-    }
+    if (!conversationId) return drop();
     const result = await actions.send(conversationId, body);
+    if (!result.ok) return drop();
+    const posted = result.data;
+
+    // O que a mensagem faz no squad (depois de gravada, para entrar no histórico que o agente lê).
+    const answer = Object.values(live.state.pending).find(
+      (p) => p.kind === "respond" && shell.workConversations[p.workItemId] === conversationId,
+    );
+    let effect: Promise<unknown> = Promise.resolve();
+    if (adjust) {
+      effect = actions.decide(adjust.approvalId, "changes_requested", body).then((r) => {
+        if (!r.ok) return setSendError(true);
+        live.expectRevision(adjust.workItemId);
+        router.refresh();
+      });
+    } else if (answer && shell.canDecide) {
+      effect = actions.decide(answer.id, "answered", body).then((r) => {
+        if (!r.ok) return setSendError(true);
+        router.refresh();
+      });
+    } else {
+      const type = deliveryForRequest(body);
+      if (type) {
+        effect = actions.createWork(posted.id, type, workTitleFrom(body)).then((r) => {
+          if (!r.ok) return setSendError(true);
+          if (r.data.runId) live.linkRun(r.data.runId, r.data.conversationId ?? conversationId, r.data.workItemId);
+          router.refresh();
+        });
+      }
+    }
+    await effect;
     setSending(false);
-    if (result.ok) setInput("");
-    else setSendError(true);
+
     if (created && target.agent) {
       // A conversa passou a existir: entra no topo do histórico do especialista e o painel segue nela.
       const next: ConversationTarget = { conversationId: created, agent: target.agent, context: target.context };
-      shell.rememberThread(target.agent, {
-        id: created,
-        title: threadTitleFrom(body),
-        at: result.ok ? result.data.created_at : new Date().toISOString(),
-      });
-      setLoaded({ key: targetKey(next), messages: result.ok ? [...messages, result.data] : messages, older: null, error: false });
+      shell.rememberThread(target.agent, { id: created, title: threadTitleFrom(body), at: posted.created_at });
+      setLoaded({ key: targetKey(next), messages: [...messages.filter((m) => m.id !== tempId), posted], older: null, error: false });
       shell.openConversation(next, sameMode);
       return;
     }
-    if (result.ok) {
-      setLoaded((prev) => (prev && prev.key === key ? { ...prev, messages: [...prev.messages, result.data] } : prev));
-    }
+    setLoaded((prev) => (prev ? { ...prev, messages: prev.messages.map((m) => (m.id === tempId ? posted : m)) } : prev));
+    // O pedido de ajuste foi enviado: a conversa segue sem o modo de ajuste (o próximo envio é mensagem comum).
+    if (adjust) shell.openConversation({ ...target, adjust: undefined, draft: undefined }, sameMode);
   }
 
   const cls = baseCls + (suggestions.length ? " has-sug" : "");
@@ -265,7 +401,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
               </div>
             ) : agent ? (
               <span className="ps-cvh-av">
-                <Agent agent={agent.id} size={40} />
+                <Agent agent={agent.id} size={40} expression={headExpr} thinking={headThink} />
               </span>
             ) : null}
             <div className="ps-cvh-t">
@@ -339,11 +475,11 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                       </div>
                     ) : null}
                   </span>
-                ) : room ? (
-                  <span className="ps-cvh-st">
-                    <span>{t("roomStatus")}</span>
-                  </span>
                 ) : null}
+                <span className="ps-cvh-st">
+                  {headLive ? <span className="ps-live-s" /> : null}
+                  <span>{headStatus}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -388,6 +524,15 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
             </button>
           </div>
         </header>
+        {lost ? (
+          <div className="ps-cstat">
+            <SquadStatus kind="tech" lead={null} message={tl("lost")} detail={tl("lostDetail")} />
+          </div>
+        ) : st ? (
+          <div className="ps-cstat">
+            <SquadStatus kind={st.kind} lead={st.lead} message={st.m} detail={st.d} />
+          </div>
+        ) : null}
         <div className="ps-cv-body">
           <div
             className="ps-msgs"
@@ -475,6 +620,17 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                       </svg>
                     </button>
                   ))}
+                </div>
+              ) : null}
+              {typingAgent ? (
+                <div className="ps-typing">
+                  <Agent agent={typingAgent} size={28} thinking />
+                  <span>{tl("typing", { name: getAgent(typingAgent).name })}</span>
+                  <span className="ps-dots" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
                 </div>
               ) : null}
             </div>

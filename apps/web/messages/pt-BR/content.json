@@ -61,6 +61,7 @@
     "approve": "Aprovar v{version}",
     "approving": "Aprovando",
     "adjust": "Pedir ajuste",
+    "adjustDraft": "Quero pedir um ajuste nesta versão.",
     "adjustNote": "O ajuste abre a conversa com {agent} ao lado, com a legenda à vista.",
     "approved": "Aprovada por você",
     "approvedText": "Aprovar não publica: a publicação pede autorização própria.",

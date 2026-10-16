@@ -220,10 +220,12 @@ export function agentModes(state: LiveState): Record<AgentId, AgentMode> {
   return modes;
 }
 
+export type ShortNowKey = "available" | "creating" | "writing" | "researching" | "working" | "waiting" | "coordinating";
+
 /** Chave do rótulo curto (`_shortNow`, L8063): o texto está no catálogo (`live.short.*`). */
-export function shortNowKey(agent: AgentId, mode: AgentMode): string {
-  if (mode === "work") return ({ bia: "researching", kaia: "creating", otto: "writing" } as Partial<Record<AgentId, string>>)[agent] ?? "working";
-  return { wait: "waiting", live: "coordinating", idle: "available" }[mode];
+export function shortNowKey(agent: AgentId, mode: AgentMode): ShortNowKey {
+  if (mode === "work") return ({ bia: "researching", kaia: "creating", otto: "writing" } as const satisfies Partial<Record<AgentId, ShortNowKey>>)[agent as "bia"] ?? "working";
+  return ({ wait: "waiting", live: "coordinating", idle: "available" } as const)[mode];
 }
 
 /** Expressão do rosto para o modo (V4.6: "big" quando aguarda você; olhos trabalhando em `work`). */

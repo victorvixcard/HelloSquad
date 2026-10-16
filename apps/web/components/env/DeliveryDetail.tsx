@@ -54,14 +54,22 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
 
   async function run(kind: Choice) {
     if (!data.approval || busy || !shell.canDecide) return;
+    if (kind === "adjust") {
+      // Como no protótipo (`_postAdjAsk`) e na decisão do dono de 16/10 10:20: abre a conversa com
+      // "Quero pedir um ajuste nesta versão." no campo; o envio é que registra o pedido de ajuste com a nota.
+      shell.openConversation({
+        conversationId: data.conversationId,
+        agent: data.agent,
+        context: { kind: "work_item", label: data.title },
+        draft: t("adjustDraft"),
+        adjust: { approvalId: data.approval.id, workItemId: data.workItemId, version: v },
+      });
+      return;
+    }
     setBusy(kind);
     setError(false);
     const result =
-      kind === "approve"
-        ? await decide(data.approval.id, "approved")
-        : kind === "adjust"
-          ? await decide(data.approval.id, "changes_requested")
-          : await decide(data.approval.id, "rejected", undefined, kind);
+      kind === "approve" ? await decide(data.approval.id, "approved") : await decide(data.approval.id, "rejected", undefined, kind);
     setBusy(null);
     if (!result.ok) {
       setError(true);
@@ -69,13 +77,6 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
     }
     setDecision(result.data.decision);
     setFollowUp(result.data.follow_up ?? (kind === "cancel" || kind === "revise" ? kind : null));
-    if (kind === "adjust") {
-      shell.openConversation({
-        conversationId: data.conversationId,
-        agent: data.agent,
-        context: { kind: "work_item", label: data.title },
-      });
-    }
   }
 
   const steps = [

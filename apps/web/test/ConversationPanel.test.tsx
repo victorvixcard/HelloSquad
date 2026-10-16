@@ -35,6 +35,8 @@ function actions(over: Partial<ConversationActions> = {}): ConversationActions {
     older: vi.fn(async () => ({ ok: true as const, data: { messages: [], older: null } })),
     send: vi.fn(async (_id: string, body: string) => ({ ok: true as const, data: message("m2", body, "2026-10-16T10:59:00-03:00") })),
     create: vi.fn(async () => ({ ok: true as const, data: { id: "nova" } })),
+    createWork: vi.fn(async () => ({ ok: true as const, data: { workItemId: "wi-9", runId: "run-9", conversationId: "otto-1" } })),
+    decide: vi.fn(async () => ({ ok: true as const, data: {} as never })),
     ...over,
   };
 }
