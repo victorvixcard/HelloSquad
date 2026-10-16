@@ -226,7 +226,7 @@ export interface paths {
         put?: never;
         /**
          * Decide uma aprovação (idempotente: repetir devolve o estado atual)
-         * @description A primeira decisão vale; repetir (clique duplo, retry) responde 200 com o mesmo estado, sem erro e sem efeito novo. Revisar/aprovar com `approved` aprova a versão e o trabalho; `changes_requested` devolve o trabalho para em andamento. Editor decide; `authorize` (ação externa) exige admin.
+         * @description A primeira decisão vale; repetir (clique duplo, retry) responde 200 com o mesmo estado, sem erro e sem efeito novo. Revisar/aprovar com `approved` aprova a versão e o trabalho; `changes_requested` e `rejected` com `follow_up=revise` devolvem o trabalho ao agente (novo run na fila); `rejected` com `follow_up=cancel` cancela o trabalho; `answered` (responder) devolve ao agente com a resposta. Só o owner decide.
          */
         post: operations["decide_approval_approvals__approval_id__decision_post"];
         delete?: never;
@@ -310,10 +310,15 @@ export interface components {
              * Format: uuid
              */
             workspace_id: string;
-            /** @description `review` revisar, `approve` aprovar, `authorize` autorizar ação externa (admin), `confirm` confirmar, `reconnect` reconectar, `respond` responder. */
+            /** @description `review` revisar, `approve` aprovar, `authorize` autorizar ação externa, `confirm` confirmar, `reconnect` reconectar, `respond` responder. Só o owner decide. */
             kind: components["schemas"]["ApprovalKind"];
             status: components["schemas"]["ApprovalStatus"];
             decision: components["schemas"]["ApprovalDecision"] | null;
+            /**
+             * Follow Up
+             * @description Saída da rejeição: `cancel` cancela o trabalho; `revise` pede nova proposta.
+             */
+            follow_up: ("cancel" | "revise") | null;
             requested_by_agent_id: components["schemas"]["AgentId"];
             /** Delivery Version Id */
             delivery_version_id: string | null;
@@ -355,6 +360,15 @@ export interface components {
          *       "decision": "changes_requested",
          *       "note": "Troque o horário para 7h."
          *     }
+         * @example {
+         *       "decision": "rejected",
+         *       "follow_up": "revise",
+         *       "note": "Quero outra abordagem."
+         *     }
+         * @example {
+         *       "decision": "rejected",
+         *       "follow_up": "cancel"
+         *     }
          */
         ApprovalDecisionCreate: {
             /** @description `review`/`approve`: approved, changes_requested ou rejected. `authorize`/`confirm`/`reconnect`: approved ou rejected. `respond`: answered. */
@@ -364,6 +378,11 @@ export interface components {
              * @description Observação de quem decide (até 2.000 caracteres).
              */
             note?: string | null;
+            /**
+             * Follow Up
+             * @description Obrigatório ao rejeitar uma entrega (`review`/`approve`): `cancel` cancela o trabalho; `revise` devolve ao agente para uma nova proposta. Não vale para outras decisões.
+             */
+            follow_up?: ("cancel" | "revise") | null;
         };
         /**
          * ApprovalKind

@@ -81,6 +81,15 @@ def missing_fields(triage: TriageResult, essentials: list[str]) -> list[str]:
     return [f for f in essentials if f in empty | flagged]
 
 
+def change_note_key(feedback: dict[str, Any] | None, revisions: int) -> str:
+    decision = (feedback or {}).get("decisao")
+    if decision == "changes_requested":
+        return "adjusted"
+    if decision == "rejected":
+        return "new_proposal"
+    return "revised" if revisions else "first"
+
+
 class StepCaller:
     def __init__(self, squad: Squad, store: RunStore, delivery_type: str, attempt: int) -> None:
         self.squad = squad
@@ -207,6 +216,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         briefing=item.briefing,
         history=data.history,
         brand_facts=data.brand_facts,
+        feedback=data.feedback,
     )
     calls = StepCaller(squad, store, delivery_type, data.attempts)
 
@@ -308,7 +318,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     kind = expert_prompt.skill.delivery_kind
     if not kind:
         raise FlowError("delivery_not_supported", {"delivery_type": delivery_type})
-    note_key = "revised" if revisions else "first"
+    note_key = change_note_key(data.feedback, revisions)
     result = await store.deliver(
         work_item=item,
         agent_id=expert.id,

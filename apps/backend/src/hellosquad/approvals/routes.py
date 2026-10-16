@@ -21,7 +21,7 @@ from hellosquad.domain import ApprovalStatus
 router = APIRouter(tags=["approvals"])
 
 APPROVAL_SELECT = """
-select a.id, a.workspace_id, a.kind::text, a.status::text, a.decision::text,
+select a.id, a.workspace_id, a.kind::text, a.status::text, a.decision::text, a.follow_up,
        a.requested_by_agent_id::text, a.delivery_version_id, v.version_no as delivery_version_no,
        a.run_id, a.decided_by, a.decided_at, a.note, a.due_at, a.created_at, a.updated_at,
        w.id as work_item_id, w.title as work_item_title, w.status::text as work_item_status,
@@ -47,7 +47,7 @@ GET_APPROVAL = f"""
 where a.id = %s and a.workspace_id in (select app.current_user_workspace_ids())
 """
 
-DECIDE_APPROVAL = "select id from app.decide_approval(%s, %s::public.approval_decision, %s)"
+DECIDE_APPROVAL = "select id from app.decide_approval(%s, %s::public.approval_decision, %s, %s)"
 
 
 def approval_from_row(row: dict) -> Approval:
@@ -106,8 +106,9 @@ async def list_approvals(
     description=(
         "A primeira decisão vale; repetir (clique duplo, retry) responde 200 com o mesmo estado, "
         "sem erro e sem efeito novo. Revisar/aprovar com `approved` aprova a versão e o trabalho; "
-        "`changes_requested` devolve o trabalho para em andamento. Editor decide; `authorize` "
-        "(ação externa) exige admin."
+        "`changes_requested` e `rejected` com `follow_up=revise` devolvem o trabalho ao agente "
+        "(novo run na fila); `rejected` com `follow_up=cancel` cancela o trabalho; `answered` "
+        "(responder) devolve ao agente com a resposta. Só o owner decide."
     ),
     responses=error_responses(401, 403, 404, 409, 422, 503),
 )
@@ -118,5 +119,7 @@ async def decide_approval(
     db: DatabaseDep,
 ) -> Approval:
     async with db.transaction_as(principal) as conn:
-        await conn.execute(DECIDE_APPROVAL, (approval_id, payload.decision, payload.note))
+        await conn.execute(
+            DECIDE_APPROVAL, (approval_id, payload.decision, payload.note, payload.follow_up)
+        )
         return await load_approval(conn, approval_id)

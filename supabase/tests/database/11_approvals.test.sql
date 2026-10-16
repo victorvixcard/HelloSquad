@@ -1,10 +1,12 @@
 -- S1a: app.decide_approval idempotente (duas chamadas, uma mudança), efeitos da decisão (versão aprovada,
--- trabalho sai de needs_you) e quem pode decidir (membro editor+, authorize exige admin).
+-- trabalho sai de needs_you) e quem pode decidir.
+-- S1c (decisão do dono, 16/10 08:55): só o owner decide; rejeitar leva follow_up cancel (trabalho
+-- cancelado) ou revise (nova proposta); ajuste, nova proposta e resposta põem um run novo na fila.
 begin;
 set local client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
-select plan(20);
+select plan(33);
 
 create temporary table fx as
 select
@@ -58,6 +60,27 @@ with
   a as (insert into public.approvals (workspace_id, work_item_id, kind, requested_by_agent_id)
         select workspace_id, id, 'authorize', 'kiwi' from w returning id)
 insert into ids select 'authorize_vitta', id from a;
+
+with
+  w as (insert into public.work_items (workspace_id, title, status, primary_agent_id)
+        select vitta, 'Post de inverno', 'needs_you', 'otto' from fx returning id, workspace_id),
+  a as (insert into public.approvals (workspace_id, work_item_id, kind, requested_by_agent_id)
+        select workspace_id, id, 'review', 'otto' from w returning id)
+insert into ids select 'review_vitta', id from a;
+
+-- Duas entregas da Miolo para as saídas da rejeição (cancelar e pedir nova proposta)
+with
+  w as (insert into public.work_items (workspace_id, title, delivery_type, status, primary_agent_id)
+        select miolo, 'Legenda de terça', '04.01', 'needs_you', 'otto' from fx returning id, workspace_id),
+  a as (insert into public.approvals (workspace_id, work_item_id, kind, requested_by_agent_id)
+        select workspace_id, id, 'review', 'otto' from w returning id)
+insert into ids select 'work_item_3', (select id from w) union all select 'reject_cancel', (select id from a);
+with
+  w as (insert into public.work_items (workspace_id, title, delivery_type, status, primary_agent_id)
+        select miolo, 'Legenda de quarta', '04.01', 'needs_you', 'otto' from fx returning id, workspace_id),
+  a as (insert into public.approvals (workspace_id, work_item_id, kind, requested_by_agent_id)
+        select workspace_id, id, 'review', 'otto' from w returning id)
+insert into ids select 'work_item_4', (select id from w) union all select 'reject_revise', (select id from a);
 
 -- Primeira decisão da Marina
 select pg_temp.act_as((select marina from fx));
@@ -146,6 +169,69 @@ select is(
   'in_progress'::public.work_item_status,
   'sem pendências, o trabalho volta para in_progress'
 );
+reset role;
+select results_eq(
+  format($$select agent_id::text, status::text, idempotency_key from public.runs where work_item_id = %L$$,
+         (select id from ids where name = 'work_item_2')),
+  format($$values ('otto', 'queued', %L)$$, 'approval:' || (select id from ids where name = 'respond_2')),
+  'resposta dada: um run novo do responsável, na fila (o ajuste com pergunta pendente não criou outro)'
+);
+select is(
+  (select count(*) from pgmq.q_runs_interactive
+   where message->>'run_id' = (select id::text from public.runs where work_item_id = (select id from ids where name = 'work_item_2'))),
+  1::bigint,
+  'o run novo entra em runs_interactive na mesma transação da decisão'
+);
+
+-- Rejeitar exige a saída; saída só vale ao rejeitar
+select pg_temp.act_as((select marina from fx));
+select throws_ok(
+  format($$select app.decide_approval(%L, 'rejected')$$, (select id from ids where name = 'reject_cancel')),
+  '22023', 'Ao rejeitar, escolha cancelar o trabalho ou pedir nova proposta.',
+  'rejeitar sem dizer a saída é recusado'
+);
+select throws_ok(
+  format($$select app.decide_approval(%L, 'approved', null, 'cancel')$$, (select id from ids where name = 'reject_cancel')),
+  '22023', 'Cancelar ou pedir nova proposta só vale ao rejeitar uma entrega.',
+  'saída da rejeição com outra decisão é recusada'
+);
+select is(
+  (app.decide_approval((select id from ids where name = 'reject_cancel'), 'rejected', 'Não vamos mais postar.', 'cancel')).follow_up,
+  'cancel',
+  'rejeitar e cancelar: decisão e saída registradas'
+);
+select is(
+  (select status from public.work_items where id = (select id from ids where name = 'work_item_3')),
+  'cancelled'::public.work_item_status,
+  'rejeitar e cancelar: trabalho cancelado'
+);
+select is(
+  (select count(*) from public.runs where work_item_id = (select id from ids where name = 'work_item_3')),
+  0::bigint,
+  'cancelar não cria run'
+);
+select is(
+  (app.decide_approval((select id from ids where name = 'reject_revise'), 'rejected', 'Quero outra abordagem.', 'revise')).decision,
+  'rejected'::public.approval_decision,
+  'rejeitar e pedir nova proposta: decisão registrada'
+);
+select is(
+  (select status from public.work_items where id = (select id from ids where name = 'work_item_4')),
+  'in_progress'::public.work_item_status,
+  'rejeitar e pedir nova proposta: trabalho volta para in_progress'
+);
+select is(
+  (app.decide_approval((select id from ids where name = 'reject_revise'), 'rejected', 'Clique repetido.', 'revise')).follow_up,
+  'revise',
+  'a saída fica registrada e a segunda chamada devolve o mesmo estado'
+);
+reset role;
+select results_eq(
+  format($$select agent_id::text, status::text, (select count(*) from pgmq.q_runs_interactive q where q.message->>'run_id' = r.id::text)
+           from public.runs r where work_item_id = %L$$, (select id from ids where name = 'work_item_4')),
+  $$values ('otto', 'queued', 1::bigint)$$,
+  'nova proposta: um run do Otto na fila, mesmo com a chamada repetida'
+);
 
 -- Quem não é da Miolo não decide e não descobre que a aprovação existe
 select pg_temp.act_as((select rafael from fx));
@@ -168,14 +254,26 @@ insert into ids select 'confirm_2', id from public.approvals where kind = 'confi
 select pg_temp.act_as((select pedro from fx));
 select throws_ok(
   format($$select app.decide_approval(%L, 'approved')$$, (select id from ids where name = 'confirm_2')),
-  '42501', 'Seu papel não permite tomar esta decisão.', 'viewer não decide'
+  '42501', 'Só o dono da conta toma esta decisão.', 'viewer não decide'
+);
+reset role;
+update public.memberships set role = 'admin'
+where workspace_id = (select miolo from fx) and user_id = (select pedro from fx);
+select pg_temp.act_as((select pedro from fx));
+select throws_ok(
+  format($$select app.decide_approval(%L, 'approved')$$, (select id from ids where name = 'confirm_2')),
+  '42501', 'Só o dono da conta toma esta decisão.', 'admin também não decide (só o owner)'
 );
 
--- authorize exige admin: Carla (editor) não autoriza; Rafael (owner) autoriza
+-- Só o owner decide: Carla (editor) não revisa nem autoriza; Rafael (owner) autoriza
 select pg_temp.act_as((select carla from fx));
 select throws_ok(
+  format($$select app.decide_approval(%L, 'approved')$$, (select id from ids where name = 'review_vitta')),
+  '42501', 'Só o dono da conta toma esta decisão.', 'editor não decide revisão'
+);
+select throws_ok(
   format($$select app.decide_approval(%L, 'approved')$$, (select id from ids where name = 'authorize_vitta')),
-  '42501', 'Seu papel não permite tomar esta decisão.', 'editor não autoriza ação externa'
+  '42501', 'Só o dono da conta toma esta decisão.', 'editor não autoriza ação externa'
 );
 select pg_temp.act_as((select rafael from fx));
 select is(

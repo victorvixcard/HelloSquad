@@ -587,3 +587,157 @@ async def test_run_taken_over_by_another_worker_cannot_finish_twice(
         ids["run_id"],
     )
     assert run == {"status": "running", "attempts": 2, "error": None}
+
+
+async def decide(api, access_token, approval_id: str, body: dict[str, Any]):
+    return await api.post(
+        f"/approvals/{approval_id}/decision", headers=bearer(access_token(MARINA)), json=body
+    )
+
+
+async def pending_review(admin_db, work_item_id: str) -> str:
+    return str(
+        await scalar(
+            admin_db,
+            "select id from public.approvals where work_item_id = %s and status = 'pending'",
+            work_item_id,
+        )
+    )
+
+
+async def test_rejection_and_adjustment_send_the_work_back_to_otto(
+    api, access_token, admin_db, miolo
+) -> None:
+    ids = await request_work(api, access_token, miolo, COMPLETE_REQUEST)
+    work_item_id = ids["work_item_id"]
+    assert await drain(worker_settings()) == ["delivered"]
+
+    first_review = await pending_review(admin_db, work_item_id)
+    missing = await decide(api, access_token, first_review, {"decision": "rejected"})
+    assert missing.status_code == 422
+    assert missing.json()["error"]["message"] == (
+        "Ao rejeitar, escolha cancelar o trabalho ou pedir nova proposta."
+    )
+
+    # Rejeitar e pedir nova proposta: o trabalho volta ao Otto, que entrega a v2.
+    rejected = await decide(
+        api,
+        access_token,
+        first_review,
+        {
+            "decision": "rejected",
+            "follow_up": "revise",
+            "note": "Quero o sábado na primeira linha.",
+        },
+    )
+    assert rejected.status_code == 200 and rejected.json()["follow_up"] == "revise"
+    assert rejected.json()["work_item"]["status"] == "in_progress"
+    rerun = await one(
+        admin_db,
+        "select id, agent_id::text, status::text from public.runs where idempotency_key = %s",
+        f"approval:{first_review}",
+    )
+    assert (rerun["agent_id"], rerun["status"]) == ("otto", "queued")
+    assert await queue_state(admin_db, str(rerun["id"])) == {"queued": 1, "archived": 0}
+
+    assert await drain(worker_settings()) == ["delivered"]
+
+    versions = await rows(
+        admin_db,
+        """
+        select v.version_no, v.change_note, v.content, v.status::text
+        from public.delivery_versions v join public.deliveries d on d.id = v.delivery_id
+        where d.work_item_id = %s order by v.version_no
+        """,
+        work_item_id,
+    )
+    assert [(v["version_no"], v["change_note"]) for v in versions] == [
+        (1, "Primeira versão."),
+        (2, "Nova proposta depois da sua rejeição."),
+    ]
+    assert versions[1]["content"] == fixture_output("otto.produce", 0)["entrega"]
+    produce = next(
+        s
+        for s in await steps(admin_db, str(rerun["id"]))
+        if s["payload"].get("step") == "otto.produce"
+    )
+    assert produce["payload"]["simulated"]["case"] == "nova_versao_com_retorno"
+    second_review = await pending_review(admin_db, work_item_id)
+    assert second_review != first_review
+    assert await scalar(
+        admin_db, "select status::text from public.work_items where id = %s", work_item_id
+    ) == ("needs_you")
+
+    # Pedir ajuste: mais uma volta, v3 com a nota do ajuste.
+    adjusted = await decide(
+        api,
+        access_token,
+        second_review,
+        {"decision": "changes_requested", "note": "Deixe a fornada da manhã mais visível."},
+    )
+    assert adjusted.status_code == 200 and adjusted.json()["work_item"]["status"] == "in_progress"
+    assert await drain(worker_settings()) == ["delivered"]
+    assert await scalar(
+        admin_db,
+        """
+        select v.change_note from public.delivery_versions v
+        join public.deliveries d on d.id = v.delivery_id
+        where d.work_item_id = %s and v.version_no = 3
+        """,
+        work_item_id,
+    ) == ("Nova versão com o ajuste que você pediu.")
+
+    # Rejeitar e cancelar: trabalho cancelado, nenhum run novo.
+    third_review = await pending_review(admin_db, work_item_id)
+    runs_before = await scalar(
+        admin_db, "select count(*) from public.runs where work_item_id = %s", work_item_id
+    )
+    cancelled = await decide(
+        api, access_token, third_review, {"decision": "rejected", "follow_up": "cancel"}
+    )
+    assert cancelled.status_code == 200 and cancelled.json()["work_item"]["status"] == "cancelled"
+    assert await scalar(
+        admin_db, "select count(*) from public.runs where work_item_id = %s", work_item_id
+    ) == (runs_before)
+    assert await drain(worker_settings()) == []
+
+
+async def test_answer_to_the_question_resumes_the_work(api, access_token, admin_db, miolo) -> None:
+    ids = await request_work(api, access_token, miolo, VAGUE_REQUEST)
+    assert await drain(worker_settings()) == ["asked"]
+    question = await pending_review(admin_db, ids["work_item_id"])
+
+    answered = await decide(
+        api,
+        access_token,
+        question,
+        {
+            "decision": "answered",
+            "note": "É para o Instagram, para levar clientes à loja no sábado de manhã.",
+        },
+    )
+    assert answered.status_code == 200 and answered.json()["work_item"]["status"] == "in_progress"
+    assert await drain(worker_settings()) == ["delivered"]
+
+    rerun = await one(
+        admin_db,
+        "select id, status::text from public.runs where idempotency_key = %s",
+        f"approval:{question}",
+    )
+    assert rerun["status"] == "succeeded"
+    triage = (await steps(admin_db, str(rerun["id"])))[0]
+    assert triage["payload"]["simulated"]["case"] == "briefing_completo"
+    version = await one(
+        admin_db,
+        """
+        select v.version_no, v.change_note from public.delivery_versions v
+        join public.deliveries d on d.id = v.delivery_id where d.work_item_id = %s
+        """,
+        ids["work_item_id"],
+    )
+    assert version == {"version_no": 1, "change_note": "Primeira versão."}
+    assert await scalar(
+        admin_db,
+        "select kind::text from public.approvals where work_item_id = %s and status = 'pending'",
+        ids["work_item_id"],
+    ) == ("review")

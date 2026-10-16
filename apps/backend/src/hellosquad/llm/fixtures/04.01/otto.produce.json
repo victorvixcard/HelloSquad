@@ -3,8 +3,51 @@
   "step": "otto.produce",
   "cases": [
     {
+      "name": "nova_versao_com_retorno",
+      "usage": {
+        "input_tokens": 1320,
+        "output_tokens": 530,
+        "cache_read_tokens": 2900
+      },
+      "output": {
+        "entrega": {
+          "canal": "instagram",
+          "objetivo": "Levar clientes à loja no sábado de manhã",
+          "versoes": [
+            {
+              "texto": "Sábado de manhã tem pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo cedo e leve o seu ainda morno.",
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#paodesabado"
+              ],
+              "cta": "Passe na loja no sábado de manhã."
+            },
+            {
+              "texto": "O pão que a semana inteira espera chega no sábado.\nFermentação longa, casca que estala e miolo macio.\nVenha cedo: a fornada da manhã é a mais disputada.",
+              "hashtags": [
+                "#fermentacaonatural",
+                "#padariadebairro",
+                "#sabadodemanha"
+              ],
+              "cta": "Venha buscar o seu no sábado de manhã."
+            }
+          ],
+          "notas": "Nova versão a partir do seu retorno: o sábado de manhã ficou logo na primeira linha. A segunda versão continua como estava."
+        },
+        "mensagem": "Fiz a nova versão da legenda com o que você pediu e mantive o resto. Agora é com você: aprove ou peça outro ajuste."
+      },
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      }
+    },
+    {
       "name": "legenda_instagram",
-      "usage": {"input_tokens": 640, "output_tokens": 520, "cache_write_tokens": 2900},
+      "usage": {
+        "input_tokens": 640,
+        "output_tokens": 520,
+        "cache_write_tokens": 2900
+      },
       "output": {
         "entrega": {
           "canal": "instagram",
@@ -12,12 +55,20 @@
           "versoes": [
             {
               "texto": "Sábado tem pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo de manhã e leve o seu ainda morno.",
-              "hashtags": ["#fermentacaonatural", "#pinheiros", "#paodesabado"],
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#paodesabado"
+              ],
               "cta": "Passe na loja no sábado de manhã."
             },
             {
               "texto": "O pão que a semana inteira espera chega no sábado.\nFermentação longa, casca que estala e miolo macio.\nVenha cedo: a fornada da manhã é a mais disputada.",
-              "hashtags": ["#fermentacaonatural", "#padariadebairro", "#sabadodemanha"],
+              "hashtags": [
+                "#fermentacaonatural",
+                "#padariadebairro",
+                "#sabadodemanha"
+              ],
               "cta": "Venha buscar o seu no sábado de manhã."
             }
           ],

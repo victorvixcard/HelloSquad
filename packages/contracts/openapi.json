@@ -1435,7 +1435,7 @@
           "approvals"
         ],
         "summary": "Decide uma aprovação (idempotente: repetir devolve o estado atual)",
-        "description": "A primeira decisão vale; repetir (clique duplo, retry) responde 200 com o mesmo estado, sem erro e sem efeito novo. Revisar/aprovar com `approved` aprova a versão e o trabalho; `changes_requested` devolve o trabalho para em andamento. Editor decide; `authorize` (ação externa) exige admin.",
+        "description": "A primeira decisão vale; repetir (clique duplo, retry) responde 200 com o mesmo estado, sem erro e sem efeito novo. Revisar/aprovar com `approved` aprova a versão e o trabalho; `changes_requested` e `rejected` com `follow_up=revise` devolvem o trabalho ao agente (novo run na fila); `rejected` com `follow_up=cancel` cancela o trabalho; `answered` (responder) devolve ao agente com a resposta. Só o owner decide.",
         "operationId": "decide_approval_approvals__approval_id__decision_post",
         "security": [
           {
@@ -1773,7 +1773,7 @@
           },
           "kind": {
             "$ref": "#/components/schemas/ApprovalKind",
-            "description": "`review` revisar, `approve` aprovar, `authorize` autorizar ação externa (admin), `confirm` confirmar, `reconnect` reconectar, `respond` responder."
+            "description": "`review` revisar, `approve` aprovar, `authorize` autorizar ação externa, `confirm` confirmar, `reconnect` reconectar, `respond` responder. Só o owner decide."
           },
           "status": {
             "$ref": "#/components/schemas/ApprovalStatus"
@@ -1787,6 +1787,22 @@
                 "type": "null"
               }
             ]
+          },
+          "follow_up": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "cancel",
+                  "revise"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Follow Up",
+            "description": "Saída da rejeição: `cancel` cancela o trabalho; `revise` pede nova proposta."
           },
           "requested_by_agent_id": {
             "$ref": "#/components/schemas/AgentId"
@@ -1894,6 +1910,7 @@
           "kind",
           "status",
           "decision",
+          "follow_up",
           "requested_by_agent_id",
           "delivery_version_id",
           "delivery_version_no",
@@ -1936,6 +1953,22 @@
             ],
             "title": "Note",
             "description": "Observação de quem decide (até 2.000 caracteres)."
+          },
+          "follow_up": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "cancel",
+                  "revise"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Follow Up",
+            "description": "Obrigatório ao rejeitar uma entrega (`review`/`approve`): `cancel` cancela o trabalho; `revise` devolve ao agente para uma nova proposta. Não vale para outras decisões."
           }
         },
         "additionalProperties": false,
@@ -1951,6 +1984,15 @@
           {
             "decision": "changes_requested",
             "note": "Troque o horário para 7h."
+          },
+          {
+            "decision": "rejected",
+            "follow_up": "revise",
+            "note": "Quero outra abordagem."
+          },
+          {
+            "decision": "rejected",
+            "follow_up": "cancel"
           }
         ]
       },

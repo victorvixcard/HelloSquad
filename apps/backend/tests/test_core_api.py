@@ -230,7 +230,8 @@ async def test_needs_you_shows_seed_approval_and_decision_is_idempotent(
     ] == []
 
 
-async def test_editor_decides_review_but_not_authorize(api, access_token, admin_db, vitta):
+async def test_only_the_owner_decides(api, access_token, admin_db, vitta):
+    """Decisão do dono (16/10 08:55): só o owner decide revisão, autorização e resposta."""
     item = await scalar(
         admin_db,
         "insert into public.work_items (workspace_id, title, delivery_type, primary_agent_id) "
@@ -250,28 +251,32 @@ async def test_editor_decides_review_but_not_authorize(api, access_token, admin_
         )
         for kind in ("review", "authorize")
     ]
-    headers = bearer(access_token(CARLA))
+    carla = bearer(access_token(CARLA))
+    forbidden = {
+        "code": "forbidden",
+        "message": "Só o dono da conta toma esta decisão.",
+        "details": [],
+    }
+
+    for approval, body in (
+        (review, {"decision": "changes_requested", "note": "Mais curto."}),
+        (authorize, {"decision": "approved"}),
+    ):
+        refused = await api.post(f"/approvals/{approval}/decision", headers=carla, json=body)
+        assert refused.status_code == 403
+        assert refused.json()["error"] == forbidden
 
     reviewed = await api.post(
         f"/approvals/{review}/decision",
-        headers=headers,
+        headers=bearer(access_token(RAFAEL)),
         json={"decision": "changes_requested", "note": "Mais curto."},
     )
-    refused = await api.post(
-        f"/approvals/{authorize}/decision", headers=headers, json={"decision": "approved"}
-    )
-
     assert (reviewed.status_code, reviewed.json()["decision"], reviewed.json()["note"]) == (
         200,
         "changes_requested",
         "Mais curto.",
     )
-    assert refused.status_code == 403
-    assert refused.json()["error"] == {
-        "code": "forbidden",
-        "message": "Seu papel não permite tomar esta decisão.",
-        "details": [],
-    }
+    assert reviewed.json()["follow_up"] is None
     assert await scalar(
         admin_db, "select status::text from public.approvals where id = %s", authorize
     ) == ("pending")

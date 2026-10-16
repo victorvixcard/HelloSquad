@@ -33,6 +33,8 @@ class RunContext:
     briefing: dict[str, Any]
     history: list[HistoryMessage] = field(default_factory=list)
     brand_facts: list[str] = field(default_factory=list)
+    # Última decisão da pessoa que devolveu o trabalho ao squad (ajuste, nova proposta, resposta).
+    feedback: dict[str, Any] | None = None
 
 
 def text(value: str) -> str:
@@ -74,12 +76,30 @@ def history_block(ctx: RunContext) -> str:
     return "<historico>\n" + "\n".join(lines) + "\n</historico>" if lines else "<historico/>"
 
 
+def feedback_block(ctx: RunContext) -> list[str]:
+    if not ctx.feedback:
+        return []
+    feedback = ctx.feedback
+    attrs = f' decisao="{escape(feedback["decisao"])}"'
+    if feedback.get("saida"):
+        attrs += f' saida="{escape(feedback["saida"])}"'
+    note = text(feedback.get("observacao") or "")
+    parts = [f"<retorno_da_pessoa{attrs}>{note}</retorno_da_pessoa>"]
+    if feedback.get("versao") is not None:
+        parts.append(
+            f'<versao_anterior numero="{feedback["versao_no"]}">{as_json(feedback["versao"])}'
+            "</versao_anterior>"
+        )
+    return parts
+
+
 def context_block(ctx: RunContext) -> list[str]:
     delivery = f' delivery="{escape(ctx.delivery_type)}"' if ctx.delivery_type else ""
     return [
         f"<trabalho{delivery}>{text(ctx.work_title)}</trabalho>",
         history_block(ctx),
         f"<pedido>{text(ctx.request)}</pedido>",
+        *feedback_block(ctx),
     ]
 
 

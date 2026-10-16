@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -26,12 +26,15 @@ class Approval(BaseModel):
     workspace_id: UUID
     kind: ApprovalKind = Field(
         description=(
-            "`review` revisar, `approve` aprovar, `authorize` autorizar ação externa (admin), "
-            "`confirm` confirmar, `reconnect` reconectar, `respond` responder."
+            "`review` revisar, `approve` aprovar, `authorize` autorizar ação externa, "
+            "`confirm` confirmar, `reconnect` reconectar, `respond` responder. Só o owner decide."
         )
     )
     status: ApprovalStatus
     decision: ApprovalDecision | None
+    follow_up: Literal["cancel", "revise"] | None = Field(
+        description="Saída da rejeição: `cancel` cancela o trabalho; `revise` pede nova proposta."
+    )
     requested_by_agent_id: AgentId
     delivery_version_id: UUID | None
     delivery_version_no: int | None
@@ -57,6 +60,8 @@ class ApprovalDecisionCreate(BaseModel):
             "examples": [
                 {"decision": "approved"},
                 {"decision": "changes_requested", "note": "Troque o horário para 7h."},
+                {"decision": "rejected", "follow_up": "revise", "note": "Quero outra abordagem."},
+                {"decision": "rejected", "follow_up": "cancel"},
             ]
         },
     )
@@ -69,4 +74,12 @@ class ApprovalDecisionCreate(BaseModel):
     )
     note: Annotated[str, StringConstraints(strip_whitespace=True, max_length=2000)] | None = Field(
         default=None, description="Observação de quem decide (até 2.000 caracteres)."
+    )
+    follow_up: Literal["cancel", "revise"] | None = Field(
+        default=None,
+        description=(
+            "Obrigatório ao rejeitar uma entrega (`review`/`approve`): `cancel` cancela o "
+            "trabalho; `revise` devolve ao agente para uma nova proposta. Não vale para outras "
+            "decisões."
+        ),
     )

@@ -46,7 +46,7 @@ def load_fixture(path: Path) -> dict[str, Any]:
 
 
 def tag_content(text: str, tag: str) -> str:
-    match = re.search(rf"<{tag}>(.*?)</{tag}>", text, flags=re.DOTALL)
+    match = re.search(rf"<{tag}(?:\s[^>]*)?>(.*?)</{tag}>", text, flags=re.DOTALL)
     return match.group(1) if match else ""
 
 

@@ -62,6 +62,7 @@ class RunData:
     request: str
     history: list[HistoryMessage]
     brand_facts: list[str]
+    feedback: dict[str, Any] | None = None
 
 
 def redact(value: Any) -> Any:
@@ -245,6 +246,21 @@ class RunStore:
                     for r in reversed(rows)
                 ]
             facts = await self._brand_facts(conn)
+            feedback = await fetchone(
+                conn,
+                """
+                select a.decision::text as decisao, a.follow_up as saida, a.note as observacao,
+                       v.version_no as versao_no, v.content as versao
+                from public.approvals a
+                left join public.delivery_versions v
+                  on v.id = a.delivery_version_id and v.workspace_id = a.workspace_id
+                where a.workspace_id = %s and a.work_item_id = %s and a.status = 'decided'
+                  and a.decision in ('changes_requested', 'rejected', 'answered')
+                order by a.decided_at desc, a.id desc
+                limit 1
+                """,
+                (self.workspace_id, row["work_item_id"]),
+            )
         item = WorkItem(
             id=row["work_item_id"],
             status=row["status"],
@@ -263,6 +279,7 @@ class RunStore:
             request=row["request"] or row["title"],
             history=history,
             brand_facts=facts,
+            feedback=dict(feedback) if feedback else None,
         )
 
     async def _brand_facts(self, conn: AsyncConnection[DictRow]) -> list[str]:

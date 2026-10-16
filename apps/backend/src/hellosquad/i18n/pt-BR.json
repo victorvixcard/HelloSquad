@@ -3,6 +3,8 @@
   "work_item_step.produce.04.01": "Escrever o texto",
   "delivery_version.change_note.first": "Primeira versão.",
   "delivery_version.change_note.revised": "Primeira versão, revisada na autoverificação.",
+  "delivery_version.change_note.adjusted": "Nova versão com o ajuste que você pediu.",
+  "delivery_version.change_note.new_proposal": "Nova proposta depois da sua rejeição.",
   "triage.fallback_question":"Para começar, preciso saber: {fields}.",
   "triage.field.canal": "em qual canal o texto vai sair",
   "triage.field.objetivo": "o que você quer que a pessoa faça depois de ler",
