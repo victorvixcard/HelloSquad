@@ -1,0 +1,111 @@
+{
+  "delivery_type": "02.03",
+  "step": "bia.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Plano de marketing até o Natal",
+          "resumo": "Nova versão com o ajuste pedido. Três frentes, nesta ordem: abrir as encomendas de Natal para quem já compra, dar ritmo ao Instagram com os bastidores do forno e começar a medir de onde vêm as encomendas.",
+          "horizonte": "de 19/10 a 24/12/2026",
+          "acoes": [
+            {
+              "ordem": 1,
+              "acao": "Abrir as encomendas de Natal com data de retirada",
+              "por_que": "É a oportunidade de prioridade alta do diagnóstico e usa o produto âncora.",
+              "responsavel": "bia",
+              "horizonte": "até 10/11"
+            },
+            {
+              "ordem": 2,
+              "acao": "Calendário editorial semanal com a série de bastidores do forno",
+              "por_que": "Bastidores têm mais salvamentos e o Instagram está sem ritmo.",
+              "responsavel": "otto",
+              "horizonte": "a partir de 19/10"
+            },
+            {
+              "ordem": 3,
+              "acao": "Peças visuais da campanha de Natal",
+              "por_que": "As encomendas precisam de peça própria no Instagram e no WhatsApp.",
+              "responsavel": "kaia",
+              "horizonte": "até 20/11"
+            },
+            {
+              "ordem": 4,
+              "acao": "Registrar a origem de cada encomenda",
+              "por_que": "Sem número por canal não dá para saber o que traz cliente.",
+              "responsavel": "iris",
+              "horizonte": "a partir de 19/10"
+            }
+          ],
+          "premissas": [
+            "O plano parte do diagnóstico e do posicionamento aprovados.",
+            "Não há verba de anúncios definida; a Kiwi entra quando houver teto autorizado."
+          ]
+        },
+        "mensagem": "Fiz a nova versão do plano com o ajuste que você pediu. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "plano",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Plano de marketing até o Natal",
+          "resumo": "Três frentes, nesta ordem: abrir as encomendas de Natal para quem já compra, dar ritmo ao Instagram com os bastidores do forno e começar a medir de onde vêm as encomendas.",
+          "horizonte": "de 19/10 a 24/12/2026",
+          "acoes": [
+            {
+              "ordem": 1,
+              "acao": "Abrir as encomendas de Natal com data de retirada",
+              "por_que": "É a oportunidade de prioridade alta do diagnóstico e usa o produto âncora.",
+              "responsavel": "bia",
+              "horizonte": "até 10/11"
+            },
+            {
+              "ordem": 2,
+              "acao": "Calendário editorial semanal com a série de bastidores do forno",
+              "por_que": "Bastidores têm mais salvamentos e o Instagram está sem ritmo.",
+              "responsavel": "otto",
+              "horizonte": "a partir de 19/10"
+            },
+            {
+              "ordem": 3,
+              "acao": "Peças visuais da campanha de Natal",
+              "por_que": "As encomendas precisam de peça própria no Instagram e no WhatsApp.",
+              "responsavel": "kaia",
+              "horizonte": "até 20/11"
+            },
+            {
+              "ordem": 4,
+              "acao": "Registrar a origem de cada encomenda",
+              "por_que": "Sem número por canal não dá para saber o que traz cliente.",
+              "responsavel": "iris",
+              "horizonte": "a partir de 19/10"
+            }
+          ],
+          "premissas": [
+            "O plano parte do diagnóstico e do posicionamento aprovados.",
+            "Não há verba de anúncios definida; a Kiwi entra quando houver teto autorizado."
+          ]
+        },
+        "mensagem": "Montei o plano até o Natal com quatro ações em ordem. A primeira é abrir as encomendas de Natal. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}

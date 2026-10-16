@@ -1,0 +1,117 @@
+{
+  "delivery_type": "02.02",
+  "step": "bia.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Posicionamento, público e objetivos da Miolo",
+          "resumo": "Nova versão com o ajuste pedido: A Miolo é a padaria de fermentação natural de quem mora em Pinheiros e Vila Madalena: pão feito com tempo, perto de casa. A direção é falar de processo e de vizinhança, não de luxo.",
+          "posicionamento": "Para quem mora em Pinheiros e Vila Madalena e quer pão de verdade no dia a dia, a Miolo é a padaria de fermentação natural do bairro, com o tempo que a massa pede.",
+          "diferenciais": [
+            "Pão de fermentação longa como produto âncora",
+            "Padaria de bairro, aberta desde 2019",
+            "Tom acolhedor e direto, sem gíria"
+          ],
+          "publicos": [
+            {
+              "nome": "Moradores de Pinheiros e Vila Madalena, 28 a 45 anos",
+              "descricao": "Compram para a semana e passam na loja de manhã.",
+              "o_que_valoriza": "Pão fresco, perto de casa, com processo que dá para entender."
+            },
+            {
+              "nome": "Quem encomenda para datas especiais",
+              "descricao": "Clientes que já compram e encomendam para o fim de ano.",
+              "o_que_valoriza": "Reservar com antecedência e retirar sem fila."
+            }
+          ],
+          "objetivos": [
+            {
+              "objetivo": "Aumentar as encomendas de fim de ano",
+              "indicador": "Encomendas registradas por semana",
+              "prazo": "até 24/12"
+            },
+            {
+              "objetivo": "Dar ritmo ao Instagram",
+              "indicador": "Publicações por semana dentro da pauta",
+              "prazo": "a partir da próxima semana"
+            }
+          ],
+          "premissas": [
+            "Os indicadores são proposta de acompanhamento: ainda não há fonte conectada para medir.",
+            "O segundo público foi inferido do histórico de encomendas; confirme na Memória da Marca."
+          ]
+        },
+        "mensagem": "Fiz a nova versão do posicionamento com o ajuste que você pediu. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "posicionamento",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Posicionamento, público e objetivos da Miolo",
+          "resumo": "A Miolo é a padaria de fermentação natural de quem mora em Pinheiros e Vila Madalena: pão feito com tempo, perto de casa. A direção é falar de processo e de vizinhança, não de luxo.",
+          "posicionamento": "Para quem mora em Pinheiros e Vila Madalena e quer pão de verdade no dia a dia, a Miolo é a padaria de fermentação natural do bairro, com o tempo que a massa pede.",
+          "diferenciais": [
+            "Pão de fermentação longa como produto âncora",
+            "Padaria de bairro, aberta desde 2019",
+            "Tom acolhedor e direto, sem gíria"
+          ],
+          "publicos": [
+            {
+              "nome": "Moradores de Pinheiros e Vila Madalena, 28 a 45 anos",
+              "descricao": "Compram para a semana e passam na loja de manhã.",
+              "o_que_valoriza": "Pão fresco, perto de casa, com processo que dá para entender."
+            },
+            {
+              "nome": "Quem encomenda para datas especiais",
+              "descricao": "Clientes que já compram e encomendam para o fim de ano.",
+              "o_que_valoriza": "Reservar com antecedência e retirar sem fila."
+            }
+          ],
+          "objetivos": [
+            {
+              "objetivo": "Aumentar as encomendas de fim de ano",
+              "indicador": "Encomendas registradas por semana",
+              "prazo": "até 24/12"
+            },
+            {
+              "objetivo": "Dar ritmo ao Instagram",
+              "indicador": "Publicações por semana dentro da pauta",
+              "prazo": "a partir da próxima semana"
+            }
+          ],
+          "premissas": [
+            "Os indicadores são proposta de acompanhamento: ainda não há fonte conectada para medir.",
+            "O segundo público foi inferido do histórico de encomendas; confirme na Memória da Marca."
+          ]
+        },
+        "mensagem": "Documentei o posicionamento, os públicos e os objetivos da Miolo. A direção é falar de processo e vizinhança. Agora é com você: aprove ou ajuste na conversa.",
+        "observacoes": [
+          {
+            "leitura": "Quem encomenda para datas especiais é um público próprio",
+            "explicacao": "Os pedidos de fim de ano vêm de clientes que já compram e querem reservar.",
+            "area": "audience",
+            "assunto": "Público",
+            "chave": "Público de encomendas"
+          }
+        ]
+      }
+    }
+  ]
+}

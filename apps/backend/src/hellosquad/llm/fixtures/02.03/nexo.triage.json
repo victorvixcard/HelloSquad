@@ -1,0 +1,28 @@
+{
+  "delivery_type": "02.03",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1700,
+        "output_tokens": 220
+      },
+      "output": {
+        "delivery_type": "02.03",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Vender mais até o Natal",
+          "tema": "plano de marketing com prioridades",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": "até o Natal"
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Plano de marketing da Miolo com prioridades até o Natal."
+      }
+    }
+  ]
+}

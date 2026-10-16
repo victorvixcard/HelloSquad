@@ -1,0 +1,55 @@
+{
+  "delivery_type": "02.07",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_incompleto",
+      "when": {
+        "not_matches": "(concorr|tendên|tenden|pesquis|mercado)"
+      },
+      "usage": {
+        "input_tokens": 1500,
+        "output_tokens": 170
+      },
+      "output": {
+        "delivery_type": "02.07",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Entender o mercado",
+          "tema": null,
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [
+          "tema"
+        ],
+        "pergunta": "Para a Bia pesquisar: o que você quer saber, concorrentes, tendências ou os dois, e de quê?",
+        "resumo": "Pedido de pesquisa sem tema."
+      }
+    },
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1700,
+        "output_tokens": 220
+      },
+      "output": {
+        "delivery_type": "02.07",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Preparar o Natal",
+          "tema": "Concorrentes do bairro e tendências de fim de ano para padarias de fermentação natural",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Pesquisa de concorrentes do bairro e tendências de fim de ano, com fontes e datas."
+      }
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "delivery_type": "02.01",
+  "step": "bia.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Diagnóstico de marketing da Miolo",
+          "resumo": "Com o foco que você pediu nas encomendas: a Miolo tem produto forte e público fiel, e o caminho mais curto até o Natal é transformar quem já compra em encomenda antecipada.",
+          "lacunas": [
+            {
+              "titulo": "Encomendas sem canal próprio",
+              "descricao": "Os pedidos chegam soltos pelo WhatsApp, sem lista de quem já comprou nem aviso de abertura de encomendas."
+            },
+            {
+              "titulo": "Instagram sem ritmo",
+              "descricao": "As publicações não seguem uma pauta; o que funciona (bastidores do forno) aparece pouco."
+            },
+            {
+              "titulo": "Pouca leitura de resultado",
+              "descricao": "Não há número de vendas por canal conectado, então não dá para saber o que traz cliente."
+            }
+          ],
+          "oportunidades": [
+            {
+              "titulo": "Encomenda antecipada de Natal",
+              "descricao": "Abrir as encomendas de fim de ano para quem já compra, com data de retirada, aproveitando o produto âncora.",
+              "prioridade": "alta"
+            },
+            {
+              "titulo": "Bastidores do forno como série",
+              "descricao": "Transformar os bastidores da fermentação longa numa série semanal no Instagram.",
+              "prioridade": "media"
+            }
+          ],
+          "premissas": [
+            "Supus que a loja comporta mais encomendas em dezembro; confirme a capacidade de produção.",
+            "Supus que os clientes atuais aceitam receber aviso pelo WhatsApp, com consentimento."
+          ],
+          "dados_que_faltam": [
+            {
+              "dado": "Vendas por canal (loja, WhatsApp)",
+              "como_conseguir": "Conectar a planilha de encomendas ou registrar a origem de cada pedido por duas semanas."
+            },
+            {
+              "dado": "Alcance e salvamentos do Instagram",
+              "como_conseguir": "Conectar o Instagram para a Íris acompanhar."
+            }
+          ]
+        },
+        "mensagem": "Fiz a nova versão do diagnóstico com o foco nas encomendas, como você pediu, e mantive o resto. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "diagnostico",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Diagnóstico de marketing da Miolo",
+          "resumo": "A Miolo tem produto forte e público fiel no bairro, mas depende do movimento espontâneo da loja. Para vender mais até o Natal, o que mais pesa é transformar quem já compra em encomenda antecipada e dar ritmo ao Instagram.",
+          "lacunas": [
+            {
+              "titulo": "Encomendas sem canal próprio",
+              "descricao": "Os pedidos chegam soltos pelo WhatsApp, sem lista de quem já comprou nem aviso de abertura de encomendas."
+            },
+            {
+              "titulo": "Instagram sem ritmo",
+              "descricao": "As publicações não seguem uma pauta; o que funciona (bastidores do forno) aparece pouco."
+            },
+            {
+              "titulo": "Pouca leitura de resultado",
+              "descricao": "Não há número de vendas por canal conectado, então não dá para saber o que traz cliente."
+            }
+          ],
+          "oportunidades": [
+            {
+              "titulo": "Encomenda antecipada de Natal",
+              "descricao": "Abrir as encomendas de fim de ano para quem já compra, com data de retirada, aproveitando o produto âncora.",
+              "prioridade": "alta"
+            },
+            {
+              "titulo": "Bastidores do forno como série",
+              "descricao": "Transformar os bastidores da fermentação longa numa série semanal no Instagram.",
+              "prioridade": "media"
+            },
+            {
+              "titulo": "Moradores de Vila Madalena",
+              "descricao": "Falar com o segundo bairro do público, que já aparece na memória da marca.",
+              "prioridade": "baixa"
+            }
+          ],
+          "premissas": [
+            "Supus que a loja comporta mais encomendas em dezembro; confirme a capacidade de produção.",
+            "Supus que os clientes atuais aceitam receber aviso pelo WhatsApp, com consentimento."
+          ],
+          "dados_que_faltam": [
+            {
+              "dado": "Vendas por canal (loja, WhatsApp)",
+              "como_conseguir": "Conectar a planilha de encomendas ou registrar a origem de cada pedido por duas semanas."
+            },
+            {
+              "dado": "Alcance e salvamentos do Instagram",
+              "como_conseguir": "Conectar o Instagram para a Íris acompanhar."
+            }
+          ]
+        },
+        "mensagem": "Terminei o diagnóstico. A conclusão: o caminho mais curto até o Natal é transformar quem já compra em encomenda antecipada. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": [
+          {
+            "leitura": "Encomendas de fim de ano chegam pelo WhatsApp",
+            "explicacao": "No histórico da conversa, os pedidos de fim de ano chegam soltos pelo WhatsApp.",
+            "area": "business",
+            "assunto": "Vendas",
+            "chave": "Canal de encomendas"
+          }
+        ]
+      }
+    }
+  ]
+}

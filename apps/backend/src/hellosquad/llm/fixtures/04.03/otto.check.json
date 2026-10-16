@@ -1,0 +1,33 @@
+{
+  "delivery_type": "04.03",
+  "step": "otto.check",
+  "cases": [
+    {
+      "name": "aprovada",
+      "usage": {
+        "input_tokens": 1300,
+        "output_tokens": 180,
+        "cache_read_tokens": 3200
+      },
+      "output": {
+        "aderencia_ao_briefing": {
+          "ok": true,
+          "observacao": "Os dois canais pedidos, tema e objetivo atendidos."
+        },
+        "consistencia_de_marca": {
+          "ok": true,
+          "observacao": "Tom da marca, sem a palavra vetada."
+        },
+        "qualidade_profissional": {
+          "ok": true,
+          "observacao": "Uma ideia por peça, roteiro com começo forte."
+        },
+        "aplicabilidade_no_canal": {
+          "ok": true,
+          "observacao": "Formato de cada canal respeitado."
+        },
+        "ajustes": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "delivery_type": "02.07",
+  "step": "bia.produce",
+  "cases": [
+    {
+      "name": "com_pesquisa",
+      "when": {
+        "matches": "<pesquisa_web estado=\"realizada\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Concorrentes e tendências de fim de ano",
+          "resumo": "A busca encontrou duas padarias do bairro já falando de fermentação natural e encomendas de fim de ano, e um levantamento que aponta mais procura por encomenda antecipada. O resto são sugestões minhas, sem validação.",
+          "achados": [
+            {
+              "texto": "O Forno do Largo abriu encomendas de panetone de fermentação natural pelo WhatsApp, com retirada a partir de 15/12.",
+              "tipo": "pesquisa",
+              "fontes": [
+                "F1"
+              ]
+            },
+            {
+              "texto": "A Casa Levain, em Vila Madalena, usa oficinas de pão aos sábados para aproximar o público.",
+              "tipo": "pesquisa",
+              "fontes": [
+                "F2"
+              ]
+            },
+            {
+              "texto": "Há mais procura por encomendas antecipadas nas datas de fim de ano em padarias de bairro.",
+              "tipo": "pesquisa",
+              "fontes": [
+                "F3"
+              ]
+            },
+            {
+              "texto": "Uma vitrine de Natal com o tempo de fermentação de cada pão pode diferenciar a Miolo.",
+              "tipo": "sugestao",
+              "fontes": []
+            }
+          ],
+          "hipoteses": [
+            "Abrir as encomendas antes dos concorrentes do bairro aumenta a reserva de quem já compra.",
+            "Oficina de pão aos sábados atrai o público de Vila Madalena."
+          ],
+          "proximos_passos": [
+            "Confirmar a data de abertura das encomendas do Forno do Largo em visita ou no perfil público.",
+            "Registrar quantas encomendas chegam por semana para testar a primeira hipótese."
+          ]
+        },
+        "mensagem": "Terminei a pesquisa. Três achados têm fonte e data; os outros são sugestões minhas, sem validação. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": [
+          {
+            "leitura": "Forno do Largo é concorrente direto no fim de ano",
+            "explicacao": "A busca mostrou encomendas de panetone de fermentação natural no Largo da Batata.",
+            "area": "knowledge",
+            "assunto": "Concorrentes",
+            "chave": "Forno do Largo"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sem_pesquisa",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Concorrentes e tendências de fim de ano",
+          "resumo": "Não houve pesquisa na web: a busca está desligada. Tudo abaixo é sugestão minha, sem validação, para você decidir o que vale pesquisar.",
+          "achados": [
+            {
+              "texto": "Padarias de bairro costumam abrir encomendas de fim de ano em novembro; vale conferir quando os concorrentes da região abrem.",
+              "tipo": "sugestao",
+              "fontes": []
+            },
+            {
+              "texto": "Mostrar o tempo de fermentação de cada pão pode diferenciar a Miolo no Natal.",
+              "tipo": "sugestao",
+              "fontes": []
+            }
+          ],
+          "hipoteses": [
+            "Abrir as encomendas antes dos concorrentes aumenta a reserva de quem já compra."
+          ],
+          "proximos_passos": [
+            "Ligar a busca web ou levantar os perfis públicos dos concorrentes do bairro.",
+            "Registrar a origem das encomendas por duas semanas."
+          ]
+        },
+        "mensagem": "A busca na web está desligada, então não houve pesquisa real: entreguei sugestões sem validação e o que pesquisar primeiro. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}

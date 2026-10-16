@@ -1,0 +1,28 @@
+{
+  "delivery_type": "02.02",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1700,
+        "output_tokens": 220
+      },
+      "output": {
+        "delivery_type": "02.02",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Documentar o posicionamento da padaria",
+          "tema": "posicionamento, público e objetivos",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Documento de posicionamento, público e objetivos da Miolo, a partir da Memória da Marca."
+      }
+    }
+  ]
+}

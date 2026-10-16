@@ -178,6 +178,7 @@
   "environment.first.otto.one": "Esta semana tem uma publicação no calendário.",
   "environment.first.otto.many": "Esta semana tem {count} publicações no calendário.",
   "environment.first.otto.next": "A próxima é “{theme}”, {day}.",
+  "environment.first.otto.upcoming": "A próxima publicação no calendário é “{theme}”, {day}.",
   "environment.first.iris.no_data": "Ainda não tenho números da {brand} para ler. Assim que o Instagram ou a planilha de encomendas estiverem conectados, eu começo.",
   "environment.first.specialist": "{greeting} {status} O que você precisa?",
   "environment.status.idle": "Disponível.",

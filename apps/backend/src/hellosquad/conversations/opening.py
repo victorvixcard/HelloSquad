@@ -41,12 +41,14 @@ order by w.updated_at desc, w.id
 limit 1
 """
 
-# Semana corrente (segunda a domingo) do calendário editorial, sem o que foi cancelado.
-WEEK_POSTS = """
-select p.scheduled_on, p.theme, p.status::text
+# Pauta do calendário editorial (aprovada; proposta e cancelado ficam de fora) de segunda em diante.
+CALENDAR_POSTS = """
+select p.scheduled_on, p.theme
 from public.calendar_posts p
-where p.workspace_id = %s and p.scheduled_on between %s and %s and p.status <> 'cancelled'
+where p.workspace_id = %s and p.scheduled_on >= %s
+  and p.status in ('planned', 'scheduled', 'published')
 order by p.scheduled_on, p.scheduled_time nulls last, p.id
+limit 50
 """
 
 
@@ -93,22 +95,26 @@ async def otto_first(
 ) -> str:
     today = datetime.now(DISPLAY_TZ).date()
     monday = today - timedelta(days=today.weekday())
-    posts = await (
-        await conn.execute(WEEK_POSTS, (workspace_id, monday, monday + timedelta(days=6)))
-    ).fetchall()
-    if not posts:
-        return t(locale, "environment.first.otto.empty", brand=brand_name)
+    posts = await (await conn.execute(CALENDAR_POSTS, (workspace_id, monday))).fetchall()
+    week = [p for p in posts if p["scheduled_on"] <= monday + timedelta(days=6)]
     upcoming = next((p for p in posts if p["scheduled_on"] >= today), None)
-    key = "one" if len(posts) == 1 else "many"
-    text = t(locale, f"environment.first.otto.{key}", count=len(posts))
+    if not week and upcoming is None:
+        return t(locale, "environment.first.otto.empty", brand=brand_name)
+    parts = []
+    if week:
+        key = "one" if len(week) == 1 else "many"
+        parts.append(t(locale, f"environment.first.otto.{key}", count=len(week)))
     if upcoming is not None:
-        text += " " + t(
-            locale,
-            "environment.first.otto.next",
-            theme=upcoming["theme"],
-            day=day_label(locale, upcoming["scheduled_on"]),
+        key = "next" if week else "upcoming"
+        parts.append(
+            t(
+                locale,
+                f"environment.first.otto.{key}",
+                theme=upcoming["theme"],
+                day=day_label(locale, upcoming["scheduled_on"]),
+            )
         )
-    return text
+    return " ".join(parts)
 
 
 async def specialist_first(

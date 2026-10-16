@@ -1,0 +1,55 @@
+{
+  "delivery_type": "02.04",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_incompleto",
+      "when": {
+        "not_matches": "(natal|campanha|dia das|lançamento|lancamento|black friday)"
+      },
+      "usage": {
+        "input_tokens": 1500,
+        "output_tokens": 170
+      },
+      "output": {
+        "delivery_type": "02.04",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Vender mais",
+          "tema": null,
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [
+          "tema"
+        ],
+        "pergunta": "Para a Bia desenhar a estratégia: qual é a campanha ou a data?",
+        "resumo": "Pedido de campanha sem tema."
+      }
+    },
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1700,
+        "output_tokens": 220
+      },
+      "output": {
+        "delivery_type": "02.04",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Encomendas antecipadas de Natal",
+          "tema": "Campanha de Natal",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": "novembro e dezembro"
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Estratégia integrada da campanha de Natal: conceito, público e prioridades para Kaia, Otto e Kiwi."
+      }
+    }
+  ]
+}

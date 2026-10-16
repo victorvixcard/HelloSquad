@@ -1,0 +1,55 @@
+{
+  "delivery_type": "02.01",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_incompleto",
+      "when": {
+        "not_matches": "(natal|vend|cresc|encomend|atrair|clientes|objetivo)"
+      },
+      "usage": {
+        "input_tokens": 1500,
+        "output_tokens": 170
+      },
+      "output": {
+        "delivery_type": "02.01",
+        "briefing": {
+          "canal": null,
+          "objetivo": null,
+          "tema": "diagnóstico de marketing",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [
+          "objetivo"
+        ],
+        "pergunta": "Para a Bia começar o diagnóstico: o que a Miolo quer alcançar agora, por exemplo vender mais até o Natal ou atrair um público novo?",
+        "resumo": "Pedido de diagnóstico sem objetivo definido."
+      }
+    },
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1700,
+        "output_tokens": 220
+      },
+      "output": {
+        "delivery_type": "02.01",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Vender mais até o Natal",
+          "tema": "diagnóstico de marketing da padaria",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Diagnóstico inicial de marketing da Miolo com foco em vender mais até o Natal."
+      }
+    }
+  ]
+}

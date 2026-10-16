@@ -1,0 +1,127 @@
+{
+  "delivery_type": "02.04",
+  "step": "bia.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Estratégia da campanha de Natal",
+          "resumo": "Nova versão com o ajuste pedido. A campanha fala com quem já compra na Miolo e convida a reservar o Natal com antecedência, mostrando o tempo do forno. Kaia faz as peças, Otto os textos e o calendário, e a Kiwi entra só com teto autorizado.",
+          "conceito": {
+            "nome": "Natal de forno aceso",
+            "ideia": "O Natal da Miolo começa semanas antes, no tempo da fermentação: quem reserva cedo garante o seu."
+          },
+          "publico": "Moradores de Pinheiros e Vila Madalena que já compram na Miolo e encomendam para datas especiais.",
+          "mensagens_chave": [
+            "Reserve o seu Natal com antecedência",
+            "Fermentação longa leva tempo, e o seu pão também",
+            "Retire sem fila no dia marcado"
+          ],
+          "periodo": "de 01/11 a 24/12/2026, com encomendas até 20/12",
+          "prioridades": [
+            {
+              "ordem": 1,
+              "frente": "Peças da campanha",
+              "responsavel": "kaia",
+              "entregas": [
+                "Post de abertura das encomendas",
+                "Status de WhatsApp com a data de retirada"
+              ]
+            },
+            {
+              "ordem": 2,
+              "frente": "Textos e calendário",
+              "responsavel": "otto",
+              "entregas": [
+                "Legendas da campanha",
+                "Calendário de novembro e dezembro"
+              ]
+            },
+            {
+              "ordem": 3,
+              "frente": "Anúncios (com teto autorizado)",
+              "responsavel": "kiwi",
+              "entregas": [
+                "Proposta de público e verba para o bairro"
+              ]
+            }
+          ],
+          "premissas": [
+            "Sem verba definida: a frente de anúncios espera o seu teto.",
+            "O período considera retirada até 24/12; confirme a capacidade de produção."
+          ]
+        },
+        "mensagem": "Fiz a nova versão da estratégia com o ajuste que você pediu. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "estrategia",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Estratégia da campanha de Natal",
+          "resumo": "A campanha fala com quem já compra na Miolo e convida a reservar o Natal com antecedência, mostrando o tempo do forno. Kaia faz as peças, Otto os textos e o calendário, e a Kiwi entra só com teto autorizado.",
+          "conceito": {
+            "nome": "Natal de forno aceso",
+            "ideia": "O Natal da Miolo começa semanas antes, no tempo da fermentação: quem reserva cedo garante o seu."
+          },
+          "publico": "Moradores de Pinheiros e Vila Madalena que já compram na Miolo e encomendam para datas especiais.",
+          "mensagens_chave": [
+            "Reserve o seu Natal com antecedência",
+            "Fermentação longa leva tempo, e o seu pão também",
+            "Retire sem fila no dia marcado"
+          ],
+          "periodo": "de 01/11 a 24/12/2026, com encomendas até 20/12",
+          "prioridades": [
+            {
+              "ordem": 1,
+              "frente": "Peças da campanha",
+              "responsavel": "kaia",
+              "entregas": [
+                "Post de abertura das encomendas",
+                "Status de WhatsApp com a data de retirada"
+              ]
+            },
+            {
+              "ordem": 2,
+              "frente": "Textos e calendário",
+              "responsavel": "otto",
+              "entregas": [
+                "Legendas da campanha",
+                "Calendário de novembro e dezembro"
+              ]
+            },
+            {
+              "ordem": 3,
+              "frente": "Anúncios (com teto autorizado)",
+              "responsavel": "kiwi",
+              "entregas": [
+                "Proposta de público e verba para o bairro"
+              ]
+            }
+          ],
+          "premissas": [
+            "Sem verba definida: a frente de anúncios espera o seu teto.",
+            "O período considera retirada até 24/12; confirme a capacidade de produção."
+          ]
+        },
+        "mensagem": "A estratégia da campanha de Natal está pronta: o conceito é \"Natal de forno aceso\". Aprovada, ela vira a referência do projeto para a Kaia, o Otto e a Kiwi.",
+        "observacoes": []
+      }
+    }
+  ]
+}

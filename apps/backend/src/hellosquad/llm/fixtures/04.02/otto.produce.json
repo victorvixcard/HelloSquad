@@ -1,0 +1,186 @@
+{
+  "delivery_type": "04.02",
+  "step": "otto.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Calendário da semana de 19 a 25/10",
+          "periodo": {
+            "inicio": "2026-10-19",
+            "fim": "2026-10-25"
+          },
+          "posts": [
+            {
+              "data": "2026-10-19",
+              "horario": "09:00",
+              "canal": "instagram",
+              "formato": "post",
+              "tema": "Fornada de segunda",
+              "responsavel": "otto",
+              "objetivo": "Lembrar que tem pão fresco no começo da semana",
+              "notas": ""
+            },
+            {
+              "data": "2026-10-22",
+              "horario": "18:00",
+              "canal": "instagram",
+              "formato": "reels",
+              "tema": "Bastidores da fermentação longa",
+              "responsavel": "kaia",
+              "objetivo": "Mostrar o processo, que tem mais salvamentos",
+              "notas": "Série de bastidores do forno."
+            },
+            {
+              "data": "2026-10-23",
+              "horario": "08:00",
+              "canal": "whatsapp",
+              "formato": "status",
+              "tema": "Encomendas do fim de semana",
+              "responsavel": "otto",
+              "objetivo": "Levar a pessoa a encomendar para sábado",
+              "notas": ""
+            }
+          ],
+          "notas": "Nova versão: os bastidores passaram para quinta, como você pediu; o resto ficou igual."
+        },
+        "mensagem": "Fiz a nova versão do calendário com o que você pediu e mantive o resto. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "com_estrategia",
+      "when": {
+        "matches": "<documento_aprovado delivery=\"02.04\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Calendário da semana de 19 a 25/10",
+          "periodo": {
+            "inicio": "2026-10-19",
+            "fim": "2026-10-25"
+          },
+          "posts": [
+            {
+              "data": "2026-10-19",
+              "horario": "09:00",
+              "canal": "instagram",
+              "formato": "post",
+              "tema": "Fornada de segunda",
+              "responsavel": "otto",
+              "objetivo": "Lembrar que tem pão fresco no começo da semana",
+              "notas": ""
+            },
+            {
+              "data": "2026-10-21",
+              "horario": "18:00",
+              "canal": "instagram",
+              "formato": "reels",
+              "tema": "Bastidores da fermentação longa",
+              "responsavel": "kaia",
+              "objetivo": "Mostrar o processo, que tem mais salvamentos",
+              "notas": "Série de bastidores do forno."
+            },
+            {
+              "data": "2026-10-23",
+              "horario": "08:00",
+              "canal": "whatsapp",
+              "formato": "status",
+              "tema": "Encomendas do fim de semana",
+              "responsavel": "otto",
+              "objetivo": "Levar a pessoa a encomendar para sábado",
+              "notas": ""
+            },
+            {
+              "data": "2026-10-24",
+              "horario": "10:00",
+              "canal": "instagram",
+              "formato": "carousel",
+              "tema": "Natal de forno aceso: as encomendas abrem em novembro",
+              "responsavel": "kaia",
+              "objetivo": "Antecipar a campanha de Natal",
+              "notas": "Segue a estratégia aprovada da Bia."
+            }
+          ],
+          "notas": "Quatro publicações; a de sábado antecipa a campanha \"Natal de forno aceso\", como na estratégia aprovada."
+        },
+        "mensagem": "Montei o calendário da semana com quatro publicações; a de sábado já antecipa a campanha de Natal da Bia. Nada é publicado antes de você aprovar.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "calendario",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Calendário da semana de 19 a 25/10",
+          "periodo": {
+            "inicio": "2026-10-19",
+            "fim": "2026-10-25"
+          },
+          "posts": [
+            {
+              "data": "2026-10-19",
+              "horario": "09:00",
+              "canal": "instagram",
+              "formato": "post",
+              "tema": "Fornada de segunda",
+              "responsavel": "otto",
+              "objetivo": "Lembrar que tem pão fresco no começo da semana",
+              "notas": ""
+            },
+            {
+              "data": "2026-10-21",
+              "horario": "18:00",
+              "canal": "instagram",
+              "formato": "reels",
+              "tema": "Bastidores da fermentação longa",
+              "responsavel": "kaia",
+              "objetivo": "Mostrar o processo, que tem mais salvamentos",
+              "notas": "Série de bastidores do forno."
+            },
+            {
+              "data": "2026-10-23",
+              "horario": "08:00",
+              "canal": "whatsapp",
+              "formato": "status",
+              "tema": "Encomendas do fim de semana",
+              "responsavel": "otto",
+              "objetivo": "Levar a pessoa a encomendar para sábado",
+              "notas": ""
+            }
+          ],
+          "notas": "Três publicações: uma por canal confirmado, com os bastidores no meio da semana."
+        },
+        "mensagem": "Montei o calendário da semana de 19 a 25/10 com três publicações, com os bastidores no meio da semana. Aprovado, ele entra na pauta; nada é publicado sem a sua autorização.",
+        "observacoes": [
+          {
+            "leitura": "Bastidores no meio da semana",
+            "explicacao": "Os bastidores do forno rendem mais salvamentos; vale fixá-los na quarta.",
+            "area": "brand",
+            "assunto": "Calendário",
+            "chave": "Dia dos bastidores"
+          }
+        ]
+      }
+    }
+  ]
+}

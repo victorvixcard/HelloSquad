@@ -1,0 +1,174 @@
+{
+  "delivery_type": "04.03",
+  "step": "otto.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Bastidores da fornada de sábado",
+          "tema": "Bastidores da fornada de sábado",
+          "objetivo": "Levar clientes à loja no sábado de manhã",
+          "versoes": [
+            {
+              "canal": "instagram",
+              "formato": "reels",
+              "texto": "Sábado de manhã, o forno da Miolo já está aceso desde cedo.\nA massa descansou a noite inteira. É esse tempo que deixa a casca crocante.\nPasse na loja e leve o seu ainda morno.",
+              "roteiro": [
+                {
+                  "trecho": "Antes do sol, a massa que descansou a noite toda vai para o forno.",
+                  "visual": "Mãos abrindo a porta do forno, vapor saindo."
+                },
+                {
+                  "trecho": "Fermentação longa: é o tempo que faz a casca e o miolo.",
+                  "visual": "Close no pão sendo cortado."
+                },
+                {
+                  "trecho": "Sábado de manhã, ele está aqui esperando você.",
+                  "visual": "Prateleira cheia, porta da loja abrindo."
+                }
+              ],
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#bastidores"
+              ],
+              "cta": "Passe na loja no sábado de manhã."
+            },
+            {
+              "canal": "whatsapp",
+              "formato": "status",
+              "texto": "A fornada de sábado sai às 8h. Quer reservar o seu? Responda aqui que a gente separa.",
+              "roteiro": [],
+              "hashtags": [],
+              "cta": "Responda para reservar."
+            }
+          ],
+          "pedido_para_kaia": "Capa do reels com o pão saindo do forno e o vapor, nas cores da Miolo.",
+          "notas": "Nova versão com o ajuste pedido; o roteiro ficou igual."
+        },
+        "mensagem": "Fiz a nova versão com o ajuste que você pediu e mantive o resto. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "com_estrategia",
+      "when": {
+        "matches": "<documento_aprovado delivery=\"02.04\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Bastidores da fornada de sábado",
+          "tema": "Bastidores da fornada de sábado",
+          "objetivo": "Levar clientes à loja no sábado de manhã",
+          "versoes": [
+            {
+              "canal": "instagram",
+              "formato": "reels",
+              "texto": "Sábado de manhã, o forno da Miolo já está aceso desde cedo.\nA massa descansou a noite inteira. É esse tempo que deixa a casca crocante.\nPasse na loja e leve o seu ainda morno.",
+              "roteiro": [
+                {
+                  "trecho": "Antes do sol, a massa que descansou a noite toda vai para o forno.",
+                  "visual": "Mãos abrindo a porta do forno, vapor saindo."
+                },
+                {
+                  "trecho": "Fermentação longa: é o tempo que faz a casca e o miolo.",
+                  "visual": "Close no pão sendo cortado."
+                },
+                {
+                  "trecho": "Sábado de manhã, ele está aqui esperando você.",
+                  "visual": "Prateleira cheia, porta da loja abrindo."
+                }
+              ],
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#bastidores"
+              ],
+              "cta": "Passe na loja no sábado de manhã."
+            },
+            {
+              "canal": "whatsapp",
+              "formato": "status",
+              "texto": "O Natal da Miolo começa no forno, semanas antes. A fornada de sábado sai às 8h: responda aqui para reservar a sua.",
+              "roteiro": [],
+              "hashtags": [],
+              "cta": "Responda para reservar."
+            }
+          ],
+          "pedido_para_kaia": "Capa do reels com o pão saindo do forno e o vapor, nas cores da Miolo.",
+          "notas": "Segui a estratégia aprovada \"Natal de forno aceso\": o tempo do forno no centro e o convite para reservar."
+        },
+        "mensagem": "Escrevi o roteiro do reels e o status de WhatsApp seguindo a estratégia de Natal da Bia. Deixei o pedido da capa para a Kaia. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "posts",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Bastidores da fornada de sábado",
+          "tema": "Bastidores da fornada de sábado",
+          "objetivo": "Levar clientes à loja no sábado de manhã",
+          "versoes": [
+            {
+              "canal": "instagram",
+              "formato": "reels",
+              "texto": "Sábado de manhã, o forno da Miolo já está aceso desde cedo.\nA massa descansou a noite inteira. É esse tempo que deixa a casca crocante.\nPasse na loja e leve o seu ainda morno.",
+              "roteiro": [
+                {
+                  "trecho": "Antes do sol, a massa que descansou a noite toda vai para o forno.",
+                  "visual": "Mãos abrindo a porta do forno, vapor saindo."
+                },
+                {
+                  "trecho": "Fermentação longa: é o tempo que faz a casca e o miolo.",
+                  "visual": "Close no pão sendo cortado."
+                },
+                {
+                  "trecho": "Sábado de manhã, ele está aqui esperando você.",
+                  "visual": "Prateleira cheia, porta da loja abrindo."
+                }
+              ],
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#bastidores"
+              ],
+              "cta": "Passe na loja no sábado de manhã."
+            },
+            {
+              "canal": "whatsapp",
+              "formato": "status",
+              "texto": "A fornada de sábado sai às 8h. Quer reservar o seu? Responda aqui que a gente separa.",
+              "roteiro": [],
+              "hashtags": [],
+              "cta": "Responda para reservar."
+            }
+          ],
+          "pedido_para_kaia": "Capa do reels com o pão saindo do forno e o vapor, nas cores da Miolo.",
+          "notas": "Roteiro curto de três trechos; status de WhatsApp para reserva."
+        },
+        "mensagem": "Escrevi o roteiro do reels para o Instagram e o status de WhatsApp sobre a fornada de sábado. Deixei o pedido da capa para a Kaia. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}

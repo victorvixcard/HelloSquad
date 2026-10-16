@@ -1,0 +1,57 @@
+{
+  "delivery_type": "04.03",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_incompleto",
+      "when": {
+        "not_matches": "(instagram|whatsapp|facebook|tiktok|linkedin|site|blog|e-?mail|reels|status)"
+      },
+      "usage": {
+        "input_tokens": 1500,
+        "output_tokens": 170
+      },
+      "output": {
+        "delivery_type": "04.03",
+        "briefing": {
+          "canal": null,
+          "objetivo": null,
+          "tema": "bastidores",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [
+          "canal"
+        ],
+        "pergunta": "Para o Otto começar: em quais canais o conteúdo vai sair?",
+        "resumo": "Pedido de conteúdo sem canal."
+      }
+    },
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1700,
+        "output_tokens": 220
+      },
+      "output": {
+        "delivery_type": "04.03",
+        "briefing": {
+          "canal": "instagram, whatsapp",
+          "objetivo": "Levar clientes à loja no sábado de manhã",
+          "tema": "Bastidores da fornada de sábado",
+          "tom": "acolhedor, direto, sem gíria",
+          "restricoes": [
+            "não usar a palavra \"artesanal\""
+          ],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Reels de bastidores para o Instagram e status de WhatsApp sobre a fornada de sábado."
+      }
+    }
+  ]
+}
