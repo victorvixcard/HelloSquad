@@ -1,0 +1,54 @@
+== 0. preparo: bônus local de 300 na Vitta (make seed devolve o saldo)
+  bônus: 300.00
+  saldo antes: 320.0
+== 1. importação de CSV (Max) com linhas adversárias
+  status: 201 {"id": "6515b9a7-b9df-42eb-8abe-64678b451548", "file_name": "h2.csv", "source": "Planilha H2", "total_rows": 9, "accepted_rows": 3, "refused_rows": 6, "refused": [{"line": 3, "reason": "no_consent"}, {"line": 4, "reason": "duplicate_in_file"}, {"line": 5, "reason": "email_not_fictitious"}, {"line": 6, "reason": "email_not_fictitious"}, {"line": 7, "reason": "missing_consent_date"}, {"line": 8, "reason": "consent_without_address"}], "created_at": "2026-10-16T22:01:46.467520Z"}
+  contatos gravados na Vitta por importação: [['ana.valida@contatos.example', 'email:granted'], ['cliente01@contatos.example', 'email:granted'], ['formula@contatos.example', 'email:granted']]
+  editor (Carla) importa: 403 {"error": {"code": "forbidden", "message": "Só o dono ou um admin importa contatos.", "details": []}}
+== 2. seis pedidos na Vitta: Bia 02.01, Otto 04.02, Kiwi 05.01, Max 06.03, Íris 07.02 + Nexo 01.02 (Sala)
+  worker: exit=0 concluídos=6 falhas=0
+  bia   02.01 status=needs_you label='v1 aguarda sua aprovação' versões=1 kind=diagnosis
+        runs=[['succeeded', '1', '10.00']] reservas=[['captured', '10.00', '10.00']] extrato=[['hold', '0.00', '1'], ['capture', '-10.00', '1']]
+  otto  04.02 status=needs_you label='v1 aguarda sua aprovação' versões=1 kind=editorial_calendar
+        runs=[['succeeded', '1', '10.00']] reservas=[['captured', '10.00', '10.00']] extrato=[['hold', '0.00', '1'], ['capture', '-10.00', '1']]
+  kiwi  05.01 status=needs_you label='v1 aguarda sua aprovação' versões=1 kind=media_plan
+        runs=[['succeeded', '1', '10.00']] reservas=[['captured', '10.00', '10.00']] extrato=[['hold', '0.00', '1'], ['capture', '-10.00', '1']]
+  max   06.03 status=needs_you label='v1 aguarda sua aprovação' versões=1 kind=customer_segments
+        runs=[['succeeded', '1', '10.00']] reservas=[['captured', '10.00', '10.00']] extrato=[['hold', '0.00', '1'], ['capture', '-10.00', '1']]
+  iris  07.02 status=needs_you label='v1 aguarda sua aprovação' versões=1 kind=performance_analysis
+        runs=[['succeeded', '1', '10.00']] reservas=[['captured', '10.00', '10.00']] extrato=[['hold', '0.00', '1'], ['capture', '-10.00', '1']]
+  nexo  01.02 status=needs_you label='Uma pergunta aguarda você' versões=0 kind=None
+        runs=[['succeeded', '1', '0.00']] reservas=[['released', '10.00', '-']] extrato=[['hold', '0.00', '1'], ['release', '0.00', '1']]
+== 3. decisão: a editora não decide; o owner aprova (12 chamadas concorrentes na da Bia)
+  Carla aprova: 403
+  Rafael x12: [200] eventos approval.decided: 1
+  aprova otto: 200 approved
+  aprova kiwi: 200 approved
+  aprova max: 200 approved
+  aprova iris: 200 approved
+  calendário da Vitta depois de aprovar a 04.02: ['planned'] 3 posts
+== 4. projeto coordenado: aprovar a etapa da Bia, rodar, aprovar a do Otto
+  etapas: [] | pendente: True
+  rodada 0: aprova respond: 422
+  worker: exit=0 concluídos=6 falhas=5
+  etapas: [] | trabalho: needs_you
+  rodada 1: aprova respond: 422
+  worker: exit=0 concluídos=6 falhas=5
+  etapas: [] | trabalho: needs_you
+  rodada 2: aprova respond: 422
+  worker: exit=0 concluídos=6 falhas=5
+  etapas: [] | trabalho: needs_you
+  projeto: 0 None | dono: null
+  marcos: []
+  runs por etapa: [['-', 'nexo', '01.02', 'succeeded', '0.00']]
+  reservas por etapa: [['01.02', 'released', '10.00', '-']]
+  handoff no contexto: []
+== 5. créditos: soma das capturas = queda do saldo; estimativa = cobrado por run
+  saldo depois: 270.0 | queda: 50.0 | capturado: 50.00
+  run cobrado com estimativa diferente: [['440ccc75-9a0d-4647-a867-bcc5ea549f4b', '10.00', '0.00']]
+  reservas presas (held): 0
+== 6. consentimento: nada vai para contato; segmentos do Max
+  e-mails para contatos (deve ser 0): 0
+  06.03 conteúdo (chaves): ['base', 'cuidados', 'premissas', 'resumo', 'segmentos', 'titulo']
+  06.03 base: {"total": 3, "origens": [{"origem": "Planilha H2", "contatos": 3}], "calculado_em": "2026-10-16", "com_consentimento": {"algum": 3, "email": 3, "whatsapp": 0}, "sem_consentimento": 0}
+IDS {'bia': 'dcad9fc9-5cf0-41ac-87c9-3d831839ceac', 'otto': 'bd64ed1a-42c9-449f-acfa-ecfeb493f7a8', 'kiwi': '3f7ba3cc-dd41-47e8-97f6-b36314d08521', 'max': '766d8bc6-a31d-4fe5-bddd-a857aad63f7d', 'iris': '6a120bef-3a0a-440e-9ad9-8c93a107694c', 'nexo': '5a0cd1c2-2a27-4c82-95a9-cbd20fbd9b56'}

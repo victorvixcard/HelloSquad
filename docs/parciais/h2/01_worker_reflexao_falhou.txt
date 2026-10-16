@@ -1,0 +1,6 @@
+ERROR hellosquad.worker: reflexão b81060f9-5f3d-4114-bd75-4fcf490bb6fd falhou (llm_config); mensagem 621 arquivada
+ERROR hellosquad.worker: reflexão dcd5ff99-1228-490a-8e26-9317f32596fb falhou (llm_config); mensagem 620 arquivada
+ERROR hellosquad.worker: reflexão a9a7461e-2a7a-4528-96f0-bc278a4b0cd7 falhou (llm_config); mensagem 623 arquivada
+ERROR hellosquad.worker: reflexão cb51e21f-9efa-460c-a9ef-4051f56d5812 falhou (llm_config); mensagem 622 arquivada
+ERROR hellosquad.worker: reflexão 12061e09-92a1-4d45-8e2c-3cc6755ea02f falhou (llm_config); mensagem 624 arquivada
+INFO hellosquad.worker: reflexões: 5 mensagem(ns) tratada(s) ['failed', 'failed', 'failed', 'failed', 'failed']
