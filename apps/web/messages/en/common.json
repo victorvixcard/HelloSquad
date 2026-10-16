@@ -1,0 +1,51 @@
+{
+  "brand": "HelloSquad",
+  "close": "Close",
+  "unavailable": "Not available in this version yet.",
+  "areas": {
+    "nexo": "Projects",
+    "bia": "Strategy",
+    "kaia": "Brand & Creative",
+    "otto": "Content",
+    "kiwi": "Growth Marketing",
+    "max": "CRM",
+    "iris": "Results"
+  },
+  "agentWith": "with {name}",
+  "agentTo": "to {name}",
+  "states": {
+    "draft": "Draft",
+    "in_progress": "In progress",
+    "needs_you": "Waiting for you",
+    "scheduled": "Scheduled",
+    "done": "Done",
+    "paused": "Paused",
+    "blocked": "Blocked",
+    "failed": "Error",
+    "cancelled": "Canceled",
+    "approved": "Approved"
+  },
+  "approvalKinds": {
+    "review": "For you to review",
+    "approve": "For you to approve",
+    "authorize": "For you to authorize",
+    "confirm": "For you to confirm",
+    "reconnect": "For you to reconnect",
+    "respond": "For you to respond",
+    "decide": "For you to decide"
+  },
+  "deliveryTypes": {
+    "d0401": "Caption"
+  },
+  "time": {
+    "today": "today",
+    "todayUpper": "Today",
+    "yesterday": "yesterday"
+  },
+  "ownerDecides": "The account owner decides",
+  "localeNames": {
+    "pt-BR": "Português (Brasil)",
+    "en": "English",
+    "es": "Español"
+  }
+}
