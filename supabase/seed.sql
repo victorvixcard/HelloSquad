@@ -281,3 +281,74 @@ begin
      jsonb_build_object('from', 'in_progress', 'to', 'needs_you'), '2026-10-15 10:16:00-03');
 end;
 $seed_nucleo$;
+
+-- S1d — Memória da Marca da Miolo (DADOS_FICTICIOS.md e FLUXOS_DA_V46.md §6, §8 e §9). Ids e horários fixos.
+-- Vitta e Trilha ficam sem memória (estado vazio honesto).
+--
+-- Estado garantido na Miolo:
+--   Fontes: "Onboarding e o que você contou" (Declarado por você, 01/10) e Instagram (Não conectada)
+--   5 conhecimentos "Confirmado" do cadastro, 1 "Decisão sua" (não usar a palavra 'artesanal')
+--   1 sugestão aberta "Otto percebeu" (bastidores do forno)
+
+do $seed_memoria$
+declare
+  v_miolo uuid := (select id from public.workspaces where slug = 'miolo');
+  v_marina uuid := (select id from auth.users where email = 'marina@miolo.example');
+  v_onboarding constant uuid := '5eed0000-0000-4000-8000-000000000801';
+  v_instagram constant uuid := '5eed0000-0000-4000-8000-000000000802';
+  v_at constant timestamptz := '2026-10-01 10:00:00-03';
+begin
+  if v_miolo is null or v_marina is null then
+    raise exception 'Seed da memória depende da Miolo e da Marina (primeiro bloco).';
+  end if;
+
+  delete from public.audit_events a
+  using public.workspaces w
+  where w.id = a.workspace_id
+    and w.slug in ('miolo', 'vitta', 'trilha')
+    and a.entity_type in ('brand_fact', 'memory_suggestion', 'memory_conflict');
+  delete from public.run_context_items i using public.workspaces s where s.id = i.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  delete from public.memory_conflicts c using public.workspaces s where s.id = c.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  delete from public.memory_suggestions m using public.workspaces s where s.id = m.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  delete from public.brand_facts f using public.workspaces s where s.id = f.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  delete from public.fact_sources f using public.workspaces s where s.id = f.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+
+  insert into public.fact_sources (id, workspace_id, kind, name, state, permissions, last_sync_at, created_at, updated_at)
+  values
+    (v_onboarding, v_miolo, 'onboarding', 'Onboarding e o que você contou', 'declared', '{}', v_at, v_at, v_at),
+    (v_instagram, v_miolo, 'connection', 'Instagram', 'not_connected',
+     array['Ler posts e métricas', 'Publicar só com sua autorização'], null, v_at, v_at);
+
+  insert into public.brand_facts (
+    id, workspace_id, area, topic, key, content, state, source_type, source_id, origin, valid_from,
+    confirmed_by, confirmed_at, created_by, created_at, updated_at
+  ) values
+    ('5eed0000-0000-4000-8000-000000000811', v_miolo, 'business', 'História', 'Negócio',
+     'Padaria de fermentação natural, aberta em 2019', 'confirmed', 'onboarding', v_onboarding,
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+    ('5eed0000-0000-4000-8000-000000000812', v_miolo, 'audience', 'Perfil dos clientes', 'Público principal',
+     'Moradores de Pinheiros e Vila Madalena, 28 a 45 anos', 'confirmed', 'onboarding', v_onboarding,
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+    ('5eed0000-0000-4000-8000-000000000813', v_miolo, 'brand', 'Tom de voz', 'Tom de voz',
+     'Acolhedor, direto, sem gíria', 'confirmed', 'onboarding', v_onboarding,
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+    ('5eed0000-0000-4000-8000-000000000814', v_miolo, 'audience', 'Comportamentos conhecidos', 'Canais',
+     'Instagram e WhatsApp', 'confirmed', 'onboarding', v_onboarding,
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+    ('5eed0000-0000-4000-8000-000000000815', v_miolo, 'business', 'Produtos', 'Produto âncora',
+     'Pão de fermentação longa', 'confirmed', 'onboarding', v_onboarding,
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+    ('5eed0000-0000-4000-8000-000000000816', v_miolo, 'brand', 'Tom de voz', 'Palavra proibida',
+     'Não usar a palavra ''artesanal'' nas legendas', 'decision', 'conversation', null,
+     'Dito por você numa conversa', '2026-10-15 10:13:00-03', v_marina, '2026-10-15 10:13:00-03', v_marina,
+     '2026-10-15 10:13:00-03', '2026-10-15 10:13:00-03');
+
+  insert into public.memory_suggestions (
+    id, workspace_id, agent_id, title, area, topic, key, content, used_by_agents, created_at, updated_at
+  ) values (
+    '5eed0000-0000-4000-8000-000000000821', v_miolo, 'otto', 'Posts com bastidores do forno têm mais salvamentos',
+    'knowledge', 'Descobertas', 'Bastidores', 'Posts com bastidores do forno têm mais salvamentos',
+    array['otto', 'kaia'], '2026-10-15 11:00:00-03', '2026-10-15 11:00:00-03'
+  );
+end;
+$seed_memoria$;
