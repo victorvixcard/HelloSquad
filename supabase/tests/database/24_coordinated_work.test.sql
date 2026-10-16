@@ -7,7 +7,7 @@ begin;
 set local client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
-select plan(46);
+select plan(48);
 
 create temporary table fx as
 select
