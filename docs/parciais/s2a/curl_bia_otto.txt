@@ -1,0 +1,42 @@
+$ bash docs/parciais/s2a/curl_bia_otto.sh   # 16/10/2026, API local :8100, worker simulado em --drain
+bônus local concedido: 100.00
+== 1. Bia 02.01, 02.02, 02.03, 02.04 e Otto 04.03: pedido → trabalho → entrega
+run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+  02.01 | needs_you | v1 aguarda sua aprovação | diagnosis v1 | dados_que_faltam, lacunas, oportunidades, premissas, resumo, titulo
+  02.02 | needs_you | v1 aguarda sua aprovação | positioning v1 | diferenciais, objetivos, posicionamento, premissas, publicos, resumo, titulo
+  02.03 | needs_you | v1 aguarda sua aprovação | marketing_plan v1 | acoes, horizonte, premissas, resumo, titulo
+  02.04 | needs_you | v1 aguarda sua aprovação | campaign_strategy v1 | conceito, mensagens_chave, periodo, premissas, prioridades, publico, resumo, titulo
+== 2. Aprovação da dona da conta (owner): a 02.04 aprovada vira a referência do Otto
+  decided
+  decided
+  decided
+  decided
+run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+  04.03 | needs_you | v1 aguarda sua aprovação | multichannel_posts v1 | estrategia, notas, objetivo, pedido_para_kaia, tema, titulo, versoes
+  04.02 | needs_you | v1 aguarda sua aprovação | editorial_calendar v1 | notas, periodo, posts, titulo
+{"versao": 1, "conceito": "Natal de forno aceso", "delivery_version_id": "1b57db50-ddf2-4fad-a3a2-5cf06bc93d79"}
+  calendário (propostas antes da aprovação):
+    2026-10-19 09:00 instagram post otto draft · Fornada de segunda
+    2026-10-21 18:00 instagram reels kaia draft · Bastidores da fermentação longa
+    2026-10-23 08:00 whatsapp status otto draft · Encomendas do fim de semana
+    2026-10-24 10:00 instagram carousel kaia draft · Natal de forno aceso: as encomendas abrem em novembro
+  decided · decided
+  calendário (depois da aprovação):
+    ['planned']
+== 3. Bia 02.07 sem busca (padrão) e com a busca mock (WEB_SEARCH_PROVIDER=mock)
+run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+  pesquisa: indisponivel | fontes: 0 | achados: ['sugestao', 'sugestao']
+run … concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 5100 tokens de entrada, 1300 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.054640
+  pesquisa: realizada mock | achados: [('pesquisa', ['F1']), ('pesquisa', ['F2']), ('pesquisa', ['F3']), ('sugestao', [])]
+    F1 https://noticias-do-bairro.example/forno-do-largo-panetone publicado 2026-10-09 coletado 2026-10-16
+    F2 https://casa-levain.example/blog/outono publicado 2026-09-28 coletado 2026-10-16
+    F3 https://observatorio-de-panificacao.example/tendencias-2026 publicado 2026-08-20 coletado 2026-10-16
+== 4. Conversa do ambiente (H1-04): uma por ambiente, primeira fala e sugestões
+  HTTP 201 f8b6e159-3f53-49ed-9195-92ab3e08e085
+  HTTP 200 f8b6e159-3f53-49ed-9195-92ab3e08e085
+{"agent_id": "bia", "message": "Oi, eu sou a Bia. Aguarda a sua aprovação na v1 de “Concorrentes e tendências”. O que você precisa?", "suggestions": ["Onde a Miolo pode crescer até o Natal?", "Crie uma promoção para esta semana", "Analisar os concorrentes do bairro"]}
+A próxima publicação no calendário é “Fornada de segunda”, seg, 19/10.
