@@ -458,7 +458,6 @@ function WeeklyChart({ s, last, current, previous }: { s: MetricSeries; last: nu
             </table>
           ) : (
             // A V4.6 lê o gráfico por hover e pelas setas (L10831); a tabela é a alternativa acessível.
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             <div className="rs-box" tabIndex={0} role="img" aria-label={aria} onMouseMove={move} onMouseLeave={() => setHov(-1)} onKeyDown={key} onBlur={() => setHov(-1)}>
               <svg className="rs-svg" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
                 <defs>
