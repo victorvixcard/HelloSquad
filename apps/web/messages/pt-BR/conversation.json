@@ -18,6 +18,8 @@
   "loadError": "Não foi possível abrir a conversa agora. Tente de novo em instantes.",
   "sendError": "A mensagem não foi enviada. Tente de novo.",
   "sending": "Enviando",
+  "sendAria": "Enviar pedido",
+  "sendHint": "enviar",
   "empty": "Ainda não há mensagens nesta conversa.",
   "you": "Você",
   "yesterday": "Ontem",

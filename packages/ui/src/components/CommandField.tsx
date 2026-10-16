@@ -15,6 +15,10 @@ export type CommandFieldProps = {
   placeholder?: string;
   /** Nome acessível do campo. */
   label?: string;
+  /** Nome acessível do botão de envio (o app passa o do catálogo do idioma da tela). */
+  sendLabel?: string;
+  /** Dica visível ao lado de ↵ (o app passa a do catálogo do idioma da tela). */
+  hint?: string;
   /** Pedido enviado: o Nexo (coordenação) assume, com os olhos no botão de envio. */
   sending?: boolean;
   /** Campo indisponível (ainda sem squad respondendo). Use com `note` para dizer por quê. */
@@ -37,6 +41,8 @@ export function CommandField({
   onSend,
   placeholder = "Peça algo ao seu squad",
   label = "Converse com o seu squad",
+  sendLabel = "Enviar pedido",
+  hint = "enviar",
   sending = false,
   disabled = false,
   note,
@@ -94,14 +100,14 @@ export function CommandField({
         />
         <span className="hs-hint" aria-hidden="true">
           <span className="hs-kbd">↵</span>
-          enviar
+          {hint}
         </span>
         <button
           type="button"
           className={cx("hs-send", sending ? "is-coord" : ready && "is-ready")}
           onClick={send}
           disabled={!ready}
-          aria-label="Enviar pedido"
+          aria-label={sendLabel}
         >
           <span className="hs-send-ico">
             <Icon name="up" size={20} strokeWidth={2.1} />

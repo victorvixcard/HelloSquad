@@ -775,6 +775,8 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
               onSend={send}
               placeholder={placeholder}
               label={placeholder}
+              sendLabel={t("sendAria")}
+              hint={t("sendHint")}
               sending={sending}
             />
           </div>
