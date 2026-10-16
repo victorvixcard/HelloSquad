@@ -1,6 +1,7 @@
 # A2c — Progresso (Aranha)
 
 **Fatia:** site público completo com SEO/GEO (Fase 2). **Início:** 16/10/2026 17:38. **Alvo:** 70 min.
+**Estado:** fechada às 18:15 (37 min). Relatório: `docs/parciais/A2c-relatorio.md`.
 **Escopo:** `apps/web`, `packages/ui` e docs da fatia. Stark em paralelo na S2e (`apps/backend`, `supabase/`): não toco.
 
 ## PASSO 0 (lido)
@@ -38,3 +39,9 @@
 | 1b | Rotas por idioma (`lib/site-routes.ts`), leitura do conteúdo, marcação de linha, textos de interface nos 3 catálogos (paridade 12/12) | feito | `febc554` |
 | 1c–3 | 15 rotas novas (pt-BR estáticas; en/es pelo middleware com prefixo), `SitePage`, landing com as seções da R32, Metadata API e JSON-LD por rota | feito | `c990c74` |
 | 4 | sitemap (36 URLs + cadastro, alternates), `robots.txt` da N2a (Disallow antes de Allow, `/admin`), `llms.txt` da N2a com links absolutos, `X-Robots-Tag` em `/admin`, imagem OG por rota e logo | feito | `fc38f0f` (**entrou no commit da S2e do Stark**: o índice é compartilhado e ele commitou com os meus arquivos no stage; nada se perdeu, está no remoto. Daqui em diante: `git commit -- <caminhos>` num comando só) |
+| 6a | Testes Vitest (89 de SEO/rotas/rastreio + 8 de componente + 1 do resolvedor) | feito | `c462f6f`, `598b1fd`, `cf0c3ee` |
+| 3b | Metadados sempre no `<head>` (`htmlLimitedBots`): en/es tinham SEO 91 no Lighthouse | feito | `8bc9642` |
+| 6b | E2e `site.spec.ts` (5) e ajuste do e2e da A0 ao grafo e ao `llms.txt` da N2a; troca de idioma com `<a>` | feito | `073b0dd`, `b20031b` |
+| — | es com "tú" (pedido da N2a), menu sem quebra no celular, cabeçalho da landing como a R32, rótulos ocultos do botão no idioma | feito | `b209814`, `4366349`, `45d8071` |
+| 5 | Lighthouse mobile final: 98–99 / 100 / 100 nas 6 rotas (`a2c/lighthouse-mobile.txt`); capturas | feito | `f961fef`, `70da589` |
+| 7 | Rodada final em `45d8071`: `make test-web` (web 327), build e e2e (24) no worktree `/tmp/hs-a2c`; relatório | feito | este commit |
