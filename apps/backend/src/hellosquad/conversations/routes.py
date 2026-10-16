@@ -11,6 +11,7 @@ from psycopg.types.json import Jsonb
 from hellosquad.api.deps import CurrentPrincipal, DatabaseDep, ensure_workspace
 from hellosquad.api.errors import ApiError, error_responses
 from hellosquad.api.pagination import CursorQuery, decode_cursor, limit_query, split_page
+from hellosquad.conversations.opening import environment_opening
 from hellosquad.conversations.schemas import (
     AgentUnread,
     Conversation,
@@ -29,7 +30,7 @@ from hellosquad.conversations.schemas import (
     UnreadCount,
     UnreadSummary,
 )
-from hellosquad.domain import AgentId
+from hellosquad.domain import AgentId, ContextType
 
 router = APIRouter(tags=["conversations"])
 
@@ -139,6 +140,10 @@ CONTEXT_QUERIES = {
     "insight": (
         "select s.title, s.state::text as status from public.memory_suggestions s where s.id = %s"
     ),
+    "calendar_post": (
+        "select p.theme as title, p.status::text as status from public.calendar_posts p "
+        "where p.id = %s"
+    ),
 }
 
 MESSAGE_COLUMNS = """
@@ -232,12 +237,9 @@ async def conversation_context(
     if row["context_type"] is None:
         return None
     meta = row["context_meta"] or {}
-    query = CONTEXT_QUERIES.get(row["context_type"])
-    found = (
-        await (await conn.execute(query, (row["context_id"],))).fetchone()
-        if query and row["context_id"]
-        else None
-    )
+    # Pelo id, título e estado vêm do banco; pela chave (calendar_post também), do context_meta.
+    query = CONTEXT_QUERIES.get(row["context_type"]) if row["context_id"] else None
+    found = await (await conn.execute(query, (row["context_id"],))).fetchone() if query else None
     source = found if query else meta
     return ConversationContext(
         type=row["context_type"],
@@ -256,10 +258,14 @@ async def conversation_detail(
 ) -> ConversationDetail:
     row = await load_conversation(conn, conversation_id)
     participants = await (await conn.execute(PARTICIPANTS, (conversation_id,))).fetchall()
+    opening = None
+    if row["context_type"] == ContextType.environment and row["archived_at"] is None:
+        opening = await environment_opening(conn, row["workspace_id"], row["context_key"])
     return ConversationDetail(
         **row,
         participants=[Participant(**p) for p in participants],
         context=await conversation_context(conn, row),
+        opening=opening,
     )
 
 

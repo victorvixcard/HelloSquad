@@ -44,6 +44,8 @@ class ContextType(StrEnum):
     segment = "segment"
     document = "document"
     capability = "capability"
+    # Conversa do ambiente ("Conversar com <Nome>"): a chave é o agente do ambiente (S2a, H1-04).
+    environment = "environment"
 
 
 CONTEXT_TYPES_BY_ID = frozenset(

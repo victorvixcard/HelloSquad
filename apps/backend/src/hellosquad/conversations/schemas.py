@@ -27,8 +27,9 @@ class ContextRef(BaseModel):
     id: UUID | None = Field(
         default=None,
         description=(
-            "Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact` e "
-            '`insight` ("<Agente> percebeu").'
+            "Id do objeto, no mesmo workspace: `project`, `work_item`, `delivery`, `memory_fact`, "
+            '`insight` ("<Agente> percebeu") e `calendar_post` (post do calendário editorial; o '
+            "post que ainda não mora no banco continua vindo pela chave)."
         ),
     )
     key: (
@@ -37,8 +38,9 @@ class ContextRef(BaseModel):
         default=None,
         description=(
             "Chave do objeto que ainda não mora no banco: `calendar_post`, `metric`, "
-            "`opportunity`, `responsibility`, `segment`, `document` e `capability` (o código da "
-            "delivery, ex.: `04.01`). Exclusiva com `id`."
+            "`opportunity`, `responsibility`, `segment`, `document`, `capability` (o código da "
+            "delivery, ex.: `04.01`) e `environment` (o agente do ambiente, ex.: `bia`; uma "
+            "conversa por ambiente, com o agente do ambiente à frente). Exclusiva com `id`."
         ),
         examples=["04.01"],
     )
@@ -176,9 +178,33 @@ class Conversation(BaseModel):
     )
 
 
+class ConversationOpening(BaseModel):
+    agent_id: AgentId
+    message: str = Field(
+        description=(
+            "Primeira fala do agente do ambiente (V4.6 `_cxEnvFirst`), no idioma do workspace e "
+            "com o estado de agora."
+        ),
+        examples=["Oi, eu sou a Bia. Disponível. O que você precisa?"],
+    )
+    suggestions: list[str] = Field(
+        description=(
+            'Sugestões de pergunta ("Pergunte à Bia"); somem depois da primeira mensagem da pessoa.'
+        ),
+        examples=[["Onde a Miolo pode crescer até o Natal?"]],
+    )
+
+
 class ConversationDetail(Conversation):
     participants: list[Participant]
     context: ConversationContext | None = Field(description="Cartão do objeto (só em `object`).")
+    opening: ConversationOpening | None = Field(
+        default=None,
+        description=(
+            "Só na conversa do ambiente (`environment`): a primeira fala do agente e as sugestões "
+            "do ambiente, calculadas a cada leitura."
+        ),
+    )
 
 
 class ConversationPage(BaseModel):
