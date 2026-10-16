@@ -6,7 +6,8 @@ import type { ConversationMode, Layout } from "@/lib/product-layout";
 
 /** Objeto sobre o qual se conversa: o cartão de contexto do painel (ambiente, trabalho, entrega). */
 export type ConversationContextRef = {
-  kind: "env" | "work_item";
+  /** `memory`: um conhecimento da Memória da Marca (V4.6 `_cx('mem')`, tipo "Conhecimento"). */
+  kind: "env" | "work_item" | "memory";
   label: string;
   href?: string;
   /** Linha de apoio do cartão de contexto (V4.6 `cx.meta`, ex.: "Otto cuida do calendário…"). */

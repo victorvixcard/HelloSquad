@@ -119,6 +119,7 @@ export function LiveProvider({
     return subscribe(workspaceId, {
       onRunEvent,
       onApproval: (event, approval) => dispatch({ type: "approval", workspaceId, event, approval }),
+      onMemory: (event, suggestion) => dispatch({ type: "memory", workspaceId, event, suggestion }),
       onStatus: (status) => {
         dispatch({ type: "connection", status });
         if (status === "lost") wasLost.current = true;

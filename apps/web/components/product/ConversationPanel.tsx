@@ -387,6 +387,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     ? [
         { k: t("rail.env"), v: envOf },
         ...(ctx.kind === "env" ? [{ k: t("rail.type"), v: t("rail.typeEnv") }] : []),
+        ...(ctx.kind === "memory" ? [{ k: t("rail.type"), v: t("rail.typeMemory") }] : []),
         ...(ctx.period ? [{ k: t("rail.period"), v: ctx.period }] : []),
         { k: t("rail.business"), v: shell.workspace.name },
         ...(ctx.origin ? [{ k: t("rail.origin"), v: ctx.origin }] : []),

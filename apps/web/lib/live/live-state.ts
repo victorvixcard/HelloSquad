@@ -68,10 +68,24 @@ export type LiveState = {
   version: number;
   /** Último aviso de entrega (a casca mostra se a conversa não estiver aberta). */
   notice: LiveNotice | null;
+  /** Sugestões da Memória que chegaram nesta sessão pelo canal ("<Agente> percebeu" novo, V4.5 `is-new`). */
+  memoryNew: string[];
+};
+
+/** Evento `memory_suggestion.*` do canal do workspace (S1d): criada, decidida ou mudança de estado. */
+export type MemorySuggestionPayload = {
+  id: string;
+  agent_id?: string;
+  state?: string;
+  decision?: string;
+  resulting_fact_id?: string;
+  run_id?: string;
+  decided_at?: string;
 };
 
 export type LiveAction =
   | { type: "run_event"; workspaceId: string; event: RunEventPayload }
+  | { type: "memory"; workspaceId: string; event: string; suggestion: MemorySuggestionPayload }
   | { type: "approval"; workspaceId: string; event: string; approval: ApprovalPayload }
   | {
       type: "run_linked";
@@ -95,6 +109,7 @@ export function initialLiveState(workspaceId: string, pending: PendingApproval[]
     messages: {},
     version: 0,
     notice: null,
+    memoryNew: [],
   };
 }
 
@@ -219,6 +234,14 @@ export function liveReducer(state: LiveState, action: LiveAction): LiveState {
     case "pending_synced": {
       if (action.workspaceId !== state.workspaceId) return state;
       return { ...state, pending: Object.fromEntries(action.pending.map((p) => [p.id, p])) };
+    }
+    case "memory": {
+      // A Memória chega ao vivo: a casca relê o servidor (versão sobe) e a sugestão nova ganha o destaque de nova.
+      if (action.workspaceId !== state.workspaceId) return state;
+      const created = action.event === "memory_suggestion.created";
+      const memoryNew =
+        created && !state.memoryNew.includes(action.suggestion.id) ? [...state.memoryNew, action.suggestion.id] : state.memoryNew;
+      return { ...state, memoryNew, version: state.version + 1 };
     }
     default:
       return state;

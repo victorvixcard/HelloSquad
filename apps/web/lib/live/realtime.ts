@@ -2,11 +2,13 @@
 
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient, realtimeToken } from "@/lib/supabase/client";
-import type { ApprovalPayload, Connection, RunEventPayload } from "./live-state";
+import type { ApprovalPayload, Connection, MemorySuggestionPayload, RunEventPayload } from "./live-state";
 
 export type LiveHandlers = {
   onRunEvent: (event: RunEventPayload) => void;
   onApproval: (event: string, approval: ApprovalPayload) => void;
+  /** "<Agente> percebeu" chegando ou decidido (Memória da Marca, S1d). */
+  onMemory?: (event: string, suggestion: MemorySuggestionPayload) => void;
   onStatus: (status: Connection) => void;
 };
 
@@ -14,6 +16,13 @@ export type LiveHandlers = {
 export type Subscribe = (workspaceId: string, handlers: LiveHandlers) => () => void;
 
 const APPROVAL_EVENTS = ["approval.created", "approval.decided", "approval.expired"] as const;
+/** Gatilho `memory_suggestions_broadcast` (S1d): criada, decidida, ou `memory_suggestion.<estado>` (visto, feito). */
+export const MEMORY_EVENTS = [
+  "memory_suggestion.created",
+  "memory_suggestion.decided",
+  "memory_suggestion.seen",
+  "memory_suggestion.done",
+] as const;
 /** Espera entre tentativas de reabrir o canal (o próprio cliente reconecta o socket; isto cobre canal fechado). */
 const BACKOFF_MS = [1000, 2000, 5000, 10000, 30000];
 
@@ -62,6 +71,11 @@ export const subscribeWorkspace: Subscribe = (workspaceId, handlers) => {
     ch.on("broadcast", { event: "run_event" }, (msg: { payload: unknown }) => handlers.onRunEvent(msg.payload as RunEventPayload));
     for (const event of APPROVAL_EVENTS) {
       ch.on("broadcast", { event }, (msg: { payload: unknown }) => handlers.onApproval(event, msg.payload as ApprovalPayload));
+    }
+    for (const event of MEMORY_EVENTS) {
+      ch.on("broadcast", { event }, (msg: { payload: unknown }) =>
+        handlers.onMemory?.(event, msg.payload as MemorySuggestionPayload),
+      );
     }
     ch.subscribe((status: string) => {
       if (stopped || channel !== ch) return;

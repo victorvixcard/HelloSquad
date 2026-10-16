@@ -66,6 +66,7 @@
     "business": "Negócio",
     "origin": "Origem",
     "typeEnv": "Ambiente",
+    "typeMemory": "Conhecimento",
     "responds": "responde · {env}",
     "back": "Voltar para {env}"
   }
