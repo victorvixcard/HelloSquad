@@ -1,0 +1,181 @@
+{
+  "delivery_type": "07.03",
+  "step": "iris.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2600,
+        "output_tokens": 950,
+        "cache_write_tokens": 3400
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Relatório: últimos 30 dias contra os 30 anteriores",
+          "resumo": "Nova versão com o ajuste pedido. Nos últimos 30 dias, comparados aos 30 anteriores, o Instagram ganhou alcance e um pouco de seguidores, o site perdeu sessões e os pedidos ficaram praticamente estáveis, com leve queda. Os números são de fonte de teste e o período anterior tem três dias sem dado de sessões, então a comparação do site pede cuidado.",
+          "destaques": [
+            {
+              "texto": "As sessões no site caíram em relação aos 30 dias anteriores.",
+              "tipo": "fato",
+              "evidencias": [
+                "E1"
+              ]
+            },
+            {
+              "texto": "O alcance no Instagram subiu, e os seguidores cresceram pouco.",
+              "tipo": "fato",
+              "evidencias": [
+                "E2",
+                "E3"
+              ]
+            },
+            {
+              "texto": "Os pedidos ficaram praticamente estáveis, com leve queda.",
+              "tipo": "fato",
+              "evidencias": [
+                "E4"
+              ]
+            },
+            {
+              "texto": "Instagram em alta e site em queda coincidem no mesmo período. Uma hipótese é que os posts de mais alcance não convidem a visitar o site; vale testar antes de concluir.",
+              "tipo": "hipotese",
+              "evidencias": [
+                "E1",
+                "E3"
+              ]
+            }
+          ],
+          "por_canal": [
+            {
+              "canal": "site",
+              "texto": "Sessões em queda. A soma do período anterior está incompleta, com três dias sem dado, então a comparação pede cuidado.",
+              "tipo": "fato",
+              "evidencias": [
+                "E1"
+              ]
+            },
+            {
+              "canal": "instagram",
+              "texto": "Alcance em alta e seguidores com crescimento pequeno. O alcance é a soma do alcance diário, não o número de pessoas diferentes.",
+              "tipo": "fato",
+              "evidencias": [
+                "E2",
+                "E3"
+              ]
+            },
+            {
+              "canal": "store",
+              "texto": "Pedidos praticamente estáveis, com leve queda. Não há como separar os pedidos pelo canal de origem.",
+              "tipo": "fato",
+              "evidencias": [
+                "E4"
+              ]
+            }
+          ],
+          "limitacoes": [
+            "O período anterior tem três dias sem dado de sessões no site; a soma daquele período está incompleta.",
+            "Os números vêm de fonte de teste, não de contas conectadas.",
+            "Não há atribuição por canal: os pedidos não dizem se vieram do Instagram, do WhatsApp, do site ou do balcão.",
+            "O alcance somado dia a dia conta a mesma pessoa mais de uma vez."
+          ],
+          "proximos_passos": [
+            "Registrar a origem de cada encomenda para o próximo relatório separar os pedidos por canal.",
+            "Conectar o GA4 e o Instagram para o próximo relatório usar dado real.",
+            "Repetir esta comparação no fim do próximo mês, no mesmo formato, para formar histórico."
+          ]
+        },
+        "mensagem": "Fiz a nova versão com o ajuste que você pediu. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "relatorio",
+      "usage": {
+        "input_tokens": 2600,
+        "output_tokens": 950,
+        "cache_write_tokens": 3400
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Relatório: últimos 30 dias contra os 30 anteriores",
+          "resumo": "Nos últimos 30 dias, comparados aos 30 anteriores, o Instagram ganhou alcance e um pouco de seguidores, o site perdeu sessões e os pedidos ficaram praticamente estáveis, com leve queda. Os números são de fonte de teste e o período anterior tem três dias sem dado de sessões, então a comparação do site pede cuidado.",
+          "destaques": [
+            {
+              "texto": "As sessões no site caíram em relação aos 30 dias anteriores.",
+              "tipo": "fato",
+              "evidencias": [
+                "E1"
+              ]
+            },
+            {
+              "texto": "O alcance no Instagram subiu, e os seguidores cresceram pouco.",
+              "tipo": "fato",
+              "evidencias": [
+                "E2",
+                "E3"
+              ]
+            },
+            {
+              "texto": "Os pedidos ficaram praticamente estáveis, com leve queda.",
+              "tipo": "fato",
+              "evidencias": [
+                "E4"
+              ]
+            },
+            {
+              "texto": "Instagram em alta e site em queda coincidem no mesmo período. Uma hipótese é que os posts de mais alcance não convidem a visitar o site; vale testar antes de concluir.",
+              "tipo": "hipotese",
+              "evidencias": [
+                "E1",
+                "E3"
+              ]
+            }
+          ],
+          "por_canal": [
+            {
+              "canal": "site",
+              "texto": "Sessões em queda. A soma do período anterior está incompleta, com três dias sem dado, então a comparação pede cuidado.",
+              "tipo": "fato",
+              "evidencias": [
+                "E1"
+              ]
+            },
+            {
+              "canal": "instagram",
+              "texto": "Alcance em alta e seguidores com crescimento pequeno. O alcance é a soma do alcance diário, não o número de pessoas diferentes.",
+              "tipo": "fato",
+              "evidencias": [
+                "E2",
+                "E3"
+              ]
+            },
+            {
+              "canal": "store",
+              "texto": "Pedidos praticamente estáveis, com leve queda. Não há como separar os pedidos pelo canal de origem.",
+              "tipo": "fato",
+              "evidencias": [
+                "E4"
+              ]
+            }
+          ],
+          "limitacoes": [
+            "O período anterior tem três dias sem dado de sessões no site; a soma daquele período está incompleta.",
+            "Os números vêm de fonte de teste, não de contas conectadas.",
+            "Não há atribuição por canal: os pedidos não dizem se vieram do Instagram, do WhatsApp, do site ou do balcão.",
+            "O alcance somado dia a dia conta a mesma pessoa mais de uma vez."
+          ],
+          "proximos_passos": [
+            "Registrar a origem de cada encomenda para o próximo relatório separar os pedidos por canal.",
+            "Conectar o GA4 e o Instagram para o próximo relatório usar dado real.",
+            "Repetir esta comparação no fim do próximo mês, no mesmo formato, para formar histórico."
+          ]
+        },
+        "mensagem": "No último mês o Instagram ganhou alcance e o site perdeu sessões, com pedidos praticamente estáveis. O mês anterior tem três dias sem dado de sessões e os números são de teste, então leia a comparação do site com cuidado. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}

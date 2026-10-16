@@ -1,0 +1,33 @@
+{
+  "delivery_type": "07.04",
+  "step": "iris.check",
+  "cases": [
+    {
+      "name": "aprovada",
+      "usage": {
+        "input_tokens": 1400,
+        "output_tokens": 190,
+        "cache_read_tokens": 3400
+      },
+      "output": {
+        "aderencia_ao_briefing": {
+          "ok": true,
+          "observacao": "Responde ao que fazer primeiro, a partir das métricas do período."
+        },
+        "consistencia_de_marca": {
+          "ok": true,
+          "observacao": "Coerente com a operação da padaria e os canais confirmados."
+        },
+        "qualidade_profissional": {
+          "ok": true,
+          "observacao": "Poucas recomendações, em ordem, com base declarada e responsável certo."
+        },
+        "aplicabilidade_no_canal": {
+          "ok": true,
+          "observacao": "Cada recomendação vira uma conversa clara com o Nexo e o especialista."
+        },
+        "ajustes": []
+      }
+    }
+  ]
+}

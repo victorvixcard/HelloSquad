@@ -1,0 +1,28 @@
+{
+  "delivery_type": "07.04",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1600,
+        "output_tokens": 210
+      },
+      "output": {
+        "delivery_type": "07.04",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Saber o que fazer primeiro a partir dos números",
+          "tema": "recomendações priorizadas a partir dos dados",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Recomendações priorizadas para a Miolo a partir das métricas recentes."
+      }
+    }
+  ]
+}

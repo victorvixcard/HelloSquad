@@ -1,0 +1,28 @@
+{
+  "delivery_type": "07.02",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1600,
+        "output_tokens": 210
+      },
+      "output": {
+        "delivery_type": "07.02",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Entender os últimos resultados",
+          "tema": "análise qualitativa de desempenho",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": "últimos 30 dias"
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Análise dos últimos resultados da Miolo: últimos 30 dias contra os 30 anteriores."
+      }
+    }
+  ]
+}

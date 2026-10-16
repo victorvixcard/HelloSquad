@@ -28,9 +28,29 @@ from hellosquad.research.websearch import (
     WebSearch,
     WebSearchUnavailable,
 )
+from hellosquad.squad.data import (
+    base_summary,
+    contact_base,
+    contact_block,
+    ground_reading,
+    ground_recommendation,
+    metrics_block,
+    metrics_evidence,
+    metrics_summary,
+    period_days,
+    segment_numbers,
+)
 from hellosquad.squad.deliveries import (
+    AdTestsDelivery,
     EditorialCalendarDelivery,
+    MediaPlanDelivery,
+    MessageSequenceDelivery,
+    PerformanceAnalysisDelivery,
+    PeriodReportDelivery,
+    RecommendationsDelivery,
     ResearchDelivery,
+    RetentionCampaignDelivery,
+    SegmentationDelivery,
     delivery_spec,
 )
 from hellosquad.squad.loader import AgentDefinition, SquadLoader
@@ -68,6 +88,20 @@ TRIAGE_MAX_TOKENS = 4096
 RESEARCH = "02.07"
 CALENDAR = "04.02"
 MULTICHANNEL = "04.03"
+MEDIA_PLAN = "05.01"
+AD_TESTS = "05.02"
+CAMPAIGN = "06.01"
+SEQUENCE = "06.02"
+SEGMENTATION = "06.03"
+ANALYSIS = "07.02"
+REPORT = "07.03"
+RECOMMENDATIONS = "07.04"
+# Deliveries do Max que leem a base de contatos; a segmentação e a campanha não existem sem ela (a
+# pessoa é chamada a importar). As da Íris leem as métricas e, sem métrica, pedem conexão ou
+# planilha (Documento Mestre §14: estado vazio pede conexão ou importação, sem inventar resultado).
+CONTACT_BASED = {SEGMENTATION, CAMPAIGN, SEQUENCE}
+NEEDS_CONTACTS = {SEGMENTATION, CAMPAIGN}
+METRIC_BASED = {ANALYSIS, REPORT, RECOMMENDATIONS}
 # Documentos aprovados que cada delivery lê antes de produzir (no mesmo projeto; sem projeto, no
 # workspace): o plano parte do diagnóstico, a campanha do posicionamento e do plano, e o Otto segue
 # a estratégia da campanha (Documento Mestre, Anexo A: 02.03, 02.04 e 04.03).
@@ -77,9 +111,26 @@ PRIOR_DOCUMENTS = {
     "02.04": ["02.02", "02.03"],
     CALENDAR: ["02.04"],
     MULTICHANNEL: ["02.04"],
+    MEDIA_PLAN: ["02.02", "02.03", "02.04"],
+    AD_TESTS: ["02.02", "02.04", MEDIA_PLAN],
+    CAMPAIGN: ["02.02", SEGMENTATION],
+    SEQUENCE: [CAMPAIGN],
+    REPORT: [ANALYSIS, REPORT],
+    RECOMMENDATIONS: [ANALYSIS, REPORT],
 }
 # Deliveries que trabalham com datas: a data de hoje vai no contexto.
-DATED = {"02.03", "02.04", CALENDAR, MULTICHANNEL}
+DATED = {
+    "02.03",
+    "02.04",
+    CALENDAR,
+    MULTICHANNEL,
+    MEDIA_PLAN,
+    CAMPAIGN,
+    SEQUENCE,
+    ANALYSIS,
+    REPORT,
+    RECOMMENDATIONS,
+}
 CALENDAR_LOOKAHEAD_DAYS = 35
 
 Output = TypeVar("Output", bound=StepOutput)
@@ -372,6 +423,19 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         )
         return {"outcome": "asked", "missing": missing, **result}
 
+    lacking = await missing_data(store, delivery_type)
+    if lacking:
+        require_tool(expert, "conversas.perguntar")
+        result = await store.ask(
+            work_item=item,
+            agent_id=expert.id,
+            question=t(locale, f"data.missing.{lacking}", brand=data.workspace_name),
+            tool_data={"tool": "conversas.perguntar", "agent_id": expert.id, "faltam": [lacking]},
+            model=calls.last_model or nexo.model["triagem"],
+            status=status_fields(locale, expert, "wait", "wait_answer"),
+        )
+        return {"outcome": "asked", "missing": [lacking], **result}
+
     require_tool(nexo, "squad.delegar")
     await store.work_step(item.id, triage_title, nexo.id, "done")
     briefing = triage.briefing.model_dump()
@@ -486,6 +550,8 @@ class DeliveryContext:
     research: SearchResponse | None = None
     research_error: str | None = None
     documents: list[dict[str, Any]] = field(default_factory=list)
+    base: dict[str, Any] | None = None
+    metrics: dict[str, Any] | None = None
 
     def finalize(self, entrega: StepOutput) -> dict[str, Any]:
         content = entrega.model_dump(mode="json")
@@ -493,6 +559,16 @@ class DeliveryContext:
             content |= research_content(entrega, self.research, self.research_error)
         if self.delivery_type == MULTICHANNEL:
             content["estrategia"] = strategy_reference(self.documents)
+        if isinstance(entrega, MediaPlanDelivery | AdTestsDelivery):
+            content |= kiwi_content(entrega, self.documents)
+        if isinstance(
+            entrega, SegmentationDelivery | RetentionCampaignDelivery | MessageSequenceDelivery
+        ):
+            content |= max_content(entrega, self.base or {}, self.documents)
+        if isinstance(
+            entrega, PerformanceAnalysisDelivery | PeriodReportDelivery | RecommendationsDelivery
+        ):
+            content |= iris_content(entrega, self.metrics or {}, self.documents)
         return content
 
     def tool_data(self, content: dict[str, Any]) -> dict[str, Any]:
@@ -542,7 +618,122 @@ async def gather_context(
             squad, store, calls, expert, briefing, request
         )
         gathered.blocks.append(research_block(gathered.research))
+    if delivery_type in CONTACT_BASED:
+        require_tool(expert, "segmentos.criar")
+        gathered.base = contact_base(await store.contacts(), today)
+        await store.tool_step(
+            {
+                "tool": "segmentos.criar",
+                "agent_id": expert.id,
+                "contatos": gathered.base["total"],
+                "com_consentimento": gathered.base["com_consentimento"]["algum"],
+            }
+        )
+        gathered.blocks.append(contact_block(gathered.base))
+    if delivery_type in METRIC_BASED:
+        require_tool(expert, "dados.ler_series_historicas")
+        days = period_days(briefing.get("data"), request)
+        last_day, rows = await store.metrics(days)
+        if last_day is None:
+            raise FlowError("metrics_missing", {"delivery_type": delivery_type})
+        gathered.metrics = metrics_evidence(rows, last_day, days)
+        await store.tool_step(
+            {
+                "tool": "dados.ler_series_historicas",
+                "agent_id": expert.id,
+                "periodo_atual": gathered.metrics["periodo_atual"],
+                "series": len(gathered.metrics["evidencias"]),
+                "lacunas": len(gathered.metrics["lacunas"]),
+            }
+        )
+        gathered.blocks.append(metrics_block(gathered.metrics))
     return gathered
+
+
+async def missing_data(store: RunStore, delivery_type: str) -> str | None:
+    """O dado sem o qual a delivery não existe: base de contatos (Max) ou métricas (Íris)."""
+    if delivery_type in NEEDS_CONTACTS and not await store.contacts():
+        return "contacts"
+    if delivery_type in METRIC_BASED and (await store.metrics(1))[0] is None:
+        return "metrics"
+    return None
+
+
+def document_reference(
+    documents: list[dict[str, Any]], delivery_type: str
+) -> dict[str, Any] | None:
+    found = next((d for d in documents if d["delivery_type"] == delivery_type), None)
+    if found is None:
+        return None
+    return {"delivery_version_id": str(found["delivery_version_id"]), "versao": found["version_no"]}
+
+
+def kiwi_content(
+    entrega: MediaPlanDelivery | AdTestsDelivery, documents: list[dict[str, Any]]
+) -> dict[str, Any]:
+    """Nada é investido nem criado nesta fase: a conta de anúncios não está conectada."""
+    if isinstance(entrega, MediaPlanDelivery):
+        return {"execucao": {"investimento": "nao_executado", "conta_de_anuncios": "nao_conectada"}}
+    plan = document_reference(documents, MEDIA_PLAN)
+    if plan is not None:
+        approved = next(d for d in documents if d["delivery_type"] == MEDIA_PLAN)
+        plan["teto_proposto"] = (approved["content"].get("orcamento") or {}).get("teto_proposto")
+    return {
+        "execucao": {"anuncios": "nao_criados", "conta_de_anuncios": "nao_conectada"},
+        "plano_de_midia": plan,
+    }
+
+
+def max_content(
+    entrega: SegmentationDelivery | RetentionCampaignDelivery | MessageSequenceDelivery,
+    base: dict[str, Any],
+    documents: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Números da base (tamanho, elegíveis por canal, origem) e o envio: nunca do modelo."""
+    if isinstance(entrega, SegmentationDelivery):
+        return {
+            "base": base_summary(base),
+            "segmentos": [
+                s.model_dump(mode="json") | base["segmentos"][s.id] for s in entrega.segmentos
+            ],
+        }
+    if isinstance(entrega, RetentionCampaignDelivery):
+        return {
+            "segmento": entrega.segmento.model_dump(mode="json")
+            | segment_numbers(base, entrega.segmento.id),
+            "envio": "nao_autorizado",
+        }
+    return {
+        "publico": segment_numbers(base, entrega.segmento) if base.get("total") else None,
+        "campanha": document_reference(documents, CAMPAIGN),
+        "envio": "nao_autorizado",
+    }
+
+
+def iris_content(
+    entrega: PerformanceAnalysisDelivery | PeriodReportDelivery | RecommendationsDelivery,
+    metrics: dict[str, Any],
+    documents: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Evidências calculadas da tabela de métricas; leitura sem evidência não fica como fato e
+    causa sem teste controlado vira hipótese."""
+    ids = {e["id"] for e in metrics["evidencias"]}
+    content: dict[str, Any] = {
+        "dados": metrics_summary(metrics),
+        "evidencias": metrics["evidencias"],
+    }
+    if isinstance(entrega, PerformanceAnalysisDelivery):
+        content["leituras"] = [ground_reading(r, ids, set()) for r in entrega.leituras]
+    elif isinstance(entrega, PeriodReportDelivery):
+        content["destaques"] = [ground_reading(r, ids, set()) for r in entrega.destaques]
+        content["por_canal"] = [ground_reading(r, ids, set()) for r in entrega.por_canal]
+        content["relatorio_anterior"] = document_reference(documents, REPORT)
+    else:
+        content["recomendacoes"] = [ground_recommendation(r, ids) for r in entrega.recomendacoes]
+        content["analises"] = [
+            ref for ref in (document_reference(documents, d) for d in (ANALYSIS, REPORT)) if ref
+        ]
+    return content
 
 
 async def web_research(

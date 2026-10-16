@@ -1,0 +1,199 @@
+{
+  "delivery_type": "07.02",
+  "step": "iris.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2600,
+        "output_tokens": 950,
+        "cache_write_tokens": 3400
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Análise de desempenho: últimos 30 dias",
+          "resumo": "Nova versão com o ajuste pedido. Nos últimos 30 dias, comparados aos 30 anteriores, o alcance no Instagram subiu e os seguidores cresceram pouco, enquanto as sessões no site caíram e os pedidos ficaram praticamente estáveis, com leve queda. Alcance em alta e site em queda coincidem no mesmo período, mas sem teste não dá para dizer que uma coisa explica a outra. Os números são de fonte de teste e o período anterior tem três dias sem dado de sessões.",
+          "leituras": [
+            {
+              "texto": "As sessões no site caíram em relação aos 30 dias anteriores. Faltam três dias de dado no período anterior, então a soma daquele período está incompleta e a comparação pede cuidado.",
+              "tipo": "fato",
+              "evidencias": [
+                "E1"
+              ]
+            },
+            {
+              "texto": "O alcance no Instagram subiu. É a soma do alcance de cada dia, não o número de pessoas diferentes alcançadas.",
+              "tipo": "fato",
+              "evidencias": [
+                "E3"
+              ]
+            },
+            {
+              "texto": "Os seguidores no Instagram subiram pouco: o valor do fim do período atual está um pouco acima do valor do fim do anterior.",
+              "tipo": "fato",
+              "evidencias": [
+                "E2"
+              ]
+            },
+            {
+              "texto": "Os pedidos ficaram praticamente estáveis, com leve queda em relação ao período anterior.",
+              "tipo": "fato",
+              "evidencias": [
+                "E4"
+              ]
+            },
+            {
+              "texto": "Alcance em alta e sessões no site em queda coincidem no mesmo período. Isso não quer dizer que uma coisa explica a outra: sem um teste, as duas podem ter explicações diferentes.",
+              "tipo": "hipotese",
+              "evidencias": [
+                "E1",
+                "E3"
+              ]
+            },
+            {
+              "texto": "Uma hipótese é que os posts que alcançaram mais gente não tragam link nem convite para visitar o site. Vale testar posts com chamada para o site e acompanhar as sessões.",
+              "tipo": "hipotese",
+              "evidencias": [
+                "E1",
+                "E3"
+              ]
+            },
+            {
+              "texto": "Pedidos estáveis com menos sessões no site podem ter relação com encomendas que chegam pelo WhatsApp ou pelo balcão, sem passar pelo site. Sem registrar a origem de cada encomenda, isso continua sendo hipótese.",
+              "tipo": "hipotese",
+              "evidencias": [
+                "E1",
+                "E4"
+              ]
+            }
+          ],
+          "o_que_os_dados_nao_mostram": [
+            "De onde vêm os pedidos: não há atribuição por canal, então não dá para dizer quanto do Instagram, do WhatsApp, do site ou do balcão virou encomenda.",
+            "Quantas pessoas diferentes viram os posts: o alcance somado dia a dia conta a mesma pessoa mais de uma vez.",
+            "O que aconteceu no site nos três dias sem dado de sessões do período anterior.",
+            "Se os números valem para a operação real: a origem é fonte de teste, não uma conta conectada."
+          ],
+          "dados_que_faltam": [
+            {
+              "dado": "Origem de cada encomenda (Instagram, WhatsApp, site ou balcão)",
+              "como_conseguir": "Registrar a origem na hora de anotar a encomenda, com uma pergunta curta: por onde você chegou até a gente?"
+            },
+            {
+              "dado": "Sessões do site por origem de tráfego",
+              "como_conseguir": "Conectar o GA4 do site."
+            },
+            {
+              "dado": "Alcance, visitas ao perfil e cliques no link por post",
+              "como_conseguir": "Conectar a conta do Instagram."
+            }
+          ],
+          "proximos_passos": [
+            "Começar a registrar a origem de cada encomenda já na próxima semana.",
+            "Conectar o GA4 e o Instagram para trocar a fonte de teste por dado real.",
+            "Testar posts com chamada para o site por algumas semanas e comparar as sessões com o período anterior."
+          ]
+        },
+        "mensagem": "Fiz a nova versão com o ajuste que você pediu. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "analise",
+      "usage": {
+        "input_tokens": 2600,
+        "output_tokens": 950,
+        "cache_write_tokens": 3400
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Análise de desempenho: últimos 30 dias",
+          "resumo": "Nos últimos 30 dias, comparados aos 30 anteriores, o alcance no Instagram subiu e os seguidores cresceram pouco, enquanto as sessões no site caíram e os pedidos ficaram praticamente estáveis, com leve queda. Alcance em alta e site em queda coincidem no mesmo período, mas sem teste não dá para dizer que uma coisa explica a outra. Os números são de fonte de teste e o período anterior tem três dias sem dado de sessões.",
+          "leituras": [
+            {
+              "texto": "As sessões no site caíram em relação aos 30 dias anteriores. Faltam três dias de dado no período anterior, então a soma daquele período está incompleta e a comparação pede cuidado.",
+              "tipo": "fato",
+              "evidencias": [
+                "E1"
+              ]
+            },
+            {
+              "texto": "O alcance no Instagram subiu. É a soma do alcance de cada dia, não o número de pessoas diferentes alcançadas.",
+              "tipo": "fato",
+              "evidencias": [
+                "E3"
+              ]
+            },
+            {
+              "texto": "Os seguidores no Instagram subiram pouco: o valor do fim do período atual está um pouco acima do valor do fim do anterior.",
+              "tipo": "fato",
+              "evidencias": [
+                "E2"
+              ]
+            },
+            {
+              "texto": "Os pedidos ficaram praticamente estáveis, com leve queda em relação ao período anterior.",
+              "tipo": "fato",
+              "evidencias": [
+                "E4"
+              ]
+            },
+            {
+              "texto": "Alcance em alta e sessões no site em queda coincidem no mesmo período. Isso não quer dizer que uma coisa explica a outra: sem um teste, as duas podem ter explicações diferentes.",
+              "tipo": "hipotese",
+              "evidencias": [
+                "E1",
+                "E3"
+              ]
+            },
+            {
+              "texto": "Uma hipótese é que os posts que alcançaram mais gente não tragam link nem convite para visitar o site. Vale testar posts com chamada para o site e acompanhar as sessões.",
+              "tipo": "hipotese",
+              "evidencias": [
+                "E1",
+                "E3"
+              ]
+            },
+            {
+              "texto": "Pedidos estáveis com menos sessões no site podem ter relação com encomendas que chegam pelo WhatsApp ou pelo balcão, sem passar pelo site. Sem registrar a origem de cada encomenda, isso continua sendo hipótese.",
+              "tipo": "hipotese",
+              "evidencias": [
+                "E1",
+                "E4"
+              ]
+            }
+          ],
+          "o_que_os_dados_nao_mostram": [
+            "De onde vêm os pedidos: não há atribuição por canal, então não dá para dizer quanto do Instagram, do WhatsApp, do site ou do balcão virou encomenda.",
+            "Quantas pessoas diferentes viram os posts: o alcance somado dia a dia conta a mesma pessoa mais de uma vez.",
+            "O que aconteceu no site nos três dias sem dado de sessões do período anterior.",
+            "Se os números valem para a operação real: a origem é fonte de teste, não uma conta conectada."
+          ],
+          "dados_que_faltam": [
+            {
+              "dado": "Origem de cada encomenda (Instagram, WhatsApp, site ou balcão)",
+              "como_conseguir": "Registrar a origem na hora de anotar a encomenda, com uma pergunta curta: por onde você chegou até a gente?"
+            },
+            {
+              "dado": "Sessões do site por origem de tráfego",
+              "como_conseguir": "Conectar o GA4 do site."
+            },
+            {
+              "dado": "Alcance, visitas ao perfil e cliques no link por post",
+              "como_conseguir": "Conectar a conta do Instagram."
+            }
+          ],
+          "proximos_passos": [
+            "Começar a registrar a origem de cada encomenda já na próxima semana.",
+            "Conectar o GA4 e o Instagram para trocar a fonte de teste por dado real.",
+            "Testar posts com chamada para o site por algumas semanas e comparar as sessões com o período anterior."
+          ]
+        },
+        "mensagem": "O alcance no Instagram subiu e as sessões no site caíram, mas sem teste não dá para dizer que uma coisa explica a outra. Os pedidos ficaram praticamente estáveis e ainda não sabemos de onde eles vêm. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}

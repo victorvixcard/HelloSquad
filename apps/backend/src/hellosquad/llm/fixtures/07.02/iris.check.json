@@ -1,0 +1,33 @@
+{
+  "delivery_type": "07.02",
+  "step": "iris.check",
+  "cases": [
+    {
+      "name": "aprovada",
+      "usage": {
+        "input_tokens": 1400,
+        "output_tokens": 190,
+        "cache_read_tokens": 3400
+      },
+      "output": {
+        "aderencia_ao_briefing": {
+          "ok": true,
+          "observacao": "Lê os últimos 30 dias contra os 30 anteriores, como pedido."
+        },
+        "consistencia_de_marca": {
+          "ok": true,
+          "observacao": "Leitura ligada à operação da padaria e aos canais confirmados."
+        },
+        "qualidade_profissional": {
+          "ok": true,
+          "observacao": "Todo fato cita evidência, hipóteses escritas como hipóteses, lacuna e fonte de teste ditas."
+        },
+        "aplicabilidade_no_canal": {
+          "ok": true,
+          "observacao": "Diz o que acompanhar, o que testar e que dado conectar."
+        },
+        "ajustes": []
+      }
+    }
+  ]
+}

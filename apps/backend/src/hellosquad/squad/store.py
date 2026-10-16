@@ -528,6 +528,51 @@ class RunStore:
                 )
             ).fetchall()
 
+    async def contacts(self) -> list[dict[str, Any]]:
+        """Base de contatos com o consentimento vigente por canal (o registro mais recente)."""
+        async with self.pool.connection() as conn:
+            return await (
+                await conn.execute(
+                    """
+                    select c.id, c.source, c.last_purchase_on, c.purchases_count,
+                           coalesce(bool_or(s.channel = 'email' and s.status = 'granted'), false)
+                             as email_ok,
+                           coalesce(bool_or(s.channel = 'whatsapp' and s.status = 'granted'), false)
+                             as whatsapp_ok
+                    from public.contacts c
+                    left join public.contact_consent_state s
+                      on s.contact_id = c.id and s.workspace_id = c.workspace_id
+                    where c.workspace_id = %s
+                    group by c.id
+                    order by c.id
+                    """,
+                    (self.workspace_id,),
+                )
+            ).fetchall()
+
+    async def metrics(self, days: int) -> tuple[date | None, list[dict[str, Any]]]:
+        """Último dia com métrica e as linhas dos dois períodos que terminam nele."""
+        async with self.pool.connection() as conn:
+            last_day = await fetchval(
+                conn,
+                "select max(day) from public.metrics_daily where workspace_id = %s",
+                (self.workspace_id,),
+            )
+            if last_day is None:
+                return None, []
+            rows = await (
+                await conn.execute(
+                    """
+                    select channel, metric, day, value, unit, source
+                    from public.metrics_daily
+                    where workspace_id = %s and day > %s::date - %s * 2 and day <= %s
+                    order by channel, metric, day
+                    """,
+                    (self.workspace_id, last_day, days, last_day),
+                )
+            ).fetchall()
+            return last_day, rows
+
     async def ensure_prompt_version(self, prompt: SquadPrompt) -> str:
         async with self.pool.connection() as conn:
             await conn.execute(

@@ -1,0 +1,28 @@
+{
+  "delivery_type": "07.03",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1600,
+        "output_tokens": 210
+      },
+      "output": {
+        "delivery_type": "07.03",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Comparar o último mês com o anterior",
+          "tema": "comparação entre períodos e relatório",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": "últimos 30 dias contra os 30 anteriores"
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Relatório da Miolo comparando os últimos 30 dias com os 30 anteriores."
+      }
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "delivery_type": "07.04",
+  "step": "iris.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2600,
+        "output_tokens": 950,
+        "cache_write_tokens": 3400
+      },
+      "output": {
+        "entrega": {
+          "titulo": "O que fazer primeiro a partir dos números",
+          "resumo": "Nova versão com o ajuste pedido. Primeiro, medir de onde vêm os pedidos e trocar a fonte de teste por dado real: sem isso, qualquer decisão sobre canal é palpite. Depois, testar se o alcance do Instagram chega ao site e à encomenda. Tudo aqui é para discutir com o Nexo e com quem executa antes de virar pedido.",
+          "recomendacoes": [
+            {
+              "ordem": 1,
+              "acao": "Registrar a origem de cada encomenda (Instagram, WhatsApp, site ou balcão)",
+              "por_que": "Os pedidos ficaram praticamente estáveis, mas hoje não há como saber de que canal eles vêm. Sem essa informação, nenhuma das outras leituras vira decisão.",
+              "base": "dado",
+              "evidencias": [
+                "E4"
+              ],
+              "responsavel": "iris",
+              "esforco": "baixo",
+              "discutir_com": [
+                "nexo",
+                "max"
+              ]
+            },
+            {
+              "ordem": 2,
+              "acao": "Conectar o GA4 do site e a conta do Instagram",
+              "por_que": "Os números de hoje são de fonte de teste e o período anterior tem três dias sem dado de sessões. Com as contas conectadas, a próxima comparação usa dado real e completo.",
+              "base": "dado",
+              "evidencias": [
+                "E1",
+                "E3"
+              ],
+              "responsavel": "iris",
+              "esforco": "baixo",
+              "discutir_com": [
+                "nexo",
+                "kiwi"
+              ]
+            },
+            {
+              "ordem": 3,
+              "acao": "Testar, por quatro semanas, posts com chamada clara para o site e acompanhar as sessões",
+              "por_que": "O alcance subiu e as sessões no site caíram no mesmo período. Uma hipótese é que os posts de mais alcance não convidem a visitar o site; o teste mostra se isso se confirma.",
+              "base": "hipotese",
+              "evidencias": [
+                "E1",
+                "E3"
+              ],
+              "responsavel": "otto",
+              "esforco": "medio",
+              "discutir_com": [
+                "nexo",
+                "otto",
+                "kiwi"
+              ]
+            },
+            {
+              "ordem": 4,
+              "acao": "Revisar o caminho do link da bio até a página de encomendas do site",
+              "por_que": "As sessões no site caíram. Vale checar se quem chega encontra rápido como encomendar; é hipótese, porque ainda não há dado de comportamento dentro do site.",
+              "base": "hipotese",
+              "evidencias": [
+                "E1"
+              ],
+              "responsavel": "kiwi",
+              "esforco": "medio",
+              "discutir_com": [
+                "nexo",
+                "kiwi"
+              ]
+            }
+          ],
+          "perguntas_para_o_squad": [
+            "Max: onde as encomendas são anotadas hoje, e dá para incluir a origem sem atrasar o atendimento?",
+            "Otto: os posts de maior alcance do período tinham chamada para o site ou para o WhatsApp?",
+            "Kiwi: o link da bio leva direto para a página de encomendas?",
+            "Nexo: agora vale mais trazer gente ao site ou fechar a encomenda pelo WhatsApp?"
+          ],
+          "premissas": [
+            "As recomendações partem das métricas dos últimos 30 dias contra os 30 anteriores, que são de fonte de teste.",
+            "Não há atribuição por canal: tudo o que liga um canal a pedido é hipótese até a origem das encomendas ser registrada.",
+            "Nenhuma recomendação traz meta numérica ou verba; isso depende de decisão do squad e de quem aprova."
+          ]
+        },
+        "mensagem": "Fiz a nova versão com o ajuste que você pediu. Agora é com você: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "recomendacoes",
+      "usage": {
+        "input_tokens": 2600,
+        "output_tokens": 950,
+        "cache_write_tokens": 3400
+      },
+      "output": {
+        "entrega": {
+          "titulo": "O que fazer primeiro a partir dos números",
+          "resumo": "Primeiro, medir de onde vêm os pedidos e trocar a fonte de teste por dado real: sem isso, qualquer decisão sobre canal é palpite. Depois, testar se o alcance do Instagram chega ao site e à encomenda. Tudo aqui é para discutir com o Nexo e com quem executa antes de virar pedido.",
+          "recomendacoes": [
+            {
+              "ordem": 1,
+              "acao": "Registrar a origem de cada encomenda (Instagram, WhatsApp, site ou balcão)",
+              "por_que": "Os pedidos ficaram praticamente estáveis, mas hoje não há como saber de que canal eles vêm. Sem essa informação, nenhuma das outras leituras vira decisão.",
+              "base": "dado",
+              "evidencias": [
+                "E4"
+              ],
+              "responsavel": "iris",
+              "esforco": "baixo",
+              "discutir_com": [
+                "nexo",
+                "max"
+              ]
+            },
+            {
+              "ordem": 2,
+              "acao": "Conectar o GA4 do site e a conta do Instagram",
+              "por_que": "Os números de hoje são de fonte de teste e o período anterior tem três dias sem dado de sessões. Com as contas conectadas, a próxima comparação usa dado real e completo.",
+              "base": "dado",
+              "evidencias": [
+                "E1",
+                "E3"
+              ],
+              "responsavel": "iris",
+              "esforco": "baixo",
+              "discutir_com": [
+                "nexo",
+                "kiwi"
+              ]
+            },
+            {
+              "ordem": 3,
+              "acao": "Testar, por quatro semanas, posts com chamada clara para o site e acompanhar as sessões",
+              "por_que": "O alcance subiu e as sessões no site caíram no mesmo período. Uma hipótese é que os posts de mais alcance não convidem a visitar o site; o teste mostra se isso se confirma.",
+              "base": "hipotese",
+              "evidencias": [
+                "E1",
+                "E3"
+              ],
+              "responsavel": "otto",
+              "esforco": "medio",
+              "discutir_com": [
+                "nexo",
+                "otto",
+                "kiwi"
+              ]
+            },
+            {
+              "ordem": 4,
+              "acao": "Revisar o caminho do link da bio até a página de encomendas do site",
+              "por_que": "As sessões no site caíram. Vale checar se quem chega encontra rápido como encomendar; é hipótese, porque ainda não há dado de comportamento dentro do site.",
+              "base": "hipotese",
+              "evidencias": [
+                "E1"
+              ],
+              "responsavel": "kiwi",
+              "esforco": "medio",
+              "discutir_com": [
+                "nexo",
+                "kiwi"
+              ]
+            }
+          ],
+          "perguntas_para_o_squad": [
+            "Max: onde as encomendas são anotadas hoje, e dá para incluir a origem sem atrasar o atendimento?",
+            "Otto: os posts de maior alcance do período tinham chamada para o site ou para o WhatsApp?",
+            "Kiwi: o link da bio leva direto para a página de encomendas?",
+            "Nexo: agora vale mais trazer gente ao site ou fechar a encomenda pelo WhatsApp?"
+          ],
+          "premissas": [
+            "As recomendações partem das métricas dos últimos 30 dias contra os 30 anteriores, que são de fonte de teste.",
+            "Não há atribuição por canal: tudo o que liga um canal a pedido é hipótese até a origem das encomendas ser registrada.",
+            "Nenhuma recomendação traz meta numérica ou verba; isso depende de decisão do squad e de quem aprova."
+          ]
+        },
+        "mensagem": "A primeira recomendação é registrar a origem de cada encomenda: sem ela, não dá para saber que canal traz pedido. As outras três são para discutir com o Nexo e com quem executa. Agora é com você: aprove ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}
