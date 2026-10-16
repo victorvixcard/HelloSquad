@@ -1,0 +1,28 @@
+{
+  "side": "nosso",
+  "errors": [],
+  "1-conversa-do-ambiente": {
+    "head": "Otto",
+    "sugestoes": [],
+    "ultimas": [
+      "Otto, preciso de uma legenda para o post de sábado sobre o pão de fermentação lo",
+      "Tom acolhedor e direto, sem gíria. E sem a palavra \"artesanal\", combinado?"
+    ]
+  },
+  "2-antes-da-mensagem": {
+    "head": "OttoConteúdo",
+    "sugestoes": [
+      "Como está o plano da próxima semana?",
+      "Que conteúdos funcionaram melhor?",
+      "Quero melhorar meu Instagram."
+    ],
+    "ultimas": []
+  },
+  "3-depois-da-mensagem": {
+    "head": "OttoConteúdo",
+    "sugestoes": [],
+    "ultimas": [
+      "obrigada"
+    ]
+  }
+}

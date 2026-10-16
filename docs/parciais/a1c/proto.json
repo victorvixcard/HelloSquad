@@ -1,0 +1,24 @@
+{
+  "side": "proto",
+  "errors": [],
+  "1-conversa-do-ambiente": {
+    "head": "Otto",
+    "sugestoes": [
+      "Como está o plano da próxima semana?",
+      "Que conteúdos funcionaram melhor?",
+      "Quero melhorar meu Instagram."
+    ],
+    "ultimas": [
+      "Esta semana tem três publicações: a fornada de segunda (saiu hoje, às 9h), os ba"
+    ]
+  },
+  "2-depois-da-mensagem": {
+    "head": "Otto",
+    "sugestoes": [],
+    "ultimas": [
+      "Esta semana tem três publicações: a fornada de segunda (saiu hoje, às 9h), os ba",
+      "obrigada",
+      "Anotei, sobre Conteúdo. Neste protótipo eu respondo a alguns roteiros de exemplo"
+    ]
+  }
+}
