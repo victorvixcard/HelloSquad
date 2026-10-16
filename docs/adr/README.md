@@ -37,7 +37,22 @@ Formato curto: contexto → decisão → consequências. Status `proposto` até 
 **Decisão:** `credit_ledger` append-only com idempotência; `credit_holds` no início do run; preços em `delivery_prices` versionada; estimativa antes de gastar.
 **Consequências:** nenhuma cobrança dupla; valores podem mudar sem deploy; conciliação simples.
 
-## ADR-0008 · Stripe para cartão recorrente e Pix avulso — `proposto`
-**Contexto:** Stripe Brasil aceita Pix em pagamento único, não recorrente (verificado em 15/10/2026).
-**Decisão:** Stripe para assinatura por cartão e recarga SPOT (cartão ou Pix). Reavaliar gateway se Pix recorrente for requisito.
-**Consequências:** uma integração de pagamento; webhooks idempotentes; decisão comercial do Vic pode reabrir este ADR.
+## ADR-0008 · Cobrança via Asaas ou Mercado Pago, atrás de interface única — `decidido pelo Vic em 16/10/2026` (substitui a proposta Stripe)
+**Contexto:** pagamento recorrente é requisito; o Vic quer Asaas e Mercado Pago mapeados (contas ainda não criadas). Stripe Brasil não faz Pix recorrente.
+**Decisão:** módulo `billing` com interface `PaymentProvider` (assinatura, recarga avulsa, webhook, conciliação) e dois adaptadores, `asaas` e `mercadopago`, escolhidos por configuração. Implementação na Fase 2 com sandbox; preços e planos só quando o Vic definir.
+**Consequências:** nenhuma dependência de Stripe; webhooks idempotentes por `event_id`; validar na Fase 2 o suporte de cada um a Pix recorrente e cartão recorrente.
+
+## ADR-0009 · Memória semântica: FTS primeiro, embeddings atrás de adaptador — `proposto`
+**Contexto:** a memória precisa achar fatos por significado, não só por palavra. Embeddings são vetores guardados no nosso Postgres (pgvector); o que falta é o modelo que transforma texto em vetor.
+**Decisão:** Fase 1 usa busca textual do Postgres (configuração `portuguese`, depois `english`/`spanish`). Fase 2 avalia dois caminhos atrás de um adaptador: modelo open-source multilíngue rodando no nosso worker (sem custo por uso, dado não sai de casa) ou API paga (custo na casa de centavos por milhão de tokens). O Vic escolhe com os números na mão.
+**Consequências:** nada sai do nosso banco; trocar de modelo é reindexar.
+
+## ADR-0010 · Internacionalização desde a Fase 1 (pt-BR, en, es) — `decidido pelo Vic em 16/10/2026`
+**Contexto:** lançamento em vários países; desenvolver primeiro em pt-BR.
+**Decisão:** `next-intl` (ou equivalente) com catálogo de mensagens por idioma; nenhum texto fixo em componente; rota por idioma (`/` = pt-BR, `/en`, `/es`) com `hreflang`; `locale` em `workspaces` e `users`; mensagens de erro da API por idioma via código estável; os agentes recebem o idioma do workspace no contexto e respondem nele; SOULs traduzidas depois.
+**Consequências:** a fatia de fidelidade visual já nasce com catálogo pt-BR; en e es entram como tradução, não como refatoração.
+
+## ADR-0011 · Data API do Supabase desligada em produção — `decidido pelo Vic em 16/10/2026`
+**Contexto:** a Data API (`/rest/v1`) expõe o banco a quem tiver a chave publicável, protegido só por RLS. O Vic quer o sistema só para nós.
+**Decisão:** em produção, nenhum schema exposto na Data API; a única porta é a API FastAPI. Local mantém a Data API para os testes pgTAP e PostgREST. Auth, Storage e Realtime continuam.
+**Consequências:** o web e o mobile nunca falam com o banco diretamente; qualquer leitura passa pela nossa API.
