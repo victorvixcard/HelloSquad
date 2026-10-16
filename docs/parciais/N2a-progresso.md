@@ -1,0 +1,14 @@
+# N2a — Progresso (Nick Fury)
+
+**Fatia:** N2a, conteúdo SEO/GEO do site público e revisão de domínio do squad (Fase 2). Início: 16/10/2026 15:34. Alvo: 60 min.
+Área: só `docs/conteudo/` e `docs/parciais/N2a-*`. Não toco em `squad/`, `apps/`, `packages/` nem `supabase/` (S2b do Stark em paralelo).
+
+| Hora | Item | Estado | Commit |
+|---|---|---|---|
+| 15:37 | PASSO 0 lido: `DIRETRIZES_DO_DONO.md` inteiro; `ARQUITETURA_PROPOSTA.md` §7; Documento Mestre §1, §2, §4, §5, §6, §11; `squad/README.md`, `conversa.md`, sete `SOUL.md` e `agent.yaml`; catálogo de deliveries (extraído por script para `/tmp`); copy da Landing V1 R32 extraída por script (hero, squad, Modo Autônomo, Memória, Resultados, Comparativo, FAQ); catálogos `apps/web/messages/{pt-BR,en,es}` (`site`, `common`, `shell`, `pages`, `memory`, `auto`); `DADOS_FICTICIOS.md`; S2a §1 | feito | este |
+| | 1. `docs/conteudo/site/README.md` (rotas, promessa, palavras-chave, perguntas GEO, metadados, JSON-LD) | em andamento | |
+| | 2. Conteúdo pt-BR das rotas | pendente | |
+| | 3. en e es | pendente | |
+| | 4. `llms.txt` e `robots.txt` | pendente | |
+| | 5. `docs/conteudo/revisao_squad.md` | pendente | |
+| | 6. Relatório | pendente | |
