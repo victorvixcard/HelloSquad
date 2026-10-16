@@ -160,6 +160,39 @@ async def test_short_slug_gets_validation_error_in_portuguese(api, access_token)
     assert response.json()["error"]["details"] == [{"field": "slug", "message": "Curto demais."}]
 
 
+async def test_workspace_name_with_control_characters_or_html_is_refused(
+    api, access_token, admin_db
+) -> None:
+    """H2-13: o nome vai para o assunto do e-mail; quebra de linha e HTML voltam 422 com a
+    mensagem, e nada é criado."""
+    headers = bearer(access_token(PEDRO))
+    for index, name in enumerate(
+        [
+            "Miolo\r\nBcc: intruso@ataque.example",
+            "Miolo\nNovo",
+            "Miolo\u0000",
+            "<img src=x onerror=alert(1)>",
+            "Miolo \u202eacnap",
+        ]
+    ):
+        response = await api.post(
+            "/workspaces", headers=headers, json={"name": name, "slug": f"nome-invalido-{index}"}
+        )
+        assert response.status_code == 422, name
+        assert response.json()["error"]["details"] == [
+            {
+                "field": "name",
+                "message": (
+                    "O nome não pode ter quebra de linha, caracteres de controle nem < ou >."
+                ),
+            }
+        ]
+    leftovers = await scalar(
+        admin_db, "select count(*) from public.workspaces where slug like 'nome-invalido-%%'"
+    )
+    assert leftovers == 0
+
+
 async def test_taken_slug_is_a_conflict(api, access_token) -> None:
     response = await api.post(
         "/workspaces", headers=bearer(access_token(PEDRO)), json={"name": "Outra", "slug": "miolo"}

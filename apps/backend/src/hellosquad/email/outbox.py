@@ -123,7 +123,12 @@ class EmailOutbox:
             transient = exc.transient if isinstance(exc, EmailSendError) else True
             code = exc.code if isinstance(exc, EmailSendError) else "internal"
             details = exc.details if isinstance(exc, EmailSendError) else {}
-            if code == "internal":
+            if isinstance(exc, ValueError):
+                # Conteúdo que não vira e-mail (ex.: quebra de linha no nome do negócio, que vai
+                # para o assunto) falha igual em toda tentativa: definitivo, com o motivo.
+                transient, code = False, "invalid_message"
+                details = {"error_type": type(exc).__name__, "reason": str(exc)[:200]}
+            elif code == "internal":
                 log.exception("e-mail %s: erro inesperado", email_id)
                 details = {"error_type": type(exc).__name__}
             error = {"code": code, "attempts": row["attempts"], "details": details}

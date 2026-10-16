@@ -1,9 +1,17 @@
+import re
 from datetime import datetime
 from enum import StrEnum
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    BeforeValidator,
+    ConfigDict,
+    Field,
+    StringConstraints,
+)
 
 from hellosquad.credits.schemas import CreditBalance
 
@@ -13,6 +21,17 @@ SLUG_PATTERN = r"^[a-z0-9]+(-[a-z0-9]+)*$"
 def normalize_slug(value: object) -> object:
     # No Pydantic, to_lower do StringConstraints só roda depois do pattern; normaliza antes.
     return value.strip().lower() if isinstance(value, str) else value
+
+
+# O nome do negócio vai para o assunto e o corpo dos e-mails e para a tela: sem caracteres de
+# controle (quebra de linha), marcas de direção do texto nem < >.
+UNSAFE_NAME = re.compile(r"[\x00-\x1f\x7f-\x9f\u200e\u200f\u202a-\u202e\u2066-\u2069<>]")
+
+
+def check_display_name(value: str) -> str:
+    if UNSAFE_NAME.search(value):
+        raise ValueError("O nome não pode ter quebra de linha, caracteres de controle nem < ou >.")
+    return value
 
 
 class WorkspaceRole(StrEnum):
@@ -25,8 +44,16 @@ class WorkspaceRole(StrEnum):
 class WorkspaceCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] = (
-        Field(description="Nome do negócio, como aparece para o time.", examples=["Miolo"])
+    name: Annotated[
+        str,
+        StringConstraints(strip_whitespace=True, min_length=1, max_length=120),
+        AfterValidator(check_display_name),
+    ] = Field(
+        description=(
+            "Nome do negócio, como aparece para o time. Sem quebra de linha, caracteres de "
+            "controle nem < > (422 validation_error)."
+        ),
+        examples=["Miolo"],
     )
     slug: Annotated[
         str,

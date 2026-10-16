@@ -310,6 +310,37 @@ async def test_transient_failure_retries_and_then_reaches_mailpit(
 
 
 @pytest.mark.integration
+async def test_unsendable_content_fails_once_with_the_reason(
+    db, pool, mailpit, clean_state
+) -> None:
+    """H2-13: nome do negócio com quebra de linha (linha anterior à validação da API) não vira
+    e-mail: falha definitiva na 1ª tentativa, com o motivo, sem voltar à fila nem injetar
+    cabeçalho."""
+    await db.execute(
+        "update public.workspaces set name = %s where slug = 'miolo'",
+        ("Miolo\r\nBcc: intruso@ataque.example",),
+    )
+    try:
+        await invite(db, "miolo", "crlf.s2f@miolo.example", MARINA)
+        assert await outbox(pool).drain() == ["failed"]
+    finally:
+        await db.execute("update public.workspaces set name = 'Miolo' where slug = 'miolo'")
+    [row] = await emails(db, "m.recipient_email = 'crlf.s2f@miolo.example'")
+    assert row["status"] == "failed" and row["attempts"] == 1
+    assert row["error"]["code"] == "invalid_message"
+    assert row["error"]["details"]["error_type"] == "ValueError"
+    assert await (
+        await db.execute(
+            "select count(*) as n from pgmq.a_email_outbox where message->>'email_message_id' = %s",
+            (str(row["id"]),),
+        )
+    ).fetchone() == {"n": 1}
+    for query in ("to:crlf.s2f@miolo.example", "to:intruso@ataque.example"):
+        found = (await mailpit.get("/api/v1/search", params={"query": query})).json()
+        assert found["messages_count"] == 0, query
+
+
+@pytest.mark.integration
 async def test_recipient_outside_example_is_refused_without_sending(
     db, pool, mailpit, clean_state
 ) -> None:
