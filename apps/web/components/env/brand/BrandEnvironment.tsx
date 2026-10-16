@@ -1,6 +1,6 @@
 "use client";
 
-import { Agent, getAgent, PRODUCT_ICONS, STATUS_GLYPHS } from "@hellosquad/ui";
+import { Agent, PRODUCT_ICONS, STATUS_GLYPHS } from "@hellosquad/ui";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -35,38 +35,33 @@ function StatusTag({ label }: { label: string }) {
  * Marca & Criação · Kaia, o estúdio da V4.3/V4.6 (template L5378): "Bancada da Kaia" (a faixa "Precisa de você" e
  * "Em produção" com os trabalhos dela em andamento) e "Criações" com os filtros da galeria. Peça entregue só entra
  * quando houver entrega visual (o motor de imagem é do Vic); até lá a galeria mostra o que está em produção e as
- * contagens reais. Com um filtro ativo, o último quadro é o novo pedido, que abre a conversa com a Kaia.
+ * contagens reais. Com um filtro ativo, o último quadro é o novo pedido. A2b: a bancada diz que as peças esperam o
+ * motor de imagem (decisão do dono de 16/10), sem fornecedor e sem data, e o novo pedido explica a espera.
  */
 export function BrandEnvironment({ business, needs, production }: { business: string; needs: StripNeed[]; production: KaiaWork[] }) {
   const t = useTranslations("envs.kaia");
-  const tp = useTranslations("pages.env");
-  const tc = useTranslations("common");
+  const tcap = useTranslations("caps");
   const shell = useShell();
   const router = useRouter();
   const [cat, setCat] = useState<Cat>("all");
-  const kaia = getAgent("kaia");
   const nar = shell.layout.contentW < 1040 ? " is-nar" : "";
   // O que está em produção vem primeiro; sem tipo de peça ligado a uma categoria ainda, só aparece em "Todas".
   const tiles = cat === "all" ? production : [];
   const count = (c: Cat) => (c === "all" ? production.length : 0);
-  const ask = (c: NewCat) =>
-    shell.openConversation({
-      conversationId: shell.conversationIds.direct.kaia ?? null,
-      agent: "kaia",
-      context: {
-        kind: "env",
-        label: tc("areas.kaia"),
-        href: `/app/${shell.workspace.slug}/squad/kaia`,
-        meta: `${kaia.name} ${tp("describe.kaia", { business })}`,
-      },
-      draft: t(`ask.${c}`),
-    });
+  // Motor de imagem do dono (16/10): nenhuma entrega visual existe ainda, então o novo pedido não abre uma conversa que
+  // não teria entrega; diz o que falta, sem fornecedor e sem data.
+  const ask = (c: NewCat) => shell.toast(`${t(`new.${c}`)}: ${tcap("kaiaWaiting")}`, "kaia");
 
   return (
     <div className={`ps-v is-wide v4 ka${nar}`} style={{ maxWidth: shell.layout.contentW }}>
       <EnvIdentity agent="kaia" business={business} />
       <NeedsStrip items={needs} />
       <section className="ka-bench" aria-label={t("bench")}>
+        <section className="ka-eng" aria-labelledby="ka-eng-t">
+          <span className="ka-k">{t("engineK")}</span>
+          <h2 id="ka-eng-t">{t("engineTitle")}</h2>
+          <p>{t("engineText")}</p>
+        </section>
         <section className="ka-prod" aria-labelledby="ka-prod-t">
           <header className="ka-sh">
             <h2 id="ka-prod-t">{t("prod")}</h2>
@@ -116,7 +111,7 @@ export function BrandEnvironment({ business, needs, production }: { business: st
           <div className="v4-empty">
             <Agent agent="kaia" size={48} expression="oval" />
             <b>{t("emptyTitle")}</b>
-            <span>{t("emptyText", { business })}</span>
+            <span>{t("emptyWait", { business })}</span>
           </div>
         ) : (
           <div className="ka-grid">
@@ -150,7 +145,7 @@ export function BrandEnvironment({ business, needs, production }: { business: st
                   <small className="ka-t-k">{t("newKick")}</small>
                   <b>{t(`new.${cat}`)}</b>
                   <span className="ka-t-m">
-                    <small>{t("newMeta")}</small>
+                    <small>{t("waitMeta")}</small>
                   </span>
                 </span>
               </button>

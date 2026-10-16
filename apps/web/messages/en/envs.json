@@ -49,7 +49,12 @@
     "wipTag": "In production",
     "wipAria": "{title}, in production. Open",
     "emptyTitle": "No creations yet.",
-    "emptyText": "What Kaia produces for {business} shows up here. Choose a type above to make your first request."
+    "emptyText": "What Kaia produces for {business} shows up here. Choose a type above to make your first request.",
+    "engineK": "Image engine",
+    "engineTitle": "Waiting for the image engine",
+    "engineText": "Kaia’s pieces, carousels, images and videos depend on the image engine, which has not arrived yet. Until then, nothing is created or shown here as ready.",
+    "waitMeta": "Waiting for the image engine",
+    "emptyWait": "What Kaia creates for {business} shows up here when the image engine arrives."
   },
   "kiwi": {
     "goalKicker": "Growth goal",

@@ -1,1 +1,101 @@
-{}
+{
+  "legend": {
+    "you": "aguarda você",
+    "prog": "agendado",
+    "done": "publicado"
+  },
+  "dayNow": "hoje",
+  "thisWeek": "esta semana",
+  "prevMonth": "Mês anterior",
+  "nextMonth": "Próximo mês",
+  "weekGroup": "Semana {n} · {range}",
+  "more": "+{n}",
+  "timeH": "{h}h",
+  "timeHM": "{h}h{m}",
+  "select": "Selecionar",
+  "selected": "Selecionado",
+  "status": {
+    "draft": "Aguarda você",
+    "draftSub": "v{n} aguarda a sua aprovação",
+    "draftSubPlain": "aguarda a sua aprovação",
+    "planned": "Aprovado",
+    "plannedSub": "publicação não autorizada",
+    "scheduled": "Agendado",
+    "scheduledSub": "agendado",
+    "published": "Publicado",
+    "publishedSub": "publicado"
+  },
+  "channels": {
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "whatsapp": "WhatsApp",
+    "gbp": "Google Perfil",
+    "site": "Site",
+    "blog": "Blog",
+    "email": "E-mail",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "formats": {
+    "post": "Post",
+    "carousel": "Carrossel",
+    "reels": "Reels",
+    "stories": "Stories",
+    "status": "Status",
+    "article": "Artigo",
+    "email": "E-mail",
+    "video": "Vídeo"
+  },
+  "insp": {
+    "region": "Detalhe: {title}",
+    "close": "Fechar o detalhe",
+    "who": "Quem",
+    "origin": "Origem",
+    "originCalendar": "Calendário",
+    "originWork": "Trabalho do Otto",
+    "talk": "Conversar com Otto sobre este conteúdo",
+    "openWork": "Abrir entrega"
+  },
+  "quickTalk": "Conversar com Otto sobre {title}",
+  "quickTalkTip": "Conversar com Otto",
+  "tileAria": "{title}, {status}, {date}. Ver no calendário",
+  "ctx": {
+    "period": "Semana {n}",
+    "origin": {
+      "week": "Calendário · semana",
+      "month": "Calendário · mês",
+      "list": "Calendário · lista"
+    }
+  },
+  "loadError": "Não foi possível ler o calendário agora. Tente de novo em instantes.",
+  "doc": {
+    "period": "Período",
+    "periodRange": "{from} a {to}",
+    "posts": "Publicações",
+    "cols": {
+      "date": "Data",
+      "time": "Horário",
+      "channel": "Canal",
+      "format": "Formato",
+      "theme": "Tema",
+      "owner": "Responsável",
+      "goal": "Objetivo",
+      "notes": "Notas"
+    },
+    "notes": "Notas",
+    "theme": "Tema",
+    "goal": "Objetivo",
+    "versions": "Versões por canal",
+    "text": "Texto",
+    "script": "Roteiro",
+    "beat": "Trecho",
+    "visual": "Visual",
+    "hashtags": "Hashtags",
+    "cta": "Chamada para ação",
+    "kaia": "Pedido para a Kaia",
+    "kaiaWait": "A peça visual espera o motor de imagem: a Kaia ainda não cria imagens nesta versão do HelloSquad.",
+    "strategy": "Estratégia seguida",
+    "strategyText": "{concept} · v{version}",
+    "strategyPlain": "v{version}"
+  }
+}

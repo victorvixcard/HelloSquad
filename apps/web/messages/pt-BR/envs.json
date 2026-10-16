@@ -49,7 +49,12 @@
     "wipTag": "Em produção",
     "wipAria": "{title}, em produção. Abrir",
     "emptyTitle": "Nenhuma criação ainda.",
-    "emptyText": "O que a Kaia produzir para {business} aparece aqui. Escolha um tipo acima para fazer o primeiro pedido."
+    "emptyText": "O que a Kaia produzir para {business} aparece aqui. Escolha um tipo acima para fazer o primeiro pedido.",
+    "engineK": "Motor de imagem",
+    "engineTitle": "Aguardando o motor de imagem",
+    "engineText": "As peças, os carrosséis, as imagens e os vídeos da Kaia dependem do motor de imagem, que ainda não chegou. Até lá, nada é criado nem aparece aqui como pronto.",
+    "waitMeta": "Aguardando o motor de imagem",
+    "emptyWait": "O que a Kaia criar para {business} aparece aqui quando o motor de imagem chegar."
   },
   "kiwi": {
     "goalKicker": "Objetivo de crescimento",

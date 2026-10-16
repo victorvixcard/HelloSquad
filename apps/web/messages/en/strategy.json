@@ -1,1 +1,77 @@
-{}
+{
+  "env": {
+    "dirPosK": "Positioning · approved on {date}",
+    "refine": "Refine with Bia",
+    "rows": {
+      "objective": "Main goal",
+      "priority": "Priority now",
+      "audience": "Priority audience"
+    },
+    "joined": "{a} · {b}",
+    "ops": "Identified opportunities",
+    "opsSub": "in order of relevance",
+    "opsEmpty": "Opportunities show up here once a diagnosis by Bia has its first version.",
+    "lead": "Bia noticed",
+    "leadSrc": "{title} · v{version} · {date}",
+    "rel": {
+      "alta": "High relevance",
+      "media": "Medium relevance",
+      "baixa": "Low relevance"
+    },
+    "talk": "Talk about this",
+    "talkAria": "{title}. Talk to Bia",
+    "more": "{count, plural, one {See # more opportunity} other {See # more opportunities}}",
+    "less": "Show only the main ones",
+    "ana": "Under analysis",
+    "anaSub": "no conclusion yet",
+    "anaDue": "by {date}",
+    "anaEmpty": "Nothing under analysis right now.",
+    "docs": "Plans and diagnoses",
+    "docsSub": "documents by Bia, with versions and approval",
+    "docsEmpty": "No document with a version yet.",
+    "docMeta": "{month} · v{version}",
+    "docAria": "{kind}: {title}, {state}. Open",
+    "docState": {
+      "you": "Waiting for you",
+      "done": "Approved",
+      "and": "In progress"
+    }
+  },
+  "doc": {
+    "panorama": "Overview",
+    "attention": "Points of attention",
+    "opportunities": "Opportunities",
+    "assumptions": "Assumptions",
+    "missing": "Missing data",
+    "missingHow": "How to get it: {how}",
+    "positioning": "Positioning",
+    "differentials": "Differentiators",
+    "audiences": "Audiences",
+    "values": "Values: {value}",
+    "objectives": "Goals",
+    "indicator": "Indicator: {value}",
+    "deadline": "Deadline: {value}",
+    "horizon": "Horizon",
+    "initiatives": "Initiatives and horizon",
+    "leads": "{agent} leads",
+    "team": "Specialists involved",
+    "concept": "Concept",
+    "audience": "Audience",
+    "keyMessages": "Key messages",
+    "period": "Period",
+    "fronts": "Workstreams",
+    "research": "Research",
+    "researchDone": "Web research done with {provider} · collected on {date}",
+    "researchQuery": "Search: {query}",
+    "researchOff": "Web search unavailable in this version: everything here is a suggestion",
+    "findings": "Findings",
+    "kindResearch": "Research",
+    "kindSuggestion": "Suggestion · not validated",
+    "hypotheses": "Hypotheses",
+    "nextSteps": "Next steps",
+    "sources": "Sources",
+    "published": "published on {date}",
+    "collected": "collected on {date}",
+    "sourceRef": "Source {id}"
+  }
+}

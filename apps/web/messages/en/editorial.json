@@ -1,1 +1,101 @@
-{}
+{
+  "legend": {
+    "you": "waiting for you",
+    "prog": "scheduled",
+    "done": "published"
+  },
+  "dayNow": "today",
+  "thisWeek": "this week",
+  "prevMonth": "Previous month",
+  "nextMonth": "Next month",
+  "weekGroup": "Week {n} · {range}",
+  "more": "+{n}",
+  "timeH": "{h}:00",
+  "timeHM": "{h}:{m}",
+  "select": "Select",
+  "selected": "Selected",
+  "status": {
+    "draft": "Waiting for you",
+    "draftSub": "v{n} is waiting for your approval",
+    "draftSubPlain": "waiting for your approval",
+    "planned": "Approved",
+    "plannedSub": "publishing not authorized",
+    "scheduled": "Scheduled",
+    "scheduledSub": "scheduled",
+    "published": "Published",
+    "publishedSub": "published"
+  },
+  "channels": {
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "whatsapp": "WhatsApp",
+    "gbp": "Google Business Profile",
+    "site": "Website",
+    "blog": "Blog",
+    "email": "Email",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "formats": {
+    "post": "Post",
+    "carousel": "Carousel",
+    "reels": "Reels",
+    "stories": "Stories",
+    "status": "Status",
+    "article": "Article",
+    "email": "Email",
+    "video": "Video"
+  },
+  "insp": {
+    "region": "Detail: {title}",
+    "close": "Close the detail",
+    "who": "Who",
+    "origin": "Origin",
+    "originCalendar": "Calendar",
+    "originWork": "Work by Otto",
+    "talk": "Talk to Otto about this content",
+    "openWork": "Open delivery"
+  },
+  "quickTalk": "Talk to Otto about {title}",
+  "quickTalkTip": "Talk to Otto",
+  "tileAria": "{title}, {status}, {date}. See in the calendar",
+  "ctx": {
+    "period": "Week {n}",
+    "origin": {
+      "week": "Calendar · week",
+      "month": "Calendar · month",
+      "list": "Calendar · list"
+    }
+  },
+  "loadError": "The calendar could not be read right now. Try again in a moment.",
+  "doc": {
+    "period": "Period",
+    "periodRange": "{from} to {to}",
+    "posts": "Posts",
+    "cols": {
+      "date": "Date",
+      "time": "Time",
+      "channel": "Channel",
+      "format": "Format",
+      "theme": "Theme",
+      "owner": "Owner",
+      "goal": "Goal",
+      "notes": "Notes"
+    },
+    "notes": "Notes",
+    "theme": "Theme",
+    "goal": "Goal",
+    "versions": "Versions by channel",
+    "text": "Text",
+    "script": "Script",
+    "beat": "Beat",
+    "visual": "Visual",
+    "hashtags": "Hashtags",
+    "cta": "Call to action",
+    "kaia": "Request for Kaia",
+    "kaiaWait": "The visual piece is waiting for the image engine: Kaia does not create images in this version of HelloSquad yet.",
+    "strategy": "Strategy followed",
+    "strategyText": "{concept} · v{version}",
+    "strategyPlain": "v{version}"
+  }
+}

@@ -1,1 +1,77 @@
-{}
+{
+  "env": {
+    "dirPosK": "Posicionamiento · aprobado el {date}",
+    "refine": "Refinar con Bia",
+    "rows": {
+      "objective": "Objetivo principal",
+      "priority": "Prioridad ahora",
+      "audience": "Público prioritario"
+    },
+    "joined": "{a} · {b}",
+    "ops": "Oportunidades identificadas",
+    "opsSub": "en orden de relevancia",
+    "opsEmpty": "Las oportunidades aparecen aquí cuando un diagnóstico de Bia tenga su primera versión.",
+    "lead": "Bia notó",
+    "leadSrc": "{title} · v{version} · {date}",
+    "rel": {
+      "alta": "Relevancia alta",
+      "media": "Relevancia media",
+      "baixa": "Relevancia baja"
+    },
+    "talk": "Conversar sobre esto",
+    "talkAria": "{title}. Conversar con Bia",
+    "more": "{count, plural, one {Ver # oportunidad más} other {Ver # oportunidades más}}",
+    "less": "Mostrar solo las principales",
+    "ana": "En análisis",
+    "anaSub": "todavía sin conclusión",
+    "anaDue": "hasta el {date}",
+    "anaEmpty": "Nada en análisis ahora.",
+    "docs": "Planes y diagnósticos",
+    "docsSub": "documentos de Bia, con versiones y aprobación",
+    "docsEmpty": "Ningún documento con versión todavía.",
+    "docMeta": "{month} · v{version}",
+    "docAria": "{kind}: {title}, {state}. Abrir",
+    "docState": {
+      "you": "Te espera",
+      "done": "Aprobado",
+      "and": "En curso"
+    }
+  },
+  "doc": {
+    "panorama": "Panorama",
+    "attention": "Puntos de atención",
+    "opportunities": "Oportunidades",
+    "assumptions": "Supuestos",
+    "missing": "Datos que faltan",
+    "missingHow": "Cómo conseguirlo: {how}",
+    "positioning": "Posicionamiento",
+    "differentials": "Diferenciales",
+    "audiences": "Públicos",
+    "values": "Valora: {value}",
+    "objectives": "Objetivos",
+    "indicator": "Indicador: {value}",
+    "deadline": "Plazo: {value}",
+    "horizon": "Horizonte",
+    "initiatives": "Iniciativas y horizonte",
+    "leads": "{agent} lidera",
+    "team": "Especialistas involucrados",
+    "concept": "Concepto",
+    "audience": "Público",
+    "keyMessages": "Mensajes clave",
+    "period": "Período",
+    "fronts": "Frentes",
+    "research": "Investigación",
+    "researchDone": "Investigación web hecha con {provider} · recopilada el {date}",
+    "researchQuery": "Búsqueda: {query}",
+    "researchOff": "Búsqueda web no disponible en esta versión: todo aquí es sugerencia",
+    "findings": "Hallazgos",
+    "kindResearch": "Investigación",
+    "kindSuggestion": "Sugerencia · sin validación",
+    "hypotheses": "Hipótesis",
+    "nextSteps": "Próximos pasos",
+    "sources": "Fuentes",
+    "published": "publicado el {date}",
+    "collected": "recopilado el {date}",
+    "sourceRef": "Fuente {id}"
+  }
+}

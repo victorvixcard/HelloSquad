@@ -47,3 +47,17 @@
   font-size: 11px;
   letter-spacing: 0.04em;
 }
+
+/* A2b: espera do motor de imagem na bancada da Kaia (decisão do dono de 16/10). Ocupa o lugar do cartão "Precisa de
+   você" da V4.6 (`ka-need`), mas no cinza dos cartões neutros: a Tinta fica só para o que depende de você. */
+.ps .ka-eng {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 24px;
+  border-radius: 24px;
+  background: #F7F7F5;
+  min-width: 0;
+}
+.ps .ka-eng h2 { margin: 0; font-size: 18px; line-height: 1.25; color: #0F0D22; }
+.ps .ka-eng p { margin: 0; font-size: 14px; line-height: 1.5; color: #4A4760; }
