@@ -110,3 +110,70 @@ class RunStatus(StrEnum):
     succeeded = "succeeded"
     failed = "failed"
     cancelled = "cancelled"
+
+
+# Memória da Marca (S1d). Rótulos da V4.6 no catálogo (i18n/pt-BR.json, chaves memory.*).
+class MemoryArea(StrEnum):
+    business = "business"
+    brand = "brand"
+    audience = "audience"
+    knowledge = "knowledge"
+
+
+class BrandFactState(StrEnum):
+    confirmed = "confirmed"
+    decision = "decision"
+    from_source = "from_source"
+    observed = "observed"
+    suggested = "suggested"
+    outdated = "outdated"
+    discarded = "discarded"
+    conflicting = "conflicting"
+    unused = "unused"
+
+
+class FactSourceKind(StrEnum):
+    onboarding = "onboarding"
+    conversation = "conversation"
+    correction = "correction"
+    approval = "approval"
+    file = "file"
+    connection = "connection"
+    agent_observation = "agent_observation"
+
+
+class FactSourceState(StrEnum):
+    declared = "declared"
+    connected = "connected"
+    outdated = "outdated"
+    needs_reconnect = "needs_reconnect"
+    not_connected = "not_connected"
+    unavailable = "unavailable"
+
+
+class MemorySuggestionState(StrEnum):
+    open = "open"
+    seen = "seen"
+    done = "done"
+
+
+class MemorySuggestionDecision(StrEnum):
+    confirm = "confirm"
+    correct = "correct"
+    discard = "discard"
+
+
+class MemoryConflictState(StrEnum):
+    open = "open"
+    resolved = "resolved"
+
+
+class MemoryConflictResolution(StrEnum):
+    keep_a = "keep_a"
+    keep_b = "keep_b"
+    corrected = "corrected"
+
+
+class RunContextKind(StrEnum):
+    fact = "fact"
+    suggestion = "suggestion"

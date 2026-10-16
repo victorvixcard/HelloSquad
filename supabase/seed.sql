@@ -317,7 +317,8 @@ begin
   values
     (v_onboarding, v_miolo, 'onboarding', 'Onboarding e o que você contou', 'declared', '{}', v_at, v_at, v_at),
     (v_instagram, v_miolo, 'connection', 'Instagram', 'not_connected',
-     array['Ler posts e métricas', 'Publicar só com sua autorização'], null, v_at, v_at);
+     array['Ler posts e métricas', 'Publicar só com sua autorização'], null,
+     v_at + interval '5 minutes', v_at + interval '5 minutes');
 
   insert into public.brand_facts (
     id, workspace_id, area, topic, key, content, state, source_type, source_id, origin, valid_from,
@@ -328,16 +329,16 @@ begin
      'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
     ('5eed0000-0000-4000-8000-000000000812', v_miolo, 'audience', 'Perfil dos clientes', 'Público principal',
      'Moradores de Pinheiros e Vila Madalena, 28 a 45 anos', 'confirmed', 'onboarding', v_onboarding,
-     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at + interval '3 minutes', v_at + interval '3 minutes'),
     ('5eed0000-0000-4000-8000-000000000813', v_miolo, 'brand', 'Tom de voz', 'Tom de voz',
      'Acolhedor, direto, sem gíria', 'confirmed', 'onboarding', v_onboarding,
-     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at + interval '2 minutes', v_at + interval '2 minutes'),
     ('5eed0000-0000-4000-8000-000000000814', v_miolo, 'audience', 'Comportamentos conhecidos', 'Canais',
      'Instagram e WhatsApp', 'confirmed', 'onboarding', v_onboarding,
-     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at + interval '4 minutes', v_at + interval '4 minutes'),
     ('5eed0000-0000-4000-8000-000000000815', v_miolo, 'business', 'Produtos', 'Produto âncora',
      'Pão de fermentação longa', 'confirmed', 'onboarding', v_onboarding,
-     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at, v_at),
+     'Contado por você no cadastro', v_at, v_marina, v_at, v_marina, v_at + interval '1 minutes', v_at + interval '1 minutes'),
     ('5eed0000-0000-4000-8000-000000000816', v_miolo, 'brand', 'Tom de voz', 'Palavra proibida',
      'Não usar a palavra ''artesanal'' nas legendas', 'decision', 'conversation', null,
      'Dito por você numa conversa', '2026-10-15 10:13:00-03', v_marina, '2026-10-15 10:13:00-03', v_marina,

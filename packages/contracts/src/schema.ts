@@ -272,6 +272,171 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workspaces/{workspace_id}/memory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dossiê da Memória da Marca: por área e assunto, com estado, fonte e quem usa */
+        get: operations["get_memory_workspaces__workspace_id__memory_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/memory/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** "<Agente> percebeu": sugestões do squad, mais recente primeiro */
+        get: operations["list_suggestions_workspaces__workspace_id__memory_suggestions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/memory/suggestions/{suggestion_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirmar, corrigir ou descartar uma sugestão (idempotente; só o owner)
+         * @description A primeira decisão vale; repetir (clique duplo, retry) responde 200 com o mesmo estado, sem efeito novo. `confirm` e `correct` criam o conhecimento Confirmado (se o mesmo assunto e chave já existem, viram a versão nova dele); `discard` não cria conhecimento e a mesma sugestão não volta. Só o owner decide.
+         */
+        post: operations["decide_suggestion_memory_suggestions__suggestion_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/memory/facts/{fact_id}/correct": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Corrigir um conhecimento: versão nova, Confirmado; a anterior fica no histórico
+         * @description Nunca edita: a versão corrigida sai de uso (`superseded_at`) e a nova passa a valer para o squad no próximo run. Repetir o mesmo texto sobre a versão antiga devolve a nova. Descartado não se corrige; em conflito, a correção é pelo conflito. Só o owner corrige.
+         */
+        post: operations["correct_fact_memory_facts__fact_id__correct_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/memory/facts/{fact_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Versões de um conhecimento e as sugestões que o originaram */
+        get: operations["fact_history_memory_facts__fact_id__history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/memory/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Busca textual nos conhecimentos atuais (chave, valor e assunto)
+         * @description Busca do Postgres na configuração do idioma do workspace (ADR-0009): palavras em qualquer ordem, com radical ("palavras" acha "palavra"); aspas para frase exata e `or` para alternativas. Traz todos os estados; Descartado e Não usado vêm marcados pelo estado.
+         */
+        get: operations["search_memory_workspaces__workspace_id__memory_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/memory/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** "De onde vem": fontes da memória com estado e permissões */
+        get: operations["list_sources_workspaces__workspace_id__memory_sources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/memory/conflicts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Conflitos: duas versões em uso que dizem coisas diferentes */
+        get: operations["list_conflicts_workspaces__workspace_id__memory_conflicts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/memory/conflicts/{conflict_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resolver um conflito: "Vale este" ou "Nenhum dos dois: corrigir" (só o owner)
+         * @description `keep_fact_id` confirma a versão escolhida; `content` cria uma versão nova Confirmado. A outra sai da memória como Descartado (o registro fica). Repetir devolve o conflito já resolvido.
+         */
+        post: operations["resolve_conflict_memory_conflicts__conflict_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -427,6 +592,127 @@ export interface components {
             delivery_type: string | null;
             primary_agent_id: components["schemas"]["AgentId"];
         };
+        /** BrandFact */
+        BrandFact: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** @description `business` Meu negócio, `brand` Minha marca, `audience` Meu público, `knowledge` Conhecimento e aprendizados. */
+            area: components["schemas"]["MemoryArea"];
+            /**
+             * Topic
+             * @description Assunto dentro da área.
+             * @example Tom de voz
+             */
+            topic: string;
+            /**
+             * Key
+             * @example Palavra proibida
+             */
+            key: string;
+            /**
+             * Content
+             * @example Não usar a palavra 'artesanal' nas legendas
+             */
+            content: string;
+            /** Content Json */
+            content_json: unknown | null;
+            /** @description `confirmed` Confirmado, `decision` Decisão sua, `from_source` Da fonte, `observed` Observado, `suggested` Sugerido, `outdated` Desatualizado, `discarded` Descartado, `conflicting` Em conflito, `unused` Não usado. O squad usa só Confirmado e Decisão sua como orientação. */
+            state: components["schemas"]["BrandFactState"];
+            source_type: components["schemas"]["FactSourceKind"];
+            /** Source Id */
+            source_id: string | null;
+            /**
+             * Origin
+             * @example Contado por você no cadastro
+             */
+            origin: string | null;
+            /**
+             * Used By Agents
+             * @description Agentes que usam este conhecimento.
+             */
+            used_by_agents: components["schemas"]["AgentId"][];
+            /** @description Quem percebeu ("<Agente> percebeu"). */
+            perceived_by_agent_id: components["schemas"]["AgentId"] | null;
+            /** Confidence */
+            confidence: number | null;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Version */
+            version: number;
+            /**
+             * Supersedes Id
+             * @description Versão anterior que esta corrigiu.
+             */
+            supersedes_id: string | null;
+            /**
+             * Superseded At
+             * @description Nulo = versão atual.
+             */
+            superseded_at: string | null;
+            /** Confirmed By */
+            confirmed_by: string | null;
+            /** Confirmed At */
+            confirmed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * BrandFactCorrection
+         * @example {
+         *       "content": "Acolhedor, direto e com humor leve."
+         *     }
+         */
+        BrandFactCorrection: {
+            /**
+             * Content
+             * @description O valor certo. Vira uma versão nova, Confirmado.
+             */
+            content: string;
+        };
+        /** BrandFactHistory */
+        BrandFactHistory: {
+            /**
+             * Fact Id
+             * Format: uuid
+             */
+            fact_id: string;
+            /**
+             * Versions
+             * @description Da versão mais nova para a mais antiga.
+             */
+            versions: components["schemas"]["BrandFact"][];
+            /**
+             * Suggestions
+             * @description Sugestões ("<Agente> percebeu") que deram origem a alguma versão.
+             */
+            suggestions: components["schemas"]["MemorySuggestion"][];
+        };
+        /**
+         * BrandFactState
+         * @enum {string}
+         */
+        BrandFactState: "confirmed" | "decision" | "from_source" | "observed" | "suggested" | "outdated" | "discarded" | "conflicting" | "unused";
         /** ContextRef */
         ContextRef: {
             /** @description Tipo do objeto de onde a conversa foi aberta. */
@@ -710,6 +996,61 @@ export interface components {
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
         };
+        /** FactSource */
+        FactSource: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["FactSourceKind"];
+            /**
+             * Name
+             * @example Instagram
+             */
+            name: string;
+            /** @description `declared` Declarado por você, `connected` Conectada, `outdated` Desatualizada, `needs_reconnect` Precisa reconectar, `not_connected` Não conectada, `unavailable` Indisponível. */
+            state: components["schemas"]["FactSourceState"];
+            /**
+             * Permissions
+             * @example [
+             *       "Ler posts e métricas"
+             *     ]
+             */
+            permissions: string[];
+            /** Last Sync At */
+            last_sync_at: string | null;
+            /**
+             * Fact Count
+             * @description Conhecimentos atuais que vieram desta fonte.
+             */
+            fact_count: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * FactSourceKind
+         * @enum {string}
+         */
+        FactSourceKind: "onboarding" | "conversation" | "correction" | "approval" | "file" | "connection" | "agent_observation";
+        /** FactSourceList */
+        FactSourceList: {
+            /** Items */
+            items: components["schemas"]["FactSource"][];
+        };
+        /**
+         * FactSourceState
+         * @enum {string}
+         */
+        FactSourceState: "declared" | "connected" | "outdated" | "needs_reconnect" | "not_connected" | "unavailable";
         /** Health */
         Health: {
             /**
@@ -736,6 +1077,426 @@ export interface components {
         Membership: {
             workspace: components["schemas"]["WorkspaceSummary"];
             role: components["schemas"]["WorkspaceRole"];
+        };
+        /**
+         * MemoryArea
+         * @enum {string}
+         */
+        MemoryArea: "business" | "brand" | "audience" | "knowledge";
+        /** MemoryAreaGroup */
+        MemoryAreaGroup: {
+            area: components["schemas"]["MemoryArea"];
+            /** Topics */
+            topics: components["schemas"]["MemoryTopic"][];
+        };
+        /** MemoryConflict */
+        MemoryConflict: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            state: components["schemas"]["MemoryConflictState"];
+            resolution: components["schemas"]["MemoryConflictResolution"] | null;
+            /** Resulting Fact Id */
+            resulting_fact_id: string | null;
+            /** Resolved By */
+            resolved_by: string | null;
+            /** Resolved At */
+            resolved_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            fact_a: components["schemas"]["BrandFact"];
+            fact_b: components["schemas"]["BrandFact"];
+        };
+        /** MemoryConflictList */
+        MemoryConflictList: {
+            /**
+             * Items
+             * @description Mais recente primeiro.
+             */
+            items: components["schemas"]["MemoryConflict"][];
+        };
+        /**
+         * MemoryConflictResolution
+         * @enum {string}
+         */
+        MemoryConflictResolution: "keep_a" | "keep_b" | "corrected";
+        /**
+         * MemoryConflictResolve
+         * @example {
+         *       "keep_fact_id": "5eed0000-0000-4000-8000-000000000811"
+         *     }
+         * @example {
+         *       "content": "Terça a domingo, das 7h às 19h"
+         *     }
+         */
+        MemoryConflictResolve: {
+            /**
+             * Keep Fact Id
+             * @description "Vale este": a versão que fica.
+             */
+            keep_fact_id?: string | null;
+            /**
+             * Content
+             * @description "Nenhum dos dois: corrigir".
+             */
+            content?: string | null;
+        };
+        /**
+         * MemoryConflictState
+         * @enum {string}
+         */
+        MemoryConflictState: "open" | "resolved";
+        /** MemoryDossier */
+        MemoryDossier: {
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /**
+             * Brand Name
+             * @example Miolo
+             */
+            brand_name: string;
+            /**
+             * Confirmed Count
+             * @description Conhecimentos Confirmado e Decisão sua (base da síntese do squad).
+             */
+            confirmed_count: number;
+            pending: components["schemas"]["MemoryPending"];
+            /**
+             * Sources
+             * @description "De onde vem".
+             */
+            sources: components["schemas"]["FactSource"][];
+            /**
+             * Areas
+             * @description Versões atuais por área e assunto, em todos os estados; a tela esconde Descartado e Não usado até a pessoa pedir.
+             */
+            areas: components["schemas"]["MemoryAreaGroup"][];
+            /**
+             * Suggestions
+             * @description "O squad percebeu": sugestões abertas.
+             */
+            suggestions: components["schemas"]["MemorySuggestion"][];
+        };
+        /** MemoryPending */
+        MemoryPending: {
+            /**
+             * Suggestions
+             * @description Sugestões abertas.
+             */
+            suggestions: number;
+            /**
+             * Conflicts
+             * @description Conflitos abertos.
+             */
+            conflicts: number;
+            /**
+             * Outdated
+             * @description Conhecimentos desatualizados.
+             */
+            outdated: number;
+        };
+        /** MemorySearchHit */
+        MemorySearchHit: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** @description `business` Meu negócio, `brand` Minha marca, `audience` Meu público, `knowledge` Conhecimento e aprendizados. */
+            area: components["schemas"]["MemoryArea"];
+            /**
+             * Topic
+             * @description Assunto dentro da área.
+             * @example Tom de voz
+             */
+            topic: string;
+            /**
+             * Key
+             * @example Palavra proibida
+             */
+            key: string;
+            /**
+             * Content
+             * @example Não usar a palavra 'artesanal' nas legendas
+             */
+            content: string;
+            /** Content Json */
+            content_json: unknown | null;
+            /** @description `confirmed` Confirmado, `decision` Decisão sua, `from_source` Da fonte, `observed` Observado, `suggested` Sugerido, `outdated` Desatualizado, `discarded` Descartado, `conflicting` Em conflito, `unused` Não usado. O squad usa só Confirmado e Decisão sua como orientação. */
+            state: components["schemas"]["BrandFactState"];
+            source_type: components["schemas"]["FactSourceKind"];
+            /** Source Id */
+            source_id: string | null;
+            /**
+             * Origin
+             * @example Contado por você no cadastro
+             */
+            origin: string | null;
+            /**
+             * Used By Agents
+             * @description Agentes que usam este conhecimento.
+             */
+            used_by_agents: components["schemas"]["AgentId"][];
+            /** @description Quem percebeu ("<Agente> percebeu"). */
+            perceived_by_agent_id: components["schemas"]["AgentId"] | null;
+            /** Confidence */
+            confidence: number | null;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Version */
+            version: number;
+            /**
+             * Supersedes Id
+             * @description Versão anterior que esta corrigiu.
+             */
+            supersedes_id: string | null;
+            /**
+             * Superseded At
+             * @description Nulo = versão atual.
+             */
+            superseded_at: string | null;
+            /** Confirmed By */
+            confirmed_by: string | null;
+            /** Confirmed At */
+            confirmed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Rank
+             * @description Relevância da busca textual (maior primeiro).
+             */
+            rank: number;
+        };
+        /** MemorySearchResult */
+        MemorySearchResult: {
+            /** Query */
+            query: string;
+            /** Items */
+            items: components["schemas"]["MemorySearchHit"][];
+        };
+        /** MemorySuggestion */
+        MemorySuggestion: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** @description Quem percebeu ("<Agente> percebeu"). */
+            agent_id: components["schemas"]["AgentId"];
+            /**
+             * Title
+             * @description Leitura curta do agente.
+             */
+            title: string;
+            /** Explanation */
+            explanation: string | null;
+            /**
+             * Question
+             * @description Pergunta ao dono; sem ela, a tela usa o conteúdo.
+             */
+            question: string | null;
+            /** Origin */
+            origin: string | null;
+            area: components["schemas"]["MemoryArea"];
+            /** Topic */
+            topic: string;
+            /** Key */
+            key: string;
+            /**
+             * Content
+             * @description O que vira conhecimento se o dono confirmar.
+             */
+            content: string;
+            /**
+             * Used By Agents
+             * @description Quem vai usar depois do ok do dono.
+             */
+            used_by_agents: components["schemas"]["AgentId"][];
+            /** Source Id */
+            source_id: string | null;
+            /** Run Id */
+            run_id: string | null;
+            /** @description `open` aberto, `seen` visto, `done` feito. */
+            state: components["schemas"]["MemorySuggestionState"];
+            decision: components["schemas"]["MemorySuggestionDecision"] | null;
+            /** Decided By */
+            decided_by: string | null;
+            /** Decided At */
+            decided_at: string | null;
+            /**
+             * Resulting Fact Id
+             * @description Conhecimento criado por Confirmar ou Corrigir.
+             */
+            resulting_fact_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** MemorySuggestionDecided */
+        MemorySuggestionDecided: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** @description Quem percebeu ("<Agente> percebeu"). */
+            agent_id: components["schemas"]["AgentId"];
+            /**
+             * Title
+             * @description Leitura curta do agente.
+             */
+            title: string;
+            /** Explanation */
+            explanation: string | null;
+            /**
+             * Question
+             * @description Pergunta ao dono; sem ela, a tela usa o conteúdo.
+             */
+            question: string | null;
+            /** Origin */
+            origin: string | null;
+            area: components["schemas"]["MemoryArea"];
+            /** Topic */
+            topic: string;
+            /** Key */
+            key: string;
+            /**
+             * Content
+             * @description O que vira conhecimento se o dono confirmar.
+             */
+            content: string;
+            /**
+             * Used By Agents
+             * @description Quem vai usar depois do ok do dono.
+             */
+            used_by_agents: components["schemas"]["AgentId"][];
+            /** Source Id */
+            source_id: string | null;
+            /** Run Id */
+            run_id: string | null;
+            /** @description `open` aberto, `seen` visto, `done` feito. */
+            state: components["schemas"]["MemorySuggestionState"];
+            decision: components["schemas"]["MemorySuggestionDecision"] | null;
+            /** Decided By */
+            decided_by: string | null;
+            /** Decided At */
+            decided_at: string | null;
+            /**
+             * Resulting Fact Id
+             * @description Conhecimento criado por Confirmar ou Corrigir.
+             */
+            resulting_fact_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            resulting_fact: components["schemas"]["BrandFact"] | null;
+        };
+        /**
+         * MemorySuggestionDecision
+         * @enum {string}
+         */
+        MemorySuggestionDecision: "confirm" | "correct" | "discard";
+        /**
+         * MemorySuggestionDecisionCreate
+         * @example {
+         *       "decision": "confirm"
+         *     }
+         * @example {
+         *       "content": "Bastidores do forno uma vez por semana.",
+         *       "decision": "correct"
+         *     }
+         * @example {
+         *       "decision": "discard"
+         *     }
+         */
+        MemorySuggestionDecisionCreate: {
+            /** @description `confirm` vira conhecimento Confirmado; `correct` vira Confirmado com o seu texto; `discard` fica registrada e não volta. */
+            decision: components["schemas"]["MemorySuggestionDecision"];
+            /**
+             * Content
+             * @description Obrigatório ao corrigir.
+             */
+            content?: string | null;
+        };
+        /** MemorySuggestionList */
+        MemorySuggestionList: {
+            /**
+             * Items
+             * @description Mais recente primeiro.
+             */
+            items: components["schemas"]["MemorySuggestion"][];
+        };
+        /**
+         * MemorySuggestionState
+         * @enum {string}
+         */
+        MemorySuggestionState: "open" | "seen" | "done";
+        /** MemoryTopic */
+        MemoryTopic: {
+            /** Topic */
+            topic: string;
+            /** Facts */
+            facts: components["schemas"]["BrandFact"][];
         };
         /** Message */
         Message: {
@@ -2409,6 +3170,605 @@ export interface operations {
             };
             /** @description Recurso não encontrado (ou fora do seu acesso). */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_memory_workspaces__workspace_id__memory_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemoryDossier"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_suggestions_workspaces__workspace_id__memory_suggestions_get: {
+        parameters: {
+            query?: {
+                /** @description `open` aberto, `seen` visto, `done` feito. */
+                state?: components["schemas"]["MemorySuggestionState"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemorySuggestionList"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    decide_suggestion_memory_suggestions__suggestion_id__decision_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suggestion_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MemorySuggestionDecisionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemorySuggestionDecided"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    correct_fact_memory_facts__fact_id__correct_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandFactCorrection"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandFact"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fact_history_memory_facts__fact_id__history_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandFactHistory"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    search_memory_workspaces__workspace_id__memory_search_get: {
+        parameters: {
+            query: {
+                /** @description Texto da busca. */
+                q: string;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemorySearchResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_sources_workspaces__workspace_id__memory_sources_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FactSourceList"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_conflicts_workspaces__workspace_id__memory_conflicts_get: {
+        parameters: {
+            query?: {
+                /** @description `open` ou `resolved`. */
+                state?: components["schemas"]["MemoryConflictState"] | null;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemoryConflictList"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    resolve_conflict_memory_conflicts__conflict_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conflict_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MemoryConflictResolve"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemoryConflict"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

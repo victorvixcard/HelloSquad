@@ -18,6 +18,7 @@ from hellosquad.config import get_settings
 from hellosquad.conversations.routes import router as conversations_router
 from hellosquad.db import Database
 from hellosquad.identity.routes import router as identity_router
+from hellosquad.memory.routes import router as memory_router
 from hellosquad.work.routes import router as work_router
 
 
@@ -65,6 +66,7 @@ app.include_router(conversations_router)
 app.include_router(work_router)
 app.include_router(approvals_router)
 app.include_router(runs_router)
+app.include_router(memory_router)
 
 
 class Health(BaseModel):

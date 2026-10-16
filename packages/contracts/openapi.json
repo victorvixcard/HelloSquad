@@ -1742,6 +1742,875 @@
         }
       }
     },
+    "/workspaces/{workspace_id}/memory": {
+      "get": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Dossiê da Memória da Marca: por área e assunto, com estado, fonte e quem usa",
+        "operationId": "get_memory_workspaces__workspace_id__memory_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryDossier"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/memory/suggestions": {
+      "get": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "\"<Agente> percebeu\": sugestões do squad, mais recente primeiro",
+        "operationId": "list_suggestions_workspaces__workspace_id__memory_suggestions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/MemorySuggestionState"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "`open` aberto, `seen` visto, `done` feito.",
+              "title": "State"
+            },
+            "description": "`open` aberto, `seen` visto, `done` feito."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemorySuggestionList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memory/suggestions/{suggestion_id}/decision": {
+      "post": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Confirmar, corrigir ou descartar uma sugestão (idempotente; só o owner)",
+        "description": "A primeira decisão vale; repetir (clique duplo, retry) responde 200 com o mesmo estado, sem efeito novo. `confirm` e `correct` criam o conhecimento Confirmado (se o mesmo assunto e chave já existem, viram a versão nova dele); `discard` não cria conhecimento e a mesma sugestão não volta. Só o owner decide.",
+        "operationId": "decide_suggestion_memory_suggestions__suggestion_id__decision_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "suggestion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Suggestion Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemorySuggestionDecisionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemorySuggestionDecided"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memory/facts/{fact_id}/correct": {
+      "post": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Corrigir um conhecimento: versão nova, Confirmado; a anterior fica no histórico",
+        "description": "Nunca edita: a versão corrigida sai de uso (`superseded_at`) e a nova passa a valer para o squad no próximo run. Repetir o mesmo texto sobre a versão antiga devolve a nova. Descartado não se corrige; em conflito, a correção é pelo conflito. Só o owner corrige.",
+        "operationId": "correct_fact_memory_facts__fact_id__correct_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Fact Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrandFactCorrection"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandFact"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memory/facts/{fact_id}/history": {
+      "get": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Versões de um conhecimento e as sugestões que o originaram",
+        "operationId": "fact_history_memory_facts__fact_id__history_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Fact Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandFactHistory"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/memory/search": {
+      "get": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Busca textual nos conhecimentos atuais (chave, valor e assunto)",
+        "description": "Busca do Postgres na configuração do idioma do workspace (ADR-0009): palavras em qualquer ordem, com radical (\"palavras\" acha \"palavra\"); aspas para frase exata e `or` para alternativas. Traz todos os estados; Descartado e Não usado vêm marcados pelo estado.",
+        "operationId": "search_memory_workspaces__workspace_id__memory_search_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "Texto da busca.",
+              "title": "Q"
+            },
+            "description": "Texto da busca."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemorySearchResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/memory/sources": {
+      "get": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "\"De onde vem\": fontes da memória com estado e permissões",
+        "operationId": "list_sources_workspaces__workspace_id__memory_sources_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FactSourceList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/memory/conflicts": {
+      "get": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Conflitos: duas versões em uso que dizem coisas diferentes",
+        "operationId": "list_conflicts_workspaces__workspace_id__memory_conflicts_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/MemoryConflictState"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "`open` ou `resolved`.",
+              "title": "State"
+            },
+            "description": "`open` ou `resolved`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryConflictList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memory/conflicts/{conflict_id}/resolve": {
+      "post": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Resolver um conflito: \"Vale este\" ou \"Nenhum dos dois: corrigir\" (só o owner)",
+        "description": "`keep_fact_id` confirma a versão escolhida; `content` cria uma versão nova Confirmado. A outra sai da memória como Descartado (o registro fica). Repetir devolve o conflito já resolvido.",
+        "operationId": "resolve_conflict_memory_conflicts__conflict_id__resolve_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conflict_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conflict Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemoryConflictResolve"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryConflict"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -2111,6 +2980,295 @@
           "primary_agent_id"
         ],
         "title": "ApprovalWorkItem"
+      },
+      "BrandFact": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "area": {
+            "$ref": "#/components/schemas/MemoryArea",
+            "description": "`business` Meu negócio, `brand` Minha marca, `audience` Meu público, `knowledge` Conhecimento e aprendizados."
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic",
+            "description": "Assunto dentro da área.",
+            "examples": [
+              "Tom de voz"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "examples": [
+              "Palavra proibida"
+            ]
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "examples": [
+              "Não usar a palavra 'artesanal' nas legendas"
+            ]
+          },
+          "content_json": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Json"
+          },
+          "state": {
+            "$ref": "#/components/schemas/BrandFactState",
+            "description": "`confirmed` Confirmado, `decision` Decisão sua, `from_source` Da fonte, `observed` Observado, `suggested` Sugerido, `outdated` Desatualizado, `discarded` Descartado, `conflicting` Em conflito, `unused` Não usado. O squad usa só Confirmado e Decisão sua como orientação."
+          },
+          "source_type": {
+            "$ref": "#/components/schemas/FactSourceKind"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin",
+            "examples": [
+              "Contado por você no cadastro"
+            ]
+          },
+          "used_by_agents": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Used By Agents",
+            "description": "Agentes que usam este conhecimento."
+          },
+          "perceived_by_agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Quem percebeu (\"<Agente> percebeu\")."
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "supersedes_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes Id",
+            "description": "Versão anterior que esta corrigiu."
+          },
+          "superseded_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Superseded At",
+            "description": "Nulo = versão atual."
+          },
+          "confirmed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed By"
+          },
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "area",
+          "topic",
+          "key",
+          "content",
+          "content_json",
+          "state",
+          "source_type",
+          "source_id",
+          "origin",
+          "used_by_agents",
+          "perceived_by_agent_id",
+          "confidence",
+          "valid_from",
+          "valid_until",
+          "version",
+          "supersedes_id",
+          "superseded_at",
+          "confirmed_by",
+          "confirmed_at",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "BrandFact"
+      },
+      "BrandFactCorrection": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Content",
+            "description": "O valor certo. Vira uma versão nova, Confirmado."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "title": "BrandFactCorrection",
+        "examples": [
+          {
+            "content": "Acolhedor, direto e com humor leve."
+          }
+        ]
+      },
+      "BrandFactHistory": {
+        "properties": {
+          "fact_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Fact Id"
+          },
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/BrandFact"
+            },
+            "type": "array",
+            "title": "Versions",
+            "description": "Da versão mais nova para a mais antiga."
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/MemorySuggestion"
+            },
+            "type": "array",
+            "title": "Suggestions",
+            "description": "Sugestões (\"<Agente> percebeu\") que deram origem a alguma versão."
+          }
+        },
+        "type": "object",
+        "required": [
+          "fact_id",
+          "versions",
+          "suggestions"
+        ],
+        "title": "BrandFactHistory"
+      },
+      "BrandFactState": {
+        "type": "string",
+        "enum": [
+          "confirmed",
+          "decision",
+          "from_source",
+          "observed",
+          "suggested",
+          "outdated",
+          "discarded",
+          "conflicting",
+          "unused"
+        ],
+        "title": "BrandFactState"
       },
       "ContextRef": {
         "properties": {
@@ -2828,6 +3986,122 @@
         ],
         "title": "ErrorResponse"
       },
+      "FactSource": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/FactSourceKind"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "examples": [
+              "Instagram"
+            ]
+          },
+          "state": {
+            "$ref": "#/components/schemas/FactSourceState",
+            "description": "`declared` Declarado por você, `connected` Conectada, `outdated` Desatualizada, `needs_reconnect` Precisa reconectar, `not_connected` Não conectada, `unavailable` Indisponível."
+          },
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Permissions",
+            "examples": [
+              [
+                "Ler posts e métricas"
+              ]
+            ]
+          },
+          "last_sync_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Sync At"
+          },
+          "fact_count": {
+            "type": "integer",
+            "title": "Fact Count",
+            "description": "Conhecimentos atuais que vieram desta fonte."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "state",
+          "permissions",
+          "last_sync_at",
+          "fact_count",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "FactSource"
+      },
+      "FactSourceKind": {
+        "type": "string",
+        "enum": [
+          "onboarding",
+          "conversation",
+          "correction",
+          "approval",
+          "file",
+          "connection",
+          "agent_observation"
+        ],
+        "title": "FactSourceKind"
+      },
+      "FactSourceList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FactSource"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "FactSourceList"
+      },
+      "FactSourceState": {
+        "type": "string",
+        "enum": [
+          "declared",
+          "connected",
+          "outdated",
+          "needs_reconnect",
+          "not_connected",
+          "unavailable"
+        ],
+        "title": "FactSourceState"
+      },
       "Health": {
         "properties": {
           "status": {
@@ -2888,6 +4162,1027 @@
           "role"
         ],
         "title": "Membership"
+      },
+      "MemoryArea": {
+        "type": "string",
+        "enum": [
+          "business",
+          "brand",
+          "audience",
+          "knowledge"
+        ],
+        "title": "MemoryArea"
+      },
+      "MemoryAreaGroup": {
+        "properties": {
+          "area": {
+            "$ref": "#/components/schemas/MemoryArea"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryTopic"
+            },
+            "type": "array",
+            "title": "Topics"
+          }
+        },
+        "type": "object",
+        "required": [
+          "area",
+          "topics"
+        ],
+        "title": "MemoryAreaGroup"
+      },
+      "MemoryConflict": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "state": {
+            "$ref": "#/components/schemas/MemoryConflictState"
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MemoryConflictResolution"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "resulting_fact_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resulting Fact Id"
+          },
+          "resolved_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved By"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "fact_a": {
+            "$ref": "#/components/schemas/BrandFact"
+          },
+          "fact_b": {
+            "$ref": "#/components/schemas/BrandFact"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "state",
+          "resolution",
+          "resulting_fact_id",
+          "resolved_by",
+          "resolved_at",
+          "created_at",
+          "updated_at",
+          "fact_a",
+          "fact_b"
+        ],
+        "title": "MemoryConflict"
+      },
+      "MemoryConflictList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryConflict"
+            },
+            "type": "array",
+            "title": "Items",
+            "description": "Mais recente primeiro."
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "MemoryConflictList"
+      },
+      "MemoryConflictResolution": {
+        "type": "string",
+        "enum": [
+          "keep_a",
+          "keep_b",
+          "corrected"
+        ],
+        "title": "MemoryConflictResolution"
+      },
+      "MemoryConflictResolve": {
+        "properties": {
+          "keep_fact_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keep Fact Id",
+            "description": "\"Vale este\": a versão que fica."
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "description": "\"Nenhum dos dois: corrigir\"."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "MemoryConflictResolve",
+        "examples": [
+          {
+            "keep_fact_id": "5eed0000-0000-4000-8000-000000000811"
+          },
+          {
+            "content": "Terça a domingo, das 7h às 19h"
+          }
+        ]
+      },
+      "MemoryConflictState": {
+        "type": "string",
+        "enum": [
+          "open",
+          "resolved"
+        ],
+        "title": "MemoryConflictState"
+      },
+      "MemoryDossier": {
+        "properties": {
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "brand_name": {
+            "type": "string",
+            "title": "Brand Name",
+            "examples": [
+              "Miolo"
+            ]
+          },
+          "confirmed_count": {
+            "type": "integer",
+            "title": "Confirmed Count",
+            "description": "Conhecimentos Confirmado e Decisão sua (base da síntese do squad)."
+          },
+          "pending": {
+            "$ref": "#/components/schemas/MemoryPending"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/FactSource"
+            },
+            "type": "array",
+            "title": "Sources",
+            "description": "\"De onde vem\"."
+          },
+          "areas": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryAreaGroup"
+            },
+            "type": "array",
+            "title": "Areas",
+            "description": "Versões atuais por área e assunto, em todos os estados; a tela esconde Descartado e Não usado até a pessoa pedir."
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/MemorySuggestion"
+            },
+            "type": "array",
+            "title": "Suggestions",
+            "description": "\"O squad percebeu\": sugestões abertas."
+          }
+        },
+        "type": "object",
+        "required": [
+          "workspace_id",
+          "brand_name",
+          "confirmed_count",
+          "pending",
+          "sources",
+          "areas",
+          "suggestions"
+        ],
+        "title": "MemoryDossier"
+      },
+      "MemoryPending": {
+        "properties": {
+          "suggestions": {
+            "type": "integer",
+            "title": "Suggestions",
+            "description": "Sugestões abertas."
+          },
+          "conflicts": {
+            "type": "integer",
+            "title": "Conflicts",
+            "description": "Conflitos abertos."
+          },
+          "outdated": {
+            "type": "integer",
+            "title": "Outdated",
+            "description": "Conhecimentos desatualizados."
+          }
+        },
+        "type": "object",
+        "required": [
+          "suggestions",
+          "conflicts",
+          "outdated"
+        ],
+        "title": "MemoryPending"
+      },
+      "MemorySearchHit": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "area": {
+            "$ref": "#/components/schemas/MemoryArea",
+            "description": "`business` Meu negócio, `brand` Minha marca, `audience` Meu público, `knowledge` Conhecimento e aprendizados."
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic",
+            "description": "Assunto dentro da área.",
+            "examples": [
+              "Tom de voz"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "examples": [
+              "Palavra proibida"
+            ]
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "examples": [
+              "Não usar a palavra 'artesanal' nas legendas"
+            ]
+          },
+          "content_json": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Json"
+          },
+          "state": {
+            "$ref": "#/components/schemas/BrandFactState",
+            "description": "`confirmed` Confirmado, `decision` Decisão sua, `from_source` Da fonte, `observed` Observado, `suggested` Sugerido, `outdated` Desatualizado, `discarded` Descartado, `conflicting` Em conflito, `unused` Não usado. O squad usa só Confirmado e Decisão sua como orientação."
+          },
+          "source_type": {
+            "$ref": "#/components/schemas/FactSourceKind"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin",
+            "examples": [
+              "Contado por você no cadastro"
+            ]
+          },
+          "used_by_agents": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Used By Agents",
+            "description": "Agentes que usam este conhecimento."
+          },
+          "perceived_by_agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Quem percebeu (\"<Agente> percebeu\")."
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "supersedes_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes Id",
+            "description": "Versão anterior que esta corrigiu."
+          },
+          "superseded_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Superseded At",
+            "description": "Nulo = versão atual."
+          },
+          "confirmed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed By"
+          },
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "rank": {
+            "type": "number",
+            "title": "Rank",
+            "description": "Relevância da busca textual (maior primeiro)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "area",
+          "topic",
+          "key",
+          "content",
+          "content_json",
+          "state",
+          "source_type",
+          "source_id",
+          "origin",
+          "used_by_agents",
+          "perceived_by_agent_id",
+          "confidence",
+          "valid_from",
+          "valid_until",
+          "version",
+          "supersedes_id",
+          "superseded_at",
+          "confirmed_by",
+          "confirmed_at",
+          "created_at",
+          "updated_at",
+          "rank"
+        ],
+        "title": "MemorySearchHit"
+      },
+      "MemorySearchResult": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MemorySearchHit"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "items"
+        ],
+        "title": "MemorySearchResult"
+      },
+      "MemorySuggestion": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId",
+            "description": "Quem percebeu (\"<Agente> percebeu\")."
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Leitura curta do agente."
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question",
+            "description": "Pergunta ao dono; sem ela, a tela usa o conteúdo."
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin"
+          },
+          "area": {
+            "$ref": "#/components/schemas/MemoryArea"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "O que vira conhecimento se o dono confirmar."
+          },
+          "used_by_agents": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Used By Agents",
+            "description": "Quem vai usar depois do ok do dono."
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "state": {
+            "$ref": "#/components/schemas/MemorySuggestionState",
+            "description": "`open` aberto, `seen` visto, `done` feito."
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MemorySuggestionDecision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decided_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "resulting_fact_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resulting Fact Id",
+            "description": "Conhecimento criado por Confirmar ou Corrigir."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "agent_id",
+          "title",
+          "explanation",
+          "question",
+          "origin",
+          "area",
+          "topic",
+          "key",
+          "content",
+          "used_by_agents",
+          "source_id",
+          "run_id",
+          "state",
+          "decision",
+          "decided_by",
+          "decided_at",
+          "resulting_fact_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "MemorySuggestion"
+      },
+      "MemorySuggestionDecided": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId",
+            "description": "Quem percebeu (\"<Agente> percebeu\")."
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Leitura curta do agente."
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question",
+            "description": "Pergunta ao dono; sem ela, a tela usa o conteúdo."
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin"
+          },
+          "area": {
+            "$ref": "#/components/schemas/MemoryArea"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "O que vira conhecimento se o dono confirmar."
+          },
+          "used_by_agents": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Used By Agents",
+            "description": "Quem vai usar depois do ok do dono."
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "state": {
+            "$ref": "#/components/schemas/MemorySuggestionState",
+            "description": "`open` aberto, `seen` visto, `done` feito."
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MemorySuggestionDecision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decided_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "resulting_fact_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resulting Fact Id",
+            "description": "Conhecimento criado por Confirmar ou Corrigir."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "resulting_fact": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BrandFact"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "agent_id",
+          "title",
+          "explanation",
+          "question",
+          "origin",
+          "area",
+          "topic",
+          "key",
+          "content",
+          "used_by_agents",
+          "source_id",
+          "run_id",
+          "state",
+          "decision",
+          "decided_by",
+          "decided_at",
+          "resulting_fact_id",
+          "created_at",
+          "updated_at",
+          "resulting_fact"
+        ],
+        "title": "MemorySuggestionDecided"
+      },
+      "MemorySuggestionDecision": {
+        "type": "string",
+        "enum": [
+          "confirm",
+          "correct",
+          "discard"
+        ],
+        "title": "MemorySuggestionDecision"
+      },
+      "MemorySuggestionDecisionCreate": {
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/MemorySuggestionDecision",
+            "description": "`confirm` vira conhecimento Confirmado; `correct` vira Confirmado com o seu texto; `discard` fica registrada e não volta."
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "description": "Obrigatório ao corrigir."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision"
+        ],
+        "title": "MemorySuggestionDecisionCreate",
+        "examples": [
+          {
+            "decision": "confirm"
+          },
+          {
+            "content": "Bastidores do forno uma vez por semana.",
+            "decision": "correct"
+          },
+          {
+            "decision": "discard"
+          }
+        ]
+      },
+      "MemorySuggestionList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MemorySuggestion"
+            },
+            "type": "array",
+            "title": "Items",
+            "description": "Mais recente primeiro."
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "MemorySuggestionList"
+      },
+      "MemorySuggestionState": {
+        "type": "string",
+        "enum": [
+          "open",
+          "seen",
+          "done"
+        ],
+        "title": "MemorySuggestionState"
+      },
+      "MemoryTopic": {
+        "properties": {
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/BrandFact"
+            },
+            "type": "array",
+            "title": "Facts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "topic",
+          "facts"
+        ],
+        "title": "MemoryTopic"
       },
       "Message": {
         "properties": {
