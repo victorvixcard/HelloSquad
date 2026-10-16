@@ -23,3 +23,18 @@ hora      comando                                                         exit  
 19:01:57  make seed                                                       0     0s       5 usuários fictícios; "já confere…; nada gravado"
 19:02:39  make test                                                       2     88s      ruff ok · pytest 220 passed (54.67s) · eslint ok · tsc ok · Vitest 9+49+327 · pgTAP FAIL 14/700 (4 arquivos) → test-infra não rodou
           (falha do pgTAP: roteiro "H2 QA" de outra sessão rodando fora da trava às 19:03:40–19:04:03, bônus de 300 na Miolo e na Vitta e 12 trabalhos novos; ver C-03)
+19:07:08  [trava] API_PORT=8199 make dev-api + pedido S1b (201/201/201) + make worker + SIGTERM no grupo   0   5s   "worker no ar…LLM simulated"; run concluído: entrega v1, needs_you, 10 créditos, US$ 0.037860; worker encerrado; 8199 livre
+19:07:26  [conferência] API do dono                                       -     -        200 / 200
+19:07:34  make test (2a; banco reaplicado por outra sessão às 19:07:1x)    2     67s      pytest 220 passed (50.05s) · Vitest 385 · pgTAP FAIL 8/700 (bônus "H2 QA" da Vitta às 19:08:34, entre o pytest e o pgTAP)
+19:09:26  flock (trava só do clone) make seed DB_LOCK= && make test DB_LOCK=   2   66s      seed ok · pytest 220 passed (51.10s) · Vitest 385 · pgTAP FAIL 2/700 (02 #16, 04 #11: convites alheios na Vitta; ver C-04)
+19:11:22  flock: guarda+apaga os 2 convites, seed, make test-db DB_LOCK=, devolve os convites   0   3s   pgTAP Files=27 Tests=700 Result: PASS; convites devolvidos idênticos (cmp)
+19:11:29  make test-infra                                                 0     0s       guarda do autosave: 8/8
+19:11:30  [conferência] API do dono                                       -     -        200 / 200
+19:11:44  make status                                                     0     -        chaves e senha mascaradas (0 linhas em claro); /health ok; web no ar (portas do .env = as do dono)
+19:11:52  WEB_PORT=3199 make dev-web                                      -     4s       Ready 1154ms; / 200; /entrar 200; /app sem sessão 307 → /entrar?next=%2Fapp; parada 19:12:11
+19:12:29  API_DATABASE_URL vazio: make migrate / make up                  2/0   -        migrate: "erro: API_DATABASE_URL vazio no .env…"; up: uma linha "aviso: .env ausente ou sem API_DATABASE_URL…" (linha 39 confere); .env devolvido
+19:12:51  [conferência] API do dono                                       -     -        200 / 200
+19:12:55  cd apps/backend && uv run pytest -m "not integration"           0     2s       66 passed, 154 deselected
+
+Contagens: ruff ok (118 arquivos) · pytest 220 passed (66 unit + 154 integração) · ESLint ok · tsc 3×Done · Vitest 9+49+327=385 · pgTAP 700/700 PASS (banco no seed) · autosave 8/8.
+Achados: C-04 🟡 (make seed não apaga convites; pgTAP quebra) · C-03 ℹ️ (trava solta entre pytest e pgTAP) · C-01 ℹ️ · C-02 ℹ️ · C-05 ℹ️.
