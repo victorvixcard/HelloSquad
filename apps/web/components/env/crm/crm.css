@@ -16,3 +16,6 @@
 .mx-rep small{font-size:12.5px;color:var(--ink3)}
 .mx-rule{margin:8px 0 0;font-size:12.5px;color:var(--ink3)}
 .is-nar .mx-imp-f{grid-template-columns:minmax(0,1fr)}
+/* Documento do Max: cada etapa da sequência num cartão (`bd-card`), na ordem. */
+.cr-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.cr-steps>li{display:flex;flex-direction:column;gap:8px}
