@@ -1,0 +1,18 @@
+{
+  "work_item_step.nexo.triage": "Qualificar o pedido",
+  "work_item_step.produce.04.01": "Escrever o texto",
+  "delivery_version.change_note.first": "Primeira versão.",
+  "delivery_version.change_note.revised": "Primeira versão, revisada na autoverificação.",
+  "triage.fallback_question":"Para começar, preciso saber: {fields}.",
+  "triage.field.canal": "em qual canal o texto vai sair",
+  "triage.field.objetivo": "o que você quer que a pessoa faça depois de ler",
+  "triage.field.tema": "sobre o que é o texto",
+  "run_error.llm_unavailable": "O provedor de IA não respondeu depois de {attempts} tentativas. Tente de novo em alguns minutos.",
+  "run_error.llm_refusal": "O modelo recusou este pedido. Reformule o pedido ou fale com o suporte.",
+  "run_error.llm_invalid_output": "A resposta do modelo veio num formato que não conseguimos usar.",
+  "run_error.llm_config": "O provedor de IA recusou a configuração do HelloSquad. A equipe precisa revisar a chave ou o modelo.",
+  "run_error.delivery_not_supported": "Esta entrega ainda não está disponível no squad.",
+  "run_error.tool_not_allowed": "O agente tentou usar uma ferramenta que não tem permissão para usar.",
+  "run_error.database_unavailable": "O banco de dados não respondeu depois de {attempts} tentativas.",
+  "run_error.internal": "Erro interno ao executar o trabalho. Tente de novo; se repetir, fale com o suporte."
+}

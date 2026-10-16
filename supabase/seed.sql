@@ -179,7 +179,13 @@ begin
 
   foreach v_queue in array array['runs_interactive', 'runs_scheduled', 'external_actions', 'memory_reflect'] loop
     perform pgmq.purge_queue(v_queue);
+    execute format('delete from pgmq.%I', 'a_' || v_queue);
   end loop;
+
+  -- S1c: versões de prompt sem run que as use (os runs do seed não têm versão) e o idioma padrão.
+  delete from public.agent_prompt_versions v
+  where not exists (select 1 from public.runs r where r.agent_id = v.agent_id and r.prompt_version = v.content_hash);
+  update public.workspaces set locale = 'pt-BR' where slug in ('miolo', 'vitta', 'trilha') and locale <> 'pt-BR';
 
   insert into public.conversations (id, workspace_id, kind, primary_agent_id, title, created_by, last_message_at, created_at, updated_at)
   values

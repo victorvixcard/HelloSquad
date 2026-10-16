@@ -56,6 +56,10 @@ class Settings(BaseSettings):
     # papel próprio do worker existir, o papel privilegiado do worker local.
     database_url: SecretStr | None = None
 
+    # Papel privilegiado do worker (ignora a RLS; o worker filtra por workspace_id). Vazio em
+    # local/test: usa DATABASE_URL.
+    worker_database_url: SecretStr | None = None
+
     # LLM do runtime do squad. anthropic sem ANTHROPIC_API_KEY cai no simulado (com aviso no log).
     llm_provider: Literal["anthropic", "simulated"] = "anthropic"
     anthropic_api_key: SecretStr | None = None

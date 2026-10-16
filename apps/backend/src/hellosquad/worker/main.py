@@ -1,10 +1,331 @@
-"""Entrypoint `hellosquad-worker`. Placeholder da J0: a fila (pgmq) chega na Fase 1."""
+"""Entrypoint `hellosquad-worker`: consome `runs_interactive` (pgmq) e executa o fluxo do squad.
 
-from hellosquad.config import get_settings
-from hellosquad.runtime import configure_logging, idle_loop
+Cada mensagem fica invisível por WORKER_VISIBILITY_TIMEOUT_SECONDS; o batimento estende o prazo
+enquanto o run roda. Concluído: `delete`. Falha passageira: o run volta para queued e a mensagem
+reaparece depois do backoff, até WORKER_MAX_ATTEMPTS. Falha definitiva: run failed e `archive`.
+SIGTERM/SIGINT: para de ler, espera os runs em andamento e devolve à fila o que não terminar.
+"""
+
+import argparse
+import asyncio
+import contextlib
+import logging
+import math
+import signal
+from typing import Any
+from uuid import UUID
+
+import psycopg
+from psycopg.rows import dict_row
+from psycopg_pool import AsyncConnectionPool
+
+from hellosquad.config import Settings, get_settings
+from hellosquad.i18n import DEFAULT_LOCALE, catalog, t
+from hellosquad.llm.base import LLMClient, LLMError
+from hellosquad.llm.factory import build_llm_client
+from hellosquad.runtime import configure_logging
+from hellosquad.squad.flow import FlowError, Squad, run_flow
+from hellosquad.squad.loader import SquadLoader
+from hellosquad.squad.store import Claim, RunStore, redact
+
+log = logging.getLogger("hellosquad.worker")
+
+QUEUE = "runs_interactive"
+CAPPED_DELAY_SECONDS = 5
+
+
+class WorkerConfigError(RuntimeError):
+    pass
+
+
+def worker_conninfo(settings: Settings) -> str:
+    if settings.worker_database_url is not None:
+        return settings.worker_database_url.get_secret_value()
+    if settings.app_env in ("local", "test") and settings.database_url is not None:
+        return settings.database_url.get_secret_value()
+    raise WorkerConfigError("WORKER_DATABASE_URL vazio (em local/test o worker usa DATABASE_URL).")
+
+
+def classify(exc: BaseException) -> tuple[bool, str, dict[str, Any]]:
+    if isinstance(exc, LLMError):
+        return exc.transient, exc.code, exc.details
+    if isinstance(exc, FlowError):
+        return False, exc.code, exc.details
+    if isinstance(exc, psycopg.OperationalError):
+        return True, "database_unavailable", {"error_type": type(exc).__name__}
+    return True, "internal", {"error_type": type(exc).__name__}
+
+
+def error_message(locale: str, code: str, attempts: int) -> str:
+    key = f"run_error.{code}"
+    if key not in catalog(DEFAULT_LOCALE):
+        key = "run_error.internal"
+    return t(locale, key, attempts=attempts)
+
+
+class Worker:
+    def __init__(
+        self,
+        settings: Settings,
+        *,
+        llm: LLMClient | None = None,
+        loader: SquadLoader | None = None,
+    ) -> None:
+        self.settings = settings
+        self.squad = Squad(
+            loader=loader or SquadLoader(settings.squad_dir),
+            llm=llm or build_llm_client(settings),
+            prices=settings.llm_prices,
+            history_limit=settings.worker_history_messages,
+        )
+        self.pool = AsyncConnectionPool(
+            worker_conninfo(settings),
+            min_size=1,
+            max_size=settings.worker_concurrency * 2 + 1,
+            open=False,
+            kwargs={"autocommit": True, "prepare_threshold": None, "row_factory": dict_row},
+            check=AsyncConnectionPool.check_connection,
+            name="hellosquad-worker",
+        )
+        self.stopping = asyncio.Event()
+        self.inflight: set[asyncio.Task[str]] = set()
+
+    async def __aenter__(self) -> "Worker":
+        await self.pool.open(wait=True, timeout=10)
+        return self
+
+    async def __aexit__(self, *exc: object) -> None:
+        await self.pool.close()
+
+    # ------------------------------------------------------------------------------------------
+    # Fila
+    # ------------------------------------------------------------------------------------------
+
+    async def read(self, qty: int) -> list[dict[str, Any]]:
+        async with self.pool.connection() as conn:
+            cursor = await conn.execute(
+                "select msg_id, read_ct, message from pgmq.read(%s, %s, %s)",
+                (QUEUE, self.settings.worker_visibility_timeout_seconds, qty),
+            )
+            return await cursor.fetchall()
+
+    async def queue_call(self, function: str, msg_id: int, *args: int) -> None:
+        placeholders = ", ".join(["%s"] * (2 + len(args)))
+        async with self.pool.connection() as conn:
+            await conn.execute(f"select pgmq.{function}({placeholders})", (QUEUE, msg_id, *args))
+
+    # ------------------------------------------------------------------------------------------
+    # Um run
+    # ------------------------------------------------------------------------------------------
+
+    async def handle(self, msg: dict[str, Any]) -> str:
+        msg_id, message = msg["msg_id"], msg["message"] or {}
+        try:
+            run_id, workspace_id = UUID(message["run_id"]), UUID(message["workspace_id"])
+        except (KeyError, TypeError, ValueError):
+            log.error("mensagem %s sem run_id ou workspace_id válidos: arquivada", msg_id)
+            await self.queue_call("archive", msg_id)
+            return "invalid"
+
+        store = RunStore(self.pool, workspace_id=workspace_id, run_id=run_id)
+        claim = await store.begin(
+            workspace_cap=self.settings.worker_workspace_cap,
+            lease_seconds=self.settings.worker_visibility_timeout_seconds,
+        )
+        if claim.outcome in ("finished", "missing", "skipped"):
+            await self.queue_call("delete", msg_id)
+            log.info(
+                "run %s: %s, nada a fazer (mensagem %s apagada)", run_id, claim.outcome, msg_id
+            )
+            return claim.outcome
+        if claim.outcome == "busy":
+            log.info("run %s em execução em outro worker; a mensagem %s espera", run_id, msg_id)
+            return "busy"
+        if claim.outcome == "capped":
+            await self.queue_call("set_vt", msg_id, CAPPED_DELAY_SECONDS)
+            log.info(
+                "workspace %s no teto de %s runs simultâneos; run %s volta em %ss",
+                workspace_id,
+                self.settings.worker_workspace_cap,
+                run_id,
+                CAPPED_DELAY_SECONDS,
+            )
+            return "capped"
+
+        log.info(
+            "run %s (workspace %s, %s): tentativa %s de %s",
+            run_id,
+            workspace_id,
+            claim.agent_id,
+            claim.attempts,
+            self.settings.worker_max_attempts,
+        )
+        heartbeat = asyncio.create_task(self.heartbeat(store, msg_id))
+        try:
+            result = await run_flow(self.squad, store)
+        except asyncio.CancelledError:
+            await asyncio.shield(self.release(store, msg_id))
+            raise
+        except Exception as exc:
+            return await self.failed(store, msg_id, claim, exc)
+        finally:
+            heartbeat.cancel()
+        await self.queue_call("delete", msg_id)
+        log.info("run %s concluído: %s", run_id, summary(result))
+        return result["outcome"]
+
+    async def heartbeat(self, store: RunStore, msg_id: int) -> None:
+        timeout = self.settings.worker_visibility_timeout_seconds
+        while True:
+            await asyncio.sleep(max(timeout / 3, 1))
+            try:
+                await store.touch()
+                await self.queue_call("set_vt", msg_id, timeout)
+            except Exception:
+                log.warning("batimento do run %s falhou", store.run_id, exc_info=True)
+
+    async def release(self, store: RunStore, msg_id: int) -> None:
+        await store.release()
+        await self.queue_call("set_vt", msg_id, 0)
+        log.warning("run %s devolvido à fila no encerramento do worker", store.run_id)
+
+    async def failed(self, store: RunStore, msg_id: int, claim: Claim, exc: Exception) -> str:
+        transient, code, details = classify(exc)
+        if code == "internal":
+            log.exception("run %s: erro inesperado", store.run_id)
+        error = {
+            "code": code,
+            "message": error_message(claim.locale, code, claim.attempts),
+            "attempts": claim.attempts,
+            "details": redact(details),
+        }
+        if transient and claim.attempts < self.settings.worker_max_attempts:
+            delay = self.settings.worker_retry_base_seconds * 2 ** (claim.attempts - 1)
+            await store.retry_later(error | {"retry_in_seconds": delay})
+            await self.queue_call("set_vt", msg_id, math.ceil(delay))
+            log.warning(
+                "run %s: %s na tentativa %s; nova tentativa em %ss",
+                store.run_id,
+                code,
+                claim.attempts,
+                delay,
+            )
+            return "retry"
+        work_status = await store.fail(error, work_item_id=claim.work_item_id)
+        await self.queue_call("archive", msg_id)
+        log.error(
+            "run %s falhou (%s, tentativa %s); trabalho em %s; mensagem %s arquivada",
+            store.run_id,
+            code,
+            claim.attempts,
+            work_status,
+            msg_id,
+        )
+        return "failed"
+
+    # ------------------------------------------------------------------------------------------
+    # Laços
+    # ------------------------------------------------------------------------------------------
+
+    async def drain(self, max_rounds: int = 100) -> list[str]:
+        """Processa até a fila não ter mensagem visível (testes e `--drain`)."""
+        outcomes: list[str] = []
+        for _ in range(max_rounds):
+            batch = await self.read(self.settings.worker_concurrency)
+            if not batch:
+                break
+            outcomes += await asyncio.gather(*(self.handle(m) for m in batch))
+        return outcomes
+
+    def stop(self) -> None:
+        if not self.stopping.is_set():
+            log.info("sinal de encerramento recebido: parando de ler a fila")
+        self.stopping.set()
+
+    async def serve(self, *, handle_signals: bool = True) -> None:
+        if handle_signals:
+            loop = asyncio.get_running_loop()
+            for sig in (signal.SIGINT, signal.SIGTERM):
+                loop.add_signal_handler(sig, self.stop)
+        log.info(
+            "worker no ar: fila %s, concorrência %s, teto por workspace %s, LLM %s",
+            QUEUE,
+            self.settings.worker_concurrency,
+            self.settings.worker_workspace_cap,
+            self.squad.llm.provider,
+        )
+        while not self.stopping.is_set():
+            free = self.settings.worker_concurrency - len(self.inflight)
+            if free <= 0:
+                await self.wait_for_slot()
+                continue
+            try:
+                batch = await self.read(free)
+            except psycopg.OperationalError:
+                log.warning("banco indisponível ao ler a fila; nova leitura em instantes")
+                batch = []
+            if not batch:
+                await self.pause(self.settings.worker_poll_seconds)
+                continue
+            for msg in batch:
+                task = asyncio.create_task(self.handle(msg))
+                self.inflight.add(task)
+                task.add_done_callback(self.task_done)
+        await self.shutdown()
+
+    def task_done(self, task: asyncio.Task[str]) -> None:
+        self.inflight.discard(task)
+        if not task.cancelled() and task.exception() is not None:
+            log.error("falha ao processar mensagem da fila", exc_info=task.exception())
+
+    async def wait_for_slot(self) -> None:
+        stop = asyncio.create_task(self.stopping.wait())
+        await asyncio.wait({*self.inflight, stop}, return_when=asyncio.FIRST_COMPLETED)
+        stop.cancel()
+
+    async def pause(self, seconds: float) -> None:
+        with contextlib.suppress(TimeoutError):
+            await asyncio.wait_for(self.stopping.wait(), timeout=seconds)
+
+    async def shutdown(self) -> None:
+        if self.inflight:
+            grace = self.settings.worker_shutdown_grace_seconds
+            log.info("esperando %s run(s) em andamento por até %ss", len(self.inflight), grace)
+            _, pending = await asyncio.wait(set(self.inflight), timeout=grace)
+            for task in pending:
+                task.cancel()
+            await asyncio.gather(*pending, return_exceptions=True)
+        log.info("worker encerrado")
+
+
+def summary(result: dict[str, Any]) -> str:
+    cost = (
+        f"{result['input_tokens']} tokens de entrada, {result['output_tokens']} de saída, "
+        f"{result['cache_read_tokens']} lidos e {result['cache_write_tokens']} gravados no cache, "
+        f"US$ {result['cost_usd']}"
+    )
+    if result["outcome"] == "asked":
+        missing = ", ".join(result["missing"])
+        return f"briefing incompleto ({missing}); pergunta enviada, trabalho em needs_you; {cost}"
+    revised = ", revisada uma vez na autoverificação" if result.get("revisions") else ""
+    return (
+        f"entrega v{result['version_no']}{revised}; revisão pedida, trabalho em needs_you; {cost}"
+    )
+
+
+async def main(settings: Settings, *, drain: bool) -> None:
+    async with Worker(settings) as worker:
+        if drain:
+            outcomes = await worker.drain()
+            log.info("fila esvaziada: %s mensagem(ns) tratada(s) %s", len(outcomes), outcomes)
+        else:
+            await worker.serve()
 
 
 def run() -> None:
+    parser = argparse.ArgumentParser(prog="hellosquad-worker", description=__doc__)
+    parser.add_argument("--drain", action="store_true", help="processa a fila até esvaziar e sai")
+    args = parser.parse_args()
     settings = get_settings()
     configure_logging(settings.log_level)
-    idle_loop("worker", settings.worker_idle_seconds, "nenhuma fila conectada ainda")
+    asyncio.run(main(settings, drain=args.drain))
