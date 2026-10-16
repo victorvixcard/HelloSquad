@@ -7,7 +7,6 @@ import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { useShell } from "@/components/product/shell-context";
 import { EnvIdentity } from "../EnvIdentity";
 import { NeedsStrip, type StripNeed } from "../NeedsStrip";
-import "./growth.css";
 
 type Lane = "org" | "paid" | "cro";
 /** As três frentes da V4.3 (`kw.lanes`, L12153), na mesma ordem e com os mesmos ícones. */
@@ -66,11 +65,12 @@ export function GrowthEnvironment({ business, needs }: { business: string; needs
               <span className="ka-k">{t("goalKicker")}</span>
               <h2 id="kw-goal-t">{t("emptyTitle")}</h2>
               <p>{t("emptyText")}</p>
-              <span className="kw-empty-a">
+              {/* Na V4.6 aqui vêm os números ilustrativos; o vazio leva às conexões, como o de Resultados. */}
+              <div style={{ marginTop: 16 }}>
                 <Link className="hm-btn is-dark is-s" href={`/app/${shell.workspace.slug}/memoria-da-marca`}>
                   {t("connections")}
                 </Link>
-              </span>
+              </div>
             </div>
           </div>
         </div>
