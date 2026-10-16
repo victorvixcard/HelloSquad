@@ -1,11 +1,12 @@
-"""Integração da S1e: créditos no worker (reserva ao começar, captura ao entregar, liberação em falha
-e na pergunta) e na API (saldo em GET /me, estimativa). Cada teste termina reaplicando o seed.
+"""Integração da S1e: créditos no worker (reserva ao começar, captura ao entregar, liberação em
+falha e na pergunta) e na API (saldo em GET /me, estimativa). Cada teste reaplica o seed ao fim.
 """
 
 from collections.abc import AsyncIterator
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 import psycopg
 import pytest
@@ -242,3 +243,117 @@ async def test_without_credits_the_run_fails_without_charging(
         "balance": Decimal("6.00"),
         "available": Decimal("6.00"),
     }
+
+
+# ----------------------------------------------------------------------------------------------
+# API
+# ----------------------------------------------------------------------------------------------
+
+
+def credits_of(me: dict[str, Any], slug: str) -> dict[str, Any]:
+    [membership] = [m for m in me["memberships"] if m["workspace"]["slug"] == slug]
+    return membership["credits"]
+
+
+async def test_me_brings_the_credit_bar_of_each_workspace(api, access_token) -> None:
+    marina = await api.get("/me", headers=bearer(access_token(MARINA)))
+    assert marina.status_code == 200, marina.text
+    miolo = credits_of(marina.json(), "miolo")
+    assert miolo["cycle_ends_at"] is not None
+    assert {k: v for k, v in miolo.items() if k != "cycle_ends_at"} == {
+        "plan": "Squad",
+        "provisional": True,
+        "balance": 36.0,
+        "reserved": 0.0,
+        "available": 36.0,
+        "cycle_credits": 100.0,
+        "cycle_used": 64.0,  # 64% na conta em uso da V4.6
+    }
+
+    juliana = await api.get("/me", headers=bearer(access_token("juliana@trilha.example")))
+    assert credits_of(juliana.json(), "trilha") == {
+        "plan": "Free",
+        "provisional": True,
+        "balance": 19.2,
+        "reserved": 0.0,
+        "available": 19.2,
+        "cycle_credits": 20.0,
+        "cycle_used": 0.8,  # 4% no primeiro acesso da V4.6
+        "cycle_ends_at": None,
+    }
+
+
+async def test_me_shows_what_a_running_run_reserved(api, access_token, admin_db, miolo) -> None:
+    ids = await request_work(api, access_token, miolo, COMPLETE_REQUEST)
+    await admin_db.execute(
+        "select app.reserve_credits(%s, 10, %s, '04.01')", (ids["run_id"], f"run:{ids['run_id']}")
+    )
+
+    me = await api.get("/me", headers=bearer(access_token(MARINA)))
+
+    miolo_credits = credits_of(me.json(), "miolo")
+    assert (miolo_credits["balance"], miolo_credits["reserved"], miolo_credits["available"]) == (
+        36.0,
+        10.0,
+        26.0,
+    )
+
+
+async def test_estimate_before_asking(api, access_token, admin_db, miolo) -> None:
+    headers = bearer(access_token(MARINA))
+
+    first = await api.post(
+        "/credits/estimate",
+        headers=headers,
+        json={"workspace_id": miolo, "delivery_type": "04.01"},
+    )
+    assert first.status_code == 200, first.text
+    assert first.json() == {
+        "delivery_type": "04.01",
+        "depth": "produzir",
+        "credits": 10.0,
+        "revision": False,
+        "provisional": True,
+        "available": 36.0,
+        "sufficient": True,
+    }
+
+    # O trabalho do seed já tem a v1 entregue: um ajuste é nova versão (preço de revisão).
+    revision = await api.post(
+        "/credits/estimate",
+        headers=headers,
+        json={
+            "workspace_id": miolo,
+            "delivery_type": "04.01",
+            "work_item_id": "5eed0000-0000-4000-8000-000000000301",
+        },
+    )
+    assert revision.status_code == 200, revision.text
+    assert (revision.json()["revision"], revision.json()["credits"]) == (True, 10.0)
+
+
+@pytest.mark.parametrize(
+    ("body", "status", "code"),
+    [
+        ({"delivery_type": "99.99"}, 404, "price_not_found"),
+        ({"delivery_type": "4.1"}, 422, "validation_error"),
+        ({"delivery_type": "04.01", "work_item_id": str(UUID(int=7))}, 404, "work_item_not_found"),
+        ({"delivery_type": "04.01", "workspace": "vitta"}, 404, "not_found"),
+    ],
+    ids=["sem-preco", "formato", "trabalho-alheio", "workspace-alheio"],
+)
+async def test_estimate_errors_use_the_error_envelope(
+    api, access_token, admin_db, miolo, body: dict[str, Any], status: int, code: str
+) -> None:
+    slug = body.pop("workspace", "miolo")
+    workspace_id = str(
+        await scalar(admin_db, "select id from public.workspaces where slug = %s", slug)
+    )
+    response = await api.post(
+        "/credits/estimate",
+        headers=bearer(access_token(MARINA)),
+        json={"workspace_id": workspace_id, **body},
+    )
+    assert response.status_code == status, response.text
+    assert response.json()["error"]["code"] == code
+    assert response.json()["error"]["message"]

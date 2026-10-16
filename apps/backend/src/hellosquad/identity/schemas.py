@@ -5,6 +5,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints
 
+from hellosquad.credits.schemas import CreditBalance
+
 SLUG_PATTERN = r"^[a-z0-9]+(-[a-z0-9]+)*$"
 
 
@@ -63,6 +65,7 @@ class User(BaseModel):
 class Membership(BaseModel):
     workspace: WorkspaceSummary
     role: WorkspaceRole
+    credits: CreditBalance = Field(description="Créditos do workspace (valores provisórios).")
 
 
 class Me(BaseModel):

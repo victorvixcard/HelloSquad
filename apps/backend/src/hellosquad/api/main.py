@@ -16,6 +16,7 @@ from hellosquad.auth import TokenVerifier
 from hellosquad.autonomy.routes import router as runs_router
 from hellosquad.config import get_settings
 from hellosquad.conversations.routes import router as conversations_router
+from hellosquad.credits.routes import router as credits_router
 from hellosquad.db import Database
 from hellosquad.identity.routes import router as identity_router
 from hellosquad.memory.routes import router as memory_router
@@ -67,6 +68,7 @@ app.include_router(work_router)
 app.include_router(approvals_router)
 app.include_router(runs_router)
 app.include_router(memory_router)
+app.include_router(credits_router)
 
 
 class Health(BaseModel):

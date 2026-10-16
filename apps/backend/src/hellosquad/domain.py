@@ -177,3 +177,10 @@ class MemoryConflictResolution(StrEnum):
 class RunContextKind(StrEnum):
     fact = "fact"
     suggestion = "suggestion"
+
+
+class DeliveryDepth(StrEnum):
+    orientar = "orientar"
+    produzir = "produzir"
+    executar = "executar"
+    otimizar = "otimizar"

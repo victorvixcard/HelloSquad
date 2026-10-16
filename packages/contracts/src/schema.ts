@@ -9,7 +9,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Usuário autenticado e os workspaces dele */
+        /** Usuário autenticado e os workspaces dele, com o saldo de créditos de cada um */
         get: operations["get_me_me_get"];
         put?: never;
         post?: never;
@@ -431,6 +431,23 @@ export interface paths {
          * @description `keep_fact_id` confirma a versão escolhida; `content` cria uma versão nova Confirmado. A outra sai da memória como Descartado (o registro fica). Repetir devolve o conflito já resolvido.
          */
         post: operations["resolve_conflict_memory_conflicts__conflict_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/credits/estimate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Quanto uma entrega custa em créditos antes de pedir (valores provisórios) */
+        post: operations["estimate_credits_credits_estimate_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -879,6 +896,105 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** CreditBalance */
+        CreditBalance: {
+            /**
+             * Plan
+             * @description Nome do plano da conta.
+             * @example Squad
+             */
+            plan: string | null;
+            /**
+             * Provisional
+             * @description Valores provisórios (dono, 16/10): ainda não são regra comercial.
+             */
+            provisional: boolean;
+            /**
+             * Balance
+             * @description Soma do extrato dos grants válidos (inclui o reservado).
+             */
+            balance: number;
+            /**
+             * Reserved
+             * @description Reservado pelos runs em andamento.
+             */
+            reserved: number;
+            /**
+             * Available
+             * @description Disponível para novas entregas: saldo − reservado.
+             */
+            available: number;
+            /**
+             * Cycle Credits
+             * @description Créditos do ciclo do plano vigente (barra créditos do mês).
+             * @example 100
+             */
+            cycle_credits: number;
+            /**
+             * Cycle Used
+             * @description Usado no ciclo do plano vigente.
+             * @example 64
+             */
+            cycle_used: number;
+            /**
+             * Cycle Ends At
+             * @description Fim do ciclo vigente. Nulo = não vence.
+             */
+            cycle_ends_at: string | null;
+        };
+        /** CreditEstimate */
+        CreditEstimate: {
+            /**
+             * Delivery Type
+             * @example 04.01
+             */
+            delivery_type: string;
+            depth: components["schemas"]["DeliveryDepth"];
+            /**
+             * Credits
+             * @description Quanto o run reserva ao começar e cobra se entregar.
+             */
+            credits: number;
+            /**
+             * Revision
+             * @description Nova versão de um trabalho que já tem entrega.
+             */
+            revision: boolean;
+            /**
+             * Provisional
+             * @description Valores provisórios (dono, 16/10): ainda não são regra comercial.
+             */
+            provisional: boolean;
+            /**
+             * Available
+             * @description Disponível no workspace agora.
+             */
+            available: number;
+            /**
+             * Sufficient
+             * @description O disponível cobre a estimativa.
+             */
+            sufficient: boolean;
+        };
+        /** CreditEstimateRequest */
+        CreditEstimateRequest: {
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /**
+             * Delivery Type
+             * @description Delivery do catálogo.
+             * @example 04.01
+             */
+            delivery_type: string;
+            /**
+             * Work Item Id
+             * @description Trabalho que já tem versão entregue: a estimativa é de uma nova versão (ajuste ou nova proposta), com o preço de revisão.
+             */
+            work_item_id?: string | null;
+        };
         /** Delivery */
         Delivery: {
             /**
@@ -909,6 +1025,11 @@ export interface components {
              */
             versions: components["schemas"]["DeliveryVersion"][];
         };
+        /**
+         * DeliveryDepth
+         * @enum {string}
+         */
+        DeliveryDepth: "orientar" | "produzir" | "executar" | "otimizar";
         /** DeliveryFile */
         DeliveryFile: {
             /**
@@ -1077,6 +1198,8 @@ export interface components {
         Membership: {
             workspace: components["schemas"]["WorkspaceSummary"];
             role: components["schemas"]["WorkspaceRole"];
+            /** @description Créditos do workspace (valores provisórios). */
+            credits: components["schemas"]["CreditBalance"];
         };
         /**
          * MemoryArea
@@ -3769,6 +3892,66 @@ export interface operations {
             };
             /** @description Conflito com o estado atual do registro. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    estimate_credits_credits_estimate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreditEstimateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditEstimate"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -11,7 +11,7 @@
         "tags": [
           "identity"
         ],
-        "summary": "Usuário autenticado e os workspaces dele",
+        "summary": "Usuário autenticado e os workspaces dele, com o saldo de créditos de cada um",
         "operationId": "get_me_me_get",
         "responses": {
           "200": {
@@ -2611,6 +2611,82 @@
         }
       }
     },
+    "/credits/estimate": {
+      "post": {
+        "tags": [
+          "credits"
+        ],
+        "summary": "Quanto uma entrega custa em créditos antes de pedir (valores provisórios)",
+        "operationId": "estimate_credits_credits_estimate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreditEstimateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditEstimate"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -3725,6 +3801,174 @@
         ],
         "title": "ConversationPage"
       },
+      "CreditBalance": {
+        "properties": {
+          "plan": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan",
+            "description": "Nome do plano da conta.",
+            "examples": [
+              "Squad"
+            ]
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional",
+            "description": "Valores provisórios (dono, 16/10): ainda não são regra comercial."
+          },
+          "balance": {
+            "type": "number",
+            "title": "Balance",
+            "description": "Soma do extrato dos grants válidos (inclui o reservado)."
+          },
+          "reserved": {
+            "type": "number",
+            "title": "Reserved",
+            "description": "Reservado pelos runs em andamento."
+          },
+          "available": {
+            "type": "number",
+            "title": "Available",
+            "description": "Disponível para novas entregas: saldo − reservado."
+          },
+          "cycle_credits": {
+            "type": "number",
+            "title": "Cycle Credits",
+            "description": "Créditos do ciclo do plano vigente (barra créditos do mês).",
+            "examples": [
+              100
+            ]
+          },
+          "cycle_used": {
+            "type": "number",
+            "title": "Cycle Used",
+            "description": "Usado no ciclo do plano vigente.",
+            "examples": [
+              64
+            ]
+          },
+          "cycle_ends_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cycle Ends At",
+            "description": "Fim do ciclo vigente. Nulo = não vence."
+          }
+        },
+        "type": "object",
+        "required": [
+          "plan",
+          "provisional",
+          "balance",
+          "reserved",
+          "available",
+          "cycle_credits",
+          "cycle_used",
+          "cycle_ends_at"
+        ],
+        "title": "CreditBalance"
+      },
+      "CreditEstimate": {
+        "properties": {
+          "delivery_type": {
+            "type": "string",
+            "title": "Delivery Type",
+            "examples": [
+              "04.01"
+            ]
+          },
+          "depth": {
+            "$ref": "#/components/schemas/DeliveryDepth"
+          },
+          "credits": {
+            "type": "number",
+            "title": "Credits",
+            "description": "Quanto o run reserva ao começar e cobra se entregar."
+          },
+          "revision": {
+            "type": "boolean",
+            "title": "Revision",
+            "description": "Nova versão de um trabalho que já tem entrega."
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional",
+            "description": "Valores provisórios (dono, 16/10): ainda não são regra comercial."
+          },
+          "available": {
+            "type": "number",
+            "title": "Available",
+            "description": "Disponível no workspace agora."
+          },
+          "sufficient": {
+            "type": "boolean",
+            "title": "Sufficient",
+            "description": "O disponível cobre a estimativa."
+          }
+        },
+        "type": "object",
+        "required": [
+          "delivery_type",
+          "depth",
+          "credits",
+          "revision",
+          "provisional",
+          "available",
+          "sufficient"
+        ],
+        "title": "CreditEstimate"
+      },
+      "CreditEstimateRequest": {
+        "properties": {
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "delivery_type": {
+            "type": "string",
+            "pattern": "^[0-9]{2}\\.[0-9]{2}$",
+            "title": "Delivery Type",
+            "description": "Delivery do catálogo.",
+            "examples": [
+              "04.01"
+            ]
+          },
+          "work_item_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Id",
+            "description": "Trabalho que já tem versão entregue: a estimativa é de uma nova versão (ajuste ou nova proposta), com o preço de revisão."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "workspace_id",
+          "delivery_type"
+        ],
+        "title": "CreditEstimateRequest"
+      },
       "Delivery": {
         "properties": {
           "id": {
@@ -3780,6 +4024,16 @@
           "versions"
         ],
         "title": "Delivery"
+      },
+      "DeliveryDepth": {
+        "type": "string",
+        "enum": [
+          "orientar",
+          "produzir",
+          "executar",
+          "otimizar"
+        ],
+        "title": "DeliveryDepth"
       },
       "DeliveryFile": {
         "properties": {
@@ -4154,12 +4408,17 @@
           },
           "role": {
             "$ref": "#/components/schemas/WorkspaceRole"
+          },
+          "credits": {
+            "$ref": "#/components/schemas/CreditBalance",
+            "description": "Créditos do workspace (valores provisórios)."
           }
         },
         "type": "object",
         "required": [
           "workspace",
-          "role"
+          "role",
+          "credits"
         ],
         "title": "Membership"
       },

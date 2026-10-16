@@ -7,6 +7,7 @@ from psycopg import errors
 
 from hellosquad.api.deps import CurrentPrincipal, DatabaseDep
 from hellosquad.api.errors import ApiError, error_responses
+from hellosquad.credits.schemas import CreditBalance
 from hellosquad.identity.schemas import (
     Me,
     Membership,
@@ -20,10 +21,28 @@ from hellosquad.identity.schemas import (
 
 router = APIRouter(tags=["identity"])
 
+# Créditos de cada workspace para a barra "Plano Squad · créditos do mês" (FLUXOS_DA_V46.md §1.1):
+# saldo pelo extrato; reservado e ciclo pelos grants válidos agora.
 MY_MEMBERSHIPS = """
-select w.id, w.slug, w.name, m.role
+select w.id, w.slug, w.name, m.role,
+       pl.name as plan, coalesce(v.provisional, true) as provisional,
+       app.credit_balance(w.id) as balance,
+       c.reserved, c.cycle_credits, c.cycle_used, c.cycle_ends_at
 from public.memberships m
 join public.workspaces w on w.id = m.workspace_id
+left join public.credit_accounts a on a.workspace_id = w.id
+left join public.plan_versions v on v.id = a.plan_version_id
+left join public.plans pl on pl.id = v.plan_id
+cross join lateral (
+  select coalesce(sum(g.reserved), 0) as reserved,
+         coalesce(sum(g.amount) filter (where g.origin = 'plan_cycle'), 0) as cycle_credits,
+         coalesce(sum(g.amount - g.remaining) filter (where g.origin = 'plan_cycle'), 0)
+           as cycle_used,
+         max(g.expires_at) filter (where g.origin = 'plan_cycle') as cycle_ends_at
+  from public.credit_grants g
+  where g.workspace_id = w.id and g.starts_at <= now()
+    and (g.expires_at is null or g.expires_at > now())
+) c
 where m.user_id = %s
 order by w.name, w.id
 """
@@ -47,7 +66,7 @@ CREATE_WORKSPACE = "select id, slug, name, created_at from app.create_workspace(
 
 @router.get(
     "/me",
-    summary="Usuário autenticado e os workspaces dele",
+    summary="Usuário autenticado e os workspaces dele, com o saldo de créditos de cada um",
     responses=error_responses(401, 503),
 )
 async def get_me(principal: CurrentPrincipal, db: DatabaseDep) -> Me:
@@ -59,6 +78,16 @@ async def get_me(principal: CurrentPrincipal, db: DatabaseDep) -> Me:
             Membership(
                 workspace=WorkspaceSummary(id=row["id"], slug=row["slug"], name=row["name"]),
                 role=row["role"],
+                credits=CreditBalance(
+                    plan=row["plan"],
+                    provisional=row["provisional"],
+                    balance=row["balance"],
+                    reserved=row["reserved"],
+                    available=row["balance"] - row["reserved"],
+                    cycle_credits=row["cycle_credits"],
+                    cycle_used=row["cycle_used"],
+                    cycle_ends_at=row["cycle_ends_at"],
+                ),
             )
             for row in rows
         ],
