@@ -1,0 +1,8 @@
+# API do Storage local (Kong :56321), 16/10 04:08: bucket deliveries, objeto em <miolo>/deliveries/<delivery>/1/
+upload com a chave secreta (papel privilegiado): 200
+Marina lê (membro da Miolo): 200 conteúdo=prova da S1b
+Rafael lê (Vitta): 400 {"statusCode":"404","error":"not_found","message":"Object not found","code":"NoSuchKey"}
+Marina grava no próprio prefixo: 400 {"statusCode":"403","error":"Unauthorized","message":"new row violates row-level security 
+público sem token: 400
+remoção com a chave secreta: 200
+objetos no bucket depois: 0

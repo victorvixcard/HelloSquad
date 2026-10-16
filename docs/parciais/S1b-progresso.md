@@ -10,4 +10,5 @@
 | 04:04 | 4. `tests/test_core_api.py` (13 testes; seed reaplicado ao fim de cada um). `pytest`: 64 passed | ✅ `d4688aa` |
 | 04:04 | 3. `make openapi` + `pnpm --filter contracts generate` + `test` (9 passed) + `typecheck` | ✅ `2323f42` |
 | 04:06 | 5a. `SETUP_LOCAL.md` com o caminho pedido → trabalho → aprovação em `curl` (sem `jq`, que não está instalado); rodado contra `make dev-api`: `docs/parciais/s1b/curl_dev_api.txt`; `make seed` depois | ✅ |
-| — | 5b. Verificação final (`make up && make migrate && make seed && make test`) e relatório | 🟡 |
+| 04:08 | 5b. Verificação final `make up && make migrate && make seed && make test`: exit 0 (ruff ok, pytest 64, contracts 9, ui 44, pgTAP 241 PASS); bucket provado pela API do Storage (`s1b/storage_api.txt`) | ✅ |
+| 04:09 | Relatório `S1b-relatorio.md`; banco no estado do seed, porta 8100 livre | ✅ fechada |
