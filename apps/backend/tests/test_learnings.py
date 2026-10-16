@@ -72,7 +72,15 @@ async def reflect() -> list[str]:
         return await worker.drain_reflections()
 
 
-async def request_work(api, access_token, user: str, workspace_id: str, body: str) -> str:
+async def request_work(
+    api,
+    access_token,
+    user: str,
+    workspace_id: str,
+    body: str,
+    delivery_type: str = "04.01",
+    title: str = "Legenda do pão de abóbora",
+) -> str:
     headers = bearer(access_token(user))
     conversation = await api.post(
         f"/workspaces/{workspace_id}/conversations",
@@ -87,7 +95,7 @@ async def request_work(api, access_token, user: str, workspace_id: str, body: st
     work = await api.post(
         f"/messages/{message.json()['id']}/work-items",
         headers=headers,
-        json={"delivery_type": "04.01", "title": "Legenda do pão de abóbora"},
+        json={"delivery_type": delivery_type, "title": title},
     )
     assert work.status_code == 201, work.text
     return work.json()["id"]
@@ -315,6 +323,54 @@ async def test_marina_correction_is_applied_in_the_next_otto_delivery(
         f"/workspaces/{miolo}/memory/learnings", headers=bearer(access_token(RAFAEL))
     )
     assert other.status_code == 404
+
+
+POSTS_REQUEST = (
+    "Otto, preciso de posts dos bastidores para o Instagram e roteiros de reels da semana do pão "
+    "de abóbora."
+)
+
+
+async def learning_items(admin_db, run_id: str) -> list[tuple[str, str, str]]:
+    items = await rows(
+        admin_db,
+        """
+        select l.topic, l.delivery_type, i.reason
+        from public.run_context_items i
+        join public.agent_learnings l on l.id = i.learning_id
+        where i.run_id = %s and i.kind = 'learning'
+        order by l.topic
+        """,
+        run_id,
+    )
+    return [(i["topic"], i["delivery_type"], i["reason"]) for i in items]
+
+
+async def test_correction_on_caption_reaches_other_deliveries_of_the_agent(
+    api, access_token, admin_db
+) -> None:
+    """H2-03: o aprendizado promovido na 04.01 vale para o Otto na 04.03 (roteiros e posts), mesmo
+    sem palavra do pedido em comum; a Vitta continua sem nada da Miolo."""
+    miolo = await workspace(admin_db, "miolo")
+    await marina_corrects_and_approves(api, access_token, admin_db, miolo)
+    assert await reflect() == ["reflected"]
+
+    posts = await request_work(
+        api, access_token, MARINA, miolo, POSTS_REQUEST, "04.03", "Posts dos bastidores"
+    )
+    assert await drain() == ["delivered"]
+    run_id = await latest_run(admin_db, posts)
+    assert await learning_items(admin_db, run_id) == [
+        ("Tratamento", "04.01", "agent"),
+        ("Vocabulário", "04.01", "agent"),
+    ]
+
+    vitta = await workspace(admin_db, "vitta")
+    vitta_posts = await request_work(
+        api, access_token, RAFAEL, vitta, POSTS_REQUEST, "04.03", "Posts dos bastidores"
+    )
+    assert await drain() == ["delivered"]
+    assert await learning_items(admin_db, await latest_run(admin_db, vitta_posts)) == []
 
 
 async def test_owner_promotes_discards_and_keeps_learnings(api, access_token, admin_db) -> None:

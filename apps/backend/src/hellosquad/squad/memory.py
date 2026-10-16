@@ -12,7 +12,8 @@ Tudo que entra é registrado em run_context_items.
 
 S2c (Arquitetura §5.4): no run de uma delivery, entre os essenciais e a busca de fatos entram os
 aprendizados promovidos deste cliente com o agente (camada 3): primeiro os da mesma delivery, depois
-os de outras deliveries do agente que a busca acha, até LEARNING_TOP_K e dentro do mesmo orçamento.
+os gerais do agente (outras deliveries dele; os que a busca acha antes), até LEARNING_TOP_K e dentro
+do mesmo orçamento (S2g, H2-03: a correção da legenda vale para os roteiros do mesmo agente).
 Candidatos e descartados nunca entram. Aprendizado sem reafirmação há LEARNING_REVIEW_DAYS entra
 marcado para o agente avisar.
 """
@@ -81,6 +82,7 @@ with query as (
 )
 select l.id, l.agent_id::text, l.delivery_type, l.topic, l.learning,
        l.delivery_type = %(delivery_type)s as same_delivery,
+       coalesce(query.q is not null and l.search_vector @@ query.q, false) as matched,
        coalesce(ts_rank_cd(l.search_vector, query.q), 0) as rank,
        coalesce(l.reviewed_at, l.decided_at, l.created_at)
          < now() - make_interval(days => %(review_days)s) as stale
@@ -89,8 +91,7 @@ where l.workspace_id = %(workspace_id)s
   and l.agent_id = %(agent_id)s::public.agent_id
   and l.superseded_at is null
   and l.status = 'promoted'
-  and (l.delivery_type = %(delivery_type)s or (query.q is not null and l.search_vector @@ query.q))
-order by same_delivery desc, rank desc, l.created_at desc, l.id
+order by same_delivery desc, matched desc, rank desc, l.created_at desc, l.id
 limit %(limit)s
 """
 
@@ -124,6 +125,12 @@ def render_learning(item: AgentLearning) -> str:
     )
 
 
+def learning_reason(row: dict[str, Any]) -> str:
+    if row["same_delivery"]:
+        return "delivery"
+    return "search" if row["matched"] else "agent"
+
+
 def to_learning(row: dict[str, Any]) -> AgentLearning:
     item = AgentLearning(
         learning_id=row["id"],
@@ -131,7 +138,7 @@ def to_learning(row: dict[str, Any]) -> AgentLearning:
         delivery_type=row["delivery_type"],
         topic=row["topic"],
         learning=row["learning"],
-        reason="delivery" if row["same_delivery"] else "search",
+        reason=learning_reason(row),
         rank=float(row["rank"]) if row["rank"] else None,
         stale=bool(row["stale"]),
         tokens=0,
