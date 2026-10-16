@@ -1,0 +1,33 @@
+{
+  "delivery_type": "05.01",
+  "step": "kiwi.check",
+  "cases": [
+    {
+      "name": "aprovada",
+      "usage": {
+        "input_tokens": 1300,
+        "output_tokens": 180,
+        "cache_read_tokens": 3200
+      },
+      "output": {
+        "aderencia_ao_briefing": {
+          "ok": true,
+          "observacao": "Serve às encomendas de Natal pelo site, com teto proposto abaixo do valor informado."
+        },
+        "consistencia_de_marca": {
+          "ok": true,
+          "observacao": "Segue o público e a estratégia de Natal aprovados."
+        },
+        "qualidade_profissional": {
+          "ok": true,
+          "observacao": "Verba só nos canais do plano, hipóteses com medida e critério, nenhum custo ou taxa inventado."
+        },
+        "aplicabilidade_no_canal": {
+          "ok": true,
+          "observacao": "Cada canal tem papel e público, e está claro o que falta autorizar."
+        },
+        "ajustes": []
+      }
+    }
+  ]
+}

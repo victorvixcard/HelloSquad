@@ -1,0 +1,181 @@
+{
+  "delivery_type": "05.01",
+  "step": "kiwi.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Plano de mídia das encomendas de Natal",
+          "resumo": "Nova versão com o ajuste pedido. Proponho até R$ 1.200 por mês, abaixo dos R$ 1.500 que você informou: a maior parte no Instagram e no Facebook, para quem mora perto, e uma parte menor no Google, para quem já procura pão de fermentação natural na região. Os R$ 300 que sobram ficam de reserva até a primeira leitura dos números.",
+          "objetivos": [
+            {
+              "objetivo": "Aumentar as encomendas de Natal feitas pelo site",
+              "indicador": "Encomendas pelo site vindas de anúncio, separadas por canal",
+              "prazo": "de 03/11 a 20/12/2026"
+            },
+            {
+              "objetivo": "Saber quanto custa trazer uma encomenda por anúncio",
+              "indicador": "Custo por encomenda em cada canal, lido pela Íris",
+              "prazo": "primeira leitura em 17/11/2026"
+            }
+          ],
+          "canais": [
+            {
+              "canal": "meta_ads",
+              "papel": "Apresentar as encomendas de Natal a quem mora perto e levar para a página de encomendas do site",
+              "publico": "Moradores de Pinheiros e Vila Madalena, de 28 a 45 anos, como na estratégia aprovada"
+            },
+            {
+              "canal": "google_ads",
+              "papel": "Aparecer para quem já procura pão de fermentação natural ou encomenda de Natal na região",
+              "publico": "Buscas locais por pão de fermentação natural e por padaria em Pinheiros"
+            }
+          ],
+          "orcamento": {
+            "moeda": "BRL",
+            "teto_informado": 1500,
+            "teto_proposto": 1200,
+            "periodo": "por mês, de 03/11 a 20/12/2026",
+            "distribuicao": [
+              {
+                "canal": "meta_ads",
+                "valor": 900
+              },
+              {
+                "canal": "google_ads",
+                "valor": 300
+              }
+            ]
+          },
+          "limites": [
+            "Nada é investido sem a sua autorização com teto, escopo e validade; aprovar este plano não autoriza gastar.",
+            "O teto de R$ 1.200 por mês vale para os dois canais juntos e nunca passa dos R$ 1.500 que você informou.",
+            "Regra de pausa, para você aprovar: se um canal gastar metade da verba do mês sem nenhuma encomenda pelo site, ele para e a gente revê junto.",
+            "A verba é sua, paga direto ao Meta e ao Google, e não se mistura com os créditos que você usa com o squad."
+          ],
+          "hipoteses": [
+            {
+              "hipotese": "Anúncios no Instagram e no Facebook para quem mora perto trazem encomendas de Natal pelo site.",
+              "como_medir": "Encomendas pelo site com origem nos anúncios do Meta, por link com UTM na página de encomendas.",
+              "criterio_de_sucesso": "Cada encomenda vinda de anúncio custar menos do que a margem que ela deixa; a margem por encomenda é você quem informa."
+            },
+            {
+              "hipotese": "A busca no Google traz encomendas de quem já decidiu comprar pão para o Natal.",
+              "como_medir": "Encomendas pelo site com origem no Google, separadas das do Meta.",
+              "criterio_de_sucesso": "Custo por encomenda no Google igual ou menor que no Meta na primeira leitura; se for maior, a verba do Google passa para o Meta."
+            }
+          ],
+          "para_executar": [
+            "Conectar as contas de anúncios do Meta e do Google só para leitura, para a Kiwi acompanhar os números.",
+            "Autorizar o teto de R$ 1.200 por mês, com escopo (Meta e Google, encomendas de Natal) e validade até 20/12/2026.",
+            "Peças da Kaia para os anúncios: foto do pão de fermentação longa na mesa de Natal e um vídeo curto do forno.",
+            "Textos dos anúncios do Otto, no tom da marca.",
+            "Link com UTM na página de encomendas do site, para a Íris separar as encomendas por canal."
+          ],
+          "premissas": [
+            "O plano segue o posicionamento, o plano de marketing e a estratégia de Natal aprovados.",
+            "Nenhum custo por clique ou taxa de conversão foi estimado: a conta de anúncios ainda não está conectada.",
+            "As encomendas de Natal pelo site abrem em 03/11, dentro do período da campanha aprovada."
+          ]
+        },
+        "mensagem": "Fiz a nova versão do plano de mídia com o ajuste que você pediu. Nada foi investido: agora é com você, aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "plano_de_midia",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Plano de mídia das encomendas de Natal",
+          "resumo": "Proponho até R$ 1.200 por mês, abaixo dos R$ 1.500 que você informou: a maior parte no Instagram e no Facebook, para quem mora perto, e uma parte menor no Google, para quem já procura pão de fermentação natural na região. Os R$ 300 que sobram ficam de reserva até a primeira leitura dos números.",
+          "objetivos": [
+            {
+              "objetivo": "Aumentar as encomendas de Natal feitas pelo site",
+              "indicador": "Encomendas pelo site vindas de anúncio, separadas por canal",
+              "prazo": "de 03/11 a 20/12/2026"
+            },
+            {
+              "objetivo": "Saber quanto custa trazer uma encomenda por anúncio",
+              "indicador": "Custo por encomenda em cada canal, lido pela Íris",
+              "prazo": "primeira leitura em 17/11/2026"
+            }
+          ],
+          "canais": [
+            {
+              "canal": "meta_ads",
+              "papel": "Apresentar as encomendas de Natal a quem mora perto e levar para a página de encomendas do site",
+              "publico": "Moradores de Pinheiros e Vila Madalena, de 28 a 45 anos, como na estratégia aprovada"
+            },
+            {
+              "canal": "google_ads",
+              "papel": "Aparecer para quem já procura pão de fermentação natural ou encomenda de Natal na região",
+              "publico": "Buscas locais por pão de fermentação natural e por padaria em Pinheiros"
+            }
+          ],
+          "orcamento": {
+            "moeda": "BRL",
+            "teto_informado": 1500,
+            "teto_proposto": 1200,
+            "periodo": "por mês, de 03/11 a 20/12/2026",
+            "distribuicao": [
+              {
+                "canal": "meta_ads",
+                "valor": 900
+              },
+              {
+                "canal": "google_ads",
+                "valor": 300
+              }
+            ]
+          },
+          "limites": [
+            "Nada é investido sem a sua autorização com teto, escopo e validade; aprovar este plano não autoriza gastar.",
+            "O teto de R$ 1.200 por mês vale para os dois canais juntos e nunca passa dos R$ 1.500 que você informou.",
+            "Regra de pausa, para você aprovar: se um canal gastar metade da verba do mês sem nenhuma encomenda pelo site, ele para e a gente revê junto.",
+            "A verba é sua, paga direto ao Meta e ao Google, e não se mistura com os créditos que você usa com o squad."
+          ],
+          "hipoteses": [
+            {
+              "hipotese": "Anúncios no Instagram e no Facebook para quem mora perto trazem encomendas de Natal pelo site.",
+              "como_medir": "Encomendas pelo site com origem nos anúncios do Meta, por link com UTM na página de encomendas.",
+              "criterio_de_sucesso": "Cada encomenda vinda de anúncio custar menos do que a margem que ela deixa; a margem por encomenda é você quem informa."
+            },
+            {
+              "hipotese": "A busca no Google traz encomendas de quem já decidiu comprar pão para o Natal.",
+              "como_medir": "Encomendas pelo site com origem no Google, separadas das do Meta.",
+              "criterio_de_sucesso": "Custo por encomenda no Google igual ou menor que no Meta na primeira leitura; se for maior, a verba do Google passa para o Meta."
+            }
+          ],
+          "para_executar": [
+            "Conectar as contas de anúncios do Meta e do Google só para leitura, para a Kiwi acompanhar os números.",
+            "Autorizar o teto de R$ 1.200 por mês, com escopo (Meta e Google, encomendas de Natal) e validade até 20/12/2026.",
+            "Peças da Kaia para os anúncios: foto do pão de fermentação longa na mesa de Natal e um vídeo curto do forno.",
+            "Textos dos anúncios do Otto, no tom da marca.",
+            "Link com UTM na página de encomendas do site, para a Íris separar as encomendas por canal."
+          ],
+          "premissas": [
+            "O plano segue o posicionamento, o plano de marketing e a estratégia de Natal aprovados.",
+            "Nenhum custo por clique ou taxa de conversão foi estimado: a conta de anúncios ainda não está conectada.",
+            "As encomendas de Natal pelo site abrem em 03/11, dentro do período da campanha aprovada."
+          ]
+        },
+        "mensagem": "Montei o plano de mídia do Natal com teto de R$ 1.200 por mês, abaixo dos R$ 1.500 que você informou: R$ 900 no Meta e R$ 300 no Google. Aprovar o plano não investe nada; para sair do papel, falta conectar a conta de anúncios só para leitura e autorizar o teto.",
+        "observacoes": []
+      }
+    }
+  ]
+}

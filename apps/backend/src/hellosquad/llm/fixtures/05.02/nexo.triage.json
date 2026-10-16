@@ -1,0 +1,28 @@
+{
+  "delivery_type": "05.02",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1700,
+        "output_tokens": 220
+      },
+      "output": {
+        "delivery_type": "05.02",
+        "briefing": {
+          "canal": "instagram",
+          "objetivo": "Descobrir qual anúncio traz mais encomendas de Natal",
+          "tema": "dois anúncios das encomendas de Natal",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Teste de dois anúncios da Miolo no Instagram para as encomendas de Natal."
+      }
+    }
+  ]
+}

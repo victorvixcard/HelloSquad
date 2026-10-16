@@ -1,0 +1,33 @@
+{
+  "delivery_type": "05.02",
+  "step": "kiwi.check",
+  "cases": [
+    {
+      "name": "aprovada",
+      "usage": {
+        "input_tokens": 1300,
+        "output_tokens": 180,
+        "cache_read_tokens": 3200
+      },
+      "output": {
+        "aderencia_ao_briefing": {
+          "ok": true,
+          "observacao": "Os dois testes respondem qual anúncio traz mais encomendas de Natal no Instagram."
+        },
+        "consistencia_de_marca": {
+          "ok": true,
+          "observacao": "Públicos e mensagens seguem a estratégia aprovada e o tom da marca."
+        },
+        "qualidade_profissional": {
+          "ok": true,
+          "observacao": "Cada teste muda uma variável só, as referências existem e a verba cabe no plano aprovado."
+        },
+        "aplicabilidade_no_canal": {
+          "ok": true,
+          "observacao": "Segmentações e formatos possíveis no Meta, com pedido claro para a Kaia."
+        },
+        "ajustes": []
+      }
+    }
+  ]
+}

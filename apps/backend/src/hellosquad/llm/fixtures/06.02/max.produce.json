@@ -1,0 +1,123 @@
+{
+  "delivery_type": "06.02",
+  "step": "max.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Sequência da reativação de Natal",
+          "resumo": "Nova versão com o ajuste pedido. Três mensagens em uma semana para quem não compra há mais de 90 dias: um e-mail de convite, um lembrete curto no WhatsApp e um último e-mail só para quem não respondeu. Cada uma diz como sair da lista.",
+          "objetivo": "Trazer de volta clientes que sumiram com uma encomenda de Natal",
+          "segmento": "inativos_90",
+          "etapas": [
+            {
+              "ordem": 1,
+              "dia": 0,
+              "canal": "email",
+              "assunto": "O seu pão de Natal já pode ser reservado",
+              "texto": "Olá! Faz um tempo que você não passa por aqui, e o forno continua aceso. As encomendas de Natal abriram, e quem já é cliente reserva antes: o pão de fermentação longa, com retirada sem fila no dia que você escolher.",
+              "cta": "Reservar o meu pão de Natal",
+              "condicao": null,
+              "descadastro": "Link para sair da lista no rodapé do e-mail; quem clica não recebe mais nada."
+            },
+            {
+              "ordem": 2,
+              "dia": 3,
+              "canal": "whatsapp",
+              "assunto": null,
+              "texto": "Olá, aqui é da Miolo. As encomendas de Natal estão abertas e você pode reservar o seu pão de fermentação longa para retirar sem fila. Quer que a gente separe o seu?",
+              "cta": "Responder com o dia da retirada",
+              "condicao": "Só para quem ainda não encomendou",
+              "descadastro": "Responder SAIR para não receber mais mensagens por aqui."
+            },
+            {
+              "ordem": 3,
+              "dia": 7,
+              "canal": "email",
+              "assunto": "Últimos dias para reservar o seu pão de Natal",
+              "texto": "Olá! Passando só para lembrar: a reserva antecipada do pão de Natal vai até 30/11. Depois disso, as encomendas continuam, mas sem garantia do dia de retirada que você preferir.",
+              "cta": "Garantir o meu dia de retirada",
+              "condicao": "Só para quem não respondeu",
+              "descadastro": "Link para sair da lista no rodapé do e-mail; quem clica não recebe mais nada."
+            }
+          ],
+          "frequencia": "No máximo três mensagens em sete dias, com pelo menos três dias entre elas; quem responde ou encomenda sai da sequência na hora.",
+          "premissas": [
+            "A sequência segue a campanha de reativação aprovada e o tom da marca: acolhedor, direto, sem gíria.",
+            "Só recebe quem consentiu em cada canal: e-mail para quem consentiu no e-mail, WhatsApp para quem consentiu no WhatsApp.",
+            "O WhatsApp fora de uma conversa aberta pelo cliente precisa de modelo de mensagem aprovado antes do envio.",
+            "Aprovar os textos não autoriza enviar: o envio é outra etapa, com a sua autorização."
+          ]
+        },
+        "mensagem": "Fiz a nova versão da sequência com o ajuste que você pediu. Nada é enviado: aprove os textos ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "sequencia",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Sequência da reativação de Natal",
+          "resumo": "Três mensagens em uma semana para quem não compra há mais de 90 dias: um e-mail de convite, um lembrete curto no WhatsApp e um último e-mail só para quem não respondeu. Cada uma diz como sair da lista.",
+          "objetivo": "Trazer de volta clientes que sumiram com uma encomenda de Natal",
+          "segmento": "inativos_90",
+          "etapas": [
+            {
+              "ordem": 1,
+              "dia": 0,
+              "canal": "email",
+              "assunto": "O seu pão de Natal já pode ser reservado",
+              "texto": "Olá! Faz um tempo que você não passa por aqui, e o forno continua aceso. As encomendas de Natal abriram, e quem já é cliente reserva antes: o pão de fermentação longa, com retirada sem fila no dia que você escolher.",
+              "cta": "Reservar o meu pão de Natal",
+              "condicao": null,
+              "descadastro": "Link para sair da lista no rodapé do e-mail; quem clica não recebe mais nada."
+            },
+            {
+              "ordem": 2,
+              "dia": 3,
+              "canal": "whatsapp",
+              "assunto": null,
+              "texto": "Olá, aqui é da Miolo. As encomendas de Natal estão abertas e você pode reservar o seu pão de fermentação longa para retirar sem fila. Quer que a gente separe o seu?",
+              "cta": "Responder com o dia da retirada",
+              "condicao": "Só para quem ainda não encomendou",
+              "descadastro": "Responder SAIR para não receber mais mensagens por aqui."
+            },
+            {
+              "ordem": 3,
+              "dia": 7,
+              "canal": "email",
+              "assunto": "Últimos dias para reservar o seu pão de Natal",
+              "texto": "Olá! Passando só para lembrar: a reserva antecipada do pão de Natal vai até 30/11. Depois disso, as encomendas continuam, mas sem garantia do dia de retirada que você preferir.",
+              "cta": "Garantir o meu dia de retirada",
+              "condicao": "Só para quem não respondeu",
+              "descadastro": "Link para sair da lista no rodapé do e-mail; quem clica não recebe mais nada."
+            }
+          ],
+          "frequencia": "No máximo três mensagens em sete dias, com pelo menos três dias entre elas; quem responde ou encomenda sai da sequência na hora.",
+          "premissas": [
+            "A sequência segue a campanha de reativação aprovada e o tom da marca: acolhedor, direto, sem gíria.",
+            "Só recebe quem consentiu em cada canal: e-mail para quem consentiu no e-mail, WhatsApp para quem consentiu no WhatsApp.",
+            "O WhatsApp fora de uma conversa aberta pelo cliente precisa de modelo de mensagem aprovado antes do envio.",
+            "Aprovar os textos não autoriza enviar: o envio é outra etapa, com a sua autorização."
+          ]
+        },
+        "mensagem": "Escrevi a sequência da reativação: um e-mail no dia 0, um WhatsApp no dia 3 e um último e-mail no dia 7, só para quem não respondeu. Toda mensagem diz como sair da lista, e nada é enviado sem a sua autorização: aprove os textos ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}

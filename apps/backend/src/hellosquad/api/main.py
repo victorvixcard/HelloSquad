@@ -15,11 +15,13 @@ from hellosquad.approvals.routes import router as approvals_router
 from hellosquad.auth import TokenVerifier
 from hellosquad.autonomy.routes import router as runs_router
 from hellosquad.config import get_settings
+from hellosquad.contacts.routes import router as contacts_router
 from hellosquad.conversations.routes import router as conversations_router
 from hellosquad.credits.routes import router as credits_router
 from hellosquad.db import Database
 from hellosquad.identity.routes import router as identity_router
 from hellosquad.memory.routes import router as memory_router
+from hellosquad.metrics.routes import router as metrics_router
 from hellosquad.work.calendar import router as calendar_router
 from hellosquad.work.needs import router as needs_router
 from hellosquad.work.projects import router as projects_router
@@ -75,6 +77,8 @@ app.include_router(approvals_router)
 app.include_router(runs_router)
 app.include_router(memory_router)
 app.include_router(credits_router)
+app.include_router(contacts_router)
+app.include_router(metrics_router)
 
 
 class Health(BaseModel):

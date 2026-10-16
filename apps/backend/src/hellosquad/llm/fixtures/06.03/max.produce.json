@@ -1,0 +1,115 @@
+{
+  "delivery_type": "06.03",
+  "step": "max.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Segmentos da base de clientes",
+          "resumo": "Nova versão com o ajuste pedido. Organizei a base em quatro segmentos pelo tempo desde a última compra e pela frequência, para falar com cada grupo do jeito certo: quem comprou há pouco, quem está esfriando, quem sumiu e quem compra sempre. O tamanho de cada um e quantos consentiram em cada canal vêm da base importada.",
+          "segmentos": [
+            {
+              "id": "ativos_30",
+              "nome": "Clientes ativos",
+              "descricao": "Compraram nos últimos 30 dias.",
+              "uso_sugerido": "Avisar primeiro quando as encomendas de Natal abrirem, sem oferta: já estão comprando."
+            },
+            {
+              "id": "esfriando_31_90",
+              "nome": "Esfriando",
+              "descricao": "A última compra foi entre 31 e 90 dias atrás.",
+              "uso_sugerido": "Um lembrete leve com a fornada da semana, antes que parem de vez."
+            },
+            {
+              "id": "inativos_90",
+              "nome": "Sumiram",
+              "descricao": "Não compram há mais de 90 dias.",
+              "uso_sugerido": "Campanha de reativação com um convite para as encomendas de Natal."
+            },
+            {
+              "id": "recorrentes",
+              "nome": "Clientes de sempre",
+              "descricao": "Compram com frequência e voltam sempre.",
+              "uso_sugerido": "Fidelização: reservar o pão de Natal antes de abrir para todos."
+            }
+          ],
+          "cuidados": [
+            "Só recebe mensagem quem consentiu naquele canal: consentimento de e-mail não vale para WhatsApp, e o contrário também.",
+            "Quem pediu para sair não recebe mais nada, em nenhum segmento, e o descadastro vale na hora.",
+            "Frequência: no máximo uma mensagem por semana para a mesma pessoa, somando todos os segmentos.",
+            "Uma pessoa pode estar em mais de um segmento (quem compra sempre costuma estar entre os ativos); num mesmo envio, ela recebe uma mensagem só.",
+            "Contato sem consentimento fica na base, mas fora de qualquer envio."
+          ],
+          "premissas": [
+            "Os segmentos usam a data da última compra e o número de compras registrados na base importada.",
+            "Segmentar não autoriza enviar: qualquer envio é outra etapa, com a sua autorização."
+          ]
+        },
+        "mensagem": "Fiz a nova versão dos segmentos com o ajuste que você pediu. Nada é enviado: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "segmentos",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Segmentos da base de clientes",
+          "resumo": "Organizei a base em quatro segmentos pelo tempo desde a última compra e pela frequência, para falar com cada grupo do jeito certo: quem comprou há pouco, quem está esfriando, quem sumiu e quem compra sempre. O tamanho de cada um e quantos consentiram em cada canal vêm da base importada.",
+          "segmentos": [
+            {
+              "id": "ativos_30",
+              "nome": "Clientes ativos",
+              "descricao": "Compraram nos últimos 30 dias.",
+              "uso_sugerido": "Avisar primeiro quando as encomendas de Natal abrirem, sem oferta: já estão comprando."
+            },
+            {
+              "id": "esfriando_31_90",
+              "nome": "Esfriando",
+              "descricao": "A última compra foi entre 31 e 90 dias atrás.",
+              "uso_sugerido": "Um lembrete leve com a fornada da semana, antes que parem de vez."
+            },
+            {
+              "id": "inativos_90",
+              "nome": "Sumiram",
+              "descricao": "Não compram há mais de 90 dias.",
+              "uso_sugerido": "Campanha de reativação com um convite para as encomendas de Natal."
+            },
+            {
+              "id": "recorrentes",
+              "nome": "Clientes de sempre",
+              "descricao": "Compram com frequência e voltam sempre.",
+              "uso_sugerido": "Fidelização: reservar o pão de Natal antes de abrir para todos."
+            }
+          ],
+          "cuidados": [
+            "Só recebe mensagem quem consentiu naquele canal: consentimento de e-mail não vale para WhatsApp, e o contrário também.",
+            "Quem pediu para sair não recebe mais nada, em nenhum segmento, e o descadastro vale na hora.",
+            "Frequência: no máximo uma mensagem por semana para a mesma pessoa, somando todos os segmentos.",
+            "Uma pessoa pode estar em mais de um segmento (quem compra sempre costuma estar entre os ativos); num mesmo envio, ela recebe uma mensagem só.",
+            "Contato sem consentimento fica na base, mas fora de qualquer envio."
+          ],
+          "premissas": [
+            "Os segmentos usam a data da última compra e o número de compras registrados na base importada.",
+            "Segmentar não autoriza enviar: qualquer envio é outra etapa, com a sua autorização."
+          ]
+        },
+        "mensagem": "Organizei a sua base em quatro segmentos, pelo tempo desde a última compra e pela frequência. O tamanho de cada um e quantos podem receber por e-mail e por WhatsApp vêm da base, e só recebe mensagem quem consentiu. Aprove ou peça um ajuste; nada é enviado.",
+        "observacoes": []
+      }
+    }
+  ]
+}

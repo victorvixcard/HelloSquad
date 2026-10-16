@@ -1,0 +1,231 @@
+{
+  "delivery_type": "05.02",
+  "step": "kiwi.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2400,
+        "output_tokens": 1300,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Testes de anúncios das encomendas de Natal",
+          "resumo": "Nova versão com o ajuste pedido. Dois testes no Instagram, um de cada vez: primeiro qual mensagem traz mais encomendas de quem mora perto, depois se vale mais falar com a vizinhança ou com quem já conhece a padaria. Cada teste muda uma coisa só e usa R$ 300 da verba do Meta no plano de mídia aprovado.",
+          "publicos": [
+            {
+              "id": "P1",
+              "nome": "Vizinhança",
+              "segmentacao": "Pessoas de 28 a 45 anos que moram em Pinheiros e na Vila Madalena, num raio de 3 km da padaria",
+              "por_que": "É o público da estratégia aprovada e quem consegue retirar a encomenda."
+            },
+            {
+              "id": "P2",
+              "nome": "Quem já conhece a padaria",
+              "segmentacao": "Seguidores do Instagram e pessoas que interagiram com o perfil nos últimos 90 dias",
+              "por_que": "Já conhece o pão; o teste mostra se vale começar por quem está mais perto da marca."
+            }
+          ],
+          "mensagens": [
+            {
+              "id": "M1",
+              "angulo": "O pão da ceia",
+              "texto": "O pão da sua ceia de Natal, de fermentação longa, feito aqui em Pinheiros. Encomende pelo site."
+            },
+            {
+              "id": "M2",
+              "angulo": "Retirada sem fila",
+              "texto": "Reserve o seu pão de fermentação longa para o Natal e retire sem fila no dia marcado. Encomende pelo site."
+            }
+          ],
+          "variacoes": [
+            {
+              "id": "V1",
+              "publico": "P1",
+              "mensagem": "M1",
+              "canal": "meta_ads",
+              "formato": "stories",
+              "criativo": "Foto vertical do pão de fermentação longa na mesa de Natal, com o texto da M1 e o botão Encomendar"
+            },
+            {
+              "id": "V2",
+              "publico": "P1",
+              "mensagem": "M2",
+              "canal": "meta_ads",
+              "formato": "stories",
+              "criativo": "A mesma foto da V1, com o texto da M2 e o botão Encomendar"
+            },
+            {
+              "id": "V3",
+              "publico": "P1",
+              "mensagem": "M1",
+              "canal": "meta_ads",
+              "formato": "reels",
+              "criativo": "Vídeo curto da fornada saindo do forno, com o texto da M1 no fim"
+            },
+            {
+              "id": "V4",
+              "publico": "P2",
+              "mensagem": "M1",
+              "canal": "meta_ads",
+              "formato": "reels",
+              "criativo": "O mesmo vídeo da V3, com o texto da M1 no fim"
+            }
+          ],
+          "testes": [
+            {
+              "ordem": 1,
+              "hipotese": "Para quem mora perto, falar do pão da ceia traz mais encomendas do que falar da retirada sem fila.",
+              "variavel": "mensagem",
+              "variacoes": [
+                "V1",
+                "V2"
+              ],
+              "metrica_principal": "Custo por encomenda iniciada no site, pelo link com UTM de cada anúncio",
+              "criterio_de_sucesso": "Vence a variação com menor custo por encomenda iniciada ao fim do período; sem encomendas suficientes para comparar, o teste é inconclusivo e não decide nada.",
+              "duracao": "7 dias corridos, a partir da autorização",
+              "verba": 300
+            },
+            {
+              "ordem": 2,
+              "hipotese": "Quem já conhece a padaria encomenda mais por anúncio do que a vizinhança que ainda não conhece.",
+              "variavel": "publico",
+              "variacoes": [
+                "V3",
+                "V4"
+              ],
+              "metrica_principal": "Custo por encomenda iniciada no site, pelo link com UTM de cada público",
+              "criterio_de_sucesso": "Vence o público com menor custo por encomenda iniciada; o vencedor fica com o resto da verba do Meta no mês, se você autorizar.",
+              "duracao": "7 dias corridos, logo depois do primeiro teste",
+              "verba": 300
+            }
+          ],
+          "pedido_para_kaia": "Kaia, preciso de duas peças verticais para os testes de Natal no Instagram: uma foto para stories do pão de fermentação longa na mesa de Natal, em duas versões de texto (M1 e M2), e um reels curto da fornada saindo do forno, com o texto da M1 no fim.",
+          "premissas": [
+            "Os testes seguem a estratégia de Natal e o plano de mídia aprovados; os R$ 600 dos dois testes cabem nos R$ 900 por mês do Meta no plano.",
+            "No segundo teste entra a mensagem que vencer o primeiro; a M1 está no lugar dela até lá.",
+            "Os textos das mensagens são base para o Otto ajustar no tom da marca antes de ir ao ar.",
+            "Nenhum custo por clique ou taxa de conversão foi estimado: os números saem da conta de anúncios quando ela estiver conectada."
+          ]
+        },
+        "mensagem": "Fiz a nova versão dos testes com o ajuste que você pediu. Nada vai ao ar: agora é com você, aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "testes",
+      "usage": {
+        "input_tokens": 2400,
+        "output_tokens": 1300,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Testes de anúncios das encomendas de Natal",
+          "resumo": "Dois testes no Instagram, um de cada vez: primeiro qual mensagem traz mais encomendas de quem mora perto, depois se vale mais falar com a vizinhança ou com quem já conhece a padaria. Cada teste muda uma coisa só e usa R$ 300 da verba do Meta no plano de mídia aprovado.",
+          "publicos": [
+            {
+              "id": "P1",
+              "nome": "Vizinhança",
+              "segmentacao": "Pessoas de 28 a 45 anos que moram em Pinheiros e na Vila Madalena, num raio de 3 km da padaria",
+              "por_que": "É o público da estratégia aprovada e quem consegue retirar a encomenda."
+            },
+            {
+              "id": "P2",
+              "nome": "Quem já conhece a padaria",
+              "segmentacao": "Seguidores do Instagram e pessoas que interagiram com o perfil nos últimos 90 dias",
+              "por_que": "Já conhece o pão; o teste mostra se vale começar por quem está mais perto da marca."
+            }
+          ],
+          "mensagens": [
+            {
+              "id": "M1",
+              "angulo": "O pão da ceia",
+              "texto": "O pão da sua ceia de Natal, de fermentação longa, feito aqui em Pinheiros. Encomende pelo site."
+            },
+            {
+              "id": "M2",
+              "angulo": "Retirada sem fila",
+              "texto": "Reserve o seu pão de fermentação longa para o Natal e retire sem fila no dia marcado. Encomende pelo site."
+            }
+          ],
+          "variacoes": [
+            {
+              "id": "V1",
+              "publico": "P1",
+              "mensagem": "M1",
+              "canal": "meta_ads",
+              "formato": "stories",
+              "criativo": "Foto vertical do pão de fermentação longa na mesa de Natal, com o texto da M1 e o botão Encomendar"
+            },
+            {
+              "id": "V2",
+              "publico": "P1",
+              "mensagem": "M2",
+              "canal": "meta_ads",
+              "formato": "stories",
+              "criativo": "A mesma foto da V1, com o texto da M2 e o botão Encomendar"
+            },
+            {
+              "id": "V3",
+              "publico": "P1",
+              "mensagem": "M1",
+              "canal": "meta_ads",
+              "formato": "reels",
+              "criativo": "Vídeo curto da fornada saindo do forno, com o texto da M1 no fim"
+            },
+            {
+              "id": "V4",
+              "publico": "P2",
+              "mensagem": "M1",
+              "canal": "meta_ads",
+              "formato": "reels",
+              "criativo": "O mesmo vídeo da V3, com o texto da M1 no fim"
+            }
+          ],
+          "testes": [
+            {
+              "ordem": 1,
+              "hipotese": "Para quem mora perto, falar do pão da ceia traz mais encomendas do que falar da retirada sem fila.",
+              "variavel": "mensagem",
+              "variacoes": [
+                "V1",
+                "V2"
+              ],
+              "metrica_principal": "Custo por encomenda iniciada no site, pelo link com UTM de cada anúncio",
+              "criterio_de_sucesso": "Vence a variação com menor custo por encomenda iniciada ao fim do período; sem encomendas suficientes para comparar, o teste é inconclusivo e não decide nada.",
+              "duracao": "7 dias corridos, a partir da autorização",
+              "verba": 300
+            },
+            {
+              "ordem": 2,
+              "hipotese": "Quem já conhece a padaria encomenda mais por anúncio do que a vizinhança que ainda não conhece.",
+              "variavel": "publico",
+              "variacoes": [
+                "V3",
+                "V4"
+              ],
+              "metrica_principal": "Custo por encomenda iniciada no site, pelo link com UTM de cada público",
+              "criterio_de_sucesso": "Vence o público com menor custo por encomenda iniciada; o vencedor fica com o resto da verba do Meta no mês, se você autorizar.",
+              "duracao": "7 dias corridos, logo depois do primeiro teste",
+              "verba": 300
+            }
+          ],
+          "pedido_para_kaia": "Kaia, preciso de duas peças verticais para os testes de Natal no Instagram: uma foto para stories do pão de fermentação longa na mesa de Natal, em duas versões de texto (M1 e M2), e um reels curto da fornada saindo do forno, com o texto da M1 no fim.",
+          "premissas": [
+            "Os testes seguem a estratégia de Natal e o plano de mídia aprovados; os R$ 600 dos dois testes cabem nos R$ 900 por mês do Meta no plano.",
+            "No segundo teste entra a mensagem que vencer o primeiro; a M1 está no lugar dela até lá.",
+            "Os textos das mensagens são base para o Otto ajustar no tom da marca antes de ir ao ar.",
+            "Nenhum custo por clique ou taxa de conversão foi estimado: os números saem da conta de anúncios quando ela estiver conectada."
+          ]
+        },
+        "mensagem": "Desenhei dois testes no Instagram, um de cada vez: primeiro a mensagem, depois o público, com R$ 300 cada, dentro do plano de mídia aprovado. Nada vai ao ar sem a sua autorização: aprove os testes ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}

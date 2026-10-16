@@ -1,0 +1,30 @@
+{
+  "delivery_type": "05.01",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_completo",
+      "usage": {
+        "input_tokens": 1700,
+        "output_tokens": 220
+      },
+      "output": {
+        "delivery_type": "05.01",
+        "briefing": {
+          "canal": null,
+          "objetivo": "Mais encomendas de Natal pelo site",
+          "tema": "plano de mídia e orçamento de anúncios para o Natal",
+          "tom": null,
+          "restricoes": [
+            "até R$ 1.500 por mês em anúncios"
+          ],
+          "cta": null,
+          "data": "Natal"
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Plano de mídia da Miolo para o Natal, com até R$ 1.500 por mês, para trazer mais encomendas pelo site."
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "delivery_type": "06.03",
+  "step": "max.check",
+  "cases": [
+    {
+      "name": "aprovada",
+      "usage": {
+        "input_tokens": 1300,
+        "output_tokens": 180,
+        "cache_read_tokens": 3200
+      },
+      "output": {
+        "aderencia_ao_briefing": {
+          "ok": true,
+          "observacao": "Quatro segmentos escolhidos entre os possíveis da base, sem repetição."
+        },
+        "consistencia_de_marca": {
+          "ok": true,
+          "observacao": "Nomes e usos coerentes com uma padaria de bairro e com a memória da marca."
+        },
+        "qualidade_profissional": {
+          "ok": true,
+          "observacao": "Uso claro em cada segmento e nenhum número ou contato inventado."
+        },
+        "aplicabilidade_no_canal": {
+          "ok": true,
+          "observacao": "Consentimento por canal, descadastro e frequência explícitos."
+        },
+        "ajustes": []
+      }
+    }
+  ]
+}

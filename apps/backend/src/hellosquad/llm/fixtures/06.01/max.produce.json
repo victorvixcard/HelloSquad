@@ -1,0 +1,133 @@
+{
+  "delivery_type": "06.01",
+  "step": "max.produce",
+  "cases": [
+    {
+      "name": "nova_versao_com_retorno",
+      "when": {
+        "matches": "<retorno_da_pessoa decisao=\"(changes_requested|rejected)\""
+      },
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Reativação de Natal",
+          "resumo": "Nova versão com o ajuste pedido. Uma campanha curta para quem não compra há mais de 90 dias: convidar para as encomendas de Natal com reserva antecipada e retirada sem fila no dia marcado, em três passos de uma semana cada, alternando e-mail e WhatsApp só para quem consentiu em cada canal.",
+          "tipo": "reativacao",
+          "objetivo": {
+            "objetivo": "Trazer de volta clientes que sumiram com uma encomenda de Natal",
+            "indicador": "Encomendas de Natal feitas por clientes do segmento, contadas pela Íris",
+            "prazo": "até 20/12/2026"
+          },
+          "segmento": {
+            "id": "inativos_90",
+            "por_que": "Já conhecem o pão e pararam de comprar; o Natal é um bom motivo para voltar."
+          },
+          "oferta": {
+            "descricao": "Reserva antecipada do pão de fermentação longa para o Natal, com retirada sem fila no dia marcado",
+            "condicoes": "Para clientes do segmento que encomendarem pelo site ou pelo WhatsApp dentro da validade, escolhendo o dia da retirada.",
+            "validade": "de 03/11 a 30/11/2026"
+          },
+          "calendario": [
+            {
+              "ordem": 1,
+              "data": "2026-11-03",
+              "canal": "email",
+              "acao": "E-mail de convite: as encomendas de Natal abriram e quem já é cliente reserva antes."
+            },
+            {
+              "ordem": 2,
+              "data": "2026-11-10",
+              "canal": "whatsapp",
+              "acao": "Lembrete curto no WhatsApp, só para quem consentiu nesse canal e ainda não encomendou."
+            },
+            {
+              "ordem": 3,
+              "data": "2026-11-17",
+              "canal": "email",
+              "acao": "Último e-mail antes do fim da reserva antecipada, só para quem não respondeu."
+            }
+          ],
+          "como_medir": [
+            "Encomendas de Natal feitas por clientes do segmento a partir do primeiro envio.",
+            "Respostas no WhatsApp e cliques no e-mail em cada passo.",
+            "Descadastros em cada passo: se aparecerem mais do que o normal, a campanha para e a gente revê."
+          ],
+          "premissas": [
+            "A campanha segue o posicionamento e a segmentação aprovados.",
+            "A oferta não tem desconto porque nenhum valor foi definido; se quiser incluir um, me diga qual.",
+            "O tamanho do segmento e quantos consentiram em cada canal vêm da base importada.",
+            "Aprovar a campanha não autoriza enviar: o envio é outra etapa, com a sua autorização."
+          ]
+        },
+        "mensagem": "Fiz a nova versão da campanha com o ajuste que você pediu. Nada é enviado: aprove ou peça outro ajuste.",
+        "observacoes": []
+      }
+    },
+    {
+      "name": "campanha",
+      "usage": {
+        "input_tokens": 2100,
+        "output_tokens": 900,
+        "cache_write_tokens": 3200
+      },
+      "output": {
+        "entrega": {
+          "titulo": "Reativação de Natal",
+          "resumo": "Uma campanha curta para quem não compra há mais de 90 dias: convidar para as encomendas de Natal com reserva antecipada e retirada sem fila no dia marcado, em três passos de uma semana cada, alternando e-mail e WhatsApp só para quem consentiu em cada canal.",
+          "tipo": "reativacao",
+          "objetivo": {
+            "objetivo": "Trazer de volta clientes que sumiram com uma encomenda de Natal",
+            "indicador": "Encomendas de Natal feitas por clientes do segmento, contadas pela Íris",
+            "prazo": "até 20/12/2026"
+          },
+          "segmento": {
+            "id": "inativos_90",
+            "por_que": "Já conhecem o pão e pararam de comprar; o Natal é um bom motivo para voltar."
+          },
+          "oferta": {
+            "descricao": "Reserva antecipada do pão de fermentação longa para o Natal, com retirada sem fila no dia marcado",
+            "condicoes": "Para clientes do segmento que encomendarem pelo site ou pelo WhatsApp dentro da validade, escolhendo o dia da retirada.",
+            "validade": "de 03/11 a 30/11/2026"
+          },
+          "calendario": [
+            {
+              "ordem": 1,
+              "data": "2026-11-03",
+              "canal": "email",
+              "acao": "E-mail de convite: as encomendas de Natal abriram e quem já é cliente reserva antes."
+            },
+            {
+              "ordem": 2,
+              "data": "2026-11-10",
+              "canal": "whatsapp",
+              "acao": "Lembrete curto no WhatsApp, só para quem consentiu nesse canal e ainda não encomendou."
+            },
+            {
+              "ordem": 3,
+              "data": "2026-11-17",
+              "canal": "email",
+              "acao": "Último e-mail antes do fim da reserva antecipada, só para quem não respondeu."
+            }
+          ],
+          "como_medir": [
+            "Encomendas de Natal feitas por clientes do segmento a partir do primeiro envio.",
+            "Respostas no WhatsApp e cliques no e-mail em cada passo.",
+            "Descadastros em cada passo: se aparecerem mais do que o normal, a campanha para e a gente revê."
+          ],
+          "premissas": [
+            "A campanha segue o posicionamento e a segmentação aprovados.",
+            "A oferta não tem desconto porque nenhum valor foi definido; se quiser incluir um, me diga qual.",
+            "O tamanho do segmento e quantos consentiram em cada canal vêm da base importada.",
+            "Aprovar a campanha não autoriza enviar: o envio é outra etapa, com a sua autorização."
+          ]
+        },
+        "mensagem": "Planejei a reativação de Natal para quem não compra há mais de 90 dias, em três passos entre 03 e 17/11, com reserva antecipada e retirada sem fila. Aprovar o plano não envia nada: aprove ou peça um ajuste.",
+        "observacoes": []
+      }
+    }
+  ]
+}
