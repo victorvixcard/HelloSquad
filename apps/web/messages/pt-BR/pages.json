@@ -18,7 +18,9 @@
       "default": "o trabalho"
     },
     "more": "Ver mais {count, plural, one {# pendência} other {# pendências}}",
-    "less": "Recolher as outras pendências"
+    "less": "Recolher as outras pendências",
+    "moreBtn": "+{count}",
+    "closeBtn": "Fechar"
   },
   "env": {
     "talk": "Conversar com {name}",

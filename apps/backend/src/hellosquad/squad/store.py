@@ -6,12 +6,14 @@ presa enquanto o modelo pensa. As mudanças de estado de um desfecho (entrega, p
 vão numa transação só: ou tudo aparece para o usuário, ou nada.
 """
 
+import contextlib
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any, Literal
 from uuid import UUID
 
+import psycopg
 from psycopg import AsyncConnection
 from psycopg.rows import DictRow
 from psycopg.types.json import Jsonb
@@ -26,7 +28,12 @@ FINISHED_RUN = {"succeeded", "failed", "cancelled", "waiting_approval"}
 RUNNABLE_WORK = {"draft", "in_progress", "failed"}
 REDACTED_KEYS = ("key", "token", "secret", "password", "authorization", "cookie")
 
-ClaimOutcome = Literal["claimed", "finished", "busy", "capped", "missing", "skipped", "exhausted"]
+ClaimOutcome = Literal[
+    "claimed", "finished", "busy", "capped", "missing", "skipped", "exhausted", "unbillable"
+]
+# Reserva recusada: HS001 = créditos insuficientes; P0002 = delivery sem preço (ou workspace sem conta);
+# 22023 = trabalho sem tipo de delivery.
+CREDIT_ERRORS = {"HS001": "insufficient_credits", "P0002": "credit_price_missing"}
 
 
 class RunLost(RuntimeError):
@@ -40,6 +47,7 @@ class Claim:
     agent_id: str | None = None
     work_item_id: UUID | None = None
     locale: str = "pt-BR"
+    error: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -188,7 +196,39 @@ class RunStore:
                     conn, run["work_item_id"], "in_progress", "agent", "nexo", item["status"]
                 )
             await self._event(conn, "started", {"agent_id": run["agent_id"], "attempt": attempts})
-            return Claim("claimed", attempts, run["agent_id"], run["work_item_id"], run["locale"])
+            claim = (attempts, run["agent_id"], run["work_item_id"], run["locale"])
+            refused = await self._reserve(conn)
+            if refused is not None:
+                return Claim("unbillable", *claim, error=refused)
+            return Claim("claimed", *claim)
+
+    async def _reserve(self, conn: AsyncConnection[DictRow]) -> dict[str, Any] | None:
+        """Reserva a estimativa do run (preço vigente da delivery do trabalho) ao começar.
+
+        Uma reserva por run: a retentativa (run de volta a queued) devolve a mesma, sem lançamento
+        novo. Recusa (sem saldo, sem preço) volta como erro para o worker encerrar o run sem cobrar.
+        """
+        try:
+            async with conn.transaction():
+                await conn.execute(
+                    """
+                    select app.reserve_credits(%s, e.credits, %s, e.delivery_type, e.price_id)
+                    from app.run_credit_estimate(%s) e
+                    """,
+                    (self.run_id, f"run:{self.run_id}", self.run_id),
+                )
+        except psycopg.Error as exc:
+            code = CREDIT_ERRORS.get(exc.sqlstate or "")
+            if code is None and exc.sqlstate == "22023":
+                code = "credit_price_missing"
+            if code is None:
+                raise
+            details: dict[str, Any] = {}
+            if exc.diag.message_detail:
+                with contextlib.suppress(ValueError):
+                    details = json.loads(exc.diag.message_detail)
+            return {"code": code, "details": details}
+        return None
 
     async def touch(self) -> None:
         """Batimento: prova que o worker dono do run está vivo (o lease conta a partir daqui)."""
@@ -580,6 +620,15 @@ class RunStore:
             suggestions = await self._suggest(conn, work_item, agent_id, observations or [])
             await transition(conn, work_item.id, "needs_you", "agent", agent_id, "in_progress")
             await self._work_step(conn, work_item.id, work_step_title, agent_id, "done")
+            # Entregou: cobra a reserva antes do succeeded (run concluído sem captura libera tudo).
+            await conn.execute(
+                """
+                select app.capture_credits(h.run_id, h.estimate)
+                from public.credit_holds h
+                where h.run_id = %s and h.workspace_id = %s and h.state = 'held'
+                """,
+                (self.run_id, self.workspace_id),
+            )
             totals = await self._succeed(conn, model=model, prompt_version=prompt_version)
             await self._event(
                 conn, "finished", {"status": "succeeded", "work_item_status": "needs_you"}
@@ -799,7 +848,7 @@ class RunStore:
             ) s
             where r.id = %s and r.workspace_id = %s
             returning r.input_tokens, r.output_tokens, r.cache_read_tokens, r.cache_write_tokens,
-                      r.cost_usd
+                      r.cost_usd, r.credits_charged
             """,
             (self.run_id, self.workspace_id, self.run_id, self.workspace_id),
         )
