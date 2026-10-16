@@ -83,7 +83,35 @@ Nenhuma jornada envia nada sozinha: cada uma só prepara a conversa certa com o 
 
 ### 3.3 Rotina no Modo Autônomo: planejamento semanal (Nexo, Otto, Kaia)
 
-<!-- §3.3 em redação -->
+**Gatilho** (V4.5 `_journey`, L13279–13286, sobre a V4.4): abre a conversa com o Nexo, em painel a partir de 1080 px, com o campo preenchido com "Quero que vocês planejem meus conteúdos toda semana.". A V3 abria um assistente de quatro passos na página do Modo Autônomo; na V4.5 a delegação é "uma conversa, não um formulário" (L13138). O mesmo fluxo começa por "Delegar uma responsabilidade", "Delegar a primeira responsabilidade", pelos cartões de "O que mais pode ficar com o squad", por "Configurar uma rotina" no Início ou por texto livre ao Nexo.
+
+| # | Quem | Texto-roteiro | Decisão e botões | Efeito |
+|---|---|---|---|---|
+| 1 | Marina | o pedido acima | enviar | `_d5Kind` reconhece "planej/conteúd/plano/posts/instagram" e escolhe o modelo `plan` (L13165). A conversa se chama "Nova responsabilidade". Sem modelo reconhecido, o Nexo pergunta "O que você quer deixar por conta do squad? Pode escrever do seu jeito, como “quero que vocês planejem meus conteúdos toda semana”." e oferece "Planejar conteúdos toda semana", "Preparar posts toda segunda", "Avisar sobre oportunidades" e "Responder avaliações do Google". |
+| 2 | Nexo | "Isso fica com o Otto, com a Kaia quando houver produção visual. Eu coordeno e te chamo quando algo depender de você." | — | O Otto entra na conversa e conduz as perguntas. **Colaboração: o Nexo passa a palavra ao responsável.** Se já existe rotina igual: "<O Otto> já cuida disso: … Para não ter duas rotinas iguais, eu ajusto a que existe." com "Ajustar a rotina atual" e "Ver no Modo Autônomo". |
+| 3 | Otto | "Qual é o foco desses conteúdos?" | "Trazer encomendas pelo site" · "Mostrar o processo da padaria" · "Manter o Instagram ativo" | A resposta fica no combinado (`cfg.obj`), mas nenhuma tela a mostra depois. |
+| 4 | Otto | "Em que dia você quer receber o plano da semana seguinte?" | "Toda segunda" · "Toda quinta" · "Toda sexta" | — |
+| 5 | Otto | "O que entra em cada plano?" | "3 posts por semana" · "3 posts e 2 stories" · "5 posts e 3 stories" | Texto digitado que contenha uma das opções também vale (L13407). |
+| 6 | Nexo | "Antes de ativar, confira o combinado:" + cartão "Responsabilidade" com Responsável, Colaboração, Coordenação, Frequência, Entrega, Aprovação, Primeira execução, "Faz sozinho", "Só com a sua autorização" e "Nunca" (L5558) | "Confirmar a delegação" · "Ajustar" | — |
+| 7 | Nexo | "O que você quer ajustar?" | "O objetivo" · "A frequência" · "O que é entregue" · "As aprovações" | "As aprovações" explica: "Hoje cada publicação pede a sua aprovação. Se você liberar, o Otto publica sozinho o que você aprovar no plano. Isso não autoriza anúncios, envio de mensagens nem investimento." e oferece "Aprovar cada publicação" ou "Publicar sozinho o que eu aprovar no plano". Depois de cada ajuste, volta ao resumo. |
+| 8 | Nexo | "Delegado. Está no Modo Autônomo como responsabilidade ativa. Primeira execução: <data>. Nada sai da Miolo sem a sua aprovação." + "Ver no Modo Autônomo" | "Confirmar a delegação" | Nota "Você confirmou a delegação · HH:MM". Registro: "Você delegou: planejar meus conteúdos toda semana". Aviso: "Responsabilidade ativa · primeira execução <data>". O cartão passa a "Delegado · ativo no Modo Autônomo". A responsabilidade nasce "Ativa", "desde hoje", e fica destacada na página por 5,2 s. |
+
+Editar uma responsabilidade usa a mesma conversa ("Confira como fica o combinado. Vale a partir da próxima execução:", "Confirmar a mudança"; depois: "Atualizado. Vale a partir da próxima execução, e o histórico continua o mesmo."). O código e o histórico continuam os mesmos (L13246). As perguntas dos outros modelos estão em `Q5` (L12842–12858) e na nota §B9.
+
+### 3.4 Ciclo de aprendizado da Memória: preço em destaque (Kaia → Memória → planejamento)
+
+**Gatilho** (`_journey4`, L13751–13757): abre a conversa com a Kaia com o campo preenchido com "Kaia, aumenta o destaque do preço na peça de encomendas do panetone.".
+
+| # | Quem | Texto-roteiro | Decisão e botões | Efeito |
+|---|---|---|---|---|
+| 1 | Marina | o pedido acima | enviar | O roteador da V4.5 reconhece "preç" e chama `_m5Price` (L13045). |
+| 2 | Kaia | "Feito. Na peça de encomendas do panetone, o preço saiu do texto pequeno e foi para o selo no topo." + cartão "Antes" e "Agora" (L5559) | — | A peça muda: o ajuste foi pedido e feito. |
+| 3 | Kaia | "Percebi uma possível preferência sua. Deixei como sugestão na Memória da Marca: as próximas peças só mudam se você confirmar." + cartão "Memória da Marca · sugestão" com "Ver na Memória da Marca" (L13052, L5560) | "Ver na Memória da Marca" | Nasce o conhecimento "Peças promocionais" · "Preços mais visíveis nas peças promocionais", em "Sugerido", sugerido pela Kaia e usado por Kaia, Otto e Bia depois do ok. Pergunta: "Você prefere preços mais visíveis nas peças promocionais?". Origem: "Ajuste pedido à Kaia · peça de encomendas do panetone". Histórico: "A Kaia sugeriu: preços mais visíveis nas peças promocionais". Na Memória, aparece no topo de "O squad percebeu" como "Kaia percebeu · …". **O ajuste não vira regra sozinho.** |
+| 4 | Marina | — | "Confirmar" · "Corrigir" · "Descartar" (na Memória, §6) | "Confirmar" leva a "Confirmado", com o aviso "Confirmado. Kaia, Otto e Bia usam a partir da próxima entrega." e o selo "confirmada hoje". |
+| 5 | Marina | — | no Modo Autônomo, "Simular a execução de quinta" (planejamento semanal) | Cria o trabalho "Plano da semana 43" (Otto com a Kaia, "Aguarda a sua aprovação") e a execução "PL-43", em "Aguarda sua aprovação" · "Entregue: 3 posts para 19 a 25/10 · aguarda a sua aprovação". Com o preço confirmado: "O preço do panetone aparece em destaque, como você confirmou na Memória da Marca." Sem confirmar: "O preço do panetone fica no texto: a preferência por preços visíveis ainda não foi confirmada." O Otto diz "Plano da semana 43 pronto, no ciclo de quinta. Usei as orientações confirmadas da Memória da Marca. Nada é publicado antes da sua aprovação." Aviso: "PL-43 · plano da semana 43 entregue (simulação)". A execução lista "Orientações da marca utilizadas: N" e "Não usada, porque ainda é sugestão: “…”". **Colaboração: Kaia, Memória, Otto.** |
+| 6 | Marina | — | "Aprovar o plano" (L5561) | "PL-43" passa a "Aprovado por você hoje, HH:MM. Cada publicação continua pedindo a sua aprovação." Aviso: "Plano da semana 43 aprovado. Nada é publicado sem a sua aprovação de cada post." O próximo ciclo vira "Plano da semana 44" (qui, 22/10). |
+
+Se a preferência já existe, a Kaia responde "O preço já está em destaque nessa peça. A preferência continua na Memória da Marca, do jeito que você deixou." (L13047).
 
 ### 3.4 Ciclo de aprendizado da Memória: preço em destaque (Kaia → Memória → planejamento)
 
@@ -156,15 +184,174 @@ Nenhuma jornada envia nada sozinha: cada uma só prepara a conversa certa com o 
 
 ## 6. Memória da Marca
 
-<!-- §6 em redação -->
+Fonte: camada V4.5 (`_vMem5`, L13610–13707; dados L12695–12931), com a V4.6 só ajustando linguagem. Da V3 ainda valem o estado `mem.items`, `_memConfirm` e `_memRemove` (L7935–7946) e o primeiro acesso (L7897–7931). Detalhe completo em `docs/parciais/x1/notas_memoria_autonomo_conexoes.md` §A.
+
+**Página, de cima para baixo** (L5191–5290): "Memória da Marca" · "O que o seu squad sabe sobre você e o seu negócio."; busca "Buscar na memória"; botão "Adicionar conhecimento"; faixa "Precisa de você" (§5); dossiê; "O squad percebeu" ao lado de "Alterações recentes"; "Tudo o que o squad sabe" · "por assunto · abra um item para ver a origem e quem usa", com "Ver pelo especialista" e as abas.
+
+**Dossiê** (L13621): nome, descrição ("Padaria de fermentação natural · Pinheiros, São Paulo · desde 2016"), a síntese do squad (`SUM5`, L12920) com "Síntese do squad a partir de N conhecimentos confirmados", "De onde vem" (pílulas das fontes com o ponto de estado), os sete rostos e "Principais conhecimentos": "Proposta de valor", "Público", "Produtos", "Diferenciais", "Posicionamento", "Identidade visual", "Tom de comunicação" (`KEY5`, L12919). Chave sem conhecimento: "Ainda não sabe · contar agora", que abre "Adicionar conhecimento" no assunto certo. No primeiro acesso: "O squad ainda sabe pouco sobre a Miolo: só o que você contou no cadastro. Cada fonte conectada e cada conversa ajudam a completar. Nada vira orientação sem o seu ok." e "Síntese a partir do cadastro".
+
+**Abas e assuntos** (`AREA5` e `TOPIC5`, L12704–12716): "Tudo", "Meu negócio" (História · Proposta de valor · Localização · Produtos · Diferenciais · Operação · Objetivos), "Minha marca" (Posicionamento · Identidade visual · Tom de voz · Preferências criativas · Referências), "Meu público" (Perfil dos clientes · Necessidades · Comportamentos conhecidos · Preferências identificadas), "Conhecimento e aprendizados" (Pesquisas · Descobertas · Decisões · Preferências · Orientações confirmadas), "Conexões e fontes" (§8). Cada aba mostra a contagem.
+
+**Estados do conhecimento** (`KST5`, L12892–12895; sempre ícone e texto):
+
+| Estado | Rótulo | Linha expandida (L13666) | O squad usa? |
+|---|---|---|---|
+| `ok` | "Confirmado" | "Confirmado por você · <data>" | sim |
+| `dec` | "Decisão sua" | "Decisão sua · <data>" | sim |
+| `src` | "Da fonte" | "Lido em <fonte> · <data> · em uso, sem confirmação sua" | sim, sem confirmação |
+| `learn` | "Observado" | "Observado pelo squad · usado como contexto, não como regra" | só como contexto |
+| `hypo` | "Sugerido" | "Sugestão · ninguém usa até você confirmar" | não |
+| `old` | "Desatualizado" | "Desatualizado · o squad avisa quando usar" | com aviso |
+| `conf` | "Em conflito" | "Em conflito · não é usado até você decidir" | não |
+| `rej` | "Descartado" | "Descartado por você · não vira regra" | não |
+| `off` | "Não usado" | "Fora de uso a seu pedido" | não |
+
+Quem usa, na linha aberta: "Como o squad utiliza", "Quem vai usar depois do seu ok" (sugestão) ou "Ninguém usa agora"; com os sete, "Todo o squad consulta quando precisa". Cada agente aparece como "<Nome> · <papel>" e diz como usa (ex.: Kaia · Criação, "nas peças de Natal").
+
+**"<Agente> percebeu"** (L13633–13638; V4.6 L13929): seção "O squad percebeu" · "nada vira orientação sem o seu ok". Cada cartão traz rosto e "<Nome> percebeu · <assunto>" (ex.: "Kaia percebeu · preferências criativas"), a pergunta ("Você prefere a data sempre visível, no topo das peças de oferta?"), "Origem: <origem>" e "Nada muda nas entregas até você confirmar." Mostra três e guarda o resto em "Ver mais N". Vazio: "Tudo revisado. Quando o squad perceber algo novo, aparece aqui para você confirmar, corrigir ou descartar."
+
+| Ação | Disponível quando | Efeito |
+|---|---|---|
+| "Confirmar" | sugerido, da fonte, observado | Vira "Confirmado". Histórico: "Você confirmou: <valor>". Aviso: "Confirmado. Todo o squad passa a usar." (preço: "Confirmado. Kaia, Otto e Bia usam a partir da próxima entrega.") |
+| "Corrigir" | todos menos descartado | Abre a edição ("Salvar como confirmado" no cartão, "Salvar" na linha, ou "Cancelar"). O valor novo vira "Confirmado" e guarda o anterior ("Antes: “…”"). Aviso: "Corrigido. O squad usa a versão nova." |
+| "Descartar" | só sugerido | Vira "Descartado", mas o registro fica guardado e só reaparece em "Mostrar descartados e fora de uso (N)". Aviso: "Descartado. Não vira regra e ninguém do squad usa." |
+| "Não usar mais" | confirmado, decisão, da fonte, observado, desatualizado | Vira "Não usado". Aviso: "Fora de uso. Fica guardado, mas o squad não usa." |
+| "Voltar a usar" | não usado | Volta ao estado anterior. Aviso: "De volta à memória do squad". |
+| "Conversar sobre isso" | sempre | Abre a conversa do conhecimento (§4). |
+
+**Conflito** (`CONF5`, L12770; só o horário no protótipo): "Duas fontes dizem coisas diferentes sobre o horário. Enquanto você não decide, o squad não usa nenhuma das duas." Mostra as duas versões com fonte e data ("Google Perfil · 20/09" e "Site · lido em 14/09"), cada uma com "Vale este", e o link "Nenhum dos dois: corrigir". Ao escolher: "Conflito resolvido. A outra versão sai da memória."
+
+**Desatualizado** (L13643): "Veio da planilha de encomendas de setembro. Outubro ainda não entrou." · "O squad avisa quando usar esse dado." Ações: "Enviar planilha nova (simulação)" ou "Continua valendo".
+
+**Busca e filtros** (L13658–13704): a busca procura em chave, valor e assunto, mostra "N resultados para “<termo>”" e oferece "Limpar a busca"; sem resultado, "Nada encontrado. Tente outra palavra ou adicione esse conhecimento.". O filtro "Ver pelo especialista" tem sete rostos ("Ver o que o Otto consulta") e mostra "<O Otto> consulta N conhecimentos" · "Usa <para quê>. Sugestões e conflitos ficam de fora até você decidir." · "Ver tudo". Descartados e fora de uso ficam escondidos.
+
+**Histórico** ("Alterações recentes", L5247): cinco linhas e "Ver todas as alterações (N)". Cada linha tem rosto (ou "M", de você), texto e data, e leva ao item. Exemplos (`LOG5`, L12910): "A Kaia sugeriu: data sempre visível nas peças de oferta", "Você confirmou a meta: 400 panetones até 20/12", "Você descartou: emojis no fim das legendas". Vazio: "As confirmações, correções e descartes aparecem aqui." Cada item também tem o próprio histórico, que termina em "Entrou na memória: <origem>".
+
+**Adicionar conhecimento** (L5200–5202): "O que o squad precisa saber?" · "Ex.: aos domingos a loja fecha às 13h" · escolha do assunto · "Cancelar" ou "Guardar" · "Entra como declarado por você, já confirmado. Todo o squad passa a usar."
+
+**Primeiro acesso** (L4644, L7907–7931): o Início mostra "Para o squad conhecer a Miolo", com três passos ("N de 3"):
+
+- "Mande o site": "O Nexo lê e separa o que for útil.", botão "Ler o site". Depois de 2,8 s: "O Nexo leu o site: 5 informações para confirmar"; as cinco viram **sugestões**, não regras.
+- "Conecte o Instagram": "Conectar não autoriza publicar.", botão "Conectar". Gera uma sugestão; aviso "Instagram conectado · simulação".
+- "Conte o resto ao Nexo": "Objetivo, público, o que vende mais.", botão "Conversar". O objetivo contado entra direto como confirmado ("contado ao Nexo"), e o Nexo responde "Anotei na Memória da Marca: “<objetivo>”. Já dá para pedir a primeira entrega." com "Pedir o post à Kaia".
+
+No Início, as sugestões aparecem em "O Squad percebeu" · "O squad notou e quer confirmar com você antes de guardar:", com "Aceitar" e "Recusar". O resultado é "Na Memória" ou "Recusada" ("Recusada. A informação não entra na Memória da Marca.").
+
+**Regra transversal:** só o que está confirmado orienta o squad. O Modo Autônomo conta como usadas só as orientações "Confirmado" e "Decisão sua"; as sugestões aparecem em "Ainda não entra, porque é sugestão:" e o rodapé diz "Só entra o que está confirmado na Memória da Marca." (L13585, L5169).
+
+**Campos de um conhecimento**, para o banco: chave, valor, área, assunto, estado, fonte (tipo e texto de origem), data de origem, quem sugeriu, pergunta da sugestão, agentes que usam e como cada um usa, valor anterior, quando foi confirmado, estado anterior a "Não usar mais" e o histórico (quem, texto, quando).
+
+> Inconsistências do protótipo registradas pelo leitor (não decidem nada; ver a nota §D): "Recusar" no Início apaga o item, enquanto "Descartar" na Memória o guarda como descartado; o filtro por especialista conta sem as sugestões, mas a lista ainda as mostra.
 
 ## 7. Modo Autônomo
 
-<!-- §7 em redação -->
+Fonte: camada V4.5 (`_vAuto5` e página, L13056–13137 e L13474–13609; dados L12806–12925); delegação em L13138–13272. Da V3 ainda valem `rot`, `auto.extra`, `_autoAll` e `_rotPause`. Detalhe em `docs/parciais/x1/notas_memoria_autonomo_conexoes.md` §B.
+
+**Página** (L5097–5186): "Modo Autônomo" · "Deixe por conta do squad o que se repete. Você define os limites."; o interruptor; "Delegar uma responsabilidade"; a faixa "Precisa de você"; o resumo; "Responsabilidades"; "Encerradas · N"; "O que mais pode ficar com o squad" · "cada delegação começa numa conversa"; "Como a autonomia funciona" · "três níveis, cada um com o seu limite"; e, ao lado, "Próximas execuções" e "Histórico de execuções".
+
+- **Resumo** (L13560): "Fazendo sozinho" ("N responsabilidades ativas" ou "Nada ativo agora"; abaixo, "N pausada · N com falha · N bloqueada", "tudo dentro do combinado" ou "delegue o que se repete"), "A seguir" (a próxima execução, ou "Nada programado") e "Últimos 7 dias" ("N execuções"; "N sem concluir, com o motivo registrado" ou "todas concluídas").
+- **Vazio:** "Nada delegado ainda." · "Comece pelo que mais se repete na sua semana. O squad conversa com você, mostra o combinado e só ativa depois do seu ok." · "Delegar a primeira responsabilidade" (L5122).
+- **Linha da responsabilidade:** rosto do responsável e dos colaboradores; título; "<Nome> lidera · com <colaborador> · <frequência>"; estado; ritmo em bolinhas; a próxima execução ou "Pausada: nada novo até você retomar"; e o aviso, se houver falha ou bloqueio.
+- **Detalhe** (L5146–5183): "Modo Autônomo / <título>"; "<O Otto> lidera · com … · o Nexo coordena · desde …"; as ações; "O combinado" (Responsável, Colaboração, Coordenação "Nexo", Frequência, Entrega, Aprovação); "Limites da autonomia"; "Orientações da marca utilizadas"; e, ao lado, "Próximas execuções", "Demonstração", "Histórico" e "Alterações".
+
+**Estados da responsabilidade** (`RST5`, L12878; "sempre ícone e texto, nunca só cor"): "Ativa", "Pausada", "Bloqueada por integração", "Falha na execução", "Encerrada" e "Aguarda sua confirmação" (resto da V3, sem produtor na V4.5).
+
+**Estados de cada execução** (`EXST5`, L12876): "Concluída", "Falhou", "Não executada", "Aguarda sua aprovação", "Aprovada por você", "Programada". No ritmo e em "Próximas execuções" aparecem também "próxima", "aguarda você", "pausada" e "bloqueada". O handoff lista os oito estados juntos ("Ativa, Pausada, Aguarda aprovação, Bloqueada por integração, Falha, Programada, Não executada e Encerrada"), mas o código separa responsabilidade e execução. O rótulo curto "Falha" não existe: o código usa "Falha na execução" e "Falhou".
+
+| Texto que acompanha o estado (L13488, L13554, L13598) | |
+|---|---|
+| Ativa | "Próxima execução: <data> · <título>. <entrega>." |
+| Pausada | "Pausada por você: nada novo é preparado ou publicado até você retomar." · "Nenhuma execução até você retomar." |
+| Falha na execução | "A última execução falhou: o acesso ao Google Perfil expirou e precisa ser reconectado." · "Nada acontece até a conexão voltar." |
+| Bloqueada por integração | "O e-mail marketing não está conectado: o Max prepara segmentos, mas nada pode ser enviado." · "Nada acontece até a integração ser conectada." |
+| Encerrada | "Encerrada por você. O histórico continua disponível." · "Encerrada: nada mais é programado." |
+
+**Catálogo de responsabilidades** (`TPL`, L6077–6139, mais `seo` e `crm` em L12806–12820):
+
+| Modelo | Título | Responsável › com | Ritmo e opções |
+|---|---|---|---|
+| `plan` | "Planejar meus conteúdos toda semana" | Otto › Kaia | dia: segunda, quinta (padrão) ou sexta; volume: "3 posts e 2 stories", "3 posts por semana", "5 posts e 3 stories" |
+| `posts` | "Preparar posts toda segunda-feira" | Kaia › Otto | dia: segunda (padrão), quinta ou sexta; volume: "3 posts", "4 posts", "5 posts" |
+| `res` | "Acompanhar meus resultados" | Íris | "Toda segunda", "Toda segunda e sexta" ou "Todo dia" |
+| `opp` | "Me avisar quando surgir uma oportunidade" | Bia › Íris | "Sempre que surgir"; onde: "no bairro e nas datas" ou "só nas datas comemorativas"; aviso: "no Início" ou "no Início e por e-mail" |
+| `reat` | "Reativar clientes que sumiram" | Max › Otto | "Todo mês" ou "A cada 15 dias"; "60 dias" ou "90 dias" sem comprar |
+| `reviews` | "Responder avaliações do Google" | Max | "Todo dia" ou "Duas vezes por semana" |
+| `seo` | "Monitorar oportunidades de busca local" | Kiwi › Íris | "Toda segunda" ou "A cada 15 dias" |
+| `crm` | "Preparar campanhas de relacionamento" | Max › Otto | "Todo mês" ou "A cada 15 dias" |
+
+O combinado de cada um é uma frase com as palavras trocáveis. Exemplo `plan`: "Toda quinta às 9h, o Otto apresenta o plano da semana seguinte com 3 posts por semana. A Kaia cria as artes. Nada é publicado sem a sua aprovação." Em "O que mais pode ficar com o squad", a tela só oferece `plan`, `posts`, `opp` e `reviews`, e só os que ainda não existem.
+
+**Na conta em uso:** "Planejar meus conteúdos toda semana" está "Ativa" desde 28/09, toda quinta, com "3 posts por semana". "Acompanhar meus resultados" está "Ativa" desde 01/10, toda segunda. "Monitorar oportunidades de busca local" está em "Falha na execução" (o Google Perfil expirou). "Preparar campanhas de relacionamento" está "Bloqueada por integração" (o e-mail não está conectado). As duas últimas não podem ser pausadas nem encerradas até serem resolvidas. No primeiro acesso, nenhuma responsabilidade.
+
+**Histórico de execuções** (`EX5`, L12866–12874): cada execução tem código, data, título, estado, mensagem, link e o que usou da memória. Códigos do protótipo: PL (plano), RS (resultados), BL (busca local), RC (relacionamento), mais o número da semana ou do mês. Exemplos:
+
+- "PL-42" · "Plano da semana 42" · "Aprovado por você na sexta, 17:42"
+- "BL-42" · "Falhou nas duas tentativas: o acesso ao Google Perfil expirou e precisa ser reconectado."
+- "RC-10" · "Não executada: o e-mail marketing não está conectado. Nada foi preparado para envio."
+
+A lista mostra três execuções e "Ver todo o histórico (N)"; vazia, diz "Cada execução fica registrada aqui, com o que foi feito, o que falhou e o trabalho que gerou."
+
+**Níveis de autonomia** (`LV5B`, L13461; `lv5`, L12822):
+
+| Nível | Texto | Limite |
+|---|---|---|
+| "Analisar" | "Pesquisa, acompanha e interpreta informações, só nas contas que você conectou." | faz sozinho |
+| "Preparar" | "Cria rascunhos, planos, peças e relatórios a cada ciclo, sem você pedir de novo." | faz sozinho · você aprova o que sai |
+| "Executar" | "Publicar, enviar mensagens, alterar campanhas e investir só acontecem com a autorização específica de cada ação." | só com a sua autorização |
+| "Nunca" | "Nem com autorização desta rotina" | ex. `plan`: "Investir em anúncios", "Responder mensagens de clientes", "Mudar preços ou ofertas" |
+
+Cada modelo lista o que faz em cada nível. Em `plan`, por exemplo, "Publicar no Instagram" exige "Sua aprovação, publicação por publicação", ou fica "Autorizado: o que você aprovar no plano" se a pessoa liberou; "Alterar campanhas pagas" aparece como "Autorização específica · não concedida". Sem ação externa: "Nenhuma ação externa nesta responsabilidade." "Publicar sozinho" é opção da responsabilidade, só para `plan` e `posts`, escolhida na conversa ("Aprovar cada publicação" ou "Publicar sozinho o que eu aprovar no plano"), e "não autoriza anúncios, envio de mensagens nem investimento" (L13216).
+
+**Ações** (detalhe, L5150–5157):
+
+| Rótulo | Quando | Efeito |
+|---|---|---|
+| "Conversar sobre ela" | sempre | Abre a conversa da responsabilidade com o responsável (§4). |
+| "Editar" | não encerrada | Abre a conversa: "O que você quer ajustar?". Não há formulário. |
+| "Pausar" | ativa | Vira "Pausada". Registro: "Você pausou a responsabilidade". Aviso: "Pausada. Nada novo é preparado." |
+| "Retomar" | pausada | Vira "Ativa". Registro: "Você retomou a responsabilidade". Aviso: "Retomada. O Otto volta na quinta." |
+| "Encerrar" | não encerrada | Pergunta "Encerrar esta responsabilidade?" · "Nada novo será preparado e o histórico continua aqui. Para só interromper por um tempo, use Pausar." com "Encerrar" e "Cancelar". Confirmado: vai para "Encerradas · N"; aviso "Encerrada. O histórico continua no Modo Autônomo." |
+| "Delegar de novo" | encerrada | Recomeça a delegação. |
+| "Reconectar conta (simulação)" · "Conectar o e-mail (simulação)" | falha · bloqueio | §8 |
+| "Simular a execução de quinta" | `plan` ativa, conta em uso | §3.4. Texto: "Demonstração: roda o ciclo de qui, 15/10 com o que está confirmado na memória agora." |
+| "Abrir a Memória" | sempre | Vai à Memória da Marca. |
+
+**Interruptor global** (L13568; `_autoAll`, L6988): fica no cabeçalho, com `role="switch"`, e só aparece se houver responsabilidade ativa ou pausada. O rótulo é **"Ligado"** quando ao menos uma está ativa e **"Pausado"** quando nenhuma está; a descrição acessível é "Pausar o Modo Autônomo" ou "Retomar o Modo Autônomo". Não existe rótulo "Desligado" na V4.5. O efeito é pausar ou retomar todas as responsabilidades de uma vez, com o aviso "Modo Autônomo pausado. Nada novo é preparado ou publicado." ou "Modo Autônomo retomado". No protótipo, o interruptor também mexe nas encerradas e não alcança as que estão com falha ou bloqueio. O "Ligado:" e o "Desligado:" da V3 (L9322) eram a opção "publicar sozinho" de cada rotina, não um interruptor global. O Documento Mestre (§10) marca a semântica do interruptor como pendente (§11).
+
+**Delegação pela conversa com o Nexo** (fluxo completo em §3.3): "delegar: uma conversa, não um formulário" (L13138).
 
 ## 8. Conexões e integrações
 
-<!-- §8 em redação -->
+As conexões aparecem na Memória da Marca, na aba "Conexões e fontes" e nas pílulas "De onde vem", e também onde travam alguma coisa: na faixa "Precisa de você", no Modo Autônomo e no cartão de envio do Max. A tela de conexões da V3 (`connItems`, com permissões por conexão) ficou sem leitor na V4.5. Detalhe em `docs/parciais/x1/notas_memoria_autonomo_conexoes.md` §C.
+
+**Estados da fonte** (`SRCST5`, L12804; um ponto colorido e o rótulo):
+
+| Estado | Rótulo | O que a tela diz (exemplos da conta em uso) |
+|---|---|---|
+| `decl` | "Declarado por você" | Onboarding: "Cadastro de 14/09 e correções nas conversas"; Conversas: "Só vira orientação depois do seu ok" |
+| `ok` | "Conectada" | Site: "Lido em 14/09 · o Nexo relê em 14/10"; Instagram: "Conectado em 14/09 · dados de exemplo"; Documentos: "Enviados por você entre 14/09 e 01/10" |
+| `old` | "Desatualizada" | Planilha: "Cobre até 30/09: outubro ainda não entrou" |
+| `exp` | "Precisa reconectar" | Google Perfil: "O acesso expirou hoje, 9h: precisa ser reconectado" |
+| `off` | "Não conectada" | E-mail: "Necessário para o Max enviar mensagens" |
+| `na` | "Indisponível" | WhatsApp Business: "Ainda não disponível neste protótipo" |
+
+**Fontes da conta em uso** (`src5`, L12783): "Onboarding e o que você contou", "Conversas e aprovações", "Site" (miolo.com.br), "Instagram" (@miolo.padaria), "Google Perfil" (Miolo · Pinheiros), "Planilha de encomendas" (encomendas-setembro.csv), "Documentos" (Guia da marca, cardápio, logo, 18 fotos), "E-mail marketing" e "WhatsApp Business". Cada linha diz quantos conhecimentos a fonte originou. No primeiro acesso: "Cadastro" ("Nome, segmento e cidade"), "Site" ("ainda não lido"), "Instagram", "Google Perfil" e "Documentos" ("nenhum enviado"). Rodapé: "Dados ilustrativos. Neste protótipo nenhuma conta é sincronizada de verdade: conectar e reconectar são simulações." (L5288).
+
+**Ações por estado** (L13653): Google Perfil expirado tem "Reconectar (simulação)"; planilha desatualizada tem "Enviar planilha nova (simulação)"; e-mail não conectado tem "Conectar (simulação)". As outras linhas não têm ação nessa tela.
+
+**Reconectar** (`_a5Reconnect`, L13079): aparece na faixa e na fonte como "Reconectar (simulação)" e, no detalhe e na conversa da responsabilidade, como "Reconectar conta (simulação)". Ao reconectar, o Google Perfil fica "Conectada" ("Reconectado hoje (simulação)") e a responsabilidade de busca local volta a "Ativa". Nasce a execução "Nova tentativa: buscas da semana" · "Programada depois da reconexão (simulação). O registro da falha continua aqui.". Registro: "Você reconectou o Google Perfil (simulação)". Aviso: "Google Perfil reconectado · simulação. Nova tentativa às 11h." A pendência some da faixa.
+
+**Bloqueio por integração:**
+
+- **Acesso expirado** (busca local): a responsabilidade fica em "Falha na execução" e a execução em "Falhou" depois de duas tentativas: "A consulta de hoje falhou duas vezes (9h e 9h30): o acesso ao Google Perfil expirou. Nada foi apresentado como concluído." As próximas execuções aparecem como bloqueadas. Na faixa, o pedido é "Para você reconectar".
+- **Integração ausente** (relacionamento): a responsabilidade fica em "Bloqueada por integração" e a execução em "Não executada": "O e-mail marketing não está conectado. O Max pode preparar segmentos, mas nada é enviado sem integração, consentimento e a sua autorização." Esse bloqueio não gera pendência na faixa.
+- **Cartão de envio do Max** (L5557, L12520–12522): uma lista de verificação com "Mensagens aprovadas" ("por você, hoje"), "Público com consentimento" ("23 de 138 inativos"), "Canal de envio" ("e-mail conectado (simulação)" ou "e-mail não conectado") e "Sua autorização de envio" ("pendente" ou "autorizado para seg, 19/10, 9h"). Botões: "Conectar o e-mail (simulação)" e "Autorizar envio para seg, 19/10, 9h". Textos: "Sem canal conectado, não há envio." e "Programada · simulação, nada é enviado". Conectado o e-mail: "E-mail marketing conectado · simulação. Nada é enviado sem a sua autorização."
+
+**Planilha:** na Memória, "Enviar planilha nova (simulação)" leva a fonte a "Conectada" com "Planilha de outubro enviada hoje (simulação)" (a planilha é arquivo, "Arquivo, sem acesso contínuo"). No Max (L12322), a importação diz: "Para começar, anexe a planilha pelo clipe ao lado do campo. Eu procuro nome, e-mail, telefone, data da última compra e se a pessoa aceitou receber mensagens. Quem não aceitou entra na base, mas não recebe nada." As opções são "Usar a planilha de exemplo" e "Conectar a plataforma da loja", esta com "Essa integração ainda está pendente: neste protótipo não conecto.".
+
+**Sem fonte, sem número:** Resultados vazio mostra "A Íris ainda não tem números para ler" · "Conecte o Instagram ou envie a planilha de encomendas. Nada aparece aqui antes de existir um dado real." · "Ver conexões" (L5372).
+
+**Regra de permissão visível:** conectar não autoriza agir. O protótipo diz "Conectar não autoriza publicar." (L4652), e as permissões da V3 separavam ler de agir: "Ler posts e métricas" e "Publicar só com sua autorização" no Instagram; "Ler avaliações e buscas" e "Responder: só com aprovação" no Google Perfil (L6196–6207).
 
 ## 9. Dados demo da Miolo (seed)
 
