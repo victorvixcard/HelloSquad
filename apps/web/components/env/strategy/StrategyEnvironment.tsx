@@ -83,7 +83,7 @@ export function StrategyEnvironment({
       conversationId: null,
       agent: "bia",
       context: {
-        kind: "document",
+        kind: "opportunity",
         label: title,
         href: docHref(src.workItemId),
         meta: src.title,

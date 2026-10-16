@@ -76,7 +76,8 @@
       "calendar_post": "Post",
       "metric": "Metric",
       "segment": "Segment",
-      "document": "Document"
+      "document": "Document",
+      "opportunity": "Opportunity"
     }
   },
   "objective": {

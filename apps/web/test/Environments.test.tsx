@@ -32,16 +32,17 @@ describe("Estratégia · Bia (primeiro acesso da V4.6)", () => {
     expectNoNumbers(container);
   });
 
-  it("Analisar meu negócio abre a conversa com a Bia com o pedido escrito, sem enviar", async () => {
+  it("Analisar meu negócio abre a conversa do pedido (capacidade b-diag, 02.01) com o pedido escrito, sem enviar", async () => {
     const user = userEvent.setup();
     const { shell } = renderWithShell(<StrategyEnvironment business="Miolo" needs={[]} />, shellWith());
     await user.click(screen.getByRole("button", { name: "Analisar meu negócio" }));
     expect(shell.openConversation).toHaveBeenCalledWith(
       expect.objectContaining({
-        conversationId: "bia-1",
+        conversationId: null,
         agent: "bia",
         draft: "Quero analisar meu negócio.",
-        context: expect.objectContaining({ kind: "env", label: "Estratégia", href: "/app/miolo/squad/bia" }),
+        deliveryType: "02.01",
+        context: expect.objectContaining({ kind: "capability", label: "Analisar meu negócio" }),
       }),
     );
   });

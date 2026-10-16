@@ -13,9 +13,10 @@ export type ApiContextRef = components["schemas"]["ContextRef"];
 export type ConversationContextRef = {
   /**
    * `memory`: um conhecimento da Memória da Marca (V4.6 `_cx('mem')`, tipo "Conhecimento"). A2b: `capability` (pedido
-   * do catálogo, tipo "Pedido"), `calendar_post` ("Publicação"), `metric` ("Indicador"), `segment` e `document`.
+   * do catálogo, tipo "Pedido"), `calendar_post` ("Publicação"), `metric` ("Indicador"), `opportunity` ("Oportunidade"),
+   * `segment` e `document`.
    */
-  kind: "env" | "work_item" | "memory" | "capability" | "calendar_post" | "metric" | "segment" | "document";
+  kind: "env" | "work_item" | "memory" | "capability" | "calendar_post" | "metric" | "segment" | "document" | "opportunity";
   label: string;
   href?: string;
   /** Linha de apoio do cartão de contexto (V4.6 `cx.meta`, ex.: "Otto cuida do calendário…"). */
