@@ -17,5 +17,9 @@ Fatia A1a, "Ao vivo" (Fase 1). Início: 16/10/2026 10:28. A sessão caiu às 10:
 | 11:29 | Item 3: segundo fluxo e2e: "Pedir ajuste" no cartão → texto do protótipo no campo → `changes_requested` com a nota → "Otto ajustando a versão" → v2 chega ao vivo, v1 "Substituída pela v2" → aprovar a v2 pelo cartão. 3 rodadas seguidas do primeiro fluxo verdes antes de somar o segundo | feito | `4827fe7` |
 | 11:32 | Cartão "Contexto da conversa" (V4.6 `_vRail`, L10916) em tela cheia a partir de 940 px, com "Mostrar o contexto": Ambiente, Tipo, Período e Origem quando há, Negócio, quem responde, "Voltar para"; a origem do trabalho ("pedido na conversa com o Otto · 16/10") vai no contexto do "Pedir ajuste" | feito | `b31a938` |
 | 11:34 | Item 5: H0-03 decidido: cookie da sessão httpOnly; o Realtime do browser recebe só o token de acesso pelo servidor (`realtimeTokenAction`), renovado perto de vencer; e2e confere o cookie e os fluxos ao vivo (7 de 7 verdes). O código entrou pelo autosave antes do meu commit | feito | `23d7cab` (wip) |
-| 11:37 | `make test-web` verde (eslint; typecheck; contracts 9, ui 49, web 56); teste antigo do "Pedir ajuste" atualizado para a origem no contexto | feito | este |
+| 11:37 | `make test-web` verde (eslint; typecheck; contracts 9, ui 49, web 56); teste antigo do "Pedir ajuste" atualizado para a origem no contexto | feito | `4f3dcfa` |
+| 11:38 | `make e2e` com build de produção: 1 falha no teste da A0/A1f (meta robots duplicado no build de produção: o do `/entrar` fica no body depois do login); asserção passou a exigir noindex em todos os metas; 7 de 7 | feito | `aae78b2` |
+| 11:41 | Aviso curto de entrega quando a pessoa não está na conversa (V4.6 `_notifyIfAway`: "O Otto entregou a v2"), reducer + e2e | feito | `0718f48` |
+| 11:42 | Rodada final: `make test-web` (web 58) e `make e2e` (build de produção, worker simulado, 7 de 7); `next dev` subido de novo na 3100 (200), API intocada | feito | — |
+| 11:45 | Item 6: `docs/SETUP_LOCAL.md` e `docs/parciais/A1a-relatorio.md` | feito | este |
 
