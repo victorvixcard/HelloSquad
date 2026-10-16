@@ -22,8 +22,12 @@ MAX_DAYS = 92
 
 LIST_CALENDAR = """
 select p.id, p.scheduled_on, p.scheduled_time, p.channel, p.format, p.theme,
-       p.owner_agent_id::text, p.status::text, p.notes, p.work_item_id, p.delivery_version_id
+       p.owner_agent_id::text, p.status::text, p.notes, p.work_item_id, p.delivery_version_id,
+       p.objective, v.version_no, w.title as work_item_title
 from public.calendar_posts p
+left join public.delivery_versions v
+  on v.workspace_id = p.workspace_id and v.id = p.delivery_version_id
+left join public.work_items w on w.workspace_id = p.workspace_id and w.id = p.work_item_id
 where p.workspace_id = %s and p.scheduled_on between %s and %s and p.status <> 'cancelled'
 order by p.scheduled_on, p.scheduled_time nulls last, p.id
 """
@@ -47,6 +51,15 @@ class CalendarPost(BaseModel):
     notes: str | None
     work_item_id: UUID | None = Field(description="Trabalho da 04.02 que propôs o post.")
     delivery_version_id: UUID | None
+    version_no: int | None = Field(
+        default=None, description="Número da versão da 04.02 que propôs o post."
+    )
+    work_item_title: str | None = Field(
+        default=None, examples=["Calendário da semana 43"], description="Título do trabalho."
+    )
+    objective: str | None = Field(
+        default=None, description="Objetivo do post na entrega que o propôs."
+    )
 
 
 class CalendarPage(BaseModel):

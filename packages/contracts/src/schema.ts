@@ -1487,6 +1487,22 @@ export interface components {
             work_item_id: string | null;
             /** Delivery Version Id */
             delivery_version_id: string | null;
+            /**
+             * Version No
+             * @description Número da versão da 04.02 que propôs o post.
+             */
+            version_no?: number | null;
+            /**
+             * Work Item Title
+             * @description Título do trabalho.
+             * @example Calendário da semana 43
+             */
+            work_item_title?: string | null;
+            /**
+             * Objective
+             * @description Objetivo do post na entrega que o propôs.
+             */
+            objective?: string | null;
         };
         /** CardAction */
         CardAction: {

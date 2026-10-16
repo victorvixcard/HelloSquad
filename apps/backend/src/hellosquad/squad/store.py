@@ -1118,8 +1118,8 @@ class RunStore:
                 """
                 insert into public.calendar_posts (
                   workspace_id, scheduled_on, scheduled_time, channel, format, theme,
-                  owner_agent_id, notes, work_item_id, delivery_version_id
-                ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                  owner_agent_id, notes, work_item_id, delivery_version_id, objective
+                ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (
                     self.workspace_id,
@@ -1132,6 +1132,7 @@ class RunStore:
                     post["notes"],
                     work_item_id,
                     version_id,
+                    post.get("objective"),
                 ),
             )
         await self._event(

@@ -6848,6 +6848,45 @@
               }
             ],
             "title": "Delivery Version Id"
+          },
+          "version_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version No",
+            "description": "Número da versão da 04.02 que propôs o post."
+          },
+          "work_item_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Title",
+            "description": "Título do trabalho.",
+            "examples": [
+              "Calendário da semana 43"
+            ]
+          },
+          "objective": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective",
+            "description": "Objetivo do post na entrega que o propôs."
           }
         },
         "type": "object",

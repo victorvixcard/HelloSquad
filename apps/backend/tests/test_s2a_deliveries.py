@@ -409,6 +409,11 @@ async def test_calendar_is_persisted_and_planned_on_approval(api, access_token, 
         "Bastidores da fermentação longa",
         "Encomendas do fim de semana",
     ]
+    # A2b §5.2: versão, título do trabalho de origem e objetivo de cada post.
+    assert {(p["version_no"], p["work_item_title"]) for p in calendar.json()["items"]} == {
+        (2, "Calendário da semana 43")
+    }
+    assert all(p["objective"] for p in calendar.json()["items"])
 
 
 async def test_otto_follows_approved_strategy(api, access_token, admin_db, miolo):

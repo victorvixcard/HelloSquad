@@ -1178,6 +1178,7 @@ def calendar_rows(calendar: EditorialCalendarDelivery) -> list[dict[str, Any]]:
             "theme": post.tema,
             "owner_agent_id": post.responsavel,
             "notes": post.notas or None,
+            "objective": post.objetivo,
         }
         for post in calendar.posts
     ]
