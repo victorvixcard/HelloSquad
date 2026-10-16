@@ -1,20 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { siteUrl } from "@/lib/env";
-import { OPEN_GRAPH_BASE, SITE } from "@/lib/site";
+import { openGraphBase } from "@/lib/site";
 import { gabarito, jetbrainsMono } from "./fonts";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl()),
-  title: { default: SITE.title, template: "%s · HelloSquad" },
-  description: SITE.description,
-  applicationName: "HelloSquad",
-  openGraph: OPEN_GRAPH_BASE,
-  twitter: { card: "summary", title: SITE.title, description: SITE.description },
-  formatDetection: { telephone: false, email: false, address: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("site.meta");
+  return {
+    metadataBase: new URL(siteUrl()),
+    title: { default: t("title"), template: "%s · HelloSquad" },
+    description: t("description"),
+    applicationName: "HelloSquad",
+    openGraph: await openGraphBase(),
+    twitter: { card: "summary", title: t("title"), description: t("description") },
+    formatDetection: { telephone: false, email: false, address: false },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#F7F7F5",

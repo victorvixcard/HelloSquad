@@ -1,23 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = { title: "Página não encontrada", robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("site.notFound");
+  return { title: t("metaTitle"), robots: { index: false } };
+}
 
-export default function NotFound() {
+export default async function NotFound() {
+  const t = await getTranslations("site.notFound");
   return (
     <main id="conteudo" className="flex min-h-dvh items-center justify-center bg-papel px-4">
       <section className="hs-sheet" aria-labelledby="nf-titulo">
-        <h1 id="nf-titulo">Não encontramos esse endereço.</h1>
-        <p>Ele não existe ou não faz parte dos seus negócios.</p>
+        <h1 id="nf-titulo">{t("title")}</h1>
+        <p>{t("lead")}</p>
         <p className="hs-sheet-sub">
-          <Link className="hs-link" href="/app">
-            Ir para o seu squad
-          </Link>{" "}
-          ou{" "}
-          <Link className="hs-link" href="/">
-            voltar ao início
-          </Link>
-          .
+          {t.rich("next", {
+            squad: (chunks) => (
+              <Link className="hs-link" href="/app">
+                {chunks}
+              </Link>
+            ),
+            home: (chunks) => (
+              <Link className="hs-link" href="/">
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
       </section>
     </main>
