@@ -2,11 +2,13 @@
 
 import { getAgent, PRODUCT_ICONS } from "@hellosquad/ui";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { useShell } from "@/components/product/shell-context";
 import { EnvIdentity } from "../EnvIdentity";
 import { NeedsStrip, type StripNeed } from "../NeedsStrip";
+import type { KiwiWork } from "./growth-types";
+import "./growth.css";
 
 type Lane = "org" | "paid" | "cro";
 /** As três frentes da V4.3 (`kw.lanes`, L12153), na mesma ordem e com os mesmos ícones. */
@@ -19,7 +21,7 @@ const LANE_ICON: Record<Lane, string> = { org: PRODUCT_ICONS.search, paid: PRODU
  * o vazio pede a conexão ou a planilha, e as três frentes mantêm só o que é estrutura e regra ("Nenhum anúncio no
  * ar. Nada é investido nem ativado sem a sua autorização."). As ações de cada frente abrem a conversa com a Kiwi.
  */
-export function GrowthEnvironment({ business, needs }: { business: string; needs: StripNeed[] }) {
+export function GrowthEnvironment({ business, needs, paid = [] }: { business: string; needs: StripNeed[]; paid?: KiwiWork[] }) {
   const t = useTranslations("envs.kiwi");
   const tp = useTranslations("pages.env");
   const tc = useTranslations("common");
@@ -116,8 +118,95 @@ export function GrowthEnvironment({ business, needs }: { business: string; needs
             <span>{t(`lane.${lane}.action`)}</span>
           </button>
         </header>
-        <p className="v41-cd-e">{t(`lane.${lane}.empty`)}</p>
+        {lane === "paid" && paid.length ? <PaidCards items={paid} /> : <p className="v41-cd-e">{t(`lane.${lane}.empty`)}</p>}
       </section>
+    </div>
+  );
+}
+
+/**
+ * Cartões de "Campanhas pagas" (template L5417, `kw-c`): um por plano de mídia (05.01) ou teste de anúncios (05.02),
+ * com o que a Kiwi escreveu e o link para o documento. Aprovar não autoriza investir: a autorização é própria (Fase 3).
+ */
+function PaidCards({ items }: { items: KiwiWork[] }) {
+  const tg = useTranslations("growth");
+  const format = useFormatter();
+  const brl = (v: number | null) => (v === null ? "—" : format.number(v, { style: "currency", currency: "BRL", maximumFractionDigits: 0 }));
+  const channel = (c: string) => (c === "meta_ads" || c === "google_ads" ? tg(`channel.${c}`) : c);
+  const variable = (v: string) => (["publico", "mensagem", "criativo", "formato"].includes(v) ? tg(`variable.${v}`) : v);
+  return (
+    <div className="kw-camps">
+      {items.map((w) => {
+        const tag = w.state === "you" || w.state === "auth" ? "you" : w.state === "pause" ? "pause" : "prog";
+        const facts: Array<[string, string]> =
+          w.kind === "plan"
+            ? [
+                [tg("paid.budget"), `${tg("paid.budgetV", { value: brl(w.ceiling), period: w.period })} · ${tg("paid.proposed")}`],
+                [tg("paid.split"), w.split.map((x) => `${channel(x.channel)} ${brl(x.value)}`).join(" · ")],
+                [tg("paid.goal"), w.goal],
+                [tg("paid.audience"), w.audience.join(" · ")],
+              ]
+            : [[tg("paid.audiences"), w.audiences.join(" · ")]];
+        return (
+          <article className="kw-c" key={w.id} aria-label={w.title}>
+            <header className="kw-c-h">
+              <b>{w.title}</b>
+              <span className={`v41-tag is-${tag}`}>
+                <span>{tg(`state.${w.state === "act" ? "prog" : w.state}`)}</span>
+              </span>
+            </header>
+            <span className="ka-k">{w.kind === "plan" ? tg("paid.plan") : tg("paid.tests")}</span>
+            <div className="kw-c-b">
+              <dl className="kw-c-f">
+                {facts
+                  .filter(([, v]) => v)
+                  .map(([k, v]) => (
+                    <div key={k}>
+                      <dt>{k}</dt>
+                      <dd>{v}</dd>
+                    </div>
+                  ))}
+              </dl>
+            </div>
+            {w.kind === "plan" && w.limits.length ? (
+              <div className="kw-c-l">
+                <span className="ka-k">{tg("paid.limits")}</span>
+                <ul>
+                  {w.limits.map((l, i) => (
+                    <li key={i}>{l}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {w.kind === "tests" && w.tests.length ? (
+              <div className="kw-c-l">
+                <span className="ka-k">{tg("paid.testList")}</span>
+                <ol>
+                  {w.tests.map((x, i) => (
+                    <li key={i}>
+                      <b>{x.hypothesis}</b>{" "}
+                      <small>
+                        {tg("paid.testMeta", {
+                          variable: variable(x.variable),
+                          duration: x.duration,
+                          budget: x.budget === null ? tg("paid.noBudget") : brl(x.budget),
+                        })}
+                      </small>
+                    </li>
+                  ))}
+                </ol>
+                {w.plan ? <small>{tg("paid.fromPlan", { no: w.plan.no, value: brl(w.plan.ceiling) })}</small> : null}
+              </div>
+            ) : null}
+            <p className="kw-c-r">{w.kind === "plan" ? tg("exec.plan") : tg("exec.tests")}</p>
+            <div className="kw-c-a">
+              <Link className={w.awaiting ? "hm-btn is-dark is-s" : "hm-link"} href={w.href}>
+                <span>{w.awaiting && w.kind === "plan" ? tg("paid.review") : tg("paid.see")}</span>
+              </Link>
+            </div>
+          </article>
+        );
+      })}
     </div>
   );
 }

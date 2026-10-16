@@ -1,0 +1,6 @@
+/* A2b · Growth · Kiwi: a lista de limites e de testes dentro do cartão `kw-c` (o protótipo só tem a linha `kw-c-r`). */
+.kw-c-l{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.kw-c-l ul,.kw-c-l ol{margin:0;padding-left:18px;font-size:13px;line-height:1.45;color:var(--ink2)}
+.kw-c-l li+li{margin-top:4px}
+.kw-c-l b{font-weight:600;color:var(--ink)}
+.kw-c-l small{font-size:12px;color:var(--ink3)}
