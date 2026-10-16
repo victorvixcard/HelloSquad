@@ -17,6 +17,15 @@ describe("catálogo pt-BR (ADR-0010)", () => {
     expect(JSON.stringify(Object.keys(messages.common.deliveryTypes))).not.toContain("04.01");
   });
 
+  it("e-mail e site de exemplo usam o TLD reservado .example (diretriz de 15/10, H1-11)", () => {
+    expect(messages.auth.fields.emailPlaceholder).toBe("voce@seunegocio.example");
+    expect(messages.home.onb.sitePlaceholder).toBe("seunegocio.example");
+    const text = JSON.stringify(messages);
+    const emails = text.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) ?? [];
+    expect(emails.filter((e) => !e.endsWith(".example"))).toEqual([]);
+    expect(text).not.toMatch(/\b[\w-]+\.com\.br\b/);
+  });
+
   it("a saudação do Início é a da V4.6", () => {
     expect(messages.home.hello).toBe("Hello, {name}.");
     expect(messages.home.question).toBe("Com o que vamos trabalhar hoje?");
