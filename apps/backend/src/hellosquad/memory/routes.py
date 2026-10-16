@@ -13,10 +13,15 @@ from psycopg.rows import DictRow
 from hellosquad.api.deps import CurrentPrincipal, DatabaseDep, ensure_workspace
 from hellosquad.api.errors import ApiError, error_responses
 from hellosquad.domain import MemoryConflictState, MemorySuggestionState
+from hellosquad.i18n import t
 from hellosquad.memory.schemas import (
     BrandFact,
     BrandFactCorrection,
+    BrandFactCreate,
     BrandFactHistory,
+    BrandFactStateChange,
+    BrandProfile,
+    BrandProfileUpdate,
     FactSource,
     FactSourceList,
     MemoryAreaGroup,
@@ -40,7 +45,7 @@ FACT_COLUMNS = """
 f.id, f.workspace_id, f.area::text, f.topic, f.key, f.content, f.content_json, f.state::text,
 f.source_type::text, f.source_id, f.origin, f.used_by_agents, f.perceived_by_agent_id::text,
 f.confidence, f.valid_from, f.valid_until, f.version, f.supersedes_id, f.superseded_at,
-f.confirmed_by, f.confirmed_at, f.created_at, f.updated_at
+f.confirmed_by, f.confirmed_at, f.created_at, f.updated_at, f.unused_from::text
 """
 
 SUGGESTION_SELECT = """
@@ -161,6 +166,20 @@ DECIDE_SUGGESTION = {
 }
 
 
+FACT_STATE_CHANGES = {
+    "stop_using": "select id from app.stop_using_fact(%s)",
+    "resume_using": "select id from app.resume_using_fact(%s)",
+    "confirm": "select id from app.confirm_fact(%s)",
+    "keep": "select id from app.keep_fact(%s)",
+}
+
+PROFILE = """
+select p.description, p.squad_summary, p.summary_agent_id::text, p.summary_updated_at
+from public.brand_profiles p
+where p.workspace_id = %s
+"""
+
+
 async def fetchall(
     conn: AsyncConnection[DictRow], query: str, params: object = None
 ) -> list[DictRow]:
@@ -226,9 +245,11 @@ async def get_memory(
             LIST_SUGGESTIONS,
             {"workspace_id": workspace_id, "state": MemorySuggestionState.open, "limit": 100},
         )
+        profile = await (await conn.execute(PROFILE, (workspace_id,))).fetchone()
     return MemoryDossier(
         workspace_id=workspace_id,
         brand_name=summary["name"],
+        profile=BrandProfile(**profile) if profile else None,
         confirmed_count=summary["confirmed_count"],
         pending=MemoryPending(
             suggestions=summary["suggestions"],
@@ -429,3 +450,100 @@ async def resolve_conflict(
         if row is None:
             raise ApiError(404, "not_found", "Conflito não encontrado.")
         return (await conflicts_from_rows(conn, [row]))[0]
+
+
+@router.post(
+    "/memory/facts/{fact_id}/state",
+    summary='Não usar mais, voltar a usar, confirmar ou "continua valendo" (só o owner)',
+    description=(
+        "Muda o estado sem criar versão: `stop_using` guarda o estado de antes e põe Não usado; "
+        "`resume_using` devolve esse estado; `confirm` vale para Da fonte e Observado; `keep` "
+        "devolve o Desatualizado a Da fonte. Repetir responde 200 com o mesmo estado; ação que "
+        "não cabe no estado atual responde 409. Só o owner decide."
+    ),
+    responses=error_responses(401, 403, 404, 409, 422, 503),
+)
+async def change_fact_state(
+    fact_id: UUID,
+    payload: BrandFactStateChange,
+    principal: CurrentPrincipal,
+    db: DatabaseDep,
+) -> BrandFact:
+    async with db.transaction_as(principal) as conn:
+        row = await (await conn.execute(FACT_STATE_CHANGES[payload.action], (fact_id,))).fetchone()
+        return await load_fact(conn, row["id"])
+
+
+@router.post(
+    "/workspaces/{workspace_id}/memory/facts",
+    status_code=201,
+    summary="Adicionar conhecimento: declarado por você, já confirmado (só o owner)",
+    description=(
+        'Entra como Confirmado na fonte "Declarado por você" e todo o squad passa a usar. Sem '
+        'assunto, vai para o primeiro assunto da área; sem chave, "Contado por você" (no '
+        "idioma do workspace)."
+    ),
+    responses=error_responses(401, 403, 404, 422, 503),
+)
+async def add_fact(
+    workspace_id: UUID,
+    payload: BrandFactCreate,
+    principal: CurrentPrincipal,
+    db: DatabaseDep,
+) -> BrandFact:
+    async with db.transaction_as(principal) as conn:
+        locale = await ensure_workspace_locale(conn, workspace_id)
+        row = await (
+            await conn.execute(
+                "select id from app.add_fact(%s, %s::public.memory_area, %s, %s, %s)",
+                (
+                    workspace_id,
+                    payload.area,
+                    payload.topic or t(locale, f"memory.default_topic.{payload.area}"),
+                    payload.key or t(locale, "memory.added_key"),
+                    payload.content,
+                ),
+            )
+        ).fetchone()
+        return await load_fact(conn, row["id"])
+
+
+@router.post(
+    "/memory/suggestions/{suggestion_id}/seen",
+    summary='Marca "<Agente> percebeu" como visto (aberto → visto; só o owner)',
+    responses=error_responses(401, 403, 404, 422, 503),
+)
+async def mark_suggestion_seen(
+    suggestion_id: UUID, principal: CurrentPrincipal, db: DatabaseDep
+) -> MemorySuggestion:
+    async with db.transaction_as(principal) as conn:
+        await conn.execute("select id from app.mark_suggestion_seen(%s)", (suggestion_id,))
+        return await load_suggestion(conn, suggestion_id)
+
+
+@router.put(
+    "/workspaces/{workspace_id}/memory/profile",
+    summary="Descrição do negócio no dossiê (só o owner); a síntese é do squad",
+    responses=error_responses(401, 403, 404, 422, 503),
+)
+async def update_profile(
+    workspace_id: UUID,
+    payload: BrandProfileUpdate,
+    principal: CurrentPrincipal,
+    db: DatabaseDep,
+) -> BrandProfile:
+    async with db.transaction_as(principal) as conn:
+        await ensure_workspace(conn, workspace_id)
+        await conn.execute(
+            "select app.set_brand_description(%s, %s)", (workspace_id, payload.description)
+        )
+        row = await (await conn.execute(PROFILE, (workspace_id,))).fetchone()
+    return BrandProfile(**row)
+
+
+async def ensure_workspace_locale(conn: AsyncConnection[DictRow], workspace_id: UUID) -> str:
+    await ensure_workspace(conn, workspace_id)
+    row = await (
+        await conn.execute("select locale from public.workspaces where id = %s", (workspace_id,))
+    ).fetchone()
+    return row["locale"]

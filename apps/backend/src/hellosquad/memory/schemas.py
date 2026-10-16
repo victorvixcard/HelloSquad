@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
@@ -57,6 +57,10 @@ class BrandFact(BaseModel):
     confirmed_at: datetime | None
     created_at: datetime
     updated_at: datetime
+    unused_from: BrandFactState | None = Field(
+        default=None,
+        description='Estado antes de "Não usar mais" ("Voltar a usar" volta para ele).',
+    )
 
 
 class MemoryTopic(BaseModel):
@@ -225,9 +229,60 @@ class MemoryPending(BaseModel):
     outdated: int = Field(description="Conhecimentos desatualizados.")
 
 
+class BrandFactStateChange(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid", json_schema_extra={"examples": [{"action": "stop_using"}]}
+    )
+
+    action: Literal["stop_using", "resume_using", "confirm", "keep"] = Field(
+        description=(
+            '`stop_using` "Não usar mais" (Confirmado, Decisão sua, Da fonte, Observado, '
+            'Desatualizado → Não usado); `resume_using` "Voltar a usar" (Não usado → o estado de '
+            'antes); `confirm` "Confirmar" (Da fonte ou Observado → Confirmado); `keep` "Continua '
+            'valendo" (Desatualizado → Da fonte). Repetir devolve o mesmo estado.'
+        )
+    )
+
+
+class BrandFactCreate(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
+            "examples": [{"area": "business", "content": "Aos domingos a loja fecha às 13h"}]
+        },
+    )
+
+    area: MemoryArea
+    content: FactText = Field(description='"O que o squad precisa saber?"')
+    topic: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)] | (
+        None
+    ) = Field(default=None, description="Assunto; sem ele, o primeiro assunto da área.")
+    key: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] | (
+        None
+    ) = Field(default=None, description='Chave; sem ela, "Contado por você".')
+
+
+class BrandProfile(BaseModel):
+    description: str | None = Field(description="Descrição do negócio, escrita pelo dono.")
+    squad_summary: str | None = Field(description='"O que o squad sabe": síntese do squad.')
+    summary_agent_id: AgentId | None
+    summary_updated_at: datetime | None
+
+
+class BrandProfileUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    description: Annotated[str, StringConstraints(strip_whitespace=True, max_length=600)] | None = (
+        Field(description="Vazio ou nulo apaga.")
+    )
+
+
 class MemoryDossier(BaseModel):
     workspace_id: UUID
     brand_name: str = Field(examples=["Miolo"])
+    profile: BrandProfile | None = Field(
+        default=None, description="Descrição do negócio e síntese do squad (nulo: ainda não há)."
+    )
     confirmed_count: int = Field(
         description="Conhecimentos Confirmado e Decisão sua (base da síntese do squad)."
     )

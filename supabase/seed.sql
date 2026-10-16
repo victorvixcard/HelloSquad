@@ -306,12 +306,17 @@ begin
   using public.workspaces w
   where w.id = a.workspace_id
     and w.slug in ('miolo', 'vitta', 'trilha')
-    and a.entity_type in ('brand_fact', 'memory_suggestion', 'memory_conflict');
+    and a.entity_type in ('brand_fact', 'memory_suggestion', 'memory_conflict', 'brand_profile');
+  delete from public.brand_profiles p using public.workspaces s where s.id = p.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.run_context_items i using public.workspaces s where s.id = i.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.memory_conflicts c using public.workspaces s where s.id = c.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.memory_suggestions m using public.workspaces s where s.id = m.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.brand_facts f using public.workspaces s where s.id = f.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
   delete from public.fact_sources f using public.workspaces s where s.id = f.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+
+  -- Dossiê (S1f): descrição do negócio de DADOS_FICTICIOS.md; a síntese do squad fica para o agente.
+  insert into public.brand_profiles (workspace_id, description, updated_by, created_at, updated_at)
+  values (v_miolo, 'Padaria de fermentação natural em Pinheiros, São Paulo.', v_marina, v_at, v_at);
 
   insert into public.fact_sources (id, workspace_id, kind, name, state, permissions, last_sync_at, created_at, updated_at)
   values

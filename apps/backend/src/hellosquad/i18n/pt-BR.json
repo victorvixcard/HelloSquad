@@ -55,5 +55,10 @@
   "status.phrase.adjusting": "ajustando a versão",
   "status.phrase.writing": "escrevendo",
   "status.phrase.wait_approval": "aguarda sua aprovação",
-  "status.phrase.wait_answer": "aguarda sua resposta"
+  "status.phrase.wait_answer": "aguarda sua resposta",
+  "memory.default_topic.business": "História",
+  "memory.default_topic.brand": "Posicionamento",
+  "memory.default_topic.audience": "Perfil dos clientes",
+  "memory.default_topic.knowledge": "Pesquisas",
+  "memory.added_key": "Contado por você"
 }
