@@ -169,12 +169,13 @@ describe("Catálogo O que pedir (V4.2/V4.3)", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("Coordenar uma campanha (Nexo) vira a estratégia de campanha da Bia (02.04); sem entrega, só o aviso", async () => {
+  // A2d (H2-01): "Coordenar uma campanha" é do Nexo (V4.6 `ag: 'coord'`) e vira o projeto coordenado 01.02 da S2d.
+  it("Coordenar uma campanha (Nexo) vira o projeto coordenado (01.02) com o Nexo à frente; sem entrega, só o aviso", async () => {
     const user = userEvent.setup();
     const { shell } = renderWithShell(<CapCatalog agent="nexo" />, makeShell());
     await user.click(screen.getByRole("button", { name: "Ver o que dá para pedir ao Nexo" }));
     await user.click(screen.getByRole("button", { name: /^Coordenar uma campanha\./ }));
-    expect(shell.openConversation).toHaveBeenCalledWith(expect.objectContaining({ agent: "bia", deliveryType: "02.04" }));
+    expect(shell.openConversation).toHaveBeenCalledWith(expect.objectContaining({ agent: "nexo", deliveryType: "01.02" }));
     await user.click(screen.getByRole("button", { name: "Ver o que dá para pedir ao Nexo" }));
     await user.click(screen.getByRole("button", { name: /^Começar um projeto novo\./ }));
     expect(shell.toast).toHaveBeenCalledWith(

@@ -213,8 +213,8 @@
       "in_progress": "{name} is working on this step.",
       "after": "Starts after the {step} step.",
       "queued": "Queued by Nexo.",
-      "waiting_engine": "Nothing is generated or charged until the engine arrives; the steps that don't depend on the piece keep going.",
-      "failed": "{name} couldn't complete this step."
+      "waiting_engine": "Nothing is generated or charged until the engine arrives; the steps that don’t depend on the piece keep going.",
+      "failed": "{name} couldn’t complete this step."
     },
     "decision": {
       "done": "{step} approved",
