@@ -315,6 +315,8 @@ async def test_coordinated_campaign_closes_with_one_owner_per_step(
     assert "Etapa 1 · Estratégia concluída" in final_texts
     assert "Etapa 2 · Peças: aguardando o motor de imagem" in final_texts
     assert "Etapa 3 · Textos concluída" in final_texts
+    approved_at = final_texts.index("Você aprovou a v1")
+    assert final_texts.index("Etapa 1 · Estratégia concluída") == approved_at + 1
     assert [m["title"] for m in project.json()["milestones"]] == ["Estratégia", "Peças", "Textos"]
     assert [
         (s["agent_id"], s["status"], s.get("status_reason_label")) for s in final_detail["steps"]
