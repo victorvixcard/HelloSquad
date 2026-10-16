@@ -49,7 +49,7 @@ Vercel serve a web (Next.js, SSR para SEO/GEO). Supabase é o plano de dados ún
 | API | **Railway** `api` | FastAPI (Python 3.12), stateless, 2+ réplicas, healthcheck, autoscale por CPU/latência | Execução longa e previsível, sem limite de função serverless; stack que o time já domina. |
 | Execução | **Railway** `worker` | Pool de workers Python consumindo filas pgmq; roda agentes (LLM), geração de imagem, integrações, reflexão de memória | Runs de agente duram de 30 s a vários minutos e precisam de retry, pausa e cancelamento. Função serverless não serve. |
 | Agendamento | **Railway** `scheduler` (ou `pg_cron`) | Tick a cada minuto: lê `responsibilities` vencidas e publica na fila com chave idempotente | Modo Autônomo precisa de histórico por execução; a fila garante exatamente-uma-vez por janela. |
-| Dados | **Supabase** | Auth (e-mail, Google), Postgres 16 com RLS, pgvector, pgmq (Supabase Queues), pg_cron, pg_net, Storage com URLs assinadas, Realtime | Um plano de dados, transações entre domínio e fila, RLS nativa para multi-tenant, pooling gerenciado (Supavisor). |
+| Dados | **Supabase** | Auth (e-mail, Google), Postgres 17 com RLS (o Supabase oferece 15 e 17; local em 17.11 desde a J0), pgvector, pgmq (Supabase Queues), pg_cron, pg_net, Storage com URLs assinadas, Realtime | Um plano de dados, transações entre domínio e fila, RLS nativa para multi-tenant, pooling gerenciado (Supavisor). |
 | Observabilidade | Sentry (erros), Langfuse (traces e custo de LLM por run), PostHog (produto) | | Custo por entrega e taxa de falha são métricas de negócio deste produto. |
 
 **O que não vai onde:**
@@ -67,6 +67,13 @@ Vercel serve a web (Next.js, SSR para SEO/GEO). Supabase é o plano de dados ún
 `workspaces` (um por negócio do cliente) ↔ `memberships` (usuário, papel: owner/admin/editor/viewer) ↔ `users` (Supabase Auth). Toda tabela de domínio carrega `workspace_id NOT NULL` com índice composto e política RLS `workspace_id IN (select workspace_id from memberships where user_id = auth.uid())`. O workspace ativo vai no JWT (custom claim) para evitar subquery em toda leitura.
 
 Storage: bucket por ambiente, caminho `workspace_id/<entidade>/<id>/<versão>`; política RLS espelha a do banco; download só por URL assinada curta.
+
+**Decisões de acesso ao banco (Thor, 16/10/2026, a partir das perguntas da J0):**
+- **Chaves do Supabase:** adotamos as novas (`sb_publishable_…` no web e no mobile, `sb_secret_…` só no backend para operações administrativas da Auth). As legadas `anon`/`service_role` não entram em código novo.
+- **Validação do JWT do usuário no FastAPI:** por JWKS da Auth (`/auth/v1/.well-known/jwks.json`) quando disponível; no local, HS256 com o segredo do CLI apenas como fallback configurável. Algoritmo e origem da chave ficam em configuração, não em código.
+- **`auto_expose_new_tables = false`.** Tabela nova não aparece na Data API sem `GRANT` explícito. Toda tabela de domínio tem RLS habilitada **e forçada** (`FORCE ROW LEVEL SECURITY`), com teste pgTAP que varre o schema e falha se alguma escapar.
+- **A API não ignora a RLS.** O FastAPI conecta com um papel próprio (`hellosquad_api`, sem `BYPASSRLS`) e, a cada requisição de usuário, aplica `SET LOCAL ROLE authenticated` e os claims do JWT na transação. Assim a RLS vale também dentro da API, não só no PostgREST. Papel privilegiado só no worker e no scheduler, sempre com `workspace_id` explícito.
+- **Postgres 17** no local e na nuvem.
 
 ### 3.2 Onde a concorrência aparece e como absorvemos
 
