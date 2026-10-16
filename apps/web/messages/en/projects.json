@@ -1,0 +1,186 @@
+{
+  "roadmap": {
+    "title": "Project roadmap",
+    "legend": {
+      "project": "project",
+      "milestone": "milestone",
+      "planned": "planned",
+      "you": "your decision"
+    },
+    "sub": "{active, plural, =1 {# active} other {# active}}{paused, plural, =0 {} =1 { · # paused} other { · # paused}}",
+    "emptyTitle": "No projects yet",
+    "emptyText": "Projects are bigger requests, like a campaign. Nexo puts the squad together, organizes the steps, and calls you in when the decision is yours.",
+    "emptyStart": "Start with the Christmas Campaign",
+    "startDraft": "I want a Christmas campaign to sell more panettone.",
+    "rowAria": "{title}: {status}. View project details",
+    "detailAria": "Project details: {title}",
+    "objective": "Goal",
+    "owners": "Owners",
+    "status": "Status",
+    "nextMilestone": "Next milestone",
+    "due": "Deadline",
+    "noDate": "No date",
+    "noDue": "No deadline",
+    "works": "Work requested in this project · {count}",
+    "talk": "Talk to Nexo about this project",
+    "projectStatus": {
+      "active": "In progress",
+      "paused": "Paused",
+      "done": "Done"
+    }
+  },
+  "working": {
+    "title": "Your squad is working",
+    "sum": "{count, plural, =1 {# work item in progress} other {# work items in progress}}",
+    "talk": "Talk to Nexo about who’s working",
+    "talkTip": "Talk to Nexo",
+    "empty": "No one is in production right now. Ask for something and Nexo organizes who does what.",
+    "more": "Show {count} more",
+    "less": "Show less",
+    "state": "in progress"
+  },
+  "milestones": {
+    "title": "Upcoming milestones",
+    "talk": "Talk to Nexo about upcoming milestones",
+    "talkTip": "Talk to Nexo",
+    "empty": "No dated milestones in the next few days."
+  },
+  "summary": {
+    "meta": "Summary · Projects"
+  },
+  "all": {
+    "title": "All work",
+    "sub": "Projects, one-off deliveries, and Autonomous Mode cycles, by status.",
+    "views": "View",
+    "view": {
+      "board": "Board",
+      "list": "List",
+      "library": "Library"
+    },
+    "kindMenu": "Work type",
+    "kind": {
+      "all": "All types",
+      "deliveries": "One-off deliveries",
+      "projects": "Projects"
+    },
+    "kindItem": {
+      "all": "All",
+      "deliveries": "One-off deliveries",
+      "projects": "Projects"
+    },
+    "kindAria": "Work type: {kind}",
+    "kindAriaValue": {
+      "all": "all",
+      "deliveries": "one-off deliveries",
+      "projects": "projects"
+    },
+    "formats": "Format",
+    "format": {
+      "all": "All",
+      "pieces": "Pieces",
+      "documents": "Documents"
+    },
+    "agentFilter": "Filter by specialist",
+    "agentShow": "Show only work {with}",
+    "agentShowing": "Showing work {with}",
+    "agentTip": "{name} · {role}",
+    "agentClear": "Show work from all specialists",
+    "clear": "Clear filters",
+    "noneTitle": "No work yet",
+    "noneText": "Ask the squad for something in New request. Nexo organizes who does what, and anything that needs you shows up here first.",
+    "filteredTitle": "No work matches these filters",
+    "libNoneTitle": "No materials yet",
+    "libNoneText": "The pieces and documents the squad produces show up here, each with its status.",
+    "libFilteredTitle": "No materials match these filters"
+  },
+  "cols": {
+    "you": "Needs you",
+    "and": "In progress",
+    "prog": "Scheduled",
+    "done": "Done"
+  },
+  "colsEmpty": {
+    "you": "No pending decisions",
+    "and": "Nothing in production",
+    "prog": "Nothing scheduled",
+    "done": "Nothing done yet"
+  },
+  "colAria": "{col}, {count, plural, =1 {# work item} other {# work items}}",
+  "groupAria": "{col}, {count}",
+  "listCols": {
+    "situation": "Status",
+    "owner": "Owner",
+    "date": "Date",
+    "next": "Next step"
+  },
+  "st": {
+    "you": "Waiting for you",
+    "and": "In progress",
+    "prog": "Scheduled",
+    "done": "Done",
+    "pause": "Paused",
+    "working": "Working"
+  },
+  "kinds": {
+    "delivery": "Delivery",
+    "work": "Work",
+    "workOf": "Work for {project}"
+  },
+  "sit": {
+    "review": "v{version} waiting for your approval",
+    "reviewDue": "v{version} waiting for your approval · by {due}"
+  },
+  "foot": {
+    "until": "by {due}",
+    "approved": "Approved",
+    "approvedByYou": "Approved by you",
+    "paused": "Paused"
+  },
+  "card": {
+    "working": "{name} is working on this",
+    "responds": "{name} is in charge",
+    "with": " · with {names}",
+    "aria": "{title}. {st}: {sit}{next}. {lead}{co}. Open work",
+    "ariaNext": ". Next step: {next}",
+    "ariaCo": ", with {names}",
+    "ctaAria": "{cta}: {title}",
+    "more": "+{count}"
+  },
+  "roles": {
+    "nexo": "Coordination",
+    "bia": "Strategy",
+    "kaia": "Creative",
+    "otto": "Content",
+    "kiwi": "Growth",
+    "max": "CRM",
+    "iris": "Data"
+  },
+  "work": {
+    "stackLabel": "{lead} with {names}",
+    "project": "Project: {name}",
+    "origin": {
+      "direct": "requested in the conversation with {agent} · {date}",
+      "room": "requested in the Squad Room · {date}",
+      "object": "conversation about {subject} · {date}",
+      "plain": "requested in {area} · {date}"
+    },
+    "history": {
+      "asked": "You asked in the conversation with {agent}",
+      "askedRoom": "You asked in the Squad Room",
+      "askedPlain": "You asked",
+      "started": "{name} started working on this",
+      "failed": "{name} couldn’t finish",
+      "delivered": "v{version} delivered",
+      "approved": "You approved v{version}",
+      "approvedPlain": "You approved",
+      "adjust": "You asked: “{note}”",
+      "adjustPlain": "You requested changes to v{version}",
+      "revise": "You asked for a new proposal",
+      "cancel": "You canceled the work",
+      "answered": "You answered",
+      "rejected": "You didn’t approve",
+      "today": "today · {time}",
+      "at": "{date} · {time}"
+    }
+  }
+}

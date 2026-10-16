@@ -1,0 +1,46 @@
+{
+  "needs": {
+    "label": "Needs you",
+    "labelCount": "Needs you: {count}",
+    "itemAria": "{who} · {kind}: {title}. {cta}",
+    "sub": "{type}, version {version}, waiting for your review",
+    "subNoVersion": "Waiting for you",
+    "cta": {
+      "review": "Review {object}",
+      "approve": "Approve {object}",
+      "authorize": "Authorize {object}",
+      "confirm": "Confirm {object}",
+      "reconnect": "Reconnect {object}",
+      "respond": "Respond to {object}",
+      "decide": "Decide on {object}"
+    },
+    "object": {
+      "d0401": "the caption",
+      "default": "the work"
+    },
+    "more": "Show {count, plural, one {# more pending item} other {# more pending items}}",
+    "less": "Hide the other pending items",
+    "moreBtn": "+{count}",
+    "closeBtn": "Close"
+  },
+  "env": {
+    "talk": "Talk to {name}",
+    "talkAria": "Talk to {name} about {area}, on the side",
+    "ask": "What to ask",
+    "describe": {
+      "nexo": "organizes {business}’s projects and calls you in when the decision is yours.",
+      "bia": "finds where the opportunity is for {business}.",
+      "kaia": "shapes {business}’s brand in every piece.",
+      "otto": "takes care of the calendar, the captions, and what {business} says on each channel.",
+      "kiwi": "takes care of {business}’s growth: search, ads, and more visits turning into orders.",
+      "max": "takes care of existing customers, always with consent.",
+      "iris": "reads {business}’s numbers and tells you what to do with them, without making up causes."
+    },
+    "provisional": "This area is still under construction. For now, talk to {name} in the side panel.",
+    "askTo": " {name}",
+    "askAria": "See what you can ask {name}"
+  },
+  "room": {
+    "title": "Squad Room"
+  }
+}

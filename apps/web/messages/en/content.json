@@ -1,0 +1,94 @@
+{
+  "calendar": "Editorial calendar",
+  "viewsLabel": "Calendar view",
+  "views": {
+    "week": "Week",
+    "month": "Month",
+    "list": "List"
+  },
+  "prevWeek": "Previous week",
+  "nextWeek": "Next week",
+  "thisWeek": "this week",
+  "rangeSame": "{month} {from} to {to}",
+  "rangeCross": "{monthFrom} {from} to {month} {to}",
+  "empty": {
+    "title": "{agent} doesn’t have a calendar for {business} yet",
+    "text": "He can plan the content every week, in Autonomous Mode. You approve before anything is published.",
+    "delegate": "Delegate weekly planning",
+    "askKaia": "Ask Kaia for a post"
+  },
+  "next": {
+    "title": "Upcoming posts",
+    "talk": "Talk to Otto about upcoming posts",
+    "talkTip": "Talk to Otto",
+    "empty": "Nothing scheduled for now."
+  },
+  "perf": {
+    "title": "Organic performance",
+    "talk": "Analyze performance with Íris",
+    "talkTip": "Analyze with Íris",
+    "empty": "Íris doesn’t have Instagram numbers to read yet."
+  },
+  "noticed": {
+    "title": "Otto noticed",
+    "talk": "Explore opportunities with Otto",
+    "talkTip": "Explore with Otto",
+    "empty": "Opportunities show up once Otto gets to know {business} and Íris has the first numbers."
+  },
+  "work": {
+    "back": "Content",
+    "tag": "one-off delivery",
+    "origin": "requested in the conversation with {agent} · {date}",
+    "steps": "Steps: preparation, approval, publishing, and confirmation",
+    "prep": "Preparation",
+    "prepSub": "Created by {agent}",
+    "review": "Your approval",
+    "reviewSub": "v{version} waiting for you",
+    "reviewDone": "v{version} approved",
+    "publish": "Publishing",
+    "publishSub": "only with your authorization",
+    "confirm": "Confirmation",
+    "confirmSub": "when the channel confirms",
+    "versions": "Versions",
+    "waits": "{agent} is waiting for you",
+    "waitsText": "Version {version} is ready for you.",
+    "facts": {
+      "format": "Format",
+      "channel": "Channel",
+      "publication": "Publishing",
+      "notIncluded": "not included"
+    },
+    "approve": "Approve v{version}",
+    "approving": "Approving",
+    "adjust": "Request changes",
+    "adjustDraft": "I’d like to request changes to this version.",
+    "adjustNote": "Requesting changes opens the conversation with {agent} on the side, with the caption in view.",
+    "approved": "Approved by you",
+    "approvedText": "Approving doesn’t publish: publishing needs its own authorization.",
+    "decideError": "Couldn’t record your decision right now. Try again.",
+    "tabs": {
+      "caption": "Caption",
+      "brief": "Brief",
+      "history": "History"
+    },
+    "captionBy": "· caption",
+    "brief": {
+      "canal": "Channel",
+      "objetivo": "Goal",
+      "tom": "Tone",
+      "restricoes": "Constraints"
+    },
+    "talk": "Talk to {name}",
+    "notFound": "This work no longer exists or doesn’t belong to this business.",
+    "prepSubAdjusted": "Created and revised by {agent}",
+    "newProposal": "Ask for a new proposal",
+    "cancelWork": "Cancel work",
+    "waitsDecision": "{agent} is waiting for the decision",
+    "makingAdjust": "{agent} is revising version {version}",
+    "makingRevise": "{agent} is creating a new proposal",
+    "makingText": "You’ll get the new version here and in the conversation.",
+    "cancelled": "Work canceled",
+    "cancelledText": "{agent} won’t continue with this delivery."
+  },
+  "today": "Today"
+}
