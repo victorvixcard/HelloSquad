@@ -81,15 +81,25 @@ def has_password(conn: psycopg.Connection, user: str) -> bool:
     return bool(row and row[0])
 
 
+def check_api_role_password(
+    conn: psycopg.Connection, settings: Settings, *, rotate: bool = False
+) -> bool:
+    """True se a senha de API_DATABASE_URL já vale; se o papel tem outra, recusa sem --rotate."""
+    user, _ = api_role_credentials(settings)
+    if password_works(secret_value(settings.api_database_url)):
+        return True
+    if has_password(conn, user) and not rotate:
+        raise LocalDbError(ROTATION_REFUSED.format(role=API_ROLE))
+    return False
+
+
 def sync_api_role_password(
     conn: psycopg.Connection, settings: Settings, *, rotate: bool = False
 ) -> str:
     """Grava a senha só quando falta: a que já vale fica; trocar outra exige --rotate."""
-    user, password = api_role_credentials(settings)
-    if password_works(secret_value(settings.api_database_url)):
+    if check_api_role_password(conn, settings, rotate=rotate):
         return f"senha do papel {API_ROLE} já confere com API_DATABASE_URL; nada gravado"
-    if has_password(conn, user) and not rotate:
-        raise LocalDbError(ROTATION_REFUSED.format(role=API_ROLE))
+    user, password = api_role_credentials(settings)
     set_api_role_password(conn, user, password)
     return f"senha do papel {API_ROLE} definida a partir de API_DATABASE_URL"
 
@@ -151,12 +161,15 @@ def main(argv: list[str] | None = None) -> int:
     try:
         conninfo = admin_conninfo(settings)
         api_role_credentials(settings)
+        rotate = getattr(args, "rotate", False)
         with psycopg.connect(conninfo, autocommit=True) as conn:
             if args.command == "seed":
+                # A senha é conferida antes: recusada, o seed não entra no banco.
+                check_api_role_password(conn, settings, rotate=rotate)
                 for email, slug, role in seed(conn, args.seed_file):
                     print(f"  {slug:<8} {role:<15} {email}")
                 print(f"seed aplicado: {args.seed_file}")
-            print(sync_api_role_password(conn, settings, rotate=getattr(args, "rotate", False)))
+            print(sync_api_role_password(conn, settings, rotate=rotate))
     except (LocalDbError, psycopg.Error, OSError) as exc:
         print(f"erro: {exc}", file=sys.stderr)
         return 1

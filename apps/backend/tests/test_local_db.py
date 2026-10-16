@@ -83,15 +83,38 @@ def test_roles_keeps_the_password_that_already_works(capsys):
     assert api_role_verifier() == before
 
 
-@pytest.mark.integration
-def test_roles_refuses_to_rotate_the_password_another_checkout_uses(monkeypatch, capsys):
+@pytest.fixture
+def another_checkout_password(monkeypatch: pytest.MonkeyPatch) -> None:
+    """API_DATABASE_URL com outra senha, como num segundo checkout que gerou a dele."""
     api_url = get_settings().api_database_url
     assert api_url is not None
     params = conninfo_to_dict(api_url.get_secret_value())
     monkeypatch.setenv("API_DATABASE_URL", make_conninfo(**{**params, "password": "outra-senha"}))
     get_settings.cache_clear()
+
+
+@pytest.mark.integration
+def test_roles_refuses_to_rotate_the_password_another_checkout_uses(
+    another_checkout_password, capsys
+):
     before = api_role_verifier()
 
     assert local_db.main(["roles"]) == 1
     assert "já tem outra senha (outro checkout nesta máquina?)" in capsys.readouterr().err
+    assert api_role_verifier() == before
+
+
+@pytest.mark.integration
+def test_seed_refuses_another_checkout_password_before_applying(
+    another_checkout_password, capsys, tmp_path
+):
+    """Antes o seed entrava no banco e só depois a senha era recusada (C-02 da H2)."""
+    seed_file = tmp_path / "seed.sql"
+    seed_file.write_text("do $$ begin raise exception 'o seed rodou'; end $$;", encoding="utf-8")
+    before = api_role_verifier()
+
+    assert local_db.main(["seed", str(seed_file)]) == 1
+    out, err = capsys.readouterr()
+    assert "já tem outra senha (outro checkout nesta máquina?)" in err
+    assert "o seed rodou" not in err and "seed aplicado" not in out
     assert api_role_verifier() == before
