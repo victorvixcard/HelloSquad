@@ -25,6 +25,7 @@ Realtime, eventos do run).
 | P-05 | Conversa do ambiente · sugestões de Bia, Kaia, Kiwi e Max | Vêm de `pedidos_sugeridos` do `agent.yaml`, não dos `asks` da V4.6 (ex.: "Analisar os concorrentes do bairro" × "Analisar as padarias do bairro") | ℹ️ |
 | P-06 | CRM · frase "Nada é enviado sem consentimento…" | Colada na borda esquerda e no pé do cartão dos números, fora do respiro dos outros blocos | ℹ️ |
 | P-07 | Growth · objeto da conversa do ambiente | Nome "Growth Marketing" no nome acessível do botão e no cartão; na V4.6 o objeto se chama "Growth" (`ENVS.media.l`) | ℹ️ |
+| P-08 | Conversas de objeto novas (Indicador na tela; Publicação e Oportunidade pelo código) | Abrem mudas: sem "Hoje", sem a primeira fala do agente, sem o cartão do objeto no histórico e sem "Pergunte à <Nome>"; a V4.6 abre cada uma com fala, cartão e três sugestões do tipo | 🟡 |
 
 (Tabela em construção: as telas da Miolo com documentos entram depois das entregas reais do Hulk.)
 
@@ -138,6 +139,32 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
    não foi aberto (criaria a conversa).
 5. **Severidade:** ℹ️. **Conferido:** A1a item 11 (barra "Growth", identidade "Growth Marketing") e a decisão do dono
    falam da barra e do título; o nome do objeto da conversa não está registrado.
+
+### P-08 · Conversas de objeto da A2b abrem sem fala, sem cartão e sem sugestões · 🟡
+
+1. **Tela e rota:** Resultados, `/app/miolo/squad/iris` → "Analisar com Íris" no indicador "Pedidos" (conversa
+   `metric`); o mesmo caminho serve "Conversar com Otto sobre este conteúdo" (`calendar_post`) e "Conversar sobre isso"
+   (`opportunity`).
+2. **Protótipo:** toda conversa nova "começa com 'Hoje' e a primeira fala do especialista" (FLUXOS §4.2). Indicador
+   (L9801–L9810): `first` "Encomendas pelo site, setembro: 128, 18% a mais que agosto. …", `firstCard` (cartão "ENCOMENDAS
+   PELO SITE · 128 · +18%" com a curva e "setembro · vs agosto · dados ilustrativos") e `sug` "Por que esse indicador
+   mudou?", "O que podemos melhorar?", "Isso está relacionado à campanha?", cada uma com a linha de apoio (L10987).
+   Publicação (`post`, L9792) e oportunidade (`opp`, L9823) também têm `first` e `sug` no mesmo `_cx`. Segmento e
+   Documento não existem na V4.6 (A2b §4 item 8): ficam fora deste achado.
+3. **Nosso:** a API só devolve `opening` para `environment`
+   (`apps/backend/src/hellosquad/conversations/routes.py:261-263`), e o painel zera as sugestões quando a conversa tem
+   objeto (`apps/web/components/product/ConversationPanel.tsx:298-304`, `!target.context?.ref`). Resultado na tela:
+   cabeçalho "Íris · Resultados · Conversando sobre Pedidos" e o histórico em branco até o campo, no painel e em tela
+   cheia. Em tela cheia o cabeçalho ainda diz "disponível"; na V4.6 o status de conversa de objeto fica vazio
+   (`status: typing && others.length ? 'escrevendo…' : ''`, L10908).
+4. **Como reproduzir:** Marina → Resultados → botão de conversa do card "Pedidos" ("Analisar Pedidos com Íris") →
+   "Expandir a conversa".
+5. **Prova:** `proto-indicador-painel.png` × `nosso-indicador-painel.png`; `proto-indicador-tela-cheia.png` ×
+   `nosso-indicador-tela-cheia.png`. Publicação e oportunidade: só pelo código (a Miolo não tinha post nem
+   diagnóstico no momento da captura).
+6. **Severidade:** 🟡. **Conferido:** A2b §4 item 2 (sem fala roteirizada) é só a conversa do **pedido**; item 5 é só a
+   hora da primeira fala do **ambiente**; item 6 é a faixa de período. A1b §4 item 9 cobre a conversa do conhecimento
+   da Memória. Nenhum registra que as conversas de indicador, publicação e oportunidade abrem vazias.
 
 ## Conferido e bateu
 
