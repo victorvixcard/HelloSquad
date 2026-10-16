@@ -2,11 +2,11 @@
 específico e base legal para dados de contatos e disparos).
 
 O CSV chega como texto, é lido em memória e nunca é guardado. Cada linha é validada aqui (nome,
-endereço, consentimento por canal com data, duplicata no próprio arquivo e, no ambiente local, e-mail
-só no domínio reservado `.example`); as linhas válidas entram por `app.import_contacts`, que confere
-de novo o papel e o consentimento e marca como duplicata quem já está na base. Linha sem
-consentimento é recusada. O relatório traz número da linha e motivo, sem o dado da linha recusada.
-Nada aqui envia mensagem.
+endereço, consentimento por canal com data, duplicata no próprio arquivo e, no ambiente local,
+e-mail só no domínio reservado `.example`); as linhas válidas entram por `app.import_contacts`,
+que confere de novo o papel e o consentimento e marca como duplicata quem já está na base. Linha
+sem consentimento é recusada. O relatório traz número da linha e motivo, sem o dado da linha
+recusada. Nada aqui envia mensagem.
 """
 
 import csv
@@ -43,6 +43,7 @@ HEADER_ALIASES = {
     "whatsapp": "telefone",
     "phone": "telefone",
     "consentimento_email": "consentimento_email",
+    "consentimento_e_mail": "consentimento_email",
     "consentimento_whatsapp": "consentimento_whatsapp",
     "data_consentimento": "data_consentimento",
     "ultima_compra": "ultima_compra",
@@ -78,7 +79,8 @@ with state as (
          coalesce(bool_or(s.channel = 'email' and s.status = 'granted'), false) as email_ok,
          coalesce(bool_or(s.channel = 'whatsapp' and s.status = 'granted'), false) as whatsapp_ok
   from public.contacts c
-  left join public.contact_consent_state s on s.contact_id = c.id and s.workspace_id = c.workspace_id
+  left join public.contact_consent_state s
+    on s.contact_id = c.id and s.workspace_id = c.workspace_id
   where c.workspace_id = %(workspace_id)s
   group by c.id
 )
@@ -87,7 +89,8 @@ select count(*) as total,
        count(*) filter (where whatsapp_ok) as whatsapp,
        count(*) filter (where email_ok or whatsapp_ok) as any_channel,
        coalesce(
-         (select jsonb_agg(jsonb_build_object('source', o.source, 'contacts', o.n) order by o.source)
+         (select jsonb_agg(jsonb_build_object('source', o.source, 'contacts', o.n)
+                           order by o.source)
           from (select source, count(*) as n from state group by source) o),
          '[]'::jsonb
        ) as sources,
