@@ -190,7 +190,8 @@
     "outdated": "{count} desatualizado",
     "and": " e ",
     "sub": "Nada vira orientação do squad sem o seu ok.",
-    "cta": "Revisar"
+    "cta": "Revisar",
+    "who": "Squad"
   },
   "context": {
     "meta": "Memória da Marca · {state}"

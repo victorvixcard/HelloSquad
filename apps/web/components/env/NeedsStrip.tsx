@@ -15,13 +15,15 @@ export type StripNeed = {
   sub: string;
   cta: string;
   href: string;
+  /** Quem pede, quando não é o especialista (V4.6 L13868: na Memória da Marca a faixa diz "Squad"). */
+  who?: string;
 };
 
 /**
  * Faixa "Precisa de você" da V4.6, igual em todos os ambientes: Tinta, uma linha, quem pede (rosto + nome),
  * o tipo de decisão em mono, o título, o contexto e a ação. Uma pendência por ambiente; "+N" abre as demais.
  */
-export function NeedsStrip({ items }: { items: StripNeed[] }) {
+export function NeedsStrip({ items, tight = false }: { items: StripNeed[]; /** Modo Autônomo e Memória: `nd is-tight` (L13832). */ tight?: boolean }) {
   const t = useTranslations("pages.needs");
   const tc = useTranslations("common");
   const router = useRouter();
@@ -32,7 +34,7 @@ export function NeedsStrip({ items }: { items: StripNeed[] }) {
   const [top, ...rest] = items;
   // V4.6 `_vNd5` (L13822): a primeira aparece; "+N" abre as demais logo abaixo, no mesmo formato, e vira "Fechar".
   const row = (x: StripNeed, first: boolean) => {
-    const who = getAgent(x.agent).name;
+    const who = x.who ?? getAgent(x.agent).name;
     // Só o dono da conta decide: quem não é owner vê a pendência em modo leitura, sem a ação de decidir.
     const cta = canDecide ? x.cta : tc("ownerDecides");
     return (
@@ -61,7 +63,7 @@ export function NeedsStrip({ items }: { items: StripNeed[] }) {
     );
   };
   return (
-    <section className="nd" aria-label={t("labelCount", { count: items.length })}>
+    <section className={"nd" + (tight ? " is-tight" : "")} aria-label={t("labelCount", { count: items.length })}>
       <div className="nd-r is-first">
         {row(top!, true)}
         {rest.length ? (

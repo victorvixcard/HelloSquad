@@ -42,5 +42,18 @@
   "memory.suggestion_state.open": "aberto",
   "memory.suggestion_state.seen": "visto",
   "memory.suggestion_state.done": "feito",
-  "memory.suggestion.perceived": "{agent} percebeu"
+  "memory.suggestion.perceived": "{agent} percebeu",
+  "status.label": "{agent} · {phrase}",
+  "status.short.writing": "escrevendo",
+  "status.short.creating": "criando",
+  "status.short.researching": "pesquisando",
+  "status.short.working": "trabalhando",
+  "status.short.wait": "aguarda você",
+  "status.short.live": "coordenando",
+  "status.phrase.organizing": "organizando seu pedido",
+  "status.phrase.creating_first": "criando a primeira versão",
+  "status.phrase.adjusting": "ajustando a versão",
+  "status.phrase.writing": "escrevendo",
+  "status.phrase.wait_approval": "aguarda sua aprovação",
+  "status.phrase.wait_answer": "aguarda sua resposta"
 }

@@ -240,7 +240,8 @@ export function ProjectsView({ data }: { data: ProjectsData }) {
         )}
       </section>
 
-      <div className={"v41-low pj-low" + (narrow ? " is-nar" : "")}>
+      {/* V4.5 (L13836): sem o cartão "Precisa de você" (virou a faixa), os dois cartões dividem a linha (is-2). */}
+      <div className={"v41-low pj-low" + (narrow ? " is-nar" : "") + " is-2"}>
         <div className="v41-stack">
           <section className="v41-cd" aria-labelledby="pj-b-t">
             <header className="v41-cd-h">

@@ -146,6 +146,7 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
           sub: t("strip.sub"),
           cta: t("strip.cta"),
           href: "#me-pend",
+          who: t("strip.who"),
         },
       ]
     : [];
@@ -592,7 +593,7 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
         </button>
       </header>
 
-      <NeedsStrip items={needs} />
+      <NeedsStrip items={needs} tight />
 
       <section className="me-dos" aria-labelledby="me-dos-t">
         <div className="me-dos-a">

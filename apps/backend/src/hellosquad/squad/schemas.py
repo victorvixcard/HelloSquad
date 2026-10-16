@@ -87,6 +87,12 @@ class CheckResult(StepOutput):
         )
 
 
+class ReplyResult(StepOutput):
+    """Resposta de um especialista na conversa (run de resposta, sem trabalho)."""
+
+    mensagem: str = Field(min_length=1, max_length=4000)
+
+
 def nullable(schema: dict[str, Any]) -> dict[str, Any]:
     return {"anyOf": [schema, {"type": "null"}]}
 
@@ -155,6 +161,8 @@ PRODUCTION_SCHEMA = obj(
         },
     }
 )
+
+REPLY_SCHEMA = obj({"mensagem": STRING})
 
 CHECK_SCHEMA = obj(
     {
