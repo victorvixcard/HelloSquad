@@ -21,3 +21,5 @@
 .rs-read-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
 .rs-read-meta small{font-size:12px;color:var(--ink3)}
 .rs-kind.is-hipotese,.rs-kind.is-causa{background:transparent;border:1.2px dashed rgba(15,13,34,.32);color:var(--ink2)}
+/* H2-10 (P-04): o rótulo da faixa quebra a linha dentro da largura da faixa (a largura vem do gráfico). */
+.rs .rs-cl.is-band{white-space:normal;line-height:1.25}

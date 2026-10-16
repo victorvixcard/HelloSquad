@@ -396,6 +396,13 @@ function WeeklyChart({ s, last, current, previous }: { s: MetricSeries; last: nu
   };
   const cur = band(current);
   const prev = previous ? band(previous) : null;
+  // V4.6 `bLp`/`pLp` e `bTp` (L10821): no alto da faixa, a 0,6% da borda esquerda. O rótulo não passa da largura da
+  // faixa (quebra a linha): na semana, as duas faixas estreitas não se sobrepõem nem saem do gráfico.
+  const bandLabel = (b: { x: number; w: number }) => ({
+    left: `${((b.x / W) * 100 + 0.6).toFixed(2)}%`,
+    top: `${(((PT - 18) / H) * 100).toFixed(2)}%`,
+    maxWidth: `${((b.w / W) * 100 - 1.2).toFixed(2)}%`,
+  });
   const ticks: number[] = [];
   for (let v = 0; v <= top + 1e-9; v += tick) ticks.push(v);
   const label = L.label(s);
@@ -504,12 +511,12 @@ function WeeklyChart({ s, last, current, previous }: { s: MetricSeries; last: nu
                 {/* H2-10 (P-04): o nome de cada faixa no alto, à esquerda (V4.6 `bLp`/`pLp`, `bTp`), com o mesmo período da
                     legenda: as janelas aqui são de 7, 30 e 90 dias com as datas (A2b §4 item 27), não meses do calendário. */}
                 {cur ? (
-                  <span className="rs-cl is-band" style={{ left: `${((cur.x / W) * 100 + 0.6).toFixed(2)}%`, top: `${(((PT - 18) / H) * 100).toFixed(2)}%` }}>
+                  <span className="rs-cl is-band" style={bandLabel(cur)}>
                     {L.range(current.start, current.end)}
                   </span>
                 ) : null}
                 {prev && previous ? (
-                  <span className="rs-cl is-band is-prev" style={{ left: `${((prev.x / W) * 100 + 0.6).toFixed(2)}%`, top: `${(((PT - 18) / H) * 100).toFixed(2)}%` }}>
+                  <span className="rs-cl is-band is-prev" style={bandLabel(prev)}>
                     {L.range(previous.start, previous.end)}
                   </span>
                 ) : null}

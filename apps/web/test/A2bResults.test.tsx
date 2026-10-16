@@ -123,7 +123,9 @@ describe("Resultados · Íris com dado real", () => {
     expect(link).toHaveAttribute("href", "/app/miolo/squad/iris/trabalho/w-03");
     expect(link).toHaveTextContent("Relatório do período · v1 · Aguarda você");
     const ch = screen.getByRole("region", { name: "Desempenho por canal" });
-    expect(within(ch).getAllByRole("button").map((b) => b.querySelector(".rs-cr-l")?.textContent)).toEqual([
+    // A2d (P-05): o primeiro botão é o de conversa do cabeçalho do card; as linhas vêm depois.
+    expect(within(ch).getAllByRole("button")[0]).toHaveAccessibleName("Analisar os canais com Íris");
+    expect([...ch.querySelectorAll("button.rs-cr")].map((b) => b.querySelector(".rs-cr-l")?.textContent)).toEqual([
       "Sessões no site",
       "Seguidores no Instagram",
       "Alcance no Instagram",
