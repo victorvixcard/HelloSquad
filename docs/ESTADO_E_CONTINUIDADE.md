@@ -2,6 +2,13 @@
 
 Handoff versionado. Quem retoma (Thor ou humano) lê este arquivo primeiro, depois `git log --oneline -20`, depois `docs/parciais/`.
 
+## Onde estamos (16/10/2026 14:50 — Fase 1 FECHADA, Fase 2 aberta)
+
+- **Fase 1 fechada às 14:40.** S1a–S1h, A1f, A1a, A1b, A1c, SA0 e H1 ✅ em `docs/PLANO_DE_ACAO_FASE1.md`. QA H1: 0 bloqueante, 4 atenção (corrigidas em S1h/A1c, exceto H1-01 parcial → checklist da Fase 5 e H1-04 → S2a), 7 notas. Bateria: pytest, pgTAP, Vitest e e2e verdes; clone limpo verde.
+- **Fase 2 aberta** por `docs/PLANO_DE_ACAO_FASE2.md` (autorização do Vic 16/10 11:35): S2a ‖ A2a → S2b ‖ N2a → S2c ‖ A2b → S2d ‖ A2c → S2e → S2f → H2 → SA1+.
+- Orquestração: sessão main do Thor (desde 11:00); check silencioso a cada 10 min; resumo ao Vic a cada 2 h. Handoff vivo em `memory/caixinhas/hellosquad.md` (workspace do OpenClaw) e aqui.
+- Perguntas ao Vic sem resposta (não bloqueiam): `S1e-relatorio.md` §4, `S1f-relatorio.md` §5, `A1b-relatorio.md` §4, `PLANO_DE_ACAO_FASE2.md` "Pendências".
+
 ## Onde estamos (15/10/2026, noite)
 
 - Infra aprovada pelo Vic: Vercel + Railway + Supabase (`docs/ARQUITETURA_PROPOSTA.md`).
