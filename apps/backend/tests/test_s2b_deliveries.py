@@ -604,12 +604,12 @@ async def test_csv_import_refuses_without_consent_duplicates_and_real_emails(
 ):
     lines = [
         CSV_HEADER,
-        "Bia Nova;nova01@contatos.example;+55 11 99999-0101;sim;sim;2026-10-01;2026-09-20;2",
+        "Bia Nova;nova01@contatos.example;+55 11 99999-0021;sim;sim;2026-10-01;2026-09-20;2",
         "Sem Consentimento;nova02@contatos.example;;não;não;;;",
         "Repetida no Arquivo;nova01@contatos.example;;sim;não;2026-10-01;;",
         "Já na Base;cliente01@contatos.example;;sim;não;2026-10-01;;",
         "Fora do Domínio;pessoa@exemplo.test;;sim;não;2026-10-01;;",
-        "Só WhatsApp;;(11) 99999-0102;não;sim;02/10/2026;;",
+        "Só WhatsApp;;(11) 99999-0022;não;sim;02/10/2026;;",
         "Consentimento sem Data;nova03@contatos.example;;sim;não;;;",
         "WhatsApp sem Telefone;nova04@contatos.example;;não;sim;2026-10-01;;",
     ]
@@ -655,14 +655,14 @@ async def test_csv_import_refuses_without_consent_duplicates_and_real_emails(
         {
             "full_name": "Bia Nova",
             "email": "nova01@contatos.example",
-            "phone": "+5511999990101",
+            "phone": "+5511999990021",
             "source": "Planilha de teste do balcão",
             "consents": ["email:granted:consent:2026-10-01", "whatsapp:granted:consent:2026-10-01"],
         },
         {
             "full_name": "Só WhatsApp",
             "email": None,
-            "phone": "+5511999990102",
+            "phone": "+5511999990022",
             "source": "Planilha de teste do balcão",
             "consents": ["whatsapp:granted:consent:2026-10-02"],
         },
