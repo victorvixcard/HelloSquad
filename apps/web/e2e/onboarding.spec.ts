@@ -71,6 +71,23 @@ test.describe("Onboarding progressivo (A2a)", () => {
     await expect(page).toHaveURL(new RegExp(`/app/${slug}/memoria-da-marca$`));
     await expect(page.getByText("Vender mais encomendas").first()).toBeVisible();
 
+    // 6. Fatos essenciais pelo caminho que a tela já tem: "Ainda não sabe · contar agora" abre "Adicionar conhecimento".
+    await page.getByRole("button", { name: "Público: ainda não sabe. Contar agora" }).click();
+    const form = page.getByRole("region", { name: "Adicionar conhecimento" });
+    await expect(form.getByRole("button", { name: "Meu público" })).toHaveAttribute("aria-pressed", "true");
+    await form.getByLabel("O que o squad precisa saber?").fill("Quem pedala para o trabalho em Curitiba, de 25 a 45 anos");
+    await snap(page, "a2a-06-pedro-contar-agora");
+    await form.getByRole("button", { name: "Guardar" }).click();
+    await expect(page.getByText("Guardado na Memória da Marca. Todo o squad passa a usar.")).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Público: Quem pedala para o trabalho/ })).toBeVisible();
+
+    // 7. A Memória já sabe mais que o objetivo: o Início deixa o primeiro acesso e mostra Resultados (vazio honesto).
+    await page.goto(`/app/${slug}`);
+    await expect(page.getByText("Hello, Pedro.")).toBeVisible();
+    await expect(page.locator("#h-onb")).toHaveCount(0);
+    await expect(page.getByRole("article", { name: "Resultados" })).toContainText("A Íris ainda não tem números para ler");
+    await snap(page, "a2a-07-pedro-configurado");
+
     // A conversa com o Nexo guardou as duas mensagens da pessoa (lidas da API, depois de navegar).
     await page.goto(`/app/${slug}/squad/nexo`);
     await page.locator("button.v4-talk").click();
@@ -126,7 +143,7 @@ test.describe("Idioma por pessoa (A2a, ADR-0010)", () => {
       await expect(nav.getByRole("link", { name: new RegExp(`^${enShell.items.mem}`) })).toBeVisible();
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(enHome.question);
       await expect(page.getByRole("button", { name: enOption("English") })).toHaveAttribute("aria-pressed", "true");
-      await snap(page, "a2a-06-marina-en");
+      await snap(page, "a2a-08-marina-en");
 
       // A escolha fica na conta: recarregar (sessão nova no servidor) continua em inglês.
       await page.reload();
