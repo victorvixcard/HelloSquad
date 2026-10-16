@@ -1,6 +1,6 @@
 "use client";
 
-import { Agent, Button, getAgent, Icon, type AgentId } from "@hellosquad/ui";
+import { Agent, Button, getAgent, Icon, PRODUCT_ICONS, type AgentId } from "@hellosquad/ui";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -27,6 +27,10 @@ export type DeliveryDetailData = {
   } | null;
   brief: Array<{ k: string; v: string }>;
   history: Array<{ agent: AgentId | null; text: string; at: string }>;
+  /** Time do trabalho (A1b): o responsável e os colaboradores, como a pilha do cabeçalho da V4.6 ("Kaia com o Otto"). */
+  team?: { agents: AgentId[]; label: string };
+  /** Projeto do trabalho, quando há (V4.3 `ps-pjl`): leva ao roadmap em Projetos. */
+  project?: { name: string; href: string } | null;
 };
 
 type Tab = "caption" | "brief" | "history";
@@ -101,15 +105,40 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
           <div className="ps-meta">
             <span className="hs-tag hs-tag--auto">{t("tag")}</span>
             <span>{data.origin}</span>
+            {data.project ? (
+              <Link className="ps-pjl" href={data.project.href}>
+                <svg className="ps-ic" viewBox="0 0 18 18" aria-hidden="true">
+                  <path d={PRODUCT_ICONS.folder} />
+                </svg>
+                <span>{data.project.name}</span>
+              </Link>
+            ) : null}
           </div>
           <h1 className="ps-h1">{data.title}</h1>
         </div>
         <div className="ps-wdh-a">
+          {data.team?.agents.length ? (
+            <span className="hs-stack">
+              <span className="hs-stack-av">
+                {data.team.agents.map((a) => (
+                  <Agent key={a} agent={a} size={24} outline />
+                ))}
+              </span>
+              <span>{data.team.label}</span>
+            </span>
+          ) : null}
           <Button
             variant="soft"
             size="s"
             icon={null}
-            onClick={() => shell.openConversation({ conversationId: data.conversationId, agent: data.agent, context: { kind: "work_item", label: data.title, origin: data.origin } })}
+            onClick={() =>
+              // A conversa do trabalho (a do pedido), no painel ao lado.
+              shell.openConversation({
+                conversationId: shell.workConversations[data.workItemId] ?? data.conversationId,
+                agent: data.agent,
+                context: { kind: "work_item", label: data.title, origin: data.origin },
+              })
+            }
           >
             {t("talk", { name: `${member.article === "a" ? "a" : "o"} ${member.name}` })}
           </Button>
