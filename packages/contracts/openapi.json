@@ -101,7 +101,8 @@
         "tags": [
           "identity"
         ],
-        "summary": "Cria um workspace; quem cria vira owner",
+        "summary": "Cria um workspace; quem cria vira owner e recebe as boas-vindas do Nexo",
+        "description": "Na mesma transação: o negócio, o idioma (`locale`, opcional) e a conversa direta \"Boas-vindas\" com a primeira fala do Nexo e a pergunta do objetivo, no idioma do negócio.",
         "operationId": "create_workspace_workspaces_post",
         "requestBody": {
           "content": {
@@ -4187,7 +4188,7 @@
           "memory"
         ],
         "summary": "Adicionar conhecimento: declarado por você, já confirmado (só o owner)",
-        "description": "Entra como Confirmado na fonte \"Declarado por você\" e todo o squad passa a usar. Sem assunto, vai para o primeiro assunto da área; sem chave, \"Contado por você\" (no idioma do workspace).",
+        "description": "Entra como Confirmado na fonte \"Declarado por você\" e todo o squad passa a usar. Sem assunto, vai para o primeiro assunto da área; sem chave, \"Contado por você\" (no idioma do workspace). Com `kind: objective`, a API nomeia o assunto e a chave do objetivo e o Nexo responde na conversa de boas-vindas.",
         "operationId": "add_fact_workspaces__workspace_id__memory_facts_post",
         "security": [
           {
@@ -4435,6 +4436,254 @@
           },
           "404": {
             "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/memory/learnings": {
+      "get": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Aprendizados do squad com este negócio (versão em vigor, mais recente primeiro)",
+        "operationId": "list_learnings_workspaces__workspace_id__memory_learnings_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AgentLearningStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AgentId"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Agent Id"
+            }
+          },
+          {
+            "name": "delivery_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9]{2}\\.[0-9]{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Delivery Type"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentLearningList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memory/learnings/{learning_id}/decision": {
+      "post": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Promover, descartar ou \"continua valendo\" um aprendizado (idempotente; só o owner)",
+        "description": "Só o owner decide. Repetir a mesma ação responde 200 com o mesmo estado. `keep` vale só para aprendizado promovido (senão 409); versão já substituída responde 409.",
+        "operationId": "decide_learning_memory_learnings__learning_id__decision_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "learning_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Learning Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentLearningDecisionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentLearning"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4891,6 +5140,205 @@
           "iris"
         ],
         "title": "AgentId"
+      },
+      "AgentLearning": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "delivery_type": {
+            "type": "string",
+            "title": "Delivery Type",
+            "description": "Delivery do catálogo em que o agente aprendeu, ex.: 04.01."
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic",
+            "description": "Assunto do aprendizado (ex.: Vocabulário, Tratamento)."
+          },
+          "learning": {
+            "type": "string",
+            "title": "Learning"
+          },
+          "evidence_refs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Evidence Refs",
+            "description": "De onde veio: `correction` (o que a pessoa pediu, com a nota), `version` (versão entregue) e `decision` (decisão final), cada uma com o trabalho de origem."
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AgentLearningStatus",
+            "description": "`candidate` fica fora do contexto até o owner promover; `promoted` entra no contexto do agente nesta delivery; `discarded` não volta."
+          },
+          "promotion_rule": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "explicit_correction",
+                  "repeated",
+                  "owner"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promotion Rule",
+            "description": "`explicit_correction` a pessoa corrigiu com as próprias palavras; `repeated` a mesma lição em trabalhos diferentes; `owner` o owner promoveu."
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "supersedes_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes Id"
+          },
+          "work_item_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Id"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At",
+            "description": "Último \"continua valendo\" do owner."
+          },
+          "stale": {
+            "type": "boolean",
+            "title": "Stale",
+            "description": "Promovido sem \"continua valendo\" há LEARNING_REVIEW_DAYS dias: entra no contexto marcado para o agente revisar."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "agent_id",
+          "delivery_type",
+          "topic",
+          "learning",
+          "evidence_refs",
+          "confidence",
+          "status",
+          "promotion_rule",
+          "version",
+          "supersedes_id",
+          "work_item_id",
+          "decided_at",
+          "reviewed_at",
+          "stale",
+          "created_at"
+        ],
+        "title": "AgentLearning"
+      },
+      "AgentLearningDecisionCreate": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "promote",
+              "discard",
+              "keep"
+            ],
+            "title": "Action",
+            "description": "`promote` \"Promover\" (entra no contexto do agente); `discard` \"Descartar\" (sai e não volta); `keep` \"Continua valendo\" (só promovido; renova a revisão). Repetir devolve o mesmo estado."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "AgentLearningDecisionCreate",
+        "examples": [
+          {
+            "action": "promote"
+          }
+        ]
+      },
+      "AgentLearningList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AgentLearning"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "AgentLearningList"
+      },
+      "AgentLearningStatus": {
+        "type": "string",
+        "enum": [
+          "candidate",
+          "promoted",
+          "discarded"
+        ],
+        "title": "AgentLearningStatus"
       },
       "AgentStatus": {
         "properties": {
@@ -5691,6 +6139,19 @@
             ],
             "title": "Key",
             "description": "Chave; sem ela, \"Contado por você\"."
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "objective"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind",
+            "description": "`objective`: o objetivo contado ao Nexo no primeiro acesso. A API nomeia assunto e chave no idioma do negócio (\"Objetivos\" · \"Objetivo atual\") e o Nexo responde na conversa de boas-vindas. Vale só em `business`, sem `topic` nem `key`."
           }
         },
         "additionalProperties": false,
@@ -11874,6 +12335,23 @@
             "examples": [
               "miolo"
             ]
+          },
+          "locale": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pt-BR",
+                  "en",
+                  "es"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locale",
+            "description": "Idioma do negócio desde o começo (os agentes respondem nele e a fala de boas-vindas do Nexo sai nele). Sem ele, pt-BR, como antes."
           }
         },
         "additionalProperties": false,

@@ -29,7 +29,10 @@ export interface paths {
         /** Workspaces de que o usuário participa */
         get: operations["list_workspaces_workspaces_get"];
         put?: never;
-        /** Cria um workspace; quem cria vira owner */
+        /**
+         * Cria um workspace; quem cria vira owner e recebe as boas-vindas do Nexo
+         * @description Na mesma transação: o negócio, o idioma (`locale`, opcional) e a conversa direta "Boas-vindas" com a primeira fala do Nexo e a pergunta do objetivo, no idioma do negócio.
+         */
         post: operations["create_workspace_workspaces_post"];
         delete?: never;
         options?: never;
@@ -699,7 +702,7 @@ export interface paths {
         put?: never;
         /**
          * Adicionar conhecimento: declarado por você, já confirmado (só o owner)
-         * @description Entra como Confirmado na fonte "Declarado por você" e todo o squad passa a usar. Sem assunto, vai para o primeiro assunto da área; sem chave, "Contado por você" (no idioma do workspace).
+         * @description Entra como Confirmado na fonte "Declarado por você" e todo o squad passa a usar. Sem assunto, vai para o primeiro assunto da área; sem chave, "Contado por você" (no idioma do workspace). Com `kind: objective`, a API nomeia o assunto e a chave do objetivo e o Nexo responde na conversa de boas-vindas.
          */
         post: operations["add_fact_workspaces__workspace_id__memory_facts_post"];
         delete?: never;
@@ -736,6 +739,43 @@ export interface paths {
         /** Descrição do negócio no dossiê (só o owner); a síntese é do squad */
         put: operations["update_profile_workspaces__workspace_id__memory_profile_put"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/memory/learnings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Aprendizados do squad com este negócio (versão em vigor, mais recente primeiro) */
+        get: operations["list_learnings_workspaces__workspace_id__memory_learnings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/memory/learnings/{learning_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Promover, descartar ou "continua valendo" um aprendizado (idempotente; só o owner)
+         * @description Só o owner decide. Repetir a mesma ação responde 200 com o mesmo estado. `keep` vale só para aprendizado promovido (senão 409); versão já substituída responde 409.
+         */
+        post: operations["decide_learning_memory_learnings__learning_id__decision_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -839,6 +879,95 @@ export interface components {
          * @enum {string}
          */
         AgentId: "nexo" | "bia" | "kaia" | "otto" | "kiwi" | "max" | "iris";
+        /** AgentLearning */
+        AgentLearning: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            agent_id: components["schemas"]["AgentId"];
+            /**
+             * Delivery Type
+             * @description Delivery do catálogo em que o agente aprendeu, ex.: 04.01.
+             */
+            delivery_type: string;
+            /**
+             * Topic
+             * @description Assunto do aprendizado (ex.: Vocabulário, Tratamento).
+             */
+            topic: string;
+            /** Learning */
+            learning: string;
+            /**
+             * Evidence Refs
+             * @description De onde veio: `correction` (o que a pessoa pediu, com a nota), `version` (versão entregue) e `decision` (decisão final), cada uma com o trabalho de origem.
+             */
+            evidence_refs: {
+                [key: string]: unknown;
+            }[];
+            /** Confidence */
+            confidence: number;
+            /** @description `candidate` fica fora do contexto até o owner promover; `promoted` entra no contexto do agente nesta delivery; `discarded` não volta. */
+            status: components["schemas"]["AgentLearningStatus"];
+            /**
+             * Promotion Rule
+             * @description `explicit_correction` a pessoa corrigiu com as próprias palavras; `repeated` a mesma lição em trabalhos diferentes; `owner` o owner promoveu.
+             */
+            promotion_rule: ("explicit_correction" | "repeated" | "owner") | null;
+            /** Version */
+            version: number;
+            /** Supersedes Id */
+            supersedes_id: string | null;
+            /** Work Item Id */
+            work_item_id: string | null;
+            /** Decided At */
+            decided_at: string | null;
+            /**
+             * Reviewed At
+             * @description Último "continua valendo" do owner.
+             */
+            reviewed_at: string | null;
+            /**
+             * Stale
+             * @description Promovido sem "continua valendo" há LEARNING_REVIEW_DAYS dias: entra no contexto marcado para o agente revisar.
+             */
+            stale: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * AgentLearningDecisionCreate
+         * @example {
+         *       "action": "promote"
+         *     }
+         */
+        AgentLearningDecisionCreate: {
+            /**
+             * Action
+             * @description `promote` "Promover" (entra no contexto do agente); `discard` "Descartar" (sai e não volta); `keep` "Continua valendo" (só promovido; renova a revisão). Repetir devolve o mesmo estado.
+             * @enum {string}
+             */
+            action: "promote" | "discard" | "keep";
+        };
+        /** AgentLearningList */
+        AgentLearningList: {
+            /** Items */
+            items: components["schemas"]["AgentLearning"][];
+        };
+        /**
+         * AgentLearningStatus
+         * @enum {string}
+         */
+        AgentLearningStatus: "candidate" | "promoted" | "discarded";
         /** AgentStatus */
         AgentStatus: {
             agent_id: components["schemas"]["AgentId"];
@@ -1150,6 +1279,11 @@ export interface components {
              * @description Chave; sem ela, "Contado por você".
              */
             key?: string | null;
+            /**
+             * Kind
+             * @description `objective`: o objetivo contado ao Nexo no primeiro acesso. A API nomeia assunto e chave no idioma do negócio ("Objetivos" · "Objetivo atual") e o Nexo responde na conversa de boas-vindas. Vale só em `business`, sem `topic` nem `key`.
+             */
+            kind?: "objective" | null;
         };
         /** BrandFactHistory */
         BrandFactHistory: {
@@ -3650,6 +3784,11 @@ export interface components {
              * @example miolo
              */
             slug: string;
+            /**
+             * Locale
+             * @description Idioma do negócio desde o começo (os agentes respondem nele e a fala de boas-vindas do Nexo sai nele). Sem ele, pt-BR, como antes.
+             */
+            locale?: ("pt-BR" | "en" | "es") | null;
         };
         /** WorkspaceList */
         WorkspaceList: {
@@ -6738,6 +6877,149 @@ export interface operations {
             };
             /** @description Recurso não encontrado (ou fora do seu acesso). */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_learnings_workspaces__workspace_id__memory_learnings_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["AgentLearningStatus"] | null;
+                agent_id?: components["schemas"]["AgentId"] | null;
+                delivery_type?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentLearningList"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    decide_learning_memory_learnings__learning_id__decision_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                learning_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentLearningDecisionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentLearning"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

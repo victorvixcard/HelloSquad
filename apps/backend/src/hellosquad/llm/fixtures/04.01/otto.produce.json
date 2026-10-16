@@ -3,6 +3,36 @@
   "step": "otto.produce",
   "cases": [
     {
+      "name": "nova_versao_com_retorno",
+      "usage": {
+        "input_tokens": 1320,
+        "output_tokens": 530,
+        "cache_read_tokens": 2900
+      },
+      "output": {
+        "entrega": {
+          "canal": "instagram",
+          "objetivo": "Levar clientes à loja no sábado de manhã",
+          "versoes": [
+            {
+              "texto": "Sábado de manhã tem pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo cedo e leve o seu ainda morno.",
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#paodesabado"
+              ],
+              "cta": "Passe na loja no sábado de manhã."
+            }
+          ],
+          "notas": "Nova versão a partir do seu retorno: o sábado de manhã ficou logo na primeira linha."
+        },
+        "mensagem": "Fiz a nova versão da legenda com o que você pediu e mantive o resto. Agora é com você: aprove ou peça outro ajuste."
+      },
+      "when": {
+        "matches": "(?s)(?=.*<retorno_da_pessoa decisao=\"(changes_requested|rejected)\")(?=.*s[áa]bado)"
+      }
+    },
+    {
       "name": "abobora_com_aprendizado",
       "when": {
         "matches": "(?s)(?=.*<aprendizados>.*promo[çc][ãa]o imperd[íi]vel.*</aprendizados>)(?=.*<pedido>[^<]*ab[óo]bora)"
@@ -91,36 +121,6 @@
           "notas": "Chama para a loja com o pão de abóbora em destaque."
         },
         "mensagem": "Escrevi a legenda do pão de abóbora para o Instagram. Agora é com você: aprove ou peça ajuste."
-      }
-    },
-    {
-      "name": "nova_versao_com_retorno",
-      "usage": {
-        "input_tokens": 1320,
-        "output_tokens": 530,
-        "cache_read_tokens": 2900
-      },
-      "output": {
-        "entrega": {
-          "canal": "instagram",
-          "objetivo": "Levar clientes à loja no sábado de manhã",
-          "versoes": [
-            {
-              "texto": "Sábado de manhã tem pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo cedo e leve o seu ainda morno.",
-              "hashtags": [
-                "#fermentacaonatural",
-                "#pinheiros",
-                "#paodesabado"
-              ],
-              "cta": "Passe na loja no sábado de manhã."
-            }
-          ],
-          "notas": "Nova versão a partir do seu retorno: o sábado de manhã ficou logo na primeira linha."
-        },
-        "mensagem": "Fiz a nova versão da legenda com o que você pediu e mantive o resto. Agora é com você: aprove ou peça outro ajuste."
-      },
-      "when": {
-        "matches": "(?s)(?=.*<retorno_da_pessoa decisao=\"(changes_requested|rejected)\")(?=.*s[áa]bado)"
       }
     },
     {
