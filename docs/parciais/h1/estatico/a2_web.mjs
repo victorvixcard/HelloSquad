@@ -134,7 +134,9 @@ try {
     const resp = await a.req.response().catch(() => null);
     const body = resp ? await resp.text().catch(() => "") : "";
     (R.cases.actionsSeen ??= []).push({ id: a.id.slice(0, 8), url: a.url, body: a.body, status: resp?.status(), len: body.length, hasToken: /token/.test(body), snippet: body.replace(/eyJ[A-Za-z0-9._-]+/g, "eyJ***").slice(0, 100) });
-    if (/"token":"eyJ/.test(body) || /eyJ[A-Za-z0-9_-]{20,}\./.test(body)) { tokenAction = { id: a.id, url: a.url, body: a.body, respHeaders: resp.headers() }; break; }
+    // O corpo da resposta em streaming nem sempre fica disponível ao Playwright: a ação sem argumentos ("[]")
+    // postada numa página de /app é a do token (confirmado no replay abaixo, que devolve o JWT).
+    if (/"token":"eyJ/.test(body) || /eyJ[A-Za-z0-9_-]{20,}\./.test(body) || (a.body === "[]" && /\/app\//.test(a.url))) { tokenAction = { id: a.id, url: a.url, body: a.body, respHeaders: resp.headers() }; break; }
   }
   R.cases.tokenAction = tokenAction ? { id: tokenAction.id, url: tokenAction.url, body: tokenAction.body, cacheControl: tokenAction.respHeaders["cache-control"] ?? null, acao: tokenAction.respHeaders["access-control-allow-origin"] ?? null, contentType: tokenAction.respHeaders["content-type"] } : null;
 
@@ -214,6 +216,7 @@ try {
     log("claims do token:", JSON.stringify(c.tokenClaims), "| ids:", JSON.stringify(c.ids));
     log("realtime joins:", String(JSON.stringify(c.realtime ?? null)).slice(0, 1500));
     log("alcance do token:", String(JSON.stringify(c.alcance ?? null)).slice(0, 1500)); }
+  if (!process.env.ONLY_TOKEN) {
   // ---------- 4: noindex (logado, Marina) ----------
   const routes = ["/app", "/app/miolo", "/app/miolo/equipe", "/app/miolo/modo-autonomo", "/app/miolo/memoria-da-marca", "/app/miolo/sala-do-squad", "/app/miolo/squad/nexo", "/app/inexistente", "/app/novo-workspace"];
   await pM.goto(`${BASE}/app/miolo/squad/nexo`, { waitUntil: "load", timeout: 90000 });
@@ -280,6 +283,7 @@ try {
     const res = await Promise.all(jobs.slice(i, i + 5).map((j) => j()));
     for (const r of res) { R.cases.next.push(r); log("  next", JSON.stringify(r)); }
     fs.writeFileSync("/tmp/h1_est_a2_result.json", JSON.stringify(R, null, 1));
+  }
   }
 } finally {
   await browser.close();
