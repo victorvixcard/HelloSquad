@@ -58,9 +58,11 @@ export async function SiteFooter({ locale, page }: { locale: Locale; page: SiteP
         <Link href="/criar-conta">{t("cta")}</Link>
         <Link href="/entrar">{t("home.signIn")}</Link>
       </nav>
+      {/* Troca de idioma com navegação completa (<a>, não Link): o <html lang> vem do layout raiz, que a navegação do
+          cliente não renderiza de novo. */}
       <nav className="st-langs" aria-label={t("languages")}>
         {LOCALES.map((other) => (
-          <Link
+          <a
             key={other}
             href={sitePath(page, other)}
             hrefLang={other}
@@ -68,7 +70,7 @@ export async function SiteFooter({ locale, page }: { locale: Locale; page: SiteP
             aria-current={other === locale ? "page" : undefined}
           >
             {tc(other)}
-          </Link>
+          </a>
         ))}
       </nav>
       <span className="hm-foot-end">{t("home.copyright")}</span>

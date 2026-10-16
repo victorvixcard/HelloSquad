@@ -86,7 +86,8 @@ test.describe("site público", () => {
     await expect(page.getByRole("link", { name: "Criar conta grátis" }).first()).toHaveAttribute("href", "/criar-conta");
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
     const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent()) ?? "{}");
-    expect(ld["@graph"].map((n: { "@type": string }) => n["@type"])).toEqual(["Organization", "SoftwareApplication"]);
+    // A2c: o grafo do README da N2a (§5.1), com o WebSite entre a organização e o aplicativo.
+    expect(ld["@graph"].map((n: { "@type": string }) => n["@type"])).toEqual(["Organization", "WebSite", "SoftwareApplication"]);
     await snap(page, "00-pagina-inicial");
 
     const robots = await (await request.get("/robots.txt")).text();
@@ -95,7 +96,8 @@ test.describe("site público", () => {
     expect((await request.get("/sitemap.xml")).status()).toBe(200);
     const llms = await request.get("/llms.txt");
     expect(llms.status()).toBe(200);
-    expect(await llms.text()).toContain("Kiwi (Growth Marketing)");
+    // A2c: o llms.txt da N2a (docs/conteudo/site/llms.txt) substituiu o da A0.
+    expect(await llms.text()).toContain("Kiwi, Growth Marketing");
     const app = await request.get("/app/miolo", { maxRedirects: 0 });
     expect(app.headers()["x-robots-tag"]).toBe("noindex, nofollow");
   });
