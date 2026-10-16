@@ -28,7 +28,7 @@ packages/ui test:         Test Files  5 passed (5)   Tests  49 passed (49)
 apps/web test:            Test Files  6 passed (6)   Tests  28 passed (28)
 ```
 
-Depois do último ajuste de texto (09:13): `tsc` exit 0 e `vitest run` do web 28/28 de novo.
+Rodada final, depois do último ajuste de texto (09:16): `make test-web` exit 0 de novo (contracts 9, ui 49, web 28) e `pnpm --filter web build` exit 0 (`/` estática).
 
 ### 2.2 `pnpm --filter web build` (09:12, exit 0)
 
