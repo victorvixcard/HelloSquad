@@ -23,11 +23,16 @@
 
 | # | Item | Estado | Commit |
 |---|---|---|---|
-| 0 | Progresso aberto | ✅ | este |
-| 1 | Resolvedor de idioma (usuário → workspace → pt-BR) + `X-NEXT-INTL-LOCALE` pelo middleware | 🟡 | |
-| 2 | Seletor de idioma no menu da conta (`updateUser` + `refreshSession`) e do negócio (sem persistência na API) | ⚪ | |
-| 3 | Catálogos `en` e `es` (sub-agentes, revisão minha) + teste de paridade de chaves e argumentos | 🟡 | |
-| 4 | `/en` e `/es` com `hreflang` | ⚪ | |
-| 5 | Onboarding progressivo (cartão da V4.6 com progresso real, objetivo pelo Nexo → Memória) | ⚪ | |
-| 6 | Vitest + e2e (Pedro onboarding; Marina en e volta) + build + `make e2e` | ⚪ | |
-| 7 | Lado a lado em `docs/parciais/a2a/` + relatório | ⚪ | |
+| 0 | Progresso aberto | ✅ | `b72d7a6` |
+| 1 | Resolvedor de idioma (pessoa → negócio → pt-BR) + `X-NEXT-INTL-LOCALE` pelo middleware | ✅ | `4feee63` |
+| 2 | Seletor de idioma no menu da conta (`updateUser` + `refreshSession`) e do negócio (aviso padrão, sem API) | ✅ | `bf7b186`, `9f4f795` |
+| 3 | Catálogos `en` e `es` (sub-agentes, revisão minha) + paridade de chaves, argumentos e marcas do português | ✅ | en 9 commits, es 5, `304c59f` |
+| 4 | `/en` e `/es` com `hreflang` e sitemap | ✅ | `4feee63` |
+| 5 | Onboarding progressivo (cartão da V4.6 com progresso real, objetivo pelo Nexo → Memória) | ✅ | `fc241b6`, `e04a0fb` |
+| 5b | "Adicionar conhecimento" e "contar agora" ligados à rota da S1f | ✅ | `dc37439` |
+| 5c | Artigo do agente e textos fixos que vazavam no en/es | ✅ | `630b87f`, `9c5d0a2` |
+| 6 | Vitest + e2e (Pedro onboarding; Marina en e volta; /en e /es) + build + `make e2e` | ✅ | `1a8e252`, `2d38c50`, `03f64f5`, `a5e3024` |
+| 7 | Lado a lado em `docs/parciais/a2a/` + relatório | ✅ | `39f764f`, este |
+
+Fechada às 15:26: `make test-web` exit 0 (web 181, ui 49, contracts 9); `make e2e` exit 0 (13/13, build de produção, `/` estática).
+Relatório: `A2a-relatorio.md`.
