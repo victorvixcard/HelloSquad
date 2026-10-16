@@ -18,14 +18,25 @@ Regras que guiam a fatia:
 - Nada de preço na tela. Nenhum dado inventado: o que a API não devolve fica vazio honesto.
 - Aprovar é só do owner (decisão de 16/10 08:55).
 
+## Como a fatia está dividida (16:55)
+
+Estrutura comum commitada por mim antes de abrir as frentes (`feb026c` e o autosave `a1dcc13`): mapa das entregas
+(`lib/delivery-types.ts`), catálogo de pedidos (`lib/capabilities.ts`, textos em `caps.json`), documento revisável na
+leitura editorial da V4.4 (`components/env/docs/DocumentDetail.tsx` + `DocumentBody` por família), áreas novas do
+catálogo nos três idiomas e o alvo da conversa com o objeto da API (`shell-context.tsx`). Quatro sub-agentes meus, cada
+um só nos próprios arquivos: Bia, Otto, Kiwi + Max, Íris. Eu fico com H1-04, catálogo, conversa do pedido, cartões de
+contexto, Kaia, e2e final e relatório.
+
 ## Itens
 
 | # | Item | Estado | Commit |
 |---|---|---|---|
-| 0 | H1-04: "Conversar com <Nome>" abre a conversa do ambiente | em andamento | — |
-| 1 | Bia: 02.01, 02.02, 02.03, 02.04, 02.07 como documentos revisáveis | pendente | — |
-| 2 | Otto: calendário 04.02 e posts multicanal 04.03 | pendente | — |
-| 3 | Kiwi 05.01/05.02 e Max (CSV, segmentos, campanha, sequências) | pendente | — |
-| 4 | Íris 07.02/07.03/07.04 e cartão `metric` | pendente | — |
-| 5 | Kaia "aguardando o motor" e cartões de contexto novos | pendente | — |
-| 6 | Vitest, e2e por ambiente, build, relatório | pendente | — |
+| 0 | H1-04: "Conversar com <Nome>" abre a conversa do ambiente (primeira fala e sugestões da API) | feito, Vitest verde | `f5a8cb5`, `c476936`, `250920b` |
+| 1 | Bia: 02.01, 02.02, 02.03, 02.04, 02.07 como documentos revisáveis | feito pela frente da Bia (Vitest 9/9) | `7ab6e20`, `e4e294a`, `c34b60b`, `13e37f4` |
+| 2 | Otto: calendário 04.02 e posts multicanal 04.03 | em andamento (frente do Otto) | — |
+| 3 | Kiwi 05.01/05.02 e Max (CSV, segmentos, campanha, sequências) | em andamento (frente Kiwi + Max) | — |
+| 4 | Íris 07.02/07.03/07.04 e cartão `metric` | em andamento (frente da Íris) | — |
+| 5 | Kaia "aguardando o motor" e cartões de contexto novos (pedido, publicação, indicador, oportunidade, segmento, documento) | feito | `c470380`, `f5a8cb5`, `c34b60b` |
+| 6 | Vitest, e2e por ambiente, build, relatório | Vitest por item; e2e escritos; `make e2e` no fim | — |
+
+Lado a lado das partes comuns em `docs/parciais/a2b/` (catálogo, conversa do ambiente, Kaia): `4fcd617`.
