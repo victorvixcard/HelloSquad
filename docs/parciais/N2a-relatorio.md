@@ -1,7 +1,7 @@
 # N2a — Relatório (Nick Fury)
 
 **Fatia:** N2a, conteúdo SEO/GEO do site público e revisão de domínio do squad (Fase 2).
-**Data:** 16/10/2026. Sessão 1 de 15:34 a 15:48, interrompida por limite de cota da conta. Retomada de 16:15 a 16:35.
+**Data:** 16/10/2026. Sessão 1 de 15:34 a 15:48, interrompida por limite de cota da conta. Retomada de 16:15 a 16:32.
 **Área:** só `docs/conteudo/` e `docs/parciais/N2a-*`. Nada tocado em `squad/`, `apps/`, `packages/` ou `supabase/` (S2c do Stark em paralelo). Nenhum serviço subido ou derrubado. Nenhuma chamada externa.
 **Commits em `main`, todos com push:** sessão 1: `e21aba4`, `8f7d04c`, `00c9dc7`, `ff0ffe4`, `f3e930b`, `a52d2b4` (e o autosave `4f352bc`, que levou `llms.txt` e `robots.txt`). Retomada: `3e1efb5`, `ad57c21`, `637ac90`, `544a46a`, `c94331e`, mais os da tradução en (`374c7ef`, `263fb7e`, `f22de60`, `87bd93c`, `a96a771`, `fea3509`), os da es (`4f0e2da`, `ed51693`, `728eb53`, `607f029`, `3709084`, `29a91cc`), a correção de quem aprova o conceito (`71135f2`) e o deste relatório.
 
