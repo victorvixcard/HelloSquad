@@ -95,9 +95,11 @@ describe("painel de conversa universal", () => {
     expect(container.querySelector(".ps-conv")).not.toHaveClass("has-sug");
   });
 
-  it("papel ao lado do nome: na direta e no objeto, menos quando o objeto é o próprio ambiente (V4.6 L13880)", () => {
+  it("papel ao lado do nome: na direta e no objeto, menos quando o objeto é o próprio ambiente (V4.6 L13880)", async () => {
     const head = (container: HTMLElement) => container.querySelector(".ps-cvh-n");
+    const loaded = () => screen.findByText("Otto, preciso de uma legenda para o post de sábado.");
     const env = renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, openShell());
+    await loaded();
     expect(head(env.container)?.textContent).toBe("Otto");
     expect(env.container.querySelector(".ps-cvh-r")).toBeNull();
     env.unmount();
@@ -106,9 +108,11 @@ describe("painel de conversa universal", () => {
       conversation: { mode: "panel", target: { conversationId: "otto-1", agent: "otto", context: { kind: "work_item", label: "Legenda do post de sábado" } } },
     });
     const obj = renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, post);
+    await loaded();
     expect(obj.container.querySelector(".ps-cvh-r")?.textContent).toBe("Conteúdo");
     obj.unmount();
     const dm = renderWithShell(<ConversationPanel actions={actions()} now={NOW} />, directShell({ conversationId: "otto-1", agent: "otto" }));
+    await loaded();
     expect(dm.container.querySelector(".ps-cvh-r")?.textContent).toBe("Conteúdo");
   });
 
