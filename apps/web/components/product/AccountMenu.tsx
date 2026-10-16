@@ -12,15 +12,23 @@ export type AccountMenuProps = {
   role: "owner" | "admin" | "editor" | "viewer";
   business: { slug: string; name: string };
   businesses: Array<{ slug: string; name: string }>;
+  /** "Plano Squad · créditos do mês" (V4.6 L4559) a partir de `GET /me` (S1e): valores provisórios, sem preço. */
+  credits?: { plan: string | null; used: number; total: number } | null;
   onUnavailable: () => void;
 };
+
+/** Parte do ciclo já usada, em % inteiro (a barra da V4.6: 64% na conta em uso, 4% no primeiro acesso). */
+export function creditsPercent(used: number, total: number): number {
+  if (!(total > 0)) return 0;
+  return Math.min(100, Math.max(0, Math.round((used / total) * 100)));
+}
 
 export function initials(text: string): string {
   return (text.trim()[0] ?? "?").toLocaleUpperCase("pt-BR");
 }
 
 /** Conta, negócio e configurações: um único lugar, no pé da barra (V4.6). */
-export function AccountMenu({ name, role, business, businesses, onUnavailable }: AccountMenuProps) {
+export function AccountMenu({ name, role, business, businesses, credits = null, onUnavailable }: AccountMenuProps) {
   const t = useTranslations("shell.account");
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
@@ -86,6 +94,17 @@ export function AccountMenu({ name, role, business, businesses, onUnavailable }:
               </span>
             </Link>
           </div>
+          {credits ? (
+            <div className="sb-cred">
+              <div className="sb-cred-h">
+                <span>{credits.plan ? t("credits", { plan: credits.plan }) : t("creditsNoPlan")}</span>
+                <b>{t("creditsPct", { pct: creditsPercent(credits.used, credits.total) })}</b>
+              </div>
+              <div className="sb-cred-bar">
+                <i style={{ width: `${creditsPercent(credits.used, credits.total)}%` }} />
+              </div>
+            </div>
+          ) : null}
           <div className="sb-acc-l">
             <button type="button" className="sb-acc-i" onClick={() => { setOpen(false); onUnavailable(); }}>
               <svg className="sb-ic" viewBox="0 0 18 18" aria-hidden="true">

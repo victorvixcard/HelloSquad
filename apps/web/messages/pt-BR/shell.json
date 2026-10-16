@@ -50,6 +50,9 @@
     "myAccount": "Minha conta",
     "settings": "Configurações",
     "signOut": "Sair",
+    "credits": "Plano {plan} · créditos do mês",
+    "creditsNoPlan": "Créditos do mês",
+    "creditsPct": "{pct}%",
     "roles": {
       "owner": "Titular",
       "admin": "Administração",

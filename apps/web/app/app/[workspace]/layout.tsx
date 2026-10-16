@@ -53,6 +53,10 @@ export default async function WorkspaceLayout({
         role: membership.role,
         business: { slug: workspace.slug, name: workspace.name },
         businesses: me.memberships.map((m) => ({ slug: m.workspace.slug, name: m.workspace.name })),
+        // Barra "Plano Squad · créditos do mês" (S1e): ciclo usado / créditos do ciclo, valores provisórios.
+        credits: membership.credits
+          ? { plan: membership.credits.plan, used: membership.credits.cycle_used, total: membership.credits.cycle_credits }
+          : null,
       }}
       needsCount={core.approvals.length}
       pending={pending}
