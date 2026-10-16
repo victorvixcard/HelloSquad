@@ -211,7 +211,10 @@ class ReflectionStore:
                         """
                         select l.id, l.topic, l.learning, l.status::text, l.promotion_rule,
                                l.version
-                        from app.record_learning(%s, %s, %s, %s, %s, %s, %s, %s) l
+                        from app.record_learning(
+                          %s, %s::text, %s::text, %s::jsonb, %s::numeric, %s::boolean,
+                          %s::numeric, %s::integer
+                        ) l
                         """,
                         (
                             claim.id,

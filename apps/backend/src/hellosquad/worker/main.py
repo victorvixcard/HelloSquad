@@ -253,6 +253,8 @@ class Worker:
             result = await run_reflection(self.squad, store, claim, rules)
         except Exception as exc:
             transient, code, details = classify(exc)
+            if code == "internal":
+                log.exception("reflexão %s: erro inesperado", reflection_id)
             error = {"code": code, "attempts": claim.attempts, "details": redact(details)}
             if transient and claim.attempts < self.settings.worker_max_attempts:
                 delay = self.settings.worker_retry_base_seconds * 2 ** (claim.attempts - 1)
