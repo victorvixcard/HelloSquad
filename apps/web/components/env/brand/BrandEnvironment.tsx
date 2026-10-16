@@ -133,7 +133,7 @@ export function BrandEnvironment({ business, needs, production }: { business: st
               </button>
             ))}
             {cat !== "all" ? (
-              <button type="button" className="ka-t is-start" aria-label={t("newAria", { label: t(`new.${cat}`) })} onClick={() => ask(cat)}>
+              <button type="button" className="ka-t is-start" aria-label={t("newWaitAria", { label: t(`new.${cat}`) })} onClick={() => ask(cat)}>
                 <span className="ka-t-v">
                   <span className="ka-startv">
                     <svg className="ps-ic" viewBox="0 0 18 18" aria-hidden="true">

@@ -54,7 +54,8 @@
     "engineTitle": "Esperando el motor de imágenes",
     "engineText": "Las piezas, los carruseles, las imágenes y los videos de Kaia dependen del motor de imágenes, que todavía no llegó. Hasta entonces, nada se crea ni aparece aquí como listo.",
     "waitMeta": "Esperando el motor de imágenes",
-    "emptyWait": "Lo que Kaia cree para {business} aparece aquí cuando llegue el motor de imágenes."
+    "emptyWait": "Lo que Kaia cree para {business} aparece aquí cuando llegue el motor de imágenes.",
+    "newWaitAria": "{label}: esperando el motor de imágenes"
   },
   "kiwi": {
     "goalKicker": "Objetivo de crecimiento",

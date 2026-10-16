@@ -54,7 +54,8 @@
     "engineTitle": "Waiting for the image engine",
     "engineText": "Kaia’s pieces, carousels, images and videos depend on the image engine, which has not arrived yet. Until then, nothing is created or shown here as ready.",
     "waitMeta": "Waiting for the image engine",
-    "emptyWait": "What Kaia creates for {business} shows up here when the image engine arrives."
+    "emptyWait": "What Kaia creates for {business} shows up here when the image engine arrives.",
+    "newWaitAria": "{label}: waiting for the image engine"
   },
   "kiwi": {
     "goalKicker": "Growth goal",

@@ -70,26 +70,32 @@ describe("Marca & Criação · Kaia (estúdio)", () => {
     expect(cats.map((b) => b.querySelector("small")?.textContent)).toEqual(["0", "0", "0", "0", "0", "0", "0"]);
     expect(screen.getByRole("button", { name: "Todas: nenhuma criação" })).toHaveAttribute("aria-pressed", "true");
     expect(within(gal).getByText("Nenhuma criação ainda.")).toBeInTheDocument();
-    expect(within(gal).getByText("O que a Kaia produzir para Miolo aparece aqui. Escolha um tipo acima para fazer o primeiro pedido.")).toBeInTheDocument();
+    // A2b: as peças esperam o motor de imagem do dono, sem fornecedor e sem data.
+    expect(within(gal).getByText("O que a Kaia criar para Miolo aparece aqui quando o motor de imagem chegar.")).toBeInTheDocument();
+    const engine = within(bench).getByRole("region", { name: "Aguardando o motor de imagem" });
+    expect(engine).toHaveTextContent("Até lá, nada é criado nem aparece aqui como pronto.");
     expect(container.querySelectorAll(".ka-t")).toHaveLength(0);
     // Os únicos números da tela são os zeros reais.
     expect(container.textContent?.match(/\d+/g)?.every((n) => n === "0")).toBe(true);
   });
 
-  it("com filtro ativo, o último quadro é o novo pedido e abre a conversa com a Kaia (V4.3 KA_NEW)", async () => {
+  it("com filtro ativo, o último quadro é o novo pedido e explica a espera do motor de imagem (V4.3 KA_NEW, A2b)", async () => {
     const user = userEvent.setup();
     const { shell } = renderWithShell(<BrandEnvironment business="Miolo" needs={[]} production={[]} />, shellWith());
     await user.click(screen.getByRole("button", { name: "Redes sociais: nenhuma criação" }));
     expect(screen.getByRole("button", { name: "Redes sociais: nenhuma criação" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByText("Para pedir mais, use a última peça desta lista.")).toBeInTheDocument();
     expect(screen.queryByText("Nenhuma criação ainda.")).toBeNull();
-    const tile = screen.getByRole("button", { name: "Nova peça para as redes: abre a conversa com a Kaia" });
+    const tile = screen.getByRole("button", { name: "Nova peça para as redes: aguardando o motor de imagem" });
     expect(tile).toHaveClass("ka-t", "is-start");
     expect(tile).toHaveTextContent("Novo pedido");
-    expect(tile).toHaveTextContent("Você conta a ideia; a Kaia conduz o briefing.");
+    expect(tile).toHaveTextContent("Aguardando o motor de imagem");
     await user.click(tile);
-    expect(shell.openConversation).toHaveBeenCalledWith(
-      expect.objectContaining({ conversationId: "kaia-1", agent: "kaia", draft: "Quero criar uma peça para as redes." }),
+    // Sem entrega visual (motor do dono), o pedido não abre uma conversa que ficaria sem resposta.
+    expect(shell.openConversation).not.toHaveBeenCalled();
+    expect(shell.toast).toHaveBeenCalledWith(
+      "Nova peça para as redes: As peças da Kaia esperam o motor de imagem. Nada é criado antes de ele chegar.",
+      "kaia",
     );
   });
 
