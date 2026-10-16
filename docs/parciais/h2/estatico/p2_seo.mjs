@@ -35,7 +35,10 @@ const ctx = (s, i, n = 60) => s.slice(Math.max(0, i - n), i + n).replace(/\s+/g,
 function findAll(re, s, n = 60) { const out = []; for (const m of s.matchAll(re)) { out.push(ctx(s, m.index, n)); if (out.length >= 8) break; } return out; }
 
 // fornecedores (palavra inteira, sem diferenciar maiúsculas); "GPTBot"/"ClaudeBot"/"anthropic-ai" tratados à parte
-const VENDOR = /\b(anthropic|claude|openai|gpt(?:-?\d[\w.-]*)?|chatgpt|supabase|vercel|railway|asaas|mercado ?pago|stripe|mailpit|next\.?js|fastapi|postgres(?:ql)?|python|react|gemini|llama|mistral|langchain|redis|docker|tailwind|shadcn|node\.js|typescript|sentry|resend|cloudflare|netlify|midjourney|dall-?e|flux)\b/gi;
+// "llama" sozinho é verbo em es ("Nexo llama a los especialistas"): só conta "Llama 3", "Meta Llama" etc.
+const VENDOR = /\b(anthropic|claude|openai|gpt(?:-?\d[\w.-]*)?|chatgpt|supabase|vercel|railway|asaas|mercado ?pago|stripe|mailpit|next\.?js|fastapi|postgres(?:ql)?|python|react|gemini|llama ?\d[\w.]*|meta llama|mistral|langchain|redis|docker|tailwind|shadcn|node\.js|typescript|sentry|resend|cloudflare|netlify|midjourney|dall-?e|flux|elevenlabs|stability ai|pagar\.?me|pagseguro|paypal|hotmart)\b/gi;
+// grupo amplo da N2a (redes sociais, buscadores, nome errado, domínio real): só registro, julgado à mão
+const VENDOR2 = /\b(instagram|facebook|tiktok|linkedin|whatsapp|youtube|pinterest|twitter|google|bing|canva|meta ads|hellootto|hello otto|hellosquad\.(?:com|ai|app|io|co|net)(?:\.br)?)\b/gi;
 const PRICE = /(pre[çc]os?\b|precios?\b|\bprices?\b|\bpricing\b|\bplanos?\b|\bplans?\b|\bplanes\b|paywall|assinatura|subscription|suscripci[oó]n|R\$|US\$|\$\s?\d|€\s?\d|gr[áa]tis|gratuito|gratuita|\bfree\b|free trial|teste gr[áa]tis|prueba gratis|\bcr[ée]ditos?\b|\bcredits?\b|checkout|mensalidade|\/m[eê]s\b|per month|al mes)/gi;
 const PRICE_LINK = /\/(precos|pricing|precios|planos|plans|planes|assinatura|checkout|subscribe)\b/i;
 const PT_WORDS = /(\bvocê\b|\bvocês\b|\bnão\b|\bseu\b|\bsua\b|\bseus\b|\bsuas\b|ção\b|ções\b|[ãõ])/gi;
@@ -127,8 +130,14 @@ for (const loc of locs) {
   }
   const allTypes = P.jsonld.flatMap((b) => b.types ?? []);
   P.tipos = [...new Set(allTypes)];
-  const exp = ["Organization"];
-  if (rota !== "/" && rota !== "/en" && rota !== "/es" && rota !== "/criar-conta") exp.push("BreadcrumbList");
+  const isHome = rota === "/" || rota === "/en" || rota === "/es";
+  const exp = isHome ? ["Organization", "WebSite", "SoftwareApplication"] : [];
+  if (!isHome && rota !== "/criar-conta") exp.push("BreadcrumbList");
+  // referências por @id a nós que não estão na própria página (definidos só no grafo da home)
+  { const defd = new Set(), refs = new Set();
+    for (const b of P.jsonld) walk(b._doc ?? {}, "$", (n) => { if (n && typeof n === "object" && !Array.isArray(n) && n["@id"]) (Object.keys(n).length === 1 ? refs : defd).add(n["@id"]); });
+    P.idsSoltos = [...refs].filter((x) => !defd.has(x));
+    if (P.idsSoltos.length) obs(rota, "jsonld-id-externo", P.idsSoltos.join(", ")); }
   if (/\/(faq|preguntas-frecuentes)$/.test(rota)) exp.push("FAQPage");
   if (/\/squad\/[^/]+$/.test(rota)) exp.push("Service");
   if (/^\/((en|es)\/)?squad$/.test(rota)) exp.push("ItemList");
@@ -150,6 +159,10 @@ for (const loc of locs) {
   const rawNoNext = html.replace(/\/_next\/[^\s"')\\]+/g, "");
   P.fornecedorHtmlBruto = [...new Set([...rawNoNext.matchAll(VENDOR)].map((m) => m[0].toLowerCase()))];
   for (const [onde, hits] of Object.entries(P.fornecedor)) if (hits.length) def(rota, "fornecedor", `${onde}: ${hits.slice(0, 3).join(" | ")}`);
+  P.fornecedorAmplo = { visivel: findAll(VENDOR2, vis), meta: findAll(VENDOR2, metaTxt), jsonld: findAll(VENDOR2, ldTxt), bruto: [...new Set([...rawNoNext.matchAll(VENDOR2)].map((m) => m[0].toLowerCase()))] };
+  // preço no HTML bruto inteiro (inclui scripts/RSC), por termo
+  P.precoBruto = {};
+  for (const m of html.matchAll(/(R\$|US\$|pre[çc]os?\b|precios?\b|\bprices?\b|\bpricing\b|paywall|assinatura|subscription|suscripci[oó]n|gr[áa]tis|free trial|\bfree\b|\boffers?\b|checkout)/gi)) P.precoBruto[m[0].toLowerCase()] = (P.precoBruto[m[0].toLowerCase()] ?? 0) + 1;
   // texto visível com cara de pt-BR em página en/es (só registro; o seletor de idioma tem "Português")
   if (P.langEsperado !== "pt-BR") P.ptNoVisivel = findAll(PT_WORDS, vis, 40);
   pages.set(rota, P);
@@ -179,8 +192,27 @@ for (const [rota, P] of pages) {
   }
 }
 
+// alternates do sitemap (xhtml:link) x hreflang da página
+{
+  let conf = 0, dif = 0;
+  for (const block of sm.text.split("<url>").slice(1)) {
+    const loc = ent((block.match(/<loc>([^<]+)<\/loc>/) ?? [])[1] ?? "");
+    const alts = Object.fromEntries([...block.matchAll(/<xhtml:link\b[^>]*>/g)].map((m) => attrs(m[0])).map((a) => [a.hreflang, pathOf(a.href)]));
+    const P = pages.get(pathOf(loc));
+    if (!P || !Object.keys(alts).length) continue;
+    const pg = Object.fromEntries(Object.entries(P.hreflang).map(([a, u]) => [a, pathOf(u)]));
+    for (const k of new Set([...Object.keys(alts), ...Object.keys(pg)])) { if (alts[k] === pg[k]) conf++; else { dif++; def(pathOf(loc), "sitemap-alternate", `${k}: sitemap ${alts[k]} x página ${pg[k]}`); } }
+  }
+  R.sitemap.alternatesConferidos = conf; R.sitemap.alternatesDivergentes = dif;
+}
+// favicon e variantes de /criar-conta
+R.extras = {};
+for (const p of ["/favicon.ico", "/icon.png", "/apple-icon.png", "/en/criar-conta", "/es/criar-conta", "/en/sign-up", "/es/crear-cuenta"]) R.extras[p] = (await get(`${BASE}${p}`)).status;
+
 // robots.txt e llms.txt
 const rb = await get(`${BASE}/robots.txt`), ll = await get(`${BASE}/llms.txt`);
+fs.writeFileSync("/tmp/h2_est_p2_robots_servido.txt", rb.text);
+fs.writeFileSync("/tmp/h2_est_p2_llms_servido.txt", ll.text);
 const rbBots = [...rb.text.matchAll(/^user-agent:\s*(.+)$/gim)].map((m) => m[1].trim());
 const rbVendorFora = rb.text.split("\n").filter((l) => !/^\s*user-agent:/i.test(l)).join("\n");
 R.robots = { status: rb.status, bytes: rb.text.length, userAgents: rbBots, disallow: [...new Set([...rb.text.matchAll(/^disallow:\s*(.*)$/gim)].map((m) => m[1].trim()))],
@@ -209,5 +241,10 @@ console.log("contagens:", JSON.stringify(R.contagens));
 console.log("robots:", JSON.stringify({ ...R.robots, ordemPrimeiroBloco: undefined }));
 console.log("robots início:", JSON.stringify(R.robots.ordemPrimeiroBloco));
 console.log("llms:", JSON.stringify({ ...R.llms, linksStatus: undefined }));
+console.log("sitemap alternates x página:", R.sitemap.alternatesConferidos, "iguais,", R.sitemap.alternatesDivergentes, "divergentes | extras:", JSON.stringify(R.extras));
+{ const agg = {}; for (const P of R.paginas) for (const [k, v] of Object.entries(P.precoBruto)) (agg[k] ??= []).push(`${P.rota}:${v}`); console.log("preço no HTML bruto (termo -> páginas):"); for (const [k, v] of Object.entries(agg)) console.log("  ", k, v.length, "páginas:", v.join(" ").slice(0, 300)); }
+{ const agg = {}; for (const P of R.paginas) for (const [onde, hits] of Object.entries(P.fornecedorAmplo)) for (const h of (onde === "bruto" ? hits : hits.map((s) => (s.match(VENDOR2) ?? ["?"])[0].toLowerCase()))) (agg[`${onde}:${h}`] ??= new Set()).add(P.rota);
+  console.log("grupo amplo N2a (redes/buscadores/nome/domínio):", JSON.stringify(Object.fromEntries(Object.entries(agg).map(([k, s]) => [k, [...s].length]))));
+  const ex = R.paginas.find((P) => P.fornecedorAmplo.visivel.length); if (ex) console.log("  ex. visível", ex.rota, JSON.stringify(ex.fornecedorAmplo.visivel.slice(0, 3))); }
 console.log(`DEFEITOS (${R.defeitos.length}):`); for (const d of R.defeitos) console.log("  ", JSON.stringify(d).slice(0, 400));
 console.log(`OBSERVACOES (${R.observacoes.length}):`); for (const d of R.observacoes) console.log("  ", JSON.stringify(d).slice(0, 300));
