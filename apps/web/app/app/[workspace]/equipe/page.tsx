@@ -51,6 +51,8 @@ export default async function Page({ params }: { params: Promise<{ workspace: st
     kind: c.kind,
     agent: c.primary_agent_id && isAgentId(c.primary_agent_id) ? c.primary_agent_id : null,
     title: c.title,
+    topic: c.topic ?? null,
+    unread: c.unread_count ?? 0,
     contextType: c.context_type,
     contextId: c.context_id,
     at: recent(c),

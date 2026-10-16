@@ -159,8 +159,15 @@
     "roomWho": "todos os especialistas",
     "who": "{name} · {area}",
     "about": "{who} · sobre {what}",
-    "aboutProject": "um projeto",
-    "aboutOther": "um contexto",
+    "roomTopic": "Sala do Squad · {topic}",
+    "groupWho": "conversa em grupo · demonstração",
+    "aboutWhat": {
+      "calendar_post": "uma publicação",
+      "project": "um projeto",
+      "metric": "um indicador",
+      "other": "um contexto"
+    },
+    "request": "{who} · pedido: {name}",
     "untitled": "Conversa {with}",
     "lastYou": "Você: {text}",
     "lastAgent": "{name}: {text}",

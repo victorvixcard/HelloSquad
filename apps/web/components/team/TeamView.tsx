@@ -13,8 +13,8 @@ type Tab = "team" | "chats";
 
 /**
  * Minha Equipe & Conversas (V4 `_vEq`, L10879, sobre a V3 `_vTeam` e `_vChats`; template L4720–4765):
- * cabeçalho com o subtítulo de cada aba e "Abrir a Sala do Squad"; abas "Equipe" (os sete) e "Conversas".
- * A API não tem "não lidas": a aba Conversas fica sem o ponto (registrado no relatório da A1b).
+ * cabeçalho com o subtítulo de cada aba e "Abrir a Sala do Squad"; abas "Equipe" (os sete) e "Conversas"
+ * (ponto quando alguma conversa tem mensagem não lida, `unread_count` da S1f).
  */
 export function TeamView({
   business,
@@ -59,6 +59,7 @@ export function TeamView({
           >
             <span>{t(`tabs.${k}`)}</span>
             <i>{counts[k]}</i>
+            {k === "chats" && chats.some((c) => c.unread > 0) ? <b className="eq-dot" /> : null}
           </button>
         ))}
       </div>

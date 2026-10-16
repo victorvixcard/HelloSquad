@@ -35,7 +35,6 @@ export function TeamProfile({ business, works, pending }: { business: string; wo
   const tc = useTranslations("common");
   const ts = useTranslations("shell");
   const tl = useTranslations("live");
-  const tst = useTranslations("common.states");
   const shell = useShell();
   const live = useLive();
   const router = useRouter();
@@ -202,7 +201,7 @@ export function TeamProfile({ business, works, pending }: { business: string; wo
                         </span>
                         <span className={`v41-tag is-${k}`}>
                           <StatusSign k={k} />
-                          <span>{tst.has(w.status) ? tst(w.status as "done") : w.status}</span>
+                          <span>{tc(`states.${w.status}`)}</span>
                         </span>
                       </button>
                     );
@@ -241,7 +240,7 @@ export function TeamProfile({ business, works, pending }: { business: string; wo
                         </span>
                       </span>
                       <span className="ps-made-t">{w.title}</span>
-                      <small>{tst.has(w.status) ? tst(w.status as "done") : w.status}</small>
+                      <small>{tc(`states.${w.status}`)}</small>
                     </button>
                   ))}
                 </div>

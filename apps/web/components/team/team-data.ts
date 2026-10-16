@@ -1,11 +1,16 @@
 import { AGENT_IDS, STATUS_GLYPHS, type AgentId } from "@hellosquad/ui";
+import type { Conversation, WorkItem } from "@/lib/core";
 
 /** Conversa da aba "Conversas", lida de `GET /workspaces/{id}/conversations` (só o que a API devolve). */
 export type ChatRow = {
   id: string;
-  kind: "squad_room" | "agent_direct" | "object";
+  kind: Conversation["kind"];
   agent: AgentId | null;
   title: string | null;
+  /** Tópico da Sala do Squad ("Sala do Squad · Campanha de Natal"); nulo = sem tópico. */
+  topic: string | null;
+  /** Mensagens de outros depois do que a pessoa leu (S1f): ponto de não lida na linha e na aba. */
+  unread: number;
   /** Objeto da conversa de objeto (`project`, `work_item`, `delivery`). */
   contextType: string | null;
   contextId: string | null;
@@ -19,7 +24,7 @@ export type ChatRow = {
 export type TeamWork = {
   id: string;
   title: string;
-  status: string;
+  status: WorkItem["status"];
   agent: AgentId;
   collaborators: AgentId[];
   deliveryType: string | null;
@@ -53,8 +58,8 @@ export function stageMetrics(contentW: number) {
 }
 
 /** Situação do trabalho → família visual da V4.6 (`stk6` + `WK_SG`, L13857 e L6394). */
-export function statusGlyph(status: string): keyof typeof STATUS_GLYPHS {
-  const map: Record<string, keyof typeof STATUS_GLYPHS> = {
+export function statusGlyph(status: WorkItem["status"]): keyof typeof STATUS_GLYPHS {
+  const map: Partial<Record<WorkItem["status"], keyof typeof STATUS_GLYPHS>> = {
     needs_you: "you",
     in_progress: "and",
     draft: "and",
