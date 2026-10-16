@@ -9,7 +9,6 @@ import { AI_CRAWLERS, llmsText, robotsText } from "@/lib/site-crawl";
 import { getSiteContent, questionsOf } from "@/lib/site-content";
 import { SITE_PAGE_KEYS, siteLanguages, sitePath, type SitePageKey } from "@/lib/site-routes";
 import { jsonLdHtml, siteJsonLd, siteMetadata } from "@/lib/site-seo";
-// @ts-expect-error: script em JavaScript puro (Node), sem tipos.
 import { buildLocale } from "../scripts/site-content.mjs";
 
 const URL_BASE = "http://127.0.0.1:3100";
