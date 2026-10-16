@@ -115,6 +115,13 @@ begin
       select 1 from seed_memberships s where s.workspace_id = m.workspace_id and s.user_id = m.user_id
     );
 
+  -- O seed não tem convite: o que sobrou de teste manual sai (o pgTAP conta os convites da Miolo e da Vitta).
+  -- Nada referencia invitations; o e-mail de convite já gravado em email_messages fica como histórico.
+  delete from public.invitations i
+  using public.workspaces w
+  where w.id = i.workspace_id
+    and w.slug in ('miolo', 'vitta', 'trilha');
+
   -- Workspaces que só o Pedro integra são resíduo de teste manual: saem com a trilha de auditoria deles.
   select id into v_pedro_id from auth.users where email = 'pedro@semconta.example';
   delete from public.audit_events a
