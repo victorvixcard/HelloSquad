@@ -83,6 +83,7 @@ class RunData:
     request: str
     history: list[HistoryMessage]
     feedback: dict[str, Any] | None = None
+    next_version: int = 1
 
 
 @dataclass(frozen=True)
@@ -94,6 +95,15 @@ class ReplyData:
     locale: str
     request: str
     history: list[HistoryMessage]
+
+
+@dataclass(frozen=True)
+class WorkLive:
+    """Frase viva e próximo passo que o agente escreve no trabalho enquanto trabalha."""
+
+    work_item_id: UUID
+    status_label: str
+    next_step: str
 
 
 # Botões do cartão (o web traduz pelo catálogo); a decisão vai por POST /approvals/{id}/decision.
@@ -310,7 +320,12 @@ class RunStore:
                 """
                 select r.agent_id, r.attempts, w.id as work_item_id, w.status, w.title, w.briefing,
                        w.delivery_type, w.conversation_id, w.origin_message_id,
-                       s.name as workspace_name, s.locale, m.body as request
+                       s.name as workspace_name, s.locale, m.body as request,
+                       (select coalesce(max(v.version_no), 0) + 1
+                        from public.delivery_versions v
+                        join public.deliveries d on d.id = v.delivery_id
+                        where d.work_item_id = w.id and d.workspace_id = r.workspace_id
+                       ) as next_version
                 from public.runs r
                 join public.work_items w
                   on w.id = r.work_item_id and w.workspace_id = r.workspace_id
@@ -382,6 +397,7 @@ class RunStore:
             request=row["request"] or row["title"],
             history=history,
             feedback=dict(feedback) if feedback else None,
+            next_version=row["next_version"],
         )
 
     async def load_reply(self, *, history_limit: int) -> ReplyData:
@@ -490,9 +506,15 @@ class RunStore:
     # ------------------------------------------------------------------------------------------
 
     async def thinking(
-        self, agent_id: str, step: str, status: dict[str, str], conversation_id: UUID | None
+        self,
+        agent_id: str,
+        step: str,
+        status: dict[str, str],
+        conversation_id: UUID | None,
+        work: "WorkLive | None" = None,
     ) -> None:
-        """Etapa começando: status por etapa e, na conversa, quem está escrevendo."""
+        """Etapa começando: status por etapa, na conversa quem está escrevendo e, no trabalho, a
+        frase viva e o próximo passo do agente."""
         async with self.pool.connection() as conn:
             await self._event(
                 conn, "agent.thinking", {"agent_id": agent_id, "step": step, **status}
@@ -502,6 +524,14 @@ class RunStore:
                     conn,
                     "conversation.typing",
                     {"conversation_id": conversation_id, "agent_id": agent_id, **status},
+                )
+            if work is not None:
+                await conn.execute(
+                    """
+                    update public.work_items set status_label = %s, next_step = %s
+                    where id = %s and workspace_id = %s and status = 'in_progress'
+                    """,
+                    (work.status_label, work.next_step, work.work_item_id, self.workspace_id),
                 )
 
     async def event(self, type_: str, data: dict[str, Any]) -> None:

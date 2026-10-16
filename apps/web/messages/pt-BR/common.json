@@ -31,7 +31,8 @@
     "authorize": "Para você autorizar",
     "confirm": "Para você confirmar",
     "reconnect": "Para você reconectar",
-    "respond": "Para você responder"
+    "respond": "Para você responder",
+    "decide": "Para você decidir"
   },
   "deliveryTypes": {
     "d0401": "Legenda"

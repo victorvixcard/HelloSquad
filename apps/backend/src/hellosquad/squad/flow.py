@@ -43,7 +43,7 @@ from hellosquad.squad.schemas import (
     StepOutput,
     TriageResult,
 )
-from hellosquad.squad.store import RunStore
+from hellosquad.squad.store import RunStore, WorkLive
 
 COORDINATOR = "nexo"
 TRIAGE_SKILL = "01.01"
@@ -126,6 +126,8 @@ class StepCaller:
         *,
         locale: str,
         conversation_id: Any = None,
+        work_item_id: Any = None,
+        next_step: str | None = None,
     ) -> None:
         self.squad = squad
         self.store = store
@@ -133,7 +135,21 @@ class StepCaller:
         self.attempt = attempt
         self.locale = locale
         self.conversation_id = conversation_id
+        self.work_item_id = work_item_id
+        self.next_step = next_step
         self.last_model: str | None = None
+
+    def work_live(self, agent: AgentDefinition, phrase: str) -> WorkLive | None:
+        """No trabalho: "Otto criando a primeira versão" e "Otto entrega a v1" (V4.6 `_works`)."""
+        if self.work_item_id is None or self.next_step is None:
+            return None
+        label = t(
+            self.locale,
+            "work.status.doing",
+            agent=agent.name,
+            phrase=t(self.locale, f"status.phrase.{phrase}"),
+        )
+        return WorkLive(self.work_item_id, label, self.next_step)
 
     async def llm(
         self,
@@ -157,6 +173,7 @@ class StepCaller:
             step,
             status_fields(self.locale, agent, "work", phrase),
             self.conversation_id,
+            self.work_live(agent, phrase),
         )
         step_id, seq = await self.store.start_step(
             kind,
@@ -275,6 +292,8 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         data.attempts,
         locale=locale,
         conversation_id=item.conversation_id,
+        work_item_id=item.id,
+        next_step=t(locale, "work.next.delivers", agent=expert.name, version=data.next_version),
     )
 
     triage_title = t(locale, "work_item_step.nexo.triage")

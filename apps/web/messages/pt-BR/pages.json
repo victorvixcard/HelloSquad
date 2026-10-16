@@ -11,7 +11,8 @@
       "authorize": "Autorizar {object}",
       "confirm": "Confirmar {object}",
       "reconnect": "Reconectar {object}",
-      "respond": "Responder {object}"
+      "respond": "Responder {object}",
+      "decide": "Decidir {object}"
     },
     "object": {
       "d0401": "a legenda",

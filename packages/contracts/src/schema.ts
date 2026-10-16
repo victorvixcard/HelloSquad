@@ -177,24 +177,11 @@ export interface paths {
         /** Projetos ativos do workspace (paginação por cursor) */
         get: operations["list_projects_workspaces__workspace_id__projects_get"];
         put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/projects/{project_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Um projeto */
-        get: operations["get_project_projects__project_id__get"];
-        put?: never;
-        post?: never;
+        /**
+         * Cria um projeto com datas e equipe (editor ou acima)
+         * @description Quem conduz (`owner_agent_id`, o Nexo por padrão) entra na equipe sozinho.
+         */
+        post: operations["create_project_workspaces__workspace_id__projects_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -245,8 +232,140 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Um trabalho com etapas, entregas (versões e arquivos), aprovações e runs */
+        /** Um trabalho com etapas, entregas (versões e arquivos), aprovações, runs e histórico */
         get: operations["get_work_item_work_items__work_item_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Um projeto com a equipe, os marcos e quantos trabalhos foram pedidos nele */
+        get: operations["get_project_projects__project_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Altera nome, objetivo, estado, quem conduz ou as datas (editor ou acima)
+         * @description Só os campos enviados mudam; `null` em objective, starts_at e ends_at apaga.
+         */
+        patch: operations["update_project_projects__project_id__patch"];
+        trace?: never;
+    };
+    "/projects/{project_id}/participants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Troca a equipe do projeto (editor ou acima)
+         * @description Quem conduz continua na equipe, mesmo fora da lista.
+         */
+        put: operations["set_participants_projects__project_id__participants_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/milestones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Acrescenta um marco ao roadmap do projeto (editor ou acima) */
+        post: operations["add_milestone_projects__project_id__milestones_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/milestones/{milestone_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Altera um marco; `done: true` conclui, `false` reabre (editor ou acima) */
+        patch: operations["update_milestone_milestones__milestone_id__patch"];
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/milestones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** "Próximos marcos": os de todos os projetos que vencem nos próximos dias */
+        get: operations["upcoming_milestones_workspaces__workspace_id__milestones_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/needs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * "Precisa de você": o que depende da pessoa agora e o que vem "Em seguida"
+         * @description `count` conta só as pendências que dependem da pessoa agora (as adiadas por "Agora não" ficam em `deferred_count`). Os itens `next` são marcos com decisão sua nos próximos 10 dias que ainda não viraram pendência: vêm depois e não entram na contagem.
+         */
+        get: operations["needs_workspaces__workspace_id__needs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/squad/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Status vivo dos sete especialistas, derivado dos runs e das pendências
+         * @description Modos da V4.6 (`idle`, `work`, `wait`, `live`, `sleep`; `monitor` chega com as rotinas) com o rótulo curto ("escrevendo", "aguarda você") e a frase da conversa ("Otto · criando a primeira versão"). Mesma regra do status ao vivo do web: serve para abrir a tela já com o estado certo antes dos eventos do Realtime.
+         */
+        get: operations["squad_status_workspaces__workspace_id__squad_status_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -286,6 +405,46 @@ export interface paths {
          * @description A primeira decisão vale; repetir (clique duplo, retry) responde 200 com o mesmo estado, sem erro e sem efeito novo. Revisar/aprovar com `approved` aprova a versão e o trabalho; `changes_requested` e `rejected` com `follow_up=revise` devolvem o trabalho ao agente (novo run na fila); `rejected` com `follow_up=cancel` cancela o trabalho; `answered` (responder) devolve ao agente com a resposta. Só o owner decide.
          */
         post: operations["decide_approval_approvals__approval_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/{approval_id}/defer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * "Agora não": adia a autorização sem decidir nem rejeitar (só o owner)
+         * @description A autorização continua pendente, sem decisão, e sai de "Precisa de você"; o trabalho não muda de estado, nenhum run nasce e nada é cobrado. Repetir devolve o mesmo estado. Só para `authorize`; decidida responde 409.
+         */
+        post: operations["defer_approval_approvals__approval_id__defer_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/{approval_id}/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * "Decidir agora": a autorização adiada volta a pedir a decisão (só o owner)
+         * @description Volta para "Precisa de você". Sem adiamento, devolve o estado atual.
+         */
+        post: operations["resume_approval_approvals__approval_id__resume_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -611,6 +770,35 @@ export interface components {
          * @enum {string}
          */
         AgentId: "nexo" | "bia" | "kaia" | "otto" | "kiwi" | "max" | "iris";
+        /** AgentStatus */
+        AgentStatus: {
+            agent_id: components["schemas"]["AgentId"];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "idle" | "work" | "wait" | "live" | "monitor" | "sleep";
+            /**
+             * Status Short
+             * @description Rótulo curto (`_shortNow`).
+             * @example escrevendo
+             */
+            status_short: string;
+            /**
+             * Status Label
+             * @description Frase da conversa.
+             * @example Otto · criando a primeira versão
+             */
+            status_label: string | null;
+            /** Run Id */
+            run_id?: string | null;
+            /** Work Item Id */
+            work_item_id?: string | null;
+            /** Conversation Id */
+            conversation_id?: string | null;
+            /** Approval Id */
+            approval_id?: string | null;
+        };
         /** AgentUnread */
         AgentUnread: {
             /** Conversations */
@@ -631,7 +819,7 @@ export interface components {
              * Format: uuid
              */
             workspace_id: string;
-            /** @description `review` revisar, `approve` aprovar, `authorize` autorizar ação externa, `confirm` confirmar, `reconnect` reconectar, `respond` responder. Só o owner decide. */
+            /** @description `review` revisar, `approve` aprovar, `authorize` autorizar ação externa, `confirm` confirmar, `reconnect` reconectar, `respond` responder, `decide` decidir (escolher entre opções). Só o owner decide. */
             kind: components["schemas"]["ApprovalKind"];
             status: components["schemas"]["ApprovalStatus"];
             decision: components["schemas"]["ApprovalDecision"] | null;
@@ -655,6 +843,19 @@ export interface components {
             note: string | null;
             /** Due At */
             due_at: string | null;
+            /**
+             * Deferred
+             * @description "Agora não": pendente, mas fora de "Precisa de você" até decidir de novo.
+             * @default false
+             */
+            deferred: boolean;
+            /** Deferred At */
+            deferred_at?: string | null;
+            /**
+             * Deferred Until
+             * @description Até quando fica adiada; nulo = até a pessoa decidir.
+             */
+            deferred_until?: string | null;
             /**
              * Created At
              * Format: date-time
@@ -692,7 +893,7 @@ export interface components {
          *     }
          */
         ApprovalDecisionCreate: {
-            /** @description `review`/`approve`: approved, changes_requested ou rejected. `authorize`/`confirm`/`reconnect`: approved ou rejected. `respond`: answered. */
+            /** @description `review`/`approve`: approved, changes_requested ou rejected. `authorize`/`confirm`/`reconnect`: approved ou rejected. `respond` e `decide`: answered (a escolha vai em `note`). */
             decision: components["schemas"]["ApprovalDecision"];
             /**
              * Note
@@ -706,10 +907,21 @@ export interface components {
             follow_up?: ("cancel" | "revise") | null;
         };
         /**
+         * ApprovalDefer
+         * @example {}
+         */
+        ApprovalDefer: {
+            /**
+             * Until
+             * @description Quando voltar a pedir; sem data, fica para quando a pessoa quiser.
+             */
+            until?: string | null;
+        };
+        /**
          * ApprovalKind
          * @enum {string}
          */
-        ApprovalKind: "review" | "approve" | "authorize" | "confirm" | "reconnect" | "respond";
+        ApprovalKind: "review" | "approve" | "authorize" | "confirm" | "reconnect" | "respond" | "decide";
         /** ApprovalPage */
         ApprovalPage: {
             /**
@@ -1537,6 +1749,11 @@ export interface components {
          * @enum {string}
          */
         FactSourceState: "declared" | "connected" | "outdated" | "needs_reconnect" | "not_connected" | "unavailable";
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
         /** Health */
         Health: {
             /**
@@ -2098,12 +2315,139 @@ export interface components {
              */
             next_cursor: string | null;
         };
+        /**
+         * MilestoneCreate
+         * @example {
+         *       "agent_id": "kaia",
+         *       "due_at": "2026-10-22T09:00:00-03:00",
+         *       "needs_you": true,
+         *       "summary": "você aprova cada uma",
+         *       "title": "Revisão das peças"
+         *     }
+         */
+        MilestoneCreate: {
+            /** Title */
+            title: string;
+            /** Summary */
+            summary?: string | null;
+            agent_id?: components["schemas"]["AgentId"] | null;
+            /** Due At */
+            due_at?: string | null;
+            /**
+             * Kind
+             * @default milestone
+             * @enum {string}
+             */
+            kind: "milestone" | "goal";
+            /**
+             * Needs You
+             * @default false
+             */
+            needs_you: boolean;
+            /**
+             * Planned
+             * @default false
+             */
+            planned: boolean;
+        };
+        /** MilestonePage */
+        MilestonePage: {
+            /**
+             * Items
+             * @description Por data, o mais próximo primeiro.
+             */
+            items: components["schemas"]["ProjectMilestone"][];
+        };
+        /**
+         * MilestoneUpdate
+         * @description Só os campos enviados mudam; `done: true` conclui agora, `false` reabre.
+         */
+        MilestoneUpdate: {
+            /** Title */
+            title?: string | null;
+            /** Summary */
+            summary?: string | null;
+            agent_id?: components["schemas"]["AgentId"] | null;
+            /** Due At */
+            due_at?: string | null;
+            /** Kind */
+            kind?: ("milestone" | "goal") | null;
+            /** Needs You */
+            needs_you?: boolean | null;
+            /** Planned */
+            planned?: boolean | null;
+            /** Done */
+            done?: boolean | null;
+        };
+        /** NeedItem */
+        NeedItem: {
+            /**
+             * Type
+             * @description Tipo da linha da faixa: os da pendência ("Para você revisar"…, "Para você decidir") ou `next` ("Em seguida": marco seu que ainda não depende de você).
+             * @enum {string}
+             */
+            type: "review" | "approve" | "authorize" | "confirm" | "reconnect" | "respond" | "decide" | "next";
+            /** @description Quem pede. */
+            agent_id: components["schemas"]["AgentId"];
+            approval?: components["schemas"]["Approval"] | null;
+            milestone?: components["schemas"]["ProjectMilestone"] | null;
+            project?: components["schemas"]["NeedProject"] | null;
+            /** Due At */
+            due_at?: string | null;
+        };
+        /** NeedProject */
+        NeedProject: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+        };
+        /** NeedsYou */
+        NeedsYou: {
+            /**
+             * Count
+             * @description Só o que depende da pessoa agora (sem adiadas e sem `next`).
+             */
+            count: number;
+            /**
+             * Deferred Count
+             * @description Autorizações adiadas por "Agora não".
+             */
+            deferred_count: number;
+            /**
+             * Items
+             * @description O que é agora (mais antigo primeiro), depois `next`.
+             */
+            items: components["schemas"]["NeedItem"][];
+        };
         /** Participant */
         Participant: {
             participant_type: components["schemas"]["PrincipalType"];
             /** User Id */
             user_id: string | null;
             agent_id: components["schemas"]["AgentId"] | null;
+        };
+        /** PendingApprovalSummary */
+        PendingApprovalSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["ApprovalKind"];
+            requested_by_agent_id: components["schemas"]["AgentId"];
+            /** Delivery Version No */
+            delivery_version_no: number | null;
+            /** Due At */
+            due_at: string | null;
+            /**
+             * Deferred
+             * @description "Agora não": fora de "Precisa de você" até decidir.
+             */
+            deferred: boolean;
         };
         /**
          * PrincipalType
@@ -2131,10 +2475,187 @@ export interface components {
             objective: string | null;
             status: components["schemas"]["ProjectStatus"];
             owner_agent_id: components["schemas"]["AgentId"];
+            /**
+             * Starts At
+             * @description Início no roadmap.
+             */
+            starts_at?: string | null;
+            /**
+             * Ends At
+             * @description Prazo ("20/12"); nulo = sem prazo.
+             */
+            ends_at?: string | null;
             /** Created By */
             created_by: string | null;
             /** Archived At */
             archived_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * ProjectCreate
+         * @example {
+         *       "ends_at": "2026-12-20T18:00:00-03:00",
+         *       "name": "Campanha de Natal",
+         *       "objective": "Vender mais panetones pelo site e na loja.",
+         *       "owner_agent_id": "nexo",
+         *       "participants": [
+         *         {
+         *           "agent_id": "bia",
+         *           "responsibility": "estratégia e conceito"
+         *         },
+         *         {
+         *           "agent_id": "kaia",
+         *           "responsibility": "peças da campanha"
+         *         }
+         *       ],
+         *       "starts_at": "2026-10-05T09:00:00-03:00"
+         *     }
+         */
+        ProjectCreate: {
+            /** Name */
+            name: string;
+            /** Objective */
+            objective?: string | null;
+            /**
+             * @description Quem conduz.
+             * @default nexo
+             */
+            owner_agent_id: components["schemas"]["AgentId"];
+            /** Starts At */
+            starts_at?: string | null;
+            /** Ends At */
+            ends_at?: string | null;
+            /** Participants */
+            participants?: components["schemas"]["ProjectParticipantIn"][];
+        };
+        /** ProjectDetail */
+        ProjectDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /**
+             * Name
+             * @example Lançamento do pão de fermentação longa
+             */
+            name: string;
+            /** Objective */
+            objective: string | null;
+            status: components["schemas"]["ProjectStatus"];
+            owner_agent_id: components["schemas"]["AgentId"];
+            /**
+             * Starts At
+             * @description Início no roadmap.
+             */
+            starts_at?: string | null;
+            /**
+             * Ends At
+             * @description Prazo ("20/12"); nulo = sem prazo.
+             */
+            ends_at?: string | null;
+            /** Created By */
+            created_by: string | null;
+            /** Archived At */
+            archived_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Participants
+             * @description Quem conduz primeiro.
+             */
+            participants: components["schemas"]["ProjectParticipant"][];
+            /**
+             * Milestones
+             * @description Por data; sem data por último.
+             */
+            milestones: components["schemas"]["ProjectMilestone"][];
+            /**
+             * Work Item Count
+             * @description "Trabalhos pedidos neste projeto · N".
+             */
+            work_item_count: number;
+        };
+        /** ProjectMilestone */
+        ProjectMilestone: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /**
+             * Title
+             * @example Revisão das peças
+             */
+            title: string;
+            /**
+             * Summary
+             * @example você aprova cada uma
+             */
+            summary: string | null;
+            agent_id: components["schemas"]["AgentId"] | null;
+            /**
+             * Kind
+             * @description `goal` é a meta do projeto.
+             * @enum {string}
+             */
+            kind: "milestone" | "goal";
+            /**
+             * Due At
+             * @description Nulo = sem data.
+             */
+            due_at: string | null;
+            /**
+             * Needs You
+             * @description "decisão sua" no roadmap.
+             */
+            needs_you: boolean;
+            /**
+             * Planned
+             * @description "previsto" no roadmap.
+             */
+            planned: boolean;
+            /** Done */
+            done: boolean;
+            /** Done At */
+            done_at: string | null;
+            /**
+             * Work Item Id
+             * @description Trabalho pedido dentro do projeto.
+             */
+            work_item_id: string | null;
+            /**
+             * Approval Id
+             * @description Pendência em que o marco virou decisão.
+             */
+            approval_id: string | null;
             /**
              * Created At
              * Format: date-time
@@ -2156,11 +2677,50 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** ProjectParticipant */
+        ProjectParticipant: {
+            agent_id: components["schemas"]["AgentId"];
+            /**
+             * Responsibility
+             * @example estratégia e conceito
+             */
+            responsibility: string | null;
+        };
+        /** ProjectParticipantIn */
+        ProjectParticipantIn: {
+            agent_id: components["schemas"]["AgentId"];
+            /** Responsibility */
+            responsibility?: string | null;
+        };
+        /** ProjectParticipantsSet */
+        ProjectParticipantsSet: {
+            /**
+             * Participants
+             * @description A equipe inteira; quem conduz continua nela.
+             */
+            participants: components["schemas"]["ProjectParticipantIn"][];
+        };
         /**
          * ProjectStatus
          * @enum {string}
          */
         ProjectStatus: "draft" | "active" | "paused" | "done" | "cancelled";
+        /**
+         * ProjectUpdate
+         * @description Só os campos enviados mudam; `null` em objective, starts_at e ends_at apaga o valor.
+         */
+        ProjectUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Objective */
+            objective?: string | null;
+            status?: components["schemas"]["ProjectStatus"] | null;
+            owner_agent_id?: components["schemas"]["AgentId"] | null;
+            /** Starts At */
+            starts_at?: string | null;
+            /** Ends At */
+            ends_at?: string | null;
+        };
         /** ReadCreate */
         ReadCreate: {
             /**
@@ -2317,6 +2877,19 @@ export interface components {
             /** Finished At */
             finished_at: string | null;
         };
+        /** SquadStatus */
+        SquadStatus: {
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /**
+             * Agents
+             * @description Os sete, na ordem do squad.
+             */
+            agents: components["schemas"]["AgentStatus"][];
+        };
         /** UnreadCount */
         UnreadCount: {
             /** Conversations */
@@ -2355,6 +2928,19 @@ export interface components {
             email: string | null;
             /** Full Name */
             full_name: string | null;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
         };
         /** WorkItem */
         WorkItem: {
@@ -2400,6 +2986,32 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /**
+             * Due At
+             * @description Prazo do trabalho.
+             */
+            due_at?: string | null;
+            /**
+             * Status Label
+             * @description Frase viva: a do agente ("Otto criando a primeira versão") ou a do estado ("v1 aguarda sua aprovação"), no idioma do workspace.
+             * @example v1 aguarda sua aprovação
+             */
+            status_label?: string | null;
+            /**
+             * Next Step
+             * @description Próximo passo.
+             * @example Aprovar a v1
+             */
+            next_step?: string | null;
+            origin?: components["schemas"]["WorkItemOrigin"] | null;
+            /**
+             * Awaiting You
+             * @description Tem pendência que depende da pessoa agora (não adiada).
+             * @default false
+             */
+            awaiting_you: boolean;
+            /** @description A pendência aberta (a que depende de você primeiro). */
+            pending_approval?: components["schemas"]["PendingApprovalSummary"] | null;
         };
         /**
          * WorkItemCreate
@@ -2479,6 +3091,32 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /**
+             * Due At
+             * @description Prazo do trabalho.
+             */
+            due_at?: string | null;
+            /**
+             * Status Label
+             * @description Frase viva: a do agente ("Otto criando a primeira versão") ou a do estado ("v1 aguarda sua aprovação"), no idioma do workspace.
+             * @example v1 aguarda sua aprovação
+             */
+            status_label?: string | null;
+            /**
+             * Next Step
+             * @description Próximo passo.
+             * @example Aprovar a v1
+             */
+            next_step?: string | null;
+            origin?: components["schemas"]["WorkItemOrigin"] | null;
+            /**
+             * Awaiting You
+             * @description Tem pendência que depende da pessoa agora (não adiada).
+             * @default false
+             */
+            awaiting_you: boolean;
+            /** @description A pendência aberta (a que depende de você primeiro). */
+            pending_approval?: components["schemas"]["PendingApprovalSummary"] | null;
             /** Briefing */
             briefing: {
                 [key: string]: unknown;
@@ -2533,6 +3171,32 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /**
+             * Due At
+             * @description Prazo do trabalho.
+             */
+            due_at?: string | null;
+            /**
+             * Status Label
+             * @description Frase viva: a do agente ("Otto criando a primeira versão") ou a do estado ("v1 aguarda sua aprovação"), no idioma do workspace.
+             * @example v1 aguarda sua aprovação
+             */
+            status_label?: string | null;
+            /**
+             * Next Step
+             * @description Próximo passo.
+             * @example Aprovar a v1
+             */
+            next_step?: string | null;
+            origin?: components["schemas"]["WorkItemOrigin"] | null;
+            /**
+             * Awaiting You
+             * @description Tem pendência que depende da pessoa agora (não adiada).
+             * @default false
+             */
+            awaiting_you: boolean;
+            /** @description A pendência aberta (a que depende de você primeiro). */
+            pending_approval?: components["schemas"]["PendingApprovalSummary"] | null;
             /** Briefing */
             briefing: {
                 [key: string]: unknown;
@@ -2545,7 +3209,87 @@ export interface components {
             approvals: components["schemas"]["Approval"][];
             /** Runs */
             runs: components["schemas"]["RunSummary"][];
+            /**
+             * History
+             * @description Do mais antigo ao mais recente.
+             */
+            history?: components["schemas"]["WorkItemHistoryEntry"][];
         };
+        /** WorkItemHistoryEntry */
+        WorkItemHistoryEntry: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            actor_type: components["schemas"]["MessageAuthorType"];
+            /** Actor User Id */
+            actor_user_id: string | null;
+            agent_id: components["schemas"]["AgentId"] | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "requested" | "delivered" | "decided";
+            /**
+             * Text
+             * @example Você aprovou a v2
+             */
+            text: string;
+            /**
+             * Mark
+             * @description "automático" ou "aprovado por você".
+             */
+            mark: ("automatic" | "approved_by_you") | null;
+            /**
+             * Mark Label
+             * @example aprovado por você
+             */
+            mark_label: string | null;
+            /** Params */
+            params: {
+                [key: string]: unknown;
+            };
+            /** Approval Id */
+            approval_id: string | null;
+            /** Delivery Version Id */
+            delivery_version_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * WorkItemOrigin
+         * @description De onde o trabalho nasceu, com o que o web precisa para escrever a origem.
+         */
+        WorkItemOrigin: {
+            type: components["schemas"]["WorkItemOriginType"];
+            /**
+             * Ref
+             * @description Id da mensagem, da sugestão ou do projeto; código da execução.
+             */
+            ref: string;
+            /**
+             * Conversation Id
+             * @description Conversa do pedido (origem mensagem).
+             */
+            conversation_id: string | null;
+            conversation_kind: components["schemas"]["ConversationKind"] | null;
+            /** @description Especialista da conversa direta ou quem percebeu o insight. */
+            agent_id: components["schemas"]["AgentId"] | null;
+            /**
+             * Title
+             * @description Título do insight ou nome do projeto.
+             */
+            title: string | null;
+        };
+        /**
+         * WorkItemOriginType
+         * @enum {string}
+         */
+        WorkItemOriginType: "message" | "insight" | "routine_run" | "project";
         /** WorkItemPage */
         WorkItemPage: {
             /**
@@ -3457,24 +4201,28 @@ export interface operations {
             };
         };
     };
-    get_project_projects__project_id__get: {
+    create_project_workspaces__workspace_id__projects_post: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                project_id: string;
+                workspace_id: string;
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProjectCreate"];
+            };
+        };
         responses: {
             /** @description Successful Response */
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Project"];
+                    "application/json": components["schemas"]["ProjectDetail"];
                 };
             };
             /** @description Token ausente, inválido ou expirado. */
@@ -3486,8 +4234,26 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Recurso não encontrado (ou fora do seu acesso). */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3729,11 +4495,533 @@ export interface operations {
             };
         };
     };
+    get_project_projects__project_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_project_projects__project_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProjectUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    set_participants_projects__project_id__participants_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProjectParticipantsSet"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    add_milestone_projects__project_id__milestones_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MilestoneCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectMilestone"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_milestone_milestones__milestone_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                milestone_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MilestoneUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectMilestone"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    upcoming_milestones_workspaces__workspace_id__milestones_get: {
+        parameters: {
+            query?: {
+                /** @description Janela a partir de hoje (o protótipo usa 10). */
+                days?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestonePage"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    needs_workspaces__workspace_id__needs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NeedsYou"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    squad_status_workspaces__workspace_id__squad_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SquadStatus"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     list_approvals_workspaces__workspace_id__approvals_get: {
         parameters: {
             query?: {
                 /** @description Filtra pelo estado da decisão. */
                 status?: components["schemas"]["ApprovalStatus"] | null;
+                /** @description Inclui as autorizações adiadas ("Agora não"); por padrão ficam fora. */
+                include_deferred?: boolean;
                 /** @description Valor de `next_cursor` da página anterior. Vazio = primeira página. */
                 cursor?: string | null;
                 /** @description Itens por página (1 a 100). */
@@ -3861,6 +5149,162 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    defer_approval_approvals__approval_id__defer_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                approval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApprovalDefer"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Approval"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    resume_approval_approvals__approval_id__resume_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                approval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Approval"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
             /** @description Dependência indisponível (banco ou Auth). */

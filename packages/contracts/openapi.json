@@ -1175,15 +1175,14 @@
             }
           }
         }
-      }
-    },
-    "/projects/{project_id}": {
-      "get": {
+      },
+      "post": {
         "tags": [
           "work"
         ],
-        "summary": "Um projeto",
-        "operationId": "get_project_projects__project_id__get",
+        "summary": "Cria um projeto com datas e equipe (editor ou acima)",
+        "description": "Quem conduz (`owner_agent_id`, o Nexo por padrão) entra na equipe sozinho.",
+        "operationId": "create_project_workspaces__workspace_id__projects_post",
         "security": [
           {
             "HTTPBearer": []
@@ -1191,23 +1190,33 @@
         ],
         "parameters": [
           {
-            "name": "project_id",
+            "name": "workspace_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
               "format": "uuid",
-              "title": "Project Id"
+              "title": "Workspace Id"
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreate"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "$ref": "#/components/schemas/ProjectDetail"
                 }
               }
             }
@@ -1222,8 +1231,28 @@
               }
             }
           },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1530,7 +1559,7 @@
         "tags": [
           "work"
         ],
-        "summary": "Um trabalho com etapas, entregas (versões e arquivos), aprovações e runs",
+        "summary": "Um trabalho com etapas, entregas (versões e arquivos), aprovações, runs e histórico",
         "operationId": "get_work_item_work_items__work_item_id__get",
         "security": [
           {
@@ -1556,6 +1585,738 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/WorkItemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}": {
+      "get": {
+        "tags": [
+          "work"
+        ],
+        "summary": "Um projeto com a equipe, os marcos e quantos trabalhos foram pedidos nele",
+        "operationId": "get_project_projects__project_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "work"
+        ],
+        "summary": "Altera nome, objetivo, estado, quem conduz ou as datas (editor ou acima)",
+        "description": "Só os campos enviados mudam; `null` em objective, starts_at e ends_at apaga.",
+        "operationId": "update_project_projects__project_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/participants": {
+      "put": {
+        "tags": [
+          "work"
+        ],
+        "summary": "Troca a equipe do projeto (editor ou acima)",
+        "description": "Quem conduz continua na equipe, mesmo fora da lista.",
+        "operationId": "set_participants_projects__project_id__participants_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectParticipantsSet"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/milestones": {
+      "post": {
+        "tags": [
+          "work"
+        ],
+        "summary": "Acrescenta um marco ao roadmap do projeto (editor ou acima)",
+        "operationId": "add_milestone_projects__project_id__milestones_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMilestone"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/milestones/{milestone_id}": {
+      "patch": {
+        "tags": [
+          "work"
+        ],
+        "summary": "Altera um marco; `done: true` conclui, `false` reabre (editor ou acima)",
+        "operationId": "update_milestone_milestones__milestone_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "milestone_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Milestone Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMilestone"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/milestones": {
+      "get": {
+        "tags": [
+          "work"
+        ],
+        "summary": "\"Próximos marcos\": os de todos os projetos que vencem nos próximos dias",
+        "operationId": "upcoming_milestones_workspaces__workspace_id__milestones_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 90,
+              "minimum": 0,
+              "description": "Janela a partir de hoje (o protótipo usa 10).",
+              "default": 10,
+              "title": "Days"
+            },
+            "description": "Janela a partir de hoje (o protótipo usa 10)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestonePage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/needs": {
+      "get": {
+        "tags": [
+          "work"
+        ],
+        "summary": "\"Precisa de você\": o que depende da pessoa agora e o que vem \"Em seguida\"",
+        "description": "`count` conta só as pendências que dependem da pessoa agora (as adiadas por \"Agora não\" ficam em `deferred_count`). Os itens `next` são marcos com decisão sua nos próximos 10 dias que ainda não viraram pendência: vêm depois e não entram na contagem.",
+        "operationId": "needs_workspaces__workspace_id__needs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NeedsYou"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/squad/status": {
+      "get": {
+        "tags": [
+          "work"
+        ],
+        "summary": "Status vivo dos sete especialistas, derivado dos runs e das pendências",
+        "description": "Modos da V4.6 (`idle`, `work`, `wait`, `live`, `sleep`; `monitor` chega com as rotinas) com o rótulo curto (\"escrevendo\", \"aguarda você\") e a frase da conversa (\"Otto · criando a primeira versão\"). Mesma regra do status ao vivo do web: serve para abrir a tela já com o estado certo antes dos eventos do Realtime.",
+        "operationId": "squad_status_workspaces__workspace_id__squad_status_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SquadStatus"
                 }
               }
             }
@@ -1643,6 +2404,18 @@
               "title": "Status"
             },
             "description": "Filtra pelo estado da decisão."
+          },
+          {
+            "name": "include_deferred",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Inclui as autorizações adiadas (\"Agora não\"); por padrão ficam fora.",
+              "default": false,
+              "title": "Include Deferred"
+            },
+            "description": "Inclui as autorizações adiadas (\"Agora não\"); por padrão ficam fora."
           },
           {
             "name": "cursor",
@@ -1834,6 +2607,214 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/approvals/{approval_id}/defer": {
+      "post": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "\"Agora não\": adia a autorização sem decidir nem rejeitar (só o owner)",
+        "description": "A autorização continua pendente, sem decisão, e sai de \"Precisa de você\"; o trabalho não muda de estado, nenhum run nasce e nada é cobrado. Repetir devolve o mesmo estado. Só para `authorize`; decidida responde 409.",
+        "operationId": "defer_approval_approvals__approval_id__defer_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "approval_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Approval Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalDefer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Approval"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/approvals/{approval_id}/resume": {
+      "post": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "\"Decidir agora\": a autorização adiada volta a pedir a decisão (só o owner)",
+        "description": "Volta para \"Precisa de você\". Sem adiamento, devolve o estado atual.",
+        "operationId": "resume_approval_approvals__approval_id__resume_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "approval_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Approval Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Approval"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -3401,6 +4382,104 @@
         ],
         "title": "AgentId"
       },
+      "AgentStatus": {
+        "properties": {
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "idle",
+              "work",
+              "wait",
+              "live",
+              "monitor",
+              "sleep"
+            ],
+            "title": "Mode"
+          },
+          "status_short": {
+            "type": "string",
+            "title": "Status Short",
+            "description": "Rótulo curto (`_shortNow`).",
+            "examples": [
+              "escrevendo"
+            ]
+          },
+          "status_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Label",
+            "description": "Frase da conversa.",
+            "examples": [
+              "Otto · criando a primeira versão"
+            ]
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "work_item_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Id"
+          },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation Id"
+          },
+          "approval_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "agent_id",
+          "mode",
+          "status_short",
+          "status_label"
+        ],
+        "title": "AgentStatus"
+      },
       "AgentUnread": {
         "properties": {
           "conversations": {
@@ -3437,7 +4516,7 @@
           },
           "kind": {
             "$ref": "#/components/schemas/ApprovalKind",
-            "description": "`review` revisar, `approve` aprovar, `authorize` autorizar ação externa, `confirm` confirmar, `reconnect` reconectar, `respond` responder. Só o owner decide."
+            "description": "`review` revisar, `approve` aprovar, `authorize` autorizar ação externa, `confirm` confirmar, `reconnect` reconectar, `respond` responder, `decide` decidir (escolher entre opções). Só o owner decide."
           },
           "status": {
             "$ref": "#/components/schemas/ApprovalStatus"
@@ -3553,6 +4632,37 @@
             ],
             "title": "Due At"
           },
+          "deferred": {
+            "type": "boolean",
+            "title": "Deferred",
+            "description": "\"Agora não\": pendente, mas fora de \"Precisa de você\" até decidir de novo.",
+            "default": false
+          },
+          "deferred_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deferred At"
+          },
+          "deferred_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deferred Until",
+            "description": "Até quando fica adiada; nulo = até a pessoa decidir."
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -3603,7 +4713,7 @@
         "properties": {
           "decision": {
             "$ref": "#/components/schemas/ApprovalDecision",
-            "description": "`review`/`approve`: approved, changes_requested ou rejected. `authorize`/`confirm`/`reconnect`: approved ou rejected. `respond`: answered."
+            "description": "`review`/`approve`: approved, changes_requested ou rejected. `authorize`/`confirm`/`reconnect`: approved ou rejected. `respond` e `decide`: answered (a escolha vai em `note`)."
           },
           "note": {
             "anyOf": [
@@ -3660,6 +4770,29 @@
           }
         ]
       },
+      "ApprovalDefer": {
+        "properties": {
+          "until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until",
+            "description": "Quando voltar a pedir; sem data, fica para quando a pessoa quiser."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ApprovalDefer",
+        "examples": [
+          {}
+        ]
+      },
       "ApprovalKind": {
         "type": "string",
         "enum": [
@@ -3668,7 +4801,8 @@
           "authorize",
           "confirm",
           "reconnect",
-          "respond"
+          "respond",
+          "decide"
         ],
         "title": "ApprovalKind"
       },
@@ -5623,6 +6757,19 @@
         ],
         "title": "FactSourceState"
       },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
       "Health": {
         "properties": {
           "status": {
@@ -7064,6 +8211,323 @@
         ],
         "title": "MessagePage"
       },
+      "MilestoneCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "milestone",
+              "goal"
+            ],
+            "title": "Kind",
+            "default": "milestone"
+          },
+          "needs_you": {
+            "type": "boolean",
+            "title": "Needs You",
+            "default": false
+          },
+          "planned": {
+            "type": "boolean",
+            "title": "Planned",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "title": "MilestoneCreate",
+        "examples": [
+          {
+            "agent_id": "kaia",
+            "due_at": "2026-10-22T09:00:00-03:00",
+            "needs_you": true,
+            "summary": "você aprova cada uma",
+            "title": "Revisão das peças"
+          }
+        ]
+      },
+      "MilestonePage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectMilestone"
+            },
+            "type": "array",
+            "title": "Items",
+            "description": "Por data, o mais próximo primeiro."
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "MilestonePage"
+      },
+      "MilestoneUpdate": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "milestone",
+                  "goal"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "needs_you": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Needs You"
+          },
+          "planned": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned"
+          },
+          "done": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Done"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "MilestoneUpdate",
+        "description": "Só os campos enviados mudam; `done: true` conclui agora, `false` reabre."
+      },
+      "NeedItem": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "review",
+              "approve",
+              "authorize",
+              "confirm",
+              "reconnect",
+              "respond",
+              "decide",
+              "next"
+            ],
+            "title": "Type",
+            "description": "Tipo da linha da faixa: os da pendência (\"Para você revisar\"…, \"Para você decidir\") ou `next` (\"Em seguida\": marco seu que ainda não depende de você)."
+          },
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId",
+            "description": "Quem pede."
+          },
+          "approval": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Approval"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectMilestone"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "project": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NeedProject"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "agent_id"
+        ],
+        "title": "NeedItem"
+      },
+      "NeedProject": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "NeedProject"
+      },
+      "NeedsYou": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count",
+            "description": "Só o que depende da pessoa agora (sem adiadas e sem `next`)."
+          },
+          "deferred_count": {
+            "type": "integer",
+            "title": "Deferred Count",
+            "description": "Autorizações adiadas por \"Agora não\"."
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/NeedItem"
+            },
+            "type": "array",
+            "title": "Items",
+            "description": "O que é agora (mais antigo primeiro), depois `next`."
+          }
+        },
+        "type": "object",
+        "required": [
+          "count",
+          "deferred_count",
+          "items"
+        ],
+        "title": "NeedsYou"
+      },
       "Participant": {
         "properties": {
           "participant_type": {
@@ -7099,6 +8563,59 @@
           "agent_id"
         ],
         "title": "Participant"
+      },
+      "PendingApprovalSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ApprovalKind"
+          },
+          "requested_by_agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "delivery_version_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Version No"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "deferred": {
+            "type": "boolean",
+            "title": "Deferred",
+            "description": "\"Agora não\": fora de \"Precisa de você\" até decidir."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "requested_by_agent_id",
+          "delivery_version_no",
+          "due_at",
+          "deferred"
+        ],
+        "title": "PendingApprovalSummary"
       },
       "PrincipalType": {
         "type": "string",
@@ -7143,6 +8660,32 @@
           },
           "owner_agent_id": {
             "$ref": "#/components/schemas/AgentId"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At",
+            "description": "Início no roadmap."
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At",
+            "description": "Prazo (\"20/12\"); nulo = sem prazo."
           },
           "created_by": {
             "anyOf": [
@@ -7194,6 +8737,374 @@
         ],
         "title": "Project"
       },
+      "ProjectCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "objective": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective"
+          },
+          "owner_agent_id": {
+            "$ref": "#/components/schemas/AgentId",
+            "description": "Quem conduz.",
+            "default": "nexo"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "participants": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectParticipantIn"
+            },
+            "type": "array",
+            "maxItems": 7,
+            "title": "Participants"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "ProjectCreate",
+        "examples": [
+          {
+            "ends_at": "2026-12-20T18:00:00-03:00",
+            "name": "Campanha de Natal",
+            "objective": "Vender mais panetones pelo site e na loja.",
+            "owner_agent_id": "nexo",
+            "participants": [
+              {
+                "agent_id": "bia",
+                "responsibility": "estratégia e conceito"
+              },
+              {
+                "agent_id": "kaia",
+                "responsibility": "peças da campanha"
+              }
+            ],
+            "starts_at": "2026-10-05T09:00:00-03:00"
+          }
+        ]
+      },
+      "ProjectDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "examples": [
+              "Lançamento do pão de fermentação longa"
+            ]
+          },
+          "objective": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProjectStatus"
+          },
+          "owner_agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At",
+            "description": "Início no roadmap."
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At",
+            "description": "Prazo (\"20/12\"); nulo = sem prazo."
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "archived_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "participants": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectParticipant"
+            },
+            "type": "array",
+            "title": "Participants",
+            "description": "Quem conduz primeiro."
+          },
+          "milestones": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectMilestone"
+            },
+            "type": "array",
+            "title": "Milestones",
+            "description": "Por data; sem data por último."
+          },
+          "work_item_count": {
+            "type": "integer",
+            "title": "Work Item Count",
+            "description": "\"Trabalhos pedidos neste projeto · N\"."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "name",
+          "objective",
+          "status",
+          "owner_agent_id",
+          "created_by",
+          "archived_at",
+          "created_at",
+          "updated_at",
+          "participants",
+          "milestones",
+          "work_item_count"
+        ],
+        "title": "ProjectDetail"
+      },
+      "ProjectMilestone": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Project Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "examples": [
+              "Revisão das peças"
+            ]
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary",
+            "examples": [
+              "você aprova cada uma"
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "milestone",
+              "goal"
+            ],
+            "title": "Kind",
+            "description": "`goal` é a meta do projeto."
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At",
+            "description": "Nulo = sem data."
+          },
+          "needs_you": {
+            "type": "boolean",
+            "title": "Needs You",
+            "description": "\"decisão sua\" no roadmap."
+          },
+          "planned": {
+            "type": "boolean",
+            "title": "Planned",
+            "description": "\"previsto\" no roadmap."
+          },
+          "done": {
+            "type": "boolean",
+            "title": "Done"
+          },
+          "done_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Done At"
+          },
+          "work_item_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Id",
+            "description": "Trabalho pedido dentro do projeto."
+          },
+          "approval_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Id",
+            "description": "Pendência em que o marco virou decisão."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "title",
+          "summary",
+          "agent_id",
+          "kind",
+          "due_at",
+          "needs_you",
+          "planned",
+          "done",
+          "done_at",
+          "work_item_id",
+          "approval_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ProjectMilestone"
+      },
       "ProjectPage": {
         "properties": {
           "items": {
@@ -7223,6 +9134,78 @@
         ],
         "title": "ProjectPage"
       },
+      "ProjectParticipant": {
+        "properties": {
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "responsibility": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsibility",
+            "examples": [
+              "estratégia e conceito"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "agent_id",
+          "responsibility"
+        ],
+        "title": "ProjectParticipant"
+      },
+      "ProjectParticipantIn": {
+        "properties": {
+          "agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "responsibility": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsibility"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "agent_id"
+        ],
+        "title": "ProjectParticipantIn"
+      },
+      "ProjectParticipantsSet": {
+        "properties": {
+          "participants": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectParticipantIn"
+            },
+            "type": "array",
+            "maxItems": 7,
+            "title": "Participants",
+            "description": "A equipe inteira; quem conduz continua nela."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "participants"
+        ],
+        "title": "ProjectParticipantsSet"
+      },
       "ProjectStatus": {
         "type": "string",
         "enum": [
@@ -7233,6 +9216,83 @@
           "cancelled"
         ],
         "title": "ProjectStatus"
+      },
+      "ProjectUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "objective": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner_agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ProjectUpdate",
+        "description": "Só os campos enviados mudam; `null` em objective, starts_at e ends_at apaga o valor."
       },
       "ReadCreate": {
         "properties": {
@@ -7583,6 +9643,29 @@
         ],
         "title": "RunSummary"
       },
+      "SquadStatus": {
+        "properties": {
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "agents": {
+            "items": {
+              "$ref": "#/components/schemas/AgentStatus"
+            },
+            "type": "array",
+            "title": "Agents",
+            "description": "Os sete, na ordem do squad."
+          }
+        },
+        "type": "object",
+        "required": [
+          "workspace_id",
+          "agents"
+        ],
+        "title": "SquadStatus"
+      },
       "UnreadCount": {
         "properties": {
           "conversations": {
@@ -7672,6 +9755,46 @@
           "full_name"
         ],
         "title": "User"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
       },
       "WorkItem": {
         "properties": {
@@ -7776,6 +9899,76 @@
             "type": "string",
             "format": "date-time",
             "title": "Updated At"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At",
+            "description": "Prazo do trabalho."
+          },
+          "status_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Label",
+            "description": "Frase viva: a do agente (\"Otto criando a primeira versão\") ou a do estado (\"v1 aguarda sua aprovação\"), no idioma do workspace.",
+            "examples": [
+              "v1 aguarda sua aprovação"
+            ]
+          },
+          "next_step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Step",
+            "description": "Próximo passo.",
+            "examples": [
+              "Aprovar a v1"
+            ]
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkItemOrigin"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "awaiting_you": {
+            "type": "boolean",
+            "title": "Awaiting You",
+            "description": "Tem pendência que depende da pessoa agora (não adiada).",
+            "default": false
+          },
+          "pending_approval": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PendingApprovalSummary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A pendência aberta (a que depende de você primeiro)."
           }
         },
         "type": "object",
@@ -7963,6 +10156,76 @@
             "format": "date-time",
             "title": "Updated At"
           },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At",
+            "description": "Prazo do trabalho."
+          },
+          "status_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Label",
+            "description": "Frase viva: a do agente (\"Otto criando a primeira versão\") ou a do estado (\"v1 aguarda sua aprovação\"), no idioma do workspace.",
+            "examples": [
+              "v1 aguarda sua aprovação"
+            ]
+          },
+          "next_step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Step",
+            "description": "Próximo passo.",
+            "examples": [
+              "Aprovar a v1"
+            ]
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkItemOrigin"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "awaiting_you": {
+            "type": "boolean",
+            "title": "Awaiting You",
+            "description": "Tem pendência que depende da pessoa agora (não adiada).",
+            "default": false
+          },
+          "pending_approval": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PendingApprovalSummary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A pendência aberta (a que depende de você primeiro)."
+          },
           "briefing": {
             "additionalProperties": true,
             "type": "object",
@@ -8106,6 +10369,76 @@
             "format": "date-time",
             "title": "Updated At"
           },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At",
+            "description": "Prazo do trabalho."
+          },
+          "status_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Label",
+            "description": "Frase viva: a do agente (\"Otto criando a primeira versão\") ou a do estado (\"v1 aguarda sua aprovação\"), no idioma do workspace.",
+            "examples": [
+              "v1 aguarda sua aprovação"
+            ]
+          },
+          "next_step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Step",
+            "description": "Próximo passo.",
+            "examples": [
+              "Aprovar a v1"
+            ]
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkItemOrigin"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "awaiting_you": {
+            "type": "boolean",
+            "title": "Awaiting You",
+            "description": "Tem pendência que depende da pessoa agora (não adiada).",
+            "default": false
+          },
+          "pending_approval": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PendingApprovalSummary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A pendência aberta (a que depende de você primeiro)."
+          },
           "briefing": {
             "additionalProperties": true,
             "type": "object",
@@ -8138,6 +10471,14 @@
             },
             "type": "array",
             "title": "Runs"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/WorkItemHistoryEntry"
+            },
+            "type": "array",
+            "title": "History",
+            "description": "Do mais antigo ao mais recente."
           }
         },
         "type": "object",
@@ -8162,6 +10503,215 @@
           "runs"
         ],
         "title": "WorkItemDetail"
+      },
+      "WorkItemHistoryEntry": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "actor_type": {
+            "$ref": "#/components/schemas/MessageAuthorType"
+          },
+          "actor_user_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor User Id"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "requested",
+              "delivered",
+              "decided"
+            ],
+            "title": "Kind"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "examples": [
+              "Você aprovou a v2"
+            ]
+          },
+          "mark": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "automatic",
+                  "approved_by_you"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mark",
+            "description": "\"automático\" ou \"aprovado por você\"."
+          },
+          "mark_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mark Label",
+            "examples": [
+              "aprovado por você"
+            ]
+          },
+          "params": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Params"
+          },
+          "approval_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Id"
+          },
+          "delivery_version_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Version Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "actor_type",
+          "actor_user_id",
+          "agent_id",
+          "kind",
+          "text",
+          "mark",
+          "mark_label",
+          "params",
+          "approval_id",
+          "delivery_version_id",
+          "created_at"
+        ],
+        "title": "WorkItemHistoryEntry"
+      },
+      "WorkItemOrigin": {
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/WorkItemOriginType"
+          },
+          "ref": {
+            "type": "string",
+            "title": "Ref",
+            "description": "Id da mensagem, da sugestão ou do projeto; código da execução."
+          },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation Id",
+            "description": "Conversa do pedido (origem mensagem)."
+          },
+          "conversation_kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConversationKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentId"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Especialista da conversa direta ou quem percebeu o insight."
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Título do insight ou nome do projeto."
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "ref",
+          "conversation_id",
+          "conversation_kind",
+          "agent_id",
+          "title"
+        ],
+        "title": "WorkItemOrigin",
+        "description": "De onde o trabalho nasceu, com o que o web precisa para escrever a origem."
+      },
+      "WorkItemOriginType": {
+        "type": "string",
+        "enum": [
+          "message",
+          "insight",
+          "routine_run",
+          "project"
+        ],
+        "title": "WorkItemOriginType"
       },
       "WorkItemPage": {
         "properties": {
