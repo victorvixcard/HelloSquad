@@ -5,7 +5,6 @@ import type { components } from "@hellosquad/contracts";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
-import { useRouter } from "next/navigation";
 import {
   createDirectConversationAction,
   createWorkItemAction,
@@ -15,12 +14,12 @@ import {
   sendMessageAction,
 } from "@/app/app/[workspace]/actions";
 import { conversationLive, shortNowKey } from "@/lib/live/live-state";
-import { deliveryForRequest, workTitleFrom } from "@/lib/live/request";
 import { dayKey, dayLabel, shortTime, threadAt, threadTitleFrom } from "./conversation-format";
 import { useLive } from "./live";
 import { usePopoverDismiss } from "./Popover";
 import { useShell, type ConversationTarget } from "./shell-context";
 import { SquadStatus, type SquadStatusKind } from "./SquadStatus";
+import { useSquadEffect } from "./use-squad-effect";
 
 type Message = components["schemas"]["Message"];
 
@@ -68,7 +67,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const locale = useLocale();
   const shell = useShell();
   const live = useLive();
-  const router = useRouter();
+  const squadEffect = useSquadEffect(actions);
   const { mode, target } = shell.conversation;
   const open = mode !== "off" && !!target;
   const [loaded, setLoaded] = useState<Loaded | null>(null);
@@ -299,13 +298,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     items[next]?.focus();
   }
 
-  /**
-   * Envio (A1a): a mensagem aparece na hora; depois, conforme a conversa,
-   * (1) "Pedir ajuste" registra `changes_requested` com a nota = texto (dono, 16/10 10:20);
-   * (2) com uma pergunta do agente pendente nesta conversa, o texto é a resposta (`answered`, V4.6 §5 "Responder");
-   * (3) pedido de uma entrega que o squad executa vira trabalho com run na fila (`POST /messages/{id}/work-items`);
-   * senão fica só a mensagem. O que o squad faz chega pelo Realtime.
-   */
+  /** Envio (A1a): a mensagem da pessoa aparece na hora; se a API recusar, ela sai e o texto volta ao campo. */
   async function send(body: string) {
     if (!target || sending) return;
     setSending(true);
@@ -343,33 +336,9 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     if (!result.ok) return drop();
     const posted = result.data;
 
-    // O que a mensagem faz no squad (depois de gravada, para entrar no histórico que o agente lê).
-    const answer = Object.values(live.state.pending).find(
-      (p) => p.kind === "respond" && shell.workConversations[p.workItemId] === conversationId,
-    );
-    let effect: Promise<unknown> = Promise.resolve();
-    if (adjust) {
-      effect = actions.decide(adjust.approvalId, "changes_requested", body).then((r) => {
-        if (!r.ok) return setSendError(true);
-        live.expectRevision(adjust.workItemId);
-        router.refresh();
-      });
-    } else if (answer && shell.canDecide) {
-      effect = actions.decide(answer.id, "answered", body).then((r) => {
-        if (!r.ok) return setSendError(true);
-        router.refresh();
-      });
-    } else {
-      const type = deliveryForRequest(body);
-      if (type) {
-        effect = actions.createWork(posted.id, type, workTitleFrom(body)).then((r) => {
-          if (!r.ok) return setSendError(true);
-          if (r.data.runId) live.linkRun(r.data.runId, r.data.conversationId ?? conversationId, r.data.workItemId);
-          router.refresh();
-        });
-      }
-    }
-    await effect;
+    // O que a mensagem faz no squad (ajuste, resposta ou pedido que vira trabalho): use-squad-effect.ts.
+    const done = await squadEffect({ conversationId, messageId: posted.id, body, adjust });
+    if (!done) setSendError(true);
     setSending(false);
 
     if (created && target.agent) {
@@ -396,7 +365,13 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
             {room ? (
               <div className="ps-cvh-room" aria-hidden="true">
                 {SQUAD.map((m) => (
-                  <Agent key={m.id} agent={m.id} size={26} />
+                  <Agent
+                    key={m.id}
+                    agent={m.id}
+                    size={26}
+                    expression={live.modes[m.id] === "wait" ? "big" : "oval"}
+                    thinking={live.modes[m.id] === "work"}
+                  />
                 ))}
               </div>
             ) : agent ? (

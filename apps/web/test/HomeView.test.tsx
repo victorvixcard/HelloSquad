@@ -22,6 +22,8 @@ function actions() {
   return {
     send: vi.fn(async (_id: string, body: string) => ({ ok: true as const, data: { id: "m1", body } as never })),
     create: vi.fn(async () => ({ ok: true as const, data: { id: "nova" } })),
+    createWork: vi.fn(async () => ({ ok: true as const, data: { workItemId: "wi-1", runId: "run-1", conversationId: "otto-1" } })),
+    decide: vi.fn(async () => ({ ok: true as const, data: {} as never })),
   };
 }
 
@@ -48,6 +50,8 @@ describe("Início V3", () => {
     await user.type(field, "Uma legenda para domingo{Enter}");
     await waitFor(() => expect(acts.send).toHaveBeenCalledWith("otto-1", "Uma legenda para domingo"));
     expect(shell.openConversation).toHaveBeenCalledWith({ conversationId: "otto-1", agent: "otto" }, "panel");
+    // Pedido de legenda (entrega 04.01, a que o squad executa na Fase 1) vira trabalho com run na fila.
+    await waitFor(() => expect(acts.createWork).toHaveBeenCalledWith("m1", "04.01", "Uma legenda para domingo"));
   });
 
   it("o squad inteiro escreve na Sala do Squad", async () => {
@@ -56,6 +60,8 @@ describe("Início V3", () => {
     renderWithShell(<HomeView firstName="Marina" business="Miolo" needs={[]} inProgress={[]} actions={acts} />);
     await user.type(screen.getByRole("textbox", { name: "Pedido para a Sala do Squad" }), "Bom dia{Enter}");
     await waitFor(() => expect(acts.send).toHaveBeenCalledWith("room-1", "Bom dia"));
+    // Mensagem que não pede uma entrega fica só como mensagem: nenhum trabalho, nenhuma resposta inventada.
+    expect(acts.createWork).not.toHaveBeenCalled();
   });
 
   it("abrir Trabalhos mostra a decisão pendente com a ação; recolher os resumos avisa que há decisão", async () => {

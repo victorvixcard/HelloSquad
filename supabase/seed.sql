@@ -235,11 +235,11 @@ begin
 
   insert into public.runs (
     id, workspace_id, work_item_id, conversation_id, agent_id, kind, status, idempotency_key,
-    started_at, created_at, updated_at
+    started_at, credits_charged, created_at, updated_at
   ) values (
     v_run, v_miolo, v_work_item, v_otto_chat, 'otto', 'interactive', 'waiting_approval',
     'work_item:' || v_work_item || ':start',
-    '2026-10-15 10:14:05-03', '2026-10-15 10:14:00-03', '2026-10-15 10:16:00-03'
+    '2026-10-15 10:14:05-03', 10, '2026-10-15 10:14:00-03', '2026-10-15 10:16:00-03'
   );
 
   insert into public.deliveries (id, workspace_id, work_item_id, kind, created_at, updated_at)
@@ -353,3 +353,137 @@ begin
   );
 end;
 $seed_memoria$;
+
+-- S1e — créditos, com valores provisórios (dono, 16/10: "preço e créditos ficam por último"; nada de preço em
+-- dinheiro). Preços: as 46 deliveries do catálogo (Documento Mestre, Anexo A) com a profundidade inferida no
+-- protótipo SA0 (pergunta 6 do SA0, aberta): 04.01 = 10 créditos (produzir), 01.01 = 0 (incluído), as demais
+-- = 10 (valor padrão provisório); todas provisional e sem aprovação comercial. Preço é versionado: linha fixa,
+-- nunca alterada. A conta de crédito de cada workspace do seed recomeça (o extrato só sai junto com a conta)
+-- e volta com ids fixos. O ciclo da Miolo acompanha o mês corrente, para o seed não vencer.
+--
+-- Estado garantido:
+--   Miolo: plano Squad (fictício, provisório), ciclo do mês com 100 créditos e 64 usados (54 de consumo
+--     anterior fictício, para a barra da V4.6 em 64%, e 10 da legenda do seed, cobrados pelo run dela);
+--     saldo 36, nada reservado
+--   Vitta: Free, 20 créditos iniciais, nada usado
+--   Trilha: Free, 20 créditos iniciais, 0,8 usado (4%, o primeiro acesso da V4.6)
+
+do $seed_creditos$
+declare
+  v_miolo uuid := (select id from public.workspaces where slug = 'miolo');
+  v_vitta uuid := (select id from public.workspaces where slug = 'vitta');
+  v_trilha uuid := (select id from public.workspaces where slug = 'trilha');
+  v_run constant uuid := '5eed0000-0000-4000-8000-000000000401';
+  v_free uuid := (app.current_plan_version('free')).id;
+  v_squad uuid;
+  v_account_miolo constant uuid := '5eed0000-0000-4000-8000-000000000911';
+  v_account_vitta constant uuid := '5eed0000-0000-4000-8000-000000000912';
+  v_account_trilha constant uuid := '5eed0000-0000-4000-8000-000000000913';
+  v_grant_miolo constant uuid := '5eed0000-0000-4000-8000-000000000921';
+  v_grant_vitta constant uuid := '5eed0000-0000-4000-8000-000000000922';
+  v_grant_trilha constant uuid := '5eed0000-0000-4000-8000-000000000923';
+  v_hold constant uuid := '5eed0000-0000-4000-8000-000000000931';
+  v_free_start constant timestamptz := '2026-10-01 00:00:00-03';
+  v_cycle_start timestamptz := date_trunc('month', now() at time zone 'America/Sao_Paulo') at time zone 'America/Sao_Paulo';
+  v_held_at timestamptz;
+  v_charged_at timestamptz;
+begin
+  if v_miolo is null or v_vitta is null or v_trilha is null then
+    raise exception 'Seed dos créditos depende da Miolo, da Vitta e da Trilha (primeiro bloco).';
+  end if;
+  if v_free is null then
+    raise exception 'Seed dos créditos depende do plano Free da migration 20261016133000_credits.sql.';
+  end if;
+  v_held_at := greatest('2026-10-15 10:14:05-03'::timestamptz, least(v_cycle_start + interval '2 minutes', now()));
+  v_charged_at := greatest('2026-10-15 10:16:00-03'::timestamptz, least(v_cycle_start + interval '3 minutes', now()));
+
+  insert into public.delivery_prices (id, delivery_type, depth, credits, valid_from, provisional, approved_commercially, created_at)
+  select md5('seed:price:' || c.delivery_type)::uuid, c.delivery_type, c.depth::public.delivery_depth,
+         case c.delivery_type when '01.01' then 0 else 10 end,
+         v_free_start, true, false, v_free_start
+  from (values
+    ('01.01', 'orientar'), ('01.02', 'produzir'), ('01.03', 'orientar'), ('01.04', 'otimizar'),
+    ('02.01', 'orientar'), ('02.02', 'orientar'), ('02.03', 'produzir'), ('02.04', 'produzir'),
+    ('02.05', 'orientar'), ('02.06', 'orientar'), ('02.07', 'orientar'),
+    ('03.01', 'produzir'), ('03.02', 'produzir'), ('03.03', 'produzir'), ('03.04', 'produzir'),
+    ('03.05', 'produzir'), ('03.06', 'produzir'), ('03.07', 'produzir'),
+    ('04.01', 'produzir'), ('04.02', 'produzir'), ('04.03', 'produzir'), ('04.04', 'executar'),
+    ('04.05', 'executar'), ('04.06', 'produzir'), ('04.07', 'produzir'),
+    ('05.01', 'orientar'), ('05.02', 'produzir'), ('05.03', 'orientar'), ('05.04', 'orientar'),
+    ('05.05', 'otimizar'), ('05.06', 'executar'), ('05.07', 'orientar'), ('05.08', 'otimizar'),
+    ('05.09', 'otimizar'),
+    ('06.01', 'orientar'), ('06.02', 'produzir'), ('06.03', 'produzir'), ('06.04', 'produzir'),
+    ('06.05', 'produzir'), ('06.06', 'executar'),
+    ('07.01', 'orientar'), ('07.02', 'orientar'), ('07.03', 'produzir'), ('07.04', 'orientar'),
+    ('07.05', 'produzir'), ('07.06', 'otimizar')
+  ) as c (delivery_type, depth)
+  on conflict (id) do nothing;
+
+  insert into public.plans (id, slug, name, created_at)
+  values ('5eed0000-0000-4000-8000-000000000901', 'squad', 'Squad', v_free_start)
+  on conflict (slug) do nothing;
+  insert into public.plan_versions (
+    id, plan_id, version, credits, cycle, validity_days, valid_from, provisional, approved_commercially, created_at
+  )
+  select '5eed0000-0000-4000-8000-000000000902', p.id, 1, 100, 'monthly', null, v_free_start, true, false, v_free_start
+  from public.plans p where p.slug = 'squad'
+  on conflict (plan_id, version) do nothing;
+  v_squad := (
+    select v.id from public.plan_versions v join public.plans p on p.id = v.plan_id
+    where p.slug = 'squad' and v.version = 1
+  );
+
+  delete from public.credit_accounts a using public.workspaces s
+  where s.id = a.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+
+  insert into public.credit_accounts (id, workspace_id, plan_version_id, created_at, updated_at) values
+    (v_account_miolo, v_miolo, v_squad, v_free_start, v_free_start),
+    (v_account_vitta, v_vitta, v_free, v_free_start, v_free_start),
+    (v_account_trilha, v_trilha, v_free, v_free_start, v_free_start);
+
+  insert into public.credit_grants (
+    id, workspace_id, account_id, origin, plan_version_id, amount, remaining, reserved, starts_at, expires_at,
+    created_at, updated_at
+  ) values
+    (v_grant_miolo, v_miolo, v_account_miolo, 'plan_cycle', v_squad, 100, 36, 0,
+     v_cycle_start, v_cycle_start + interval '1 month', v_cycle_start, v_charged_at),
+    (v_grant_vitta, v_vitta, v_account_vitta, 'plan_cycle', v_free, 20, 20, 0,
+     v_free_start, null, v_free_start, v_free_start),
+    (v_grant_trilha, v_trilha, v_account_trilha, 'plan_cycle', v_free, 20, 19.2, 0,
+     v_free_start, null, v_free_start, v_free_start);
+
+  insert into public.credit_holds (
+    id, workspace_id, account_id, run_id, idempotency_key, delivery_type, price_id, estimate, captured, state,
+    settled_at, created_at, updated_at
+  ) values (
+    v_hold, v_miolo, v_account_miolo, v_run, 'run:' || v_run, '04.01', md5('seed:price:04.01')::uuid, 10, 10,
+    'captured', v_charged_at, v_held_at, v_charged_at
+  );
+
+  insert into public.credit_ledger (
+    id, workspace_id, account_id, entry_type, grant_id, hold_id, run_id, amount, reserved_delta,
+    idempotency_key, note, metadata, created_at
+  ) values
+    ('5eed0000-0000-4000-8000-000000000941', v_miolo, v_account_miolo, 'grant', v_grant_miolo, null, null,
+     100, 0, 'seed:miolo:plan_cycle', null, '{}', v_cycle_start),
+    ('5eed0000-0000-4000-8000-000000000942', v_miolo, v_account_miolo, 'adjustment', v_grant_miolo, null, null,
+     -54, 0, 'seed:miolo:consumo_anterior',
+     'Consumo anterior do ciclo (fictício): a conta em uso da V4.6 mostra 64% dos créditos do mês.', '{}',
+     least(v_cycle_start + interval '1 minute', now())),
+    ('5eed0000-0000-4000-8000-000000000943', v_miolo, v_account_miolo, 'hold', v_grant_miolo, v_hold, v_run,
+     0, 10, 'run:' || v_run || ':hold:' || v_grant_miolo, null,
+     jsonb_build_object('delivery_type', '04.01', 'work_item_id', '5eed0000-0000-4000-8000-000000000301'),
+     v_held_at),
+    ('5eed0000-0000-4000-8000-000000000944', v_miolo, v_account_miolo, 'capture', v_grant_miolo, v_hold, v_run,
+     -10, -10, 'run:' || v_run || ':capture:' || v_grant_miolo, null,
+     jsonb_build_object('delivery_type', '04.01'), v_charged_at),
+    ('5eed0000-0000-4000-8000-000000000951', v_vitta, v_account_vitta, 'grant', v_grant_vitta, null, null,
+     20, 0, 'seed:vitta:free', null, '{}', v_free_start),
+    ('5eed0000-0000-4000-8000-000000000961', v_trilha, v_account_trilha, 'grant', v_grant_trilha, null, null,
+     20, 0, 'seed:trilha:free', null, '{}', v_free_start),
+    ('5eed0000-0000-4000-8000-000000000962', v_trilha, v_account_trilha, 'adjustment', v_grant_trilha, null, null,
+     -0.8, 0, 'seed:trilha:primeiro_acesso',
+     'Uso fictício do primeiro acesso: a V4.6 mostra 4% dos créditos do mês.', '{}',
+     v_free_start + interval '5 minutes');
+end;
+$seed_creditos$;

@@ -2,6 +2,7 @@
 
 import { Agent, getAgent, PRODUCT_ICONS, type AgentId } from "@hellosquad/ui";
 import { useTranslations } from "next-intl";
+import { useLive } from "@/components/product/live";
 import { useShell } from "@/components/product/shell-context";
 
 /** Camada de identidade dos ambientes V4: o especialista, o título, uma frase e a conversa com ele. */
@@ -11,11 +12,13 @@ export function EnvIdentity({ agent, business }: { agent: AgentId; business: str
   const shell = useShell();
   const member = getAgent(agent);
   const area = tc(`areas.${agent}`);
-  const waiting = shell.conversation.target?.agent === agent && shell.conversation.mode !== "off";
+  // V4.6 `_vId` (L10569): o rosto segue o modo ao vivo do especialista: "big" quando aguarda você, olhos
+  // trabalhando quando está numa etapa (runs e pendências pelo Realtime).
+  const mode = useLive().modes[agent];
   return (
     <header className="v4-id">
       <span className="v4-id-av" aria-hidden="true">
-        <Agent agent={agent} size={44} expression={waiting ? "happy" : "oval"} />
+        <Agent agent={agent} size={44} expression={mode === "wait" ? "big" : "oval"} thinking={mode === "work"} />
       </span>
       <div className="v4-id-t">
         <h1 className="v4-h1">{area}</h1>

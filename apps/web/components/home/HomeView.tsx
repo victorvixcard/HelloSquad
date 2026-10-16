@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createDirectConversationAction, sendMessageAction } from "@/app/app/[workspace]/actions";
+import { SQUAD_EFFECT_ACTIONS, useSquadEffect, type SquadEffectActions } from "@/components/product/use-squad-effect";
 import { useShell } from "@/components/product/shell-context";
 import { SquadStage } from "./SquadStage";
 import { SuggestionBand, type Suggestion } from "./SuggestionBand";
@@ -27,7 +28,7 @@ export type HomeViewProps = {
   business: string;
   needs: HomeNeed[];
   inProgress: HomeWork[];
-  actions?: { send: typeof sendMessageAction; create: typeof createDirectConversationAction };
+  actions?: { send: typeof sendMessageAction; create: typeof createDirectConversationAction } & Partial<SquadEffectActions>;
 };
 
 const ORDER: AgentId[] = SQUAD.map((m) => m.id);
@@ -43,6 +44,7 @@ export function HomeView({ firstName, business, needs, inProgress, actions }: Ho
   const base = `/app/${shell.workspace.slug}`;
   const send = actions?.send ?? sendMessageAction;
   const create = actions?.create ?? createDirectConversationAction;
+  const squadEffect = useSquadEffect(actions?.createWork && actions.decide ? (actions as SquadEffectActions) : SQUAD_EFFECT_ACTIONS);
   const [input, setInput] = useState("");
   const [sel, setSel] = useState<AgentId[] | null>(null);
   const [min, setMin] = useState(false);
@@ -164,13 +166,17 @@ export function HomeView({ firstName, business, needs, inProgress, actions }: Ho
       if (created.ok) target = { ...target, conversationId: created.data.id };
     }
     const result = target.conversationId ? await send(target.conversationId, body) : null;
-    setBusy(false);
-    if (!result?.ok) {
+    if (!result?.ok || !target.conversationId) {
+      setBusy(false);
       setError(true);
       return;
     }
     setInput("");
+    // A conversa abre com o pedido à vista; o pedido de uma entrega vira trabalho e o squad responde ao vivo.
     shell.openConversation(target, "panel");
+    const done = await squadEffect({ conversationId: target.conversationId, messageId: result.data.id, body });
+    setBusy(false);
+    if (!done) setError(true);
   }
 
   const suggestions = t.raw("suggestions") as Suggestion[];
