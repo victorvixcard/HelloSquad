@@ -19,6 +19,7 @@ from psycopg_pool import AsyncConnectionPool
 
 from hellosquad.llm.base import Usage
 from hellosquad.squad.loader import SquadPrompt
+from hellosquad.squad.memory import MemoryFact, select_memory
 from hellosquad.squad.prompt import HistoryMessage
 
 FINISHED_RUN = {"succeeded", "failed", "cancelled", "waiting_approval"}
@@ -61,7 +62,6 @@ class RunData:
     locale: str
     request: str
     history: list[HistoryMessage]
-    brand_facts: list[str]
     feedback: dict[str, Any] | None = None
 
 
@@ -245,7 +245,6 @@ class RunStore:
                     HistoryMessage(r["author_type"], r["author_agent_id"], r["body"])
                     for r in reversed(rows)
                 ]
-            facts = await self._brand_facts(conn)
             feedback = await fetchone(
                 conn,
                 """
@@ -278,22 +277,39 @@ class RunStore:
             locale=row["locale"],
             request=row["request"] or row["title"],
             history=history,
-            brand_facts=facts,
             feedback=dict(feedback) if feedback else None,
         )
 
-    async def _brand_facts(self, conn: AsyncConnection[DictRow]) -> list[str]:
-        """Bloco fixo da marca enquanto a memória (S1d) não chega: brand_profiles, se existir."""
-        exists = await fetchval(conn, "select to_regclass('public.brand_profiles') is not null")
-        if not exists:
-            return []
-        profile = await fetchval(
-            conn,
-            "select to_jsonb(p) - 'id' - 'workspace_id' - 'created_at' - 'updated_at' "
-            "from public.brand_profiles p where p.workspace_id = %s limit 1",
-            (self.workspace_id,),
-        )
-        return [f"{k}: {v}" for k, v in sorted((profile or {}).items()) if isinstance(v, str) and v]
+    async def recall_memory(self, *, locale: str, text: str, budget: int) -> list[MemoryFact]:
+        """Memória da Marca do run (essenciais + busca sob orçamento), registrada em
+        run_context_items na mesma transação. Retentativa do run não duplica o registro."""
+        async with self.pool.connection() as conn, conn.transaction():
+            await self._fence(conn)
+            facts = await select_memory(
+                conn, workspace_id=self.workspace_id, locale=locale, text=text, budget=budget
+            )
+            if facts:
+                async with conn.cursor() as cur:
+                    await cur.executemany(
+                        """
+                        insert into public.run_context_items (
+                          workspace_id, run_id, kind, fact_id, reason, rank, tokens
+                        ) values (%s, %s, 'fact', %s, %s, %s, %s)
+                        on conflict do nothing
+                        """,
+                        [
+                            (
+                                self.workspace_id,
+                                self.run_id,
+                                fact.fact_id,
+                                fact.reason,
+                                fact.rank,
+                                fact.tokens,
+                            )
+                            for fact in facts
+                        ],
+                    )
+        return facts
 
     async def ensure_prompt_version(self, prompt: SquadPrompt) -> str:
         async with self.pool.connection() as conn:
@@ -475,8 +491,10 @@ class RunStore:
         work_step_title: str,
         model: str,
         prompt_version: str,
+        observations: list[dict[str, str]] | None = None,
     ) -> dict[str, Any]:
-        """Entrega pronta: versão, mensagem do agente, revisão pedida, trabalho em needs_you."""
+        """Entrega pronta: versão, mensagem do agente, revisão pedida, trabalho em needs_you e o que
+        o agente percebeu como sugestão "<Agente> percebeu" (nunca conhecimento confirmado)."""
         async with self.pool.connection() as conn, conn.transaction():
             await self._fence(conn)
             delivery = await fetchone(
@@ -559,13 +577,59 @@ class RunStore:
             await self._event(
                 conn, "approval.requested", {"approval_id": approval_id, "kind": "review"}
             )
+            suggestions = await self._suggest(conn, work_item, agent_id, observations or [])
             await transition(conn, work_item.id, "needs_you", "agent", agent_id, "in_progress")
             await self._work_step(conn, work_item.id, work_step_title, agent_id, "done")
             totals = await self._succeed(conn, model=model, prompt_version=prompt_version)
             await self._event(
                 conn, "finished", {"status": "succeeded", "work_item_status": "needs_you"}
             )
-        return ids | {"message_id": message_id, "approval_id": approval_id, **totals}
+        return ids | {
+            "message_id": message_id,
+            "approval_id": approval_id,
+            "suggestion_ids": suggestions,
+            **totals,
+        }
+
+    async def _suggest(
+        self,
+        conn: AsyncConnection[DictRow],
+        work_item: WorkItem,
+        agent_id: str,
+        observations: list[dict[str, str]],
+    ) -> list[UUID]:
+        created: list[UUID] = []
+        for item in observations:
+            row = await fetchone(
+                conn,
+                """
+                select outcome, suggestion_id
+                from app.suggest_memory(
+                  %s, %s, %s::public.memory_area, %s, %s, %s,
+                  p_title => %s, p_explanation => %s, p_origin => %s, p_run_id => %s
+                )
+                """,
+                (
+                    self.workspace_id,
+                    agent_id,
+                    item["area"],
+                    item["assunto"],
+                    item["chave"],
+                    item["leitura"],
+                    item["leitura"],
+                    item.get("explicacao"),
+                    work_item.title,
+                    self.run_id,
+                ),
+            )
+            if row and row["outcome"] == "created":
+                created.append(row["suggestion_id"])
+                await self._event(
+                    conn,
+                    "memory.suggested",
+                    {"suggestion_id": row["suggestion_id"], "agent_id": agent_id},
+                )
+        return created
 
     async def ask(
         self,

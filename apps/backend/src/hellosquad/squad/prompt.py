@@ -1,8 +1,9 @@
 """Montagem do prompt de um run: prefixo estável (regras + SOUL + skill, cacheado) e contexto.
 
 Ordem do system: regras compartilhadas e SOUL → skill da delivery (cache) → workspace: idioma,
-marca e fatos confirmados (cache). O que muda a cada chamada (histórico, pedido, etapa) vai na
-mensagem do usuário, depois do último breakpoint. Texto de pessoas ou do modelo entra escapado.
+marca e os conhecimentos essenciais da Memória da Marca (cache). O que muda a cada run ou chamada
+(memória achada pela busca, histórico, pedido, etapa) vai na mensagem do usuário, depois do último
+breakpoint. Texto de pessoas ou do modelo entra escapado.
 """
 
 import json
@@ -12,6 +13,7 @@ from typing import Any
 
 from hellosquad.llm.base import ChatMessage, SystemBlock
 from hellosquad.squad.loader import Skill, SquadPrompt
+from hellosquad.squad.memory import MemoryFact, render_fact
 
 BRAND_NAME_PLACEHOLDER = "{{marca.nome}}"
 
@@ -32,7 +34,8 @@ class RunContext:
     delivery_type: str | None
     briefing: dict[str, Any]
     history: list[HistoryMessage] = field(default_factory=list)
-    brand_facts: list[str] = field(default_factory=list)
+    # Memória da Marca recuperada para o run: essenciais (system) e achados pela busca (usuário).
+    memory: list[MemoryFact] = field(default_factory=list)
     # Última decisão da pessoa que devolveu o trabalho ao squad (ajuste, nova proposta, resposta).
     feedback: dict[str, Any] | None = None
 
@@ -45,9 +48,17 @@ def as_json(value: Any) -> str:
     return text(json.dumps(value, ensure_ascii=False, sort_keys=True))
 
 
+def facts_block(ctx: RunContext, reason: str) -> str:
+    return "\n".join(
+        render_fact(ctx.locale, f.state, f.topic, f.key, f.content)
+        for f in ctx.memory
+        if f.reason == reason
+    )
+
+
 def system_blocks(prompt: SquadPrompt, ctx: RunContext) -> list[SystemBlock]:
     soul = prompt.agent.soul.replace(BRAND_NAME_PLACEHOLDER, ctx.brand_name)
-    facts = "\n".join(f"<fato>{text(fact)}</fato>" for fact in ctx.brand_facts)
+    facts = facts_block(ctx, "essential")
     workspace = "\n".join(
         [
             f"<idioma>{text(ctx.locale)}</idioma>",
@@ -95,8 +106,10 @@ def feedback_block(ctx: RunContext) -> list[str]:
 
 def context_block(ctx: RunContext) -> list[str]:
     delivery = f' delivery="{escape(ctx.delivery_type)}"' if ctx.delivery_type else ""
+    relevant = facts_block(ctx, "search")
     return [
         f"<trabalho{delivery}>{text(ctx.work_title)}</trabalho>",
+        *([f"<memoria_relevante>\n{relevant}\n</memoria_relevante>"] if relevant else []),
         history_block(ctx),
         f"<pedido>{text(ctx.request)}</pedido>",
         *feedback_block(ctx),

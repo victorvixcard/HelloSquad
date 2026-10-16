@@ -3,7 +3,7 @@
 O schema vai em `output_config.format` no modo real; o Pydantic valida a resposta nos dois modos.
 """
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -45,9 +45,20 @@ class CaptionDelivery(StepOutput):
     notas: str
 
 
+class Observation(StepOutput):
+    """O que o agente percebeu ao produzir: vira sugestão "<Agente> percebeu", nunca regra."""
+
+    leitura: str = Field(min_length=1, max_length=200)
+    explicacao: str = Field(max_length=2000)
+    area: Literal["business", "brand", "audience", "knowledge"]
+    assunto: str = Field(min_length=1, max_length=80)
+    chave: str = Field(min_length=1, max_length=120)
+
+
 class ProductionResult(StepOutput):
     entrega: CaptionDelivery
     mensagem: str = Field(min_length=1)
+    observacoes: list[Observation] = Field(default_factory=list)
 
 
 class CheckCriterion(StepOutput):
@@ -127,6 +138,21 @@ PRODUCTION_SCHEMA = obj(
             }
         ),
         "mensagem": STRING,
+        "observacoes": {
+            "type": "array",
+            "items": obj(
+                {
+                    "leitura": STRING,
+                    "explicacao": STRING,
+                    "area": {
+                        "type": "string",
+                        "enum": ["business", "brand", "audience", "knowledge"],
+                    },
+                    "assunto": STRING,
+                    "chave": STRING,
+                }
+            ),
+        },
     }
 )
 

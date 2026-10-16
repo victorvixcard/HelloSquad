@@ -83,6 +83,7 @@ class Worker:
             llm=llm or build_llm_client(settings),
             prices=settings.llm_prices,
             history_limit=settings.worker_history_messages,
+            memory_budget=settings.memory_context_tokens,
         )
         self.pool = AsyncConnectionPool(
             worker_conninfo(settings),

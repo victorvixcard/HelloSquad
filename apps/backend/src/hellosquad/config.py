@@ -80,6 +80,8 @@ class Settings(BaseSettings):
     worker_poll_seconds: float = Field(default=1.0, gt=0)
     worker_shutdown_grace_seconds: float = Field(default=30.0, ge=0)
     worker_history_messages: int = Field(default=20, ge=1)
+    # Orçamento (tokens estimados) da Memória da Marca no contexto de cada run (S1d).
+    memory_context_tokens: int = Field(default=1500, ge=0)
 
     @field_validator("auth_jwt_algorithms", "api_cors_origins", mode="before")
     @classmethod

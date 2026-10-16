@@ -22,6 +22,7 @@ from hellosquad.llm.base import (
 )
 from hellosquad.llm.pricing import ModelPrice, cost_usd
 from hellosquad.squad.loader import AgentDefinition, SquadLoader
+from hellosquad.squad.memory import search_text
 from hellosquad.squad.prompt import (
     RunContext,
     check_messages,
@@ -66,6 +67,7 @@ class Squad:
     llm: LLMClient
     prices: Mapping[str, ModelPrice]
     history_limit: int = 20
+    memory_budget: int = 1500
 
 
 def require_tool(agent: AgentDefinition, tool: str) -> None:
@@ -207,6 +209,13 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
     nexo, expert = nexo_prompt.agent, expert_prompt.agent
     nexo_version = await store.ensure_prompt_version(nexo_prompt)
     expert_version = await store.ensure_prompt_version(expert_prompt)
+    memory = await store.recall_memory(
+        locale=locale,
+        text=search_text(
+            data.request, item.title, item.briefing, expert_prompt.skill.meta.get("titulo")
+        ),
+        budget=squad.memory_budget,
+    )
     ctx = RunContext(
         locale=locale,
         brand_name=data.workspace_name,
@@ -215,7 +224,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         delivery_type=delivery_type,
         briefing=item.briefing,
         history=data.history,
-        brand_facts=data.brand_facts,
+        memory=memory,
         feedback=data.feedback,
     )
     calls = StepCaller(squad, store, delivery_type, data.attempts)
@@ -292,6 +301,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         schema=CHECK_SCHEMA,
         **common,
     )
+    observations = {o.leitura: o for o in production.observacoes}
     revisions = 0
     if not review.approved:
         production = await calls.llm(
@@ -304,6 +314,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
             schema=PRODUCTION_SCHEMA,
             **common,
         )
+        observations |= {o.leitura: o for o in production.observacoes}
         revisions = 1
         review = await calls.llm(
             CheckResult,
@@ -335,6 +346,7 @@ async def run_flow(squad: Squad, store: RunStore) -> dict[str, Any]:
         work_step_title=produce_title,
         model=calls.last_model or expert.model["padrao"],
         prompt_version=expert_version,
+        observations=[o.model_dump() for o in observations.values()],
     )
     return {"outcome": "delivered", "revisions": revisions, "check_approved": review.approved} | (
         result

@@ -2,10 +2,12 @@
 
 import shutil
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
 from hellosquad.squad.loader import REPO_SQUAD_DIR, SquadDefinitionError, SquadLoader
+from hellosquad.squad.memory import MemoryFact
 from hellosquad.squad.prompt import (
     HistoryMessage,
     RunContext,
@@ -97,13 +99,26 @@ def test_missing_skill_or_wrong_agent_id_is_refused(squad_copy: Path) -> None:
 
 def test_system_prompt_caches_the_stable_prefix_and_renders_the_brand() -> None:
     prompt = SquadLoader().prompt("otto", "04.01")
-    blocks = system_blocks(prompt, context(locale="es", brand_facts=["Tom: acolhedor"]))
+    tone = MemoryFact(
+        uuid4(), "decision", "brand", "Tom de voz", "Tom", "acolhedor", "essential", None, 9
+    )
+    found = MemoryFact(
+        uuid4(), "confirmed", "audience", "Canais", "Canais", "Instagram", "search", 0.4, 9
+    )
+    ctx = context(locale="es", memory=[tone, found])
+    blocks = system_blocks(prompt, ctx)
     assert [b.cache for b in blocks] == [False, True, True]
     assert blocks[0].text.startswith("## Regras que todos os agentes compartilham")
     assert "squad da Miolo" in blocks[0].text and "{{marca.nome}}" not in blocks[0].text
     assert blocks[1].text == prompt.skill.body
     assert "<idioma>es</idioma>" in blocks[2].text
-    assert "<fato>Tom: acolhedor</fato>" in blocks[2].text
+    assert '<fato estado="Decisão sua" assunto="Tom de voz">Tom: acolhedor</fato>' in blocks[2].text
+    assert "Instagram" not in blocks[2].text
+    [message] = triage_messages(ctx, prompt.skill)
+    assert (
+        '<memoria_relevante>\n<fato estado="Confirmado" assunto="Canais">Canais: Instagram</fato>'
+        in message.content
+    )
 
 
 def test_run_context_is_escaped_data_in_the_user_turn() -> None:

@@ -74,7 +74,16 @@
           ],
           "notas": "A primeira versão destaca o processo; a segunda, o ritual do sábado. As duas evitam a palavra vetada e não citam horário, que não veio no briefing."
         },
-        "mensagem": "Escrevi duas versões da legenda de sábado para o Instagram: uma destaca a fermentação longa e a outra o ritual do sábado de manhã. As duas chamam para a loja. Agora é com você: aprove uma ou peça ajuste."
+        "mensagem": "Escrevi duas versões da legenda de sábado para o Instagram: uma destaca a fermentação longa e a outra o ritual do sábado de manhã. As duas chamam para a loja. Agora é com você: aprove uma ou peça ajuste.",
+        "observacoes": [
+          {
+            "leitura": "Posts com bastidores do forno têm mais salvamentos",
+            "explicacao": "Nos posts da Miolo que usei de referência para esta legenda, os de bastidores do forno foram os mais salvos. Se você confirmar, eu e a Kaia passamos a puxar mais bastidores.",
+            "area": "knowledge",
+            "assunto": "Descobertas",
+            "chave": "Bastidores"
+          }
+        ]
       }
     }
   ]
