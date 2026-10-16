@@ -4,12 +4,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { DeliveryDetail, type DeliveryDetailData } from "@/components/env/DeliveryDetail";
+import { DocumentDetail, type DocumentDetailData } from "@/components/env/docs/DocumentDetail";
 import { originOf, workEvents, type WorkEvent } from "@/components/env/projects/work-history";
 import { dayKey, shortTime } from "@/components/product/conversation-format";
 import { TIME_ZONE } from "@/i18n/config";
 import { loadMe, serverApi } from "@/lib/api";
 import { loadWorkItem, loadWorkspaceCore, type Conversation } from "@/lib/core";
-import { deliveryTypeKey } from "@/lib/delivery-types";
+import { deliveryTypeKey, isDocumentDelivery } from "@/lib/delivery-types";
 
 type Params = { params: Promise<{ workspace: string; agente: string; id: string }> };
 
@@ -123,6 +124,48 @@ export default async function TrabalhoPage({ params }: Params) {
 
   const projectName = item.project_id ? await projectNameOf(item.project_id) : null;
 
+  const approvalData = approval
+    ? { id: approval.id, status: approval.status, decision: approval.decision, followUp: approval.follow_up }
+    : null;
+  const project = projectName ? { name: projectName, href: `/app/${slug}/squad/nexo` } : null;
+  // A decisão e a versão nova chegam pelo Realtime (router.refresh): a chave remonta o detalhe com o estado do servidor.
+  const key = `${approval?.id ?? "-"}:${approval?.status ?? "-"}:${current?.id ?? "-"}`;
+
+  // Entregas em documento (A2b): Bia, Otto 04.02/04.03, Kiwi, Max e Íris, na leitura editorial do documento da V4.4.
+  if (isDocumentDelivery(item.delivery_type) && typeKey) {
+    const td = await getTranslations("docs");
+    const type = item.delivery_type;
+    const doc: DocumentDetailData = {
+      workItemId: item.id,
+      conversationId: item.conversation_id,
+      title: item.title,
+      agent,
+      envHref: `/app/${slug}/squad/${agente}`,
+      envLabel: tc(`areas.${agente}`),
+      origin: originL,
+      type,
+      typeLabel: tc(`deliveryTypes.${typeKey}`),
+      approveLabel:
+        type === "02.01"
+          ? td("approveDiagnosis")
+          : type === "02.02" || type === "02.03" || type === "02.04"
+            ? td("approveDirection")
+            : t("approve", { version: current?.version_no ?? 1 }),
+      versions: versions.map((x) => ({
+        no: x.version_no,
+        at: shortDate(x.created_at, locale),
+        status: x.status,
+        note: x.change_note,
+        content: (x.content ?? {}) as Record<string, unknown>,
+      })),
+      approval: approvalData,
+      history,
+      team,
+      project,
+    };
+    return <DocumentDetail key={key} data={doc} />;
+  }
+
   const data: DeliveryDetailData = {
     workItemId: item.id,
     conversationId: item.conversation_id,
@@ -143,14 +186,12 @@ export default async function TrabalhoPage({ params }: Params) {
         }
       : null,
     versions: versions.map((x) => ({ no: x.version_no, at: shortDate(x.created_at, locale) })),
-    approval: approval ? { id: approval.id, status: approval.status, decision: approval.decision, followUp: approval.follow_up } : null,
+    approval: approvalData,
     brief: briefRows,
     history,
     team,
-    project: projectName ? { name: projectName, href: `/app/${slug}/squad/nexo` } : null,
+    project,
   };
-  // A decisão e a versão nova chegam pelo Realtime (router.refresh): a chave remonta o detalhe com o estado do servidor.
-  const key = `${approval?.id ?? "-"}:${approval?.status ?? "-"}:${current?.id ?? "-"}`;
   return <DeliveryDetail key={key} data={data} />;
 }
 

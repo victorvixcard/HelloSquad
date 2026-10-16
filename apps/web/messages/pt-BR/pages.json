@@ -15,7 +15,22 @@
       "decide": "Decidir {object}"
     },
     "object": {
+      "d0201": "o diagnóstico",
+      "d0202": "o posicionamento",
+      "d0203": "o plano",
+      "d0204": "a estratégia",
+      "d0207": "a pesquisa",
       "d0401": "a legenda",
+      "d0402": "o calendário",
+      "d0403": "os posts",
+      "d0501": "o plano de mídia",
+      "d0502": "os testes",
+      "d0601": "a campanha",
+      "d0602": "as mensagens",
+      "d0603": "os segmentos",
+      "d0702": "a análise",
+      "d0703": "o relatório",
+      "d0704": "as recomendações",
       "default": "o trabalho"
     },
     "more": "Ver mais {count, plural, one {# pendência} other {# pendências}}",

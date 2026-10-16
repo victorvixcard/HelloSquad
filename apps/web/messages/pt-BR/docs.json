@@ -1,0 +1,20 @@
+{
+  "tabs": {
+    "document": "Documento"
+  },
+  "approveDiagnosis": "Aprovar o diagnóstico",
+  "approveDirection": "Aprovar o direcionamento",
+  "docBy": "documento {article, select, a {da} other {do}} {name}",
+  "facts": {
+    "type": "Entrega",
+    "execution": "Execução",
+    "notExecuted": "nada é publicado, enviado ou investido sem a sua autorização"
+  },
+  "steps": {
+    "prepSub": "{agent} preparou o documento",
+    "prepSubAdjusted": "{agent} preparou e ajustou o documento"
+  },
+  "empty": "Esta versão não tem conteúdo para mostrar.",
+  "viewingOld": "Você está vendo a v{version} · versão anterior",
+  "pdf": "Baixar PDF"
+}

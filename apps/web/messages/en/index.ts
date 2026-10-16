@@ -16,6 +16,13 @@ import shell from "./shell.json";
 import site from "./site.json";
 import system from "./system.json";
 import team from "./team.json";
+import caps from "./caps.json";
+import crm from "./crm.json";
+import docs from "./docs.json";
+import editorial from "./editorial.json";
+import growth from "./growth.json";
+import results from "./results.json";
+import strategy from "./strategy.json";
 
 const messages: Messages = {
   common,
@@ -34,6 +41,14 @@ const messages: Messages = {
   team,
   auto,
   envs,
+  // A2b: catálogo de pedidos, documentos das entregas e os ambientes com entrega (um arquivo por área).
+  caps,
+  docs,
+  strategy,
+  editorial,
+  growth,
+  crm,
+  results,
 };
 
 export default messages;

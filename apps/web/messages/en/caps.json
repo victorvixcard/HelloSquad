@@ -1,0 +1,270 @@
+{
+  "title": "What do you want to do {with}?",
+  "lead": "{name} runs the briefing in the conversation, no forms.",
+  "search": "Search what to ask for",
+  "empty": "Nothing with “{query}”. Write what you need in the conversation: {ref} will understand.",
+  "foot": "When the request involves another specialty, {ref} brings in whoever is needed in the same conversation.",
+  "closeAria": "Close what you can ask {name}",
+  "dialog": "What to ask {name}",
+  "state": {
+    "created": "work created",
+    "works": "{count, plural, one {# work item} other {# work items}}"
+  },
+  "noDelivery": "This request has no delivery in this version yet. Write what you need in the conversation.",
+  "kaiaWaiting": "Kaia's pieces are waiting for the image engine. Nothing is created before it arrives.",
+  "placeholder": {
+    "nexo": "Search: project, approval…",
+    "bia": "Search: diagnosis, competitors…",
+    "kaia": "Search: carousel, poster, video…",
+    "otto": "Search: post, article, calendar…",
+    "kiwi": "Search: SEO, campaign, test…",
+    "max": "Search: journey, email…",
+    "iris": "Search: report, compare…"
+  },
+  "groups": {
+    "nexo": [
+      "Organize the work",
+      "Follow up"
+    ],
+    "bia": [
+      "Understand the business",
+      "Decide the direction"
+    ],
+    "kaia": [
+      "Brand",
+      "Pieces and materials",
+      "Image and video"
+    ],
+    "otto": [
+      "Plan",
+      "Write",
+      "Publish"
+    ],
+    "kiwi": [
+      "Search and organic",
+      "Ads",
+      "Conversion"
+    ],
+    "max": [
+      "Know the customers",
+      "Relationship",
+      "Capture and reactivate"
+    ],
+    "iris": [
+      "Understand the numbers",
+      "Follow up"
+    ]
+  },
+  "items": {
+    "nProj": {
+      "label": "Start a new project",
+      "text": "You share the goal; I set up stages, team and deadlines.",
+      "ask": "I want to start a new project."
+    },
+    "nCamp": {
+      "label": "Coordinate a campaign",
+      "text": "Strategy, pieces, copy and acquisition in a single plan.",
+      "ask": "I want to coordinate a campaign."
+    },
+    "nDele": {
+      "label": "Hand a task to the squad",
+      "text": "Say what you need; I pick who does it and follow up.",
+      "ask": "I want to hand a task to the squad."
+    },
+    "nAcomp": {
+      "label": "Follow the deliveries",
+      "text": "What moved, what slipped and what comes next.",
+      "ask": "I want to follow the deliveries."
+    },
+    "nAppr": {
+      "label": "Review what awaits my approval",
+      "text": "Everything that depends on you, by deadline.",
+      "ask": "I want to review what awaits my approval."
+    },
+    "bDiag": {
+      "label": "Analyze my business",
+      "text": "Diagnosis: strengths, opportunities and what to do first.",
+      "ask": "I want to analyze my business."
+    },
+    "bMerc": {
+      "label": "Analyze the market and competitors",
+      "text": "Nearby businesses: what they sell, what they charge, how they show up.",
+      "ask": "I want to analyze the market and competitors."
+    },
+    "bPos": {
+      "label": "Define the positioning",
+      "text": "How {business} wants to be remembered, in one sentence.",
+      "ask": "I want to define the positioning of {business}."
+    },
+    "bPlan": {
+      "label": "Build a plan",
+      "text": "Goals with numbers, priorities and who owns each one.",
+      "ask": "I want to build a marketing plan."
+    },
+    "bOpp": {
+      "label": "Find opportunities",
+      "text": "Where {business} can grow with what it already has.",
+      "ask": "I want to find opportunities for {business} to grow."
+    },
+    "kId": {
+      "label": "Create or review the visual identity",
+      "text": "Colors, type and the way {business} shows up.",
+      "ask": "I want to create or review the visual identity."
+    },
+    "kPost": {
+      "label": "Create a social media piece",
+      "text": "Post, stories or cover, looking like {business}.",
+      "ask": "I want to create a social media piece."
+    },
+    "kCar": {
+      "label": "Create a carousel",
+      "text": "A story across several slides, with Otto's copy.",
+      "ask": "I want to create a carousel."
+    },
+    "kPromo": {
+      "label": "Create promotional materials",
+      "text": "Posters, labels and menus for the store.",
+      "ask": "I want to create promotional materials."
+    },
+    "kImg": {
+      "label": "Edit and adapt images",
+      "text": "Formats, crops and tweaks to your photos.",
+      "ask": "I want to edit and adapt images."
+    },
+    "kVid": {
+      "label": "Produce videos and motion",
+      "text": "Short reels and animations with the brand.",
+      "ask": "I want to produce a video."
+    },
+    "oPlan": {
+      "label": "Plan the content",
+      "text": "Topics, formats and frequency for the coming weeks.",
+      "ask": "I want to plan the content."
+    },
+    "oCal": {
+      "label": "Prepare the editorial calendar",
+      "text": "Dates, channels and what goes out each day.",
+      "ask": "I want to prepare the editorial calendar."
+    },
+    "oPost": {
+      "label": "Create a post",
+      "text": "Idea and caption; Kaia makes the piece.",
+      "ask": "I want to create a post."
+    },
+    "oTxt": {
+      "label": "Write copy and articles",
+      "text": "For the website, the blog or emails, in the voice of {business}.",
+      "ask": "I want to write copy and articles."
+    },
+    "oSeo": {
+      "label": "Write to show up on Google",
+      "text": "Content based on the searches Kiwi finds.",
+      "ask": "I want to write content to show up on Google."
+    },
+    "oProg": {
+      "label": "Schedule the content",
+      "text": "I leave it scheduled; nothing goes out without your authorization.",
+      "ask": "I want to schedule the content."
+    },
+    "gSeo": {
+      "label": "See where {business} can show up on Google",
+      "text": "SEO analysis: searches, competitors and pages.",
+      "ask": "I want to analyze the organic growth opportunities of my brand."
+    },
+    "gOrg": {
+      "label": "Bring more visits without ads",
+      "text": "Google Profile, website and content working together.",
+      "ask": "I want to bring more visits without paying for ads."
+    },
+    "gPaid": {
+      "label": "Plan a paid campaign",
+      "text": "Goal, audience, budget and what to measure.",
+      "ask": "I want to plan a paid campaign."
+    },
+    "gAds": {
+      "label": "Optimize a campaign",
+      "text": "Tweaks to what is live, always within the cap.",
+      "ask": "I want to optimize a campaign."
+    },
+    "gAud": {
+      "label": "Review budget and audiences",
+      "text": "Who to advertise to and how much it makes sense to invest.",
+      "ask": "I want to review the budget and the audiences."
+    },
+    "gCro": {
+      "label": "Turn more visits into orders",
+      "text": "Optimize the path from the website to the order.",
+      "ask": "I want more visits to turn into orders."
+    },
+    "gTest": {
+      "label": "Create a conversion test",
+      "text": "One hypothesis, two versions and a clear result.",
+      "ask": "I want to create a growth test."
+    },
+    "mPub": {
+      "label": "Organize my audiences",
+      "text": "Who is a customer, who just follows and who disappeared.",
+      "ask": "I want to organize my audiences."
+    },
+    "mSeg": {
+      "label": "Segment customers",
+      "text": "Groups by frequency, preference and moment.",
+      "ask": "I want to segment my customers."
+    },
+    "mCamp": {
+      "label": "Plan a relationship campaign",
+      "text": "Messages for people who already know {business}.",
+      "ask": "I want to plan a relationship campaign."
+    },
+    "mJour": {
+      "label": "Create a journey",
+      "text": "Messages in sequence, at the right moment.",
+      "ask": "I want to create a customer journey."
+    },
+    "mFlow": {
+      "label": "Prepare message flows",
+      "text": "Email and WhatsApp, with clear sending rules.",
+      "ask": "I want to prepare message flows."
+    },
+    "mReat": {
+      "label": "Reactivate inactive customers",
+      "text": "People who have not bought in 60 days, only with consent.",
+      "ask": "I want to reactivate inactive customers."
+    },
+    "mLead": {
+      "label": "Capture and reactivate customers",
+      "text": "Bring new contacts and win back those who left.",
+      "ask": "I want to capture and reactivate customers."
+    },
+    "iInd": {
+      "label": "Analyze a metric",
+      "text": "What changed, when and what coincides with it.",
+      "ask": "I want to analyze a metric."
+    },
+    "iCmp": {
+      "label": "Compare periods",
+      "text": "Week, month or quarter against the previous one.",
+      "ask": "I want to compare periods."
+    },
+    "iInt": {
+      "label": "Interpret a result",
+      "text": "In plain words, without making up a cause.",
+      "ask": "I want to understand a result."
+    },
+    "iRep": {
+      "label": "Build a report",
+      "text": "For you or to show someone.",
+      "ask": "I want to build a report."
+    },
+    "iInv": {
+      "label": "Investigate a problem",
+      "text": "When something drops or a number makes no sense.",
+      "ask": "I want to investigate a problem."
+    },
+    "iOpp": {
+      "label": "Follow an opportunity",
+      "text": "Measure whether an idea is working.",
+      "ask": "I want to follow an opportunity."
+    }
+  }
+}

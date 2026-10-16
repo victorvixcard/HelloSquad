@@ -15,7 +15,22 @@
       "decide": "Decidir {object}"
     },
     "object": {
+      "d0201": "el diagnóstico",
+      "d0202": "el posicionamiento",
+      "d0203": "el plan",
+      "d0204": "la estrategia",
+      "d0207": "la investigación",
       "d0401": "el pie de foto",
+      "d0402": "el calendario",
+      "d0403": "las publicaciones",
+      "d0501": "el plan de medios",
+      "d0502": "las pruebas",
+      "d0601": "la campaña",
+      "d0602": "los mensajes",
+      "d0603": "los segmentos",
+      "d0702": "el análisis",
+      "d0703": "el informe",
+      "d0704": "las recomendaciones",
       "default": "el trabajo"
     },
     "more": "Ver {count, plural, one {# pendiente más} other {# pendientes más}}",

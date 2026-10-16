@@ -36,7 +36,22 @@
     "decide": "For you to decide"
   },
   "deliveryTypes": {
-    "d0401": "Caption"
+    "d0201": "Diagnosis",
+    "d0202": "Positioning, audience and goals",
+    "d0203": "Marketing plan",
+    "d0204": "Campaign strategy",
+    "d0207": "Competitors and trends",
+    "d0401": "Caption",
+    "d0402": "Editorial calendar",
+    "d0403": "Posts and scripts",
+    "d0501": "Media plan",
+    "d0502": "Ad audiences and tests",
+    "d0601": "Relationship campaign",
+    "d0602": "Message sequence",
+    "d0603": "Customer segmentation",
+    "d0702": "Performance analysis",
+    "d0703": "Period report",
+    "d0704": "Recommendations"
   },
   "time": {
     "today": "today",

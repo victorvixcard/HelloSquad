@@ -165,6 +165,9 @@
       "calendar_post": "una publicación",
       "project": "un proyecto",
       "metric": "un indicador",
+      "environment": "el ambiente",
+      "segment": "un segmento",
+      "document": "un documento",
       "other": "un contexto"
     },
     "request": "{who} · pedido: {name}",

@@ -1,0 +1,20 @@
+{
+  "tabs": {
+    "document": "Documento"
+  },
+  "approveDiagnosis": "Aprobar el diagnóstico",
+  "approveDirection": "Aprobar el rumbo",
+  "docBy": "documento de {name}",
+  "facts": {
+    "type": "Entrega",
+    "execution": "Ejecución",
+    "notExecuted": "nada se publica, envía ni invierte sin tu autorización"
+  },
+  "steps": {
+    "prepSub": "{agent} preparó el documento",
+    "prepSubAdjusted": "{agent} preparó y ajustó el documento"
+  },
+  "empty": "Esta versión no tiene contenido para mostrar.",
+  "viewingOld": "Estás viendo la v{version} · versión anterior",
+  "pdf": "Descargar PDF"
+}

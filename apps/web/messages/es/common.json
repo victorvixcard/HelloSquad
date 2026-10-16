@@ -36,7 +36,22 @@
     "decide": "Para que decidas"
   },
   "deliveryTypes": {
-    "d0401": "Pie de foto"
+    "d0201": "Diagnóstico",
+    "d0202": "Posicionamiento, público y objetivos",
+    "d0203": "Plan de marketing",
+    "d0204": "Estrategia de campaña",
+    "d0207": "Competidores y tendencias",
+    "d0401": "Pie de foto",
+    "d0402": "Calendario editorial",
+    "d0403": "Publicaciones y guiones",
+    "d0501": "Plan de medios",
+    "d0502": "Públicos y pruebas de anuncios",
+    "d0601": "Campaña de relación",
+    "d0602": "Secuencia de mensajes",
+    "d0603": "Segmentación de clientes",
+    "d0702": "Análisis de desempeño",
+    "d0703": "Informe del período",
+    "d0704": "Recomendaciones"
   },
   "time": {
     "today": "hoy",

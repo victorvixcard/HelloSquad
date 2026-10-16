@@ -165,6 +165,9 @@
       "calendar_post": "a post",
       "project": "a project",
       "metric": "a metric",
+      "environment": "the environment",
+      "segment": "a segment",
+      "document": "a document",
       "other": "a context"
     },
     "request": "{who} · request: {name}",

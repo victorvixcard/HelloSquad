@@ -1,0 +1,270 @@
+{
+  "title": "O que você quer fazer {with}?",
+  "lead": "{article, select, a {A} other {O}} {name} conduz o briefing na conversa, sem formulário.",
+  "search": "Buscar o que pedir",
+  "empty": "Nada com “{query}”. Escreva na conversa o que você precisa: {ref} entende.",
+  "foot": "Quando o pedido envolve outra especialidade, {ref} chama quem precisa na mesma conversa.",
+  "closeAria": "Fechar o que dá para pedir {article, select, a {à} other {ao}} {name}",
+  "dialog": "O que pedir {article, select, a {à} other {ao}} {name}",
+  "state": {
+    "created": "trabalho criado",
+    "works": "{count, plural, one {# trabalho} other {# trabalhos}}"
+  },
+  "noDelivery": "Este pedido ainda não tem entrega nesta versão. Escreva na conversa o que você precisa.",
+  "kaiaWaiting": "As peças da Kaia esperam o motor de imagem. Nada é criado antes de ele chegar.",
+  "placeholder": {
+    "nexo": "Buscar: projeto, aprovação…",
+    "bia": "Buscar: diagnóstico, concorrentes…",
+    "kaia": "Buscar: carrossel, cartaz, vídeo…",
+    "otto": "Buscar: post, artigo, calendário…",
+    "kiwi": "Buscar: SEO, campanha, teste…",
+    "max": "Buscar: jornada, e-mail…",
+    "iris": "Buscar: relatório, comparar…"
+  },
+  "groups": {
+    "nexo": [
+      "Organizar o trabalho",
+      "Acompanhar"
+    ],
+    "bia": [
+      "Entender o negócio",
+      "Decidir o rumo"
+    ],
+    "kaia": [
+      "Marca",
+      "Peças e materiais",
+      "Imagem e vídeo"
+    ],
+    "otto": [
+      "Planejar",
+      "Escrever",
+      "Publicar"
+    ],
+    "kiwi": [
+      "Busca e orgânico",
+      "Anúncios",
+      "Conversão"
+    ],
+    "max": [
+      "Conhecer os clientes",
+      "Relacionamento",
+      "Captar e reativar"
+    ],
+    "iris": [
+      "Entender os números",
+      "Acompanhar"
+    ]
+  },
+  "items": {
+    "nProj": {
+      "label": "Começar um projeto novo",
+      "text": "Você conta o objetivo; eu monto etapas, time e prazos.",
+      "ask": "Quero começar um projeto novo."
+    },
+    "nCamp": {
+      "label": "Coordenar uma campanha",
+      "text": "Estratégia, peças, textos e aquisição num plano só.",
+      "ask": "Quero coordenar uma campanha."
+    },
+    "nDele": {
+      "label": "Passar uma tarefa para o squad",
+      "text": "Diga o que precisa; eu escolho quem faz e acompanho.",
+      "ask": "Quero passar uma tarefa para o squad."
+    },
+    "nAcomp": {
+      "label": "Acompanhar as entregas",
+      "text": "O que andou, o que atrasou e o que vem a seguir.",
+      "ask": "Quero acompanhar as entregas."
+    },
+    "nAppr": {
+      "label": "Revisar o que espera minha aprovação",
+      "text": "Tudo o que depende de você, em ordem de prazo.",
+      "ask": "Quero revisar o que espera a minha aprovação."
+    },
+    "bDiag": {
+      "label": "Analisar meu negócio",
+      "text": "Diagnóstico: forças, oportunidades e o que fazer primeiro.",
+      "ask": "Quero analisar meu negócio."
+    },
+    "bMerc": {
+      "label": "Analisar o mercado e os concorrentes",
+      "text": "As padarias do bairro: o que vendem, quanto cobram, como aparecem.",
+      "ask": "Quero analisar o mercado e os concorrentes."
+    },
+    "bPos": {
+      "label": "Definir o posicionamento",
+      "text": "Como {business} quer ser lembrada, em uma frase.",
+      "ask": "Quero definir o posicionamento de {business}."
+    },
+    "bPlan": {
+      "label": "Montar um planejamento",
+      "text": "Objetivos com número, prioridades e quem cuida de cada uma.",
+      "ask": "Quero montar um planejamento de marketing."
+    },
+    "bOpp": {
+      "label": "Encontrar oportunidades",
+      "text": "Onde {business} pode crescer com o que já tem.",
+      "ask": "Quero encontrar oportunidades para {business} crescer."
+    },
+    "kId": {
+      "label": "Criar ou revisar a identidade visual",
+      "text": "Cores, letras e o jeito de {business} aparecer.",
+      "ask": "Quero criar ou revisar a identidade visual."
+    },
+    "kPost": {
+      "label": "Criar uma peça para as redes",
+      "text": "Post, stories ou capa, com a cara de {business}.",
+      "ask": "Quero criar uma peça para as redes."
+    },
+    "kCar": {
+      "label": "Criar um carrossel",
+      "text": "Uma história em várias telas, com o texto do Otto.",
+      "ask": "Quero criar um carrossel."
+    },
+    "kPromo": {
+      "label": "Criar materiais promocionais",
+      "text": "Cartazes, etiquetas e cardápios para a loja.",
+      "ask": "Quero criar materiais promocionais."
+    },
+    "kImg": {
+      "label": "Editar e adaptar imagens",
+      "text": "Formatos, recortes e ajustes nas suas fotos.",
+      "ask": "Quero editar e adaptar imagens."
+    },
+    "kVid": {
+      "label": "Produzir vídeos e motion",
+      "text": "Reels curtos e animações com a marca.",
+      "ask": "Quero produzir um vídeo."
+    },
+    "oPlan": {
+      "label": "Planejar os conteúdos",
+      "text": "Temas, formatos e frequência para as próximas semanas.",
+      "ask": "Quero planejar os conteúdos."
+    },
+    "oCal": {
+      "label": "Preparar o calendário editorial",
+      "text": "Datas, canais e o que sai em cada dia.",
+      "ask": "Quero preparar o calendário editorial."
+    },
+    "oPost": {
+      "label": "Criar uma publicação",
+      "text": "Ideia e legenda; a Kaia faz a peça.",
+      "ask": "Quero criar uma publicação."
+    },
+    "oTxt": {
+      "label": "Escrever textos e artigos",
+      "text": "Para o site, o blog ou e-mails, na voz de {business}.",
+      "ask": "Quero escrever textos e artigos."
+    },
+    "oSeo": {
+      "label": "Escrever para aparecer no Google",
+      "text": "Conteúdo a partir das buscas que a Kiwi encontrar.",
+      "ask": "Quero escrever conteúdos para aparecer no Google."
+    },
+    "oProg": {
+      "label": "Programar os conteúdos",
+      "text": "Deixo agendado; nada sai sem a sua autorização.",
+      "ask": "Quero programar os conteúdos."
+    },
+    "gSeo": {
+      "label": "Ver onde {business} pode aparecer no Google",
+      "text": "Análise de SEO: buscas, concorrentes e páginas.",
+      "ask": "Quero analisar as oportunidades de crescimento orgânico da minha marca."
+    },
+    "gOrg": {
+      "label": "Trazer mais visitas sem anúncio",
+      "text": "Google Perfil, site e conteúdo trabalhando juntos.",
+      "ask": "Quero trazer mais visitas sem pagar anúncio."
+    },
+    "gPaid": {
+      "label": "Planejar uma campanha paga",
+      "text": "Objetivo, público, verba e o que medir.",
+      "ask": "Quero planejar uma campanha paga."
+    },
+    "gAds": {
+      "label": "Otimizar uma campanha",
+      "text": "Ajustes no que estiver no ar, sempre dentro do teto.",
+      "ask": "Quero otimizar uma campanha."
+    },
+    "gAud": {
+      "label": "Revisar orçamento e públicos",
+      "text": "Para quem anunciar e quanto faz sentido investir.",
+      "ask": "Quero revisar o orçamento e os públicos."
+    },
+    "gCro": {
+      "label": "Fazer mais visitas virarem encomendas",
+      "text": "Otimizar o caminho do site até a encomenda.",
+      "ask": "Quero que mais visitas virem encomendas."
+    },
+    "gTest": {
+      "label": "Criar um teste de conversão",
+      "text": "Uma hipótese, duas versões e um resultado claro.",
+      "ask": "Quero criar um teste de crescimento."
+    },
+    "mPub": {
+      "label": "Organizar meus públicos",
+      "text": "Quem é cliente, quem só segue e quem sumiu.",
+      "ask": "Quero organizar meus públicos."
+    },
+    "mSeg": {
+      "label": "Segmentar clientes",
+      "text": "Grupos por frequência, preferência e momento.",
+      "ask": "Quero segmentar meus clientes."
+    },
+    "mCamp": {
+      "label": "Planejar uma campanha de relacionamento",
+      "text": "Mensagens para quem já conhece {business}.",
+      "ask": "Quero planejar uma campanha de relacionamento."
+    },
+    "mJour": {
+      "label": "Criar uma jornada",
+      "text": "Mensagens em sequência, no momento certo.",
+      "ask": "Quero criar uma jornada para os clientes."
+    },
+    "mFlow": {
+      "label": "Preparar fluxos de mensagens",
+      "text": "E-mail e WhatsApp, com regras claras de envio.",
+      "ask": "Quero preparar fluxos de mensagens."
+    },
+    "mReat": {
+      "label": "Reativar clientes inativos",
+      "text": "Quem não compra há 60 dias, só com consentimento.",
+      "ask": "Quero reativar clientes inativos."
+    },
+    "mLead": {
+      "label": "Captar e reativar clientes",
+      "text": "Trazer contatos novos e fazer voltar quem sumiu.",
+      "ask": "Quero captar e reativar clientes."
+    },
+    "iInd": {
+      "label": "Analisar um indicador",
+      "text": "O que mudou, quando e o que coincide com isso.",
+      "ask": "Quero analisar um indicador."
+    },
+    "iCmp": {
+      "label": "Comparar períodos",
+      "text": "Semana, mês ou trimestre contra o anterior.",
+      "ask": "Quero comparar períodos."
+    },
+    "iInt": {
+      "label": "Interpretar um resultado",
+      "text": "Em palavras simples, sem inventar causa.",
+      "ask": "Quero entender um resultado."
+    },
+    "iRep": {
+      "label": "Montar um relatório",
+      "text": "Para você ou para mostrar a alguém.",
+      "ask": "Quero montar um relatório."
+    },
+    "iInv": {
+      "label": "Investigar um problema",
+      "text": "Quando algo cai ou um número não faz sentido.",
+      "ask": "Quero investigar um problema."
+    },
+    "iOpp": {
+      "label": "Acompanhar uma oportunidade",
+      "text": "Medir se uma ideia está dando certo.",
+      "ask": "Quero acompanhar uma oportunidade."
+    }
+  }
+}

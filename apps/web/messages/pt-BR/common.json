@@ -36,7 +36,22 @@
     "decide": "Para você decidir"
   },
   "deliveryTypes": {
-    "d0401": "Legenda"
+    "d0201": "Diagnóstico",
+    "d0202": "Posicionamento, público e objetivos",
+    "d0203": "Plano de marketing",
+    "d0204": "Estratégia de campanha",
+    "d0207": "Concorrentes e tendências",
+    "d0401": "Legenda",
+    "d0402": "Calendário editorial",
+    "d0403": "Posts e roteiros",
+    "d0501": "Plano de mídia",
+    "d0502": "Públicos e testes de anúncios",
+    "d0601": "Campanha de relacionamento",
+    "d0602": "Sequência de mensagens",
+    "d0603": "Segmentação de clientes",
+    "d0702": "Análise de desempenho",
+    "d0703": "Relatório do período",
+    "d0704": "Recomendações"
   },
   "time": {
     "today": "hoje",

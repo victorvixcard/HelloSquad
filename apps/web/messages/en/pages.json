@@ -15,7 +15,22 @@
       "decide": "Decide on {object}"
     },
     "object": {
+      "d0201": "the diagnosis",
+      "d0202": "the positioning",
+      "d0203": "the plan",
+      "d0204": "the strategy",
+      "d0207": "the research",
       "d0401": "the caption",
+      "d0402": "the calendar",
+      "d0403": "the posts",
+      "d0501": "the media plan",
+      "d0502": "the tests",
+      "d0601": "the campaign",
+      "d0602": "the messages",
+      "d0603": "the segments",
+      "d0702": "the analysis",
+      "d0703": "the report",
+      "d0704": "the recommendations",
       "default": "the work"
     },
     "more": "Show {count, plural, one {# more pending item} other {# more pending items}}",

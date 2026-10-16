@@ -1,0 +1,20 @@
+{
+  "tabs": {
+    "document": "Document"
+  },
+  "approveDiagnosis": "Approve the diagnosis",
+  "approveDirection": "Approve the direction",
+  "docBy": "document by {name}",
+  "facts": {
+    "type": "Delivery",
+    "execution": "Execution",
+    "notExecuted": "nothing is published, sent or invested without your authorization"
+  },
+  "steps": {
+    "prepSub": "{agent} prepared the document",
+    "prepSubAdjusted": "{agent} prepared and adjusted the document"
+  },
+  "empty": "This version has no content to show.",
+  "viewingOld": "You are viewing v{version} · previous version",
+  "pdf": "Download PDF"
+}
