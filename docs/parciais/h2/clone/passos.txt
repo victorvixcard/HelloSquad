@@ -1,0 +1,25 @@
+H2 · clone limpo seguindo só o docs/SETUP_LOCAL.md — resumo dos comandos (hora local, -03)
+Clone: /tmp/h2_clone (remoto https://github.com/victorvixcard/HelloSquad, HEAD bc58140). Chaves e senhas mascaradas.
+Supabase: o mesmo do projeto hellosquad (11 containers supabase_*_hellosquad, já no ar). API do dono :8100 e web :3100 intocadas.
+
+hora      comando                                                         exit  duração  resultado
+18:58:59  git clone https://github.com/victorvixcard/HelloSquad /tmp/h2_clone   0     3s       HEAD bc58140 (= main local)
+19:00:24  [conferência] API do dono: token da Marina + GET :8100/me e /workspaces   -     -        200 / 200 (linha de base)
+19:00:30  cp .env.example .env && chmod 600 .env                          0     0s       .env 600
+19:00:30  openssl rand -hex 24 → API_DATABASE_URL no .env (linha 26/65)   0     0s       senha nova (48 hex), diferente da do dono
+19:00:35  corepack enable pnpm                                            0     0s
+19:00:35  make install                                                    0     1s       pnpm +459 (store em cache), uv 46 pacotes, CPython 3.12.3
+19:00:58  make up  (senha do clone ≠ senha do dono)                       2     3s       start "já no ar", 0 migrations; erro: o papel hellosquad_api já tem outra senha
+19:01:07  [conferência] API do dono                                       -     -        200 / 200
+19:01:16  pnpm exec supabase status -o env → chaves no .env (linha 29)    0     -        PUBLISHABLE_KEY, SECRET_KEY, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+19:01:20  make migrate (senha do clone ≠ senha do dono)                   2     2s       0 migrations; erro: já tem outra senha (recusa, nada gravado)
+19:01:23  [conferência H1-09] API do dono depois do make migrate do clone  -     -        200 / 200  (H1-09 não reproduz)
+19:01:33  make seed (senha do clone ≠ senha do dono)                      2     1s       "seed aplicado" + erro: já tem outra senha (o seed entra mesmo assim)
+19:01:35  [conferência] API do dono                                       -     -        200 / 200
+19:01:42  API_DATABASE_URL copiado do .env do dono (linhas 68 e 601)      0     0s       igual ao do dono (sem imprimir)
+19:01:42  make migrate                                                    0     1s       "já confere com API_DATABASE_URL; nada gravado"
+19:01:44  [conferência] API do dono                                       -     -        200 / 200
+19:01:48  make up                                                         0     9s       0 migrations; "já confere…; nada gravado"
+19:01:57  make seed                                                       0     0s       5 usuários fictícios; "já confere…; nada gravado"
+19:02:39  make test                                                       2     88s      ruff ok · pytest 220 passed (54.67s) · eslint ok · tsc ok · Vitest 9+49+327 · pgTAP FAIL 14/700 (4 arquivos) → test-infra não rodou
+          (falha do pgTAP: roteiro "H2 QA" de outra sessão rodando fora da trava às 19:03:40–19:04:03, bônus de 300 na Miolo e na Vitta e 12 trabalhos novos; ver C-03)
