@@ -4,6 +4,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Literal
 
+import httpx
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,6 +15,7 @@ from hellosquad.api.errors import register_error_handlers
 from hellosquad.approvals.routes import router as approvals_router
 from hellosquad.auth import TokenVerifier
 from hellosquad.autonomy.routes import router as runs_router
+from hellosquad.billing.routes import router as billing_router
 from hellosquad.config import get_settings
 from hellosquad.contacts.routes import router as contacts_router
 from hellosquad.conversations.routes import router as conversations_router
@@ -42,9 +44,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     )
     await database.open()
     app.state.database = database
+    app.state.payment_http = httpx.AsyncClient(timeout=settings.payment_timeout_seconds)
     try:
         yield
     finally:
+        await app.state.payment_http.aclose()
         await database.close()
 
 
@@ -81,6 +85,7 @@ app.include_router(learnings_router)
 app.include_router(credits_router)
 app.include_router(contacts_router)
 app.include_router(metrics_router)
+app.include_router(billing_router)
 
 
 class Health(BaseModel):

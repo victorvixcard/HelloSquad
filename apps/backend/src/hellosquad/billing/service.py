@@ -1,7 +1,7 @@
 """Abertura de cobrança: cliente, assinatura, recarga e cancelamento, com o papel privilegiado.
 
-Nenhuma rota chama isto ainda: a compra pela web e pelo app é da Fase 4 (decisão do dono de 16/10). Sem
-preço em dinheiro cadastrado, nada é aberto no provedor.
+Nenhuma rota chama isto ainda: a compra pela web e pelo app é da Fase 4 (decisão do dono de 16/10).
+Sem preço em dinheiro cadastrado, nada é aberto no provedor.
 """
 
 from datetime import date, datetime
@@ -60,7 +60,8 @@ async def apply_event(
     conn: AsyncConnection[DictRow], provider: str, event: WebhookEvent
 ) -> dict[str, Any]:
     async with conn.transaction():
-        return await (await conn.execute(APPLY_EVENT, (provider, Jsonb(event.as_json())))).fetchone()
+        cursor = await conn.execute(APPLY_EVENT, (provider, Jsonb(event.as_json())))
+        return await cursor.fetchone()
 
 
 async def ensure_customer(

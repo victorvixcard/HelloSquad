@@ -62,8 +62,8 @@ class Database:
 
     @asynccontextmanager
     async def transaction_as_billing(self) -> AsyncIterator[AsyncConnection[DictRow]]:
-        """Transação do webhook de pagamento (não há usuário): papel hellosquad_billing, que só executa
-        app.billing_apply_event e não lê tabela nenhuma."""
+        """Transação do webhook de pagamento (não há usuário): papel hellosquad_billing, que só
+        executa app.billing_apply_event e não lê tabela nenhuma."""
         async with self._pool.connection() as conn, conn.transaction():
             await conn.execute("select set_config('role', 'hellosquad_billing', true)")
             yield conn

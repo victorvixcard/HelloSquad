@@ -1,6 +1,6 @@
-"""Renovação mensal (scheduler): a assinatura com o período pago vencido só ganha ciclo novo com pagamento
-confirmado pelo provedor. Antes de decidir, concilia com o provedor (o webhook pode ter se perdido); sem
-confirmação, a assinatura fica past_due e nada é bloqueado (paywall é decisão do dono)."""
+"""Renovação mensal (scheduler): a assinatura com o período pago vencido só ganha ciclo novo com
+pagamento confirmado pelo provedor. Antes de decidir, concilia com o provedor (o webhook pode ter se
+perdido); sem confirmação, fica past_due e nada é bloqueado (paywall é decisão do dono)."""
 
 import logging
 from collections.abc import Mapping
@@ -31,8 +31,8 @@ class RenewalReport:
 async def reconcile_subscription(
     conn: AsyncConnection[DictRow], provider: PaymentProvider, subscription: Mapping[str, Any]
 ) -> None:
-    """Traz do provedor o estado dos ciclos e da assinatura, como eventos de conciliação idempotentes
-    (o mesmo estado da mesma cobrança vira o mesmo event_id)."""
+    """Traz do provedor o estado dos ciclos e da assinatura como eventos de conciliação
+    idempotentes (o mesmo estado da mesma cobrança vira o mesmo event_id)."""
     reference = subscription["provider_subscription_id"]
     remote = await provider.get_subscription(reference)
     for payment in await provider.list_subscription_payments(reference):
