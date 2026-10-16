@@ -4,7 +4,7 @@ import { Agent, Button, getAgent, Icon, type AgentId } from "@hellosquad/ui";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { decideApprovalAction } from "@/app/app/[workspace]/actions";
+import { decideApprovalAction, type FollowUp } from "@/app/app/[workspace]/actions";
 import { useShell } from "@/components/product/shell-context";
 
 export type DeliveryDetailData = {
@@ -19,37 +19,56 @@ export type DeliveryDetailData = {
   channel: string | null;
   version: { no: number; caption: string; hashtags: string[]; at: string; note: string | null } | null;
   versions: Array<{ no: number; at: string }>;
-  approval: { id: string; status: "pending" | "decided" | "expired"; decision: string | null } | null;
+  approval: {
+    id: string;
+    status: "pending" | "decided" | "expired";
+    decision: string | null;
+    followUp?: FollowUp | null;
+  } | null;
   brief: Array<{ k: string; v: string }>;
   history: Array<{ agent: AgentId | null; text: string; at: string }>;
 };
 
 type Tab = "caption" | "brief" | "history";
+type Choice = "approve" | "adjust" | FollowUp;
 
 /** Entrega pontual da V4.6 (detalhe do trabalho): etapas, a entrega à vista, a decisão e Legenda/Briefing/Histórico. */
 export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: DeliveryDetailData; decide?: typeof decideApprovalAction }) {
   const t = useTranslations("content.work");
+  const tc = useTranslations("common");
   const shell = useShell();
   const member = getAgent(data.agent);
   const [tab, setTab] = useState<Tab>("caption");
-  const [busy, setBusy] = useState<"approve" | "adjust" | null>(null);
+  const [busy, setBusy] = useState<Choice | null>(null);
   const [error, setError] = useState(false);
-  const [decision, setDecision] = useState<string | null>(data.approval?.status === "decided" ? data.approval.decision : null);
+  const decidedBefore = data.approval?.status === "decided";
+  const [decision, setDecision] = useState<string | null>(decidedBefore ? (data.approval?.decision ?? null) : null);
+  const [followUp, setFollowUp] = useState<FollowUp | null>(decidedBefore ? (data.approval?.followUp ?? null) : null);
   const pending = data.approval?.status === "pending" && !decision;
   const approved = decision === "approved";
+  // Pedir ajuste e pedir nova proposta devolvem o trabalho ao agente (run novo); cancelar encerra o trabalho.
+  const making = decision === "changes_requested" || (decision === "rejected" && followUp === "revise");
+  const cancelled = decision === "rejected" && followUp === "cancel";
   const v = data.version?.no ?? 1;
+  const agentRef = `${member.article === "a" ? "a" : "o"} ${member.name}`;
 
-  async function run(kind: "approve" | "adjust") {
-    if (!data.approval || busy) return;
+  async function run(kind: Choice) {
+    if (!data.approval || busy || !shell.canDecide) return;
     setBusy(kind);
     setError(false);
-    const result = await decide(data.approval.id, kind === "approve" ? "approved" : "changes_requested");
+    const result =
+      kind === "approve"
+        ? await decide(data.approval.id, "approved")
+        : kind === "adjust"
+          ? await decide(data.approval.id, "changes_requested")
+          : await decide(data.approval.id, "rejected", undefined, kind);
     setBusy(null);
     if (!result.ok) {
       setError(true);
       return;
     }
     setDecision(result.data.decision);
+    setFollowUp(result.data.follow_up ?? (kind === "cancel" || kind === "revise" ? kind : null));
     if (kind === "adjust") {
       shell.openConversation({
         conversationId: data.conversationId,
@@ -61,7 +80,7 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
 
   const steps = [
     { k: "done", t: t("prep"), s: data.versions.length > 1 ? t("prepSubAdjusted", { agent: member.name }) : t("prepSub", { agent: member.name }) },
-    { k: approved ? "done" : pending ? "you" : "todo", t: t("review"), s: approved ? t("reviewDone", { version: v }) : t("reviewSub", { version: v }) },
+    { k: approved ? "done" : pending && shell.canDecide ? "you" : "todo", t: t("review"), s: approved ? t("reviewDone", { version: v }) : t("reviewSub", { version: v }) },
     { k: "todo", t: t("publish"), s: t("publishSub") },
     { k: "todo", t: t("confirm"), s: t("confirmSub") },
   ];
@@ -138,8 +157,8 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
                   <Agent agent={data.agent} size={40} expression="big" />
                 </span>
                 <div>
-                  <b>{t("waits", { agent: member.name })}</b>
-                  <p>{data.version?.note || t("waitsText", { version: v })}</p>
+                  <b>{shell.canDecide ? t("waits", { agent: member.name }) : t("waitsDecision", { agent: member.name })}</b>
+                  {shell.canDecide || data.version?.note ? <p>{data.version?.note || t("waitsText", { version: v })}</p> : null}
                 </div>
               </div>
               <dl className="ps-facts">
@@ -158,17 +177,29 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
                   <dd>{t("facts.notIncluded")}</dd>
                 </div>
               </dl>
-              <div className="ps-dec-a">
-                <Button variant="primary" size="s" icon="check" state={busy === "approve" ? "loading" : "rest"} loadingLabel={t("approving")} onClick={() => run("approve")}>
-                  {t("approve", { version: v })}
-                </Button>
-                <Button variant="soft" size="s" icon={null} state={busy === "adjust" ? "loading" : "rest"} onClick={() => run("adjust")}>
-                  {t("adjust")}
-                </Button>
-              </div>
-              <p className="ps-dec-n" role={error ? "alert" : undefined}>
-                {error ? t("decideError") : t("adjustNote", { agent: `${member.article === "a" ? "a" : "o"} ${member.name}` })}
-              </p>
+              {shell.canDecide ? (
+                <>
+                  <div className="ps-dec-a">
+                    <Button variant="primary" size="s" icon="check" state={busy === "approve" ? "loading" : "rest"} loadingLabel={t("approving")} onClick={() => run("approve")}>
+                      {t("approve", { version: v })}
+                    </Button>
+                    <Button variant="soft" size="s" icon={null} state={busy === "adjust" ? "loading" : "rest"} onClick={() => run("adjust")}>
+                      {t("adjust")}
+                    </Button>
+                    <Button variant="soft" size="s" icon={null} state={busy === "revise" ? "loading" : "rest"} onClick={() => run("revise")}>
+                      {t("newProposal")}
+                    </Button>
+                    <Button variant="soft" size="s" icon={null} state={busy === "cancel" ? "loading" : "rest"} onClick={() => run("cancel")}>
+                      {t("cancelWork")}
+                    </Button>
+                  </div>
+                  <p className="ps-dec-n" role={error ? "alert" : undefined}>
+                    {error ? t("decideError") : t("adjustNote", { agent: agentRef })}
+                  </p>
+                </>
+              ) : (
+                <p className="ps-dec-n">{tc("ownerDecides")}</p>
+              )}
             </div>
           ) : approved ? (
             <div className="ps-dec is-ok">
@@ -179,6 +210,30 @@ export function DeliveryDetail({ data, decide = decideApprovalAction }: { data: 
                 <div>
                   <b>{t("approved")}</b>
                   <p>{t("approvedText")}</p>
+                </div>
+              </div>
+            </div>
+          ) : making ? (
+            <div className="ps-dec is-wait">
+              <div className="ps-dec-h">
+                <span className="ps-dec-av">
+                  <Agent agent={data.agent} size={40} thinking />
+                </span>
+                <div>
+                  <b>{decision === "changes_requested" ? t("makingAdjust", { agent: member.name, version: v }) : t("makingRevise", { agent: member.name })}</b>
+                  <p>{t("makingText")}</p>
+                </div>
+              </div>
+            </div>
+          ) : cancelled ? (
+            <div className="ps-dec">
+              <div className="ps-dec-h">
+                <span className="ps-dec-av">
+                  <Agent agent={data.agent} size={40} />
+                </span>
+                <div>
+                  <b>{t("cancelled")}</b>
+                  <p>{t("cancelledText", { agent: member.name })}</p>
                 </div>
               </div>
             </div>

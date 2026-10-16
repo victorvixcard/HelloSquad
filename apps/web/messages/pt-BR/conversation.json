@@ -40,5 +40,9 @@
     ]
   },
   "capAria": "O que mais pedir {article, select, a {à} other {ao}} {name}",
-  "roomHint": "O Nexo distribui para quem precisa"
+  "roomHint": "O Nexo distribui para quem precisa",
+  "threadsH": "Conversas Nova conversa {with}",
+  "threadUntitled": "Conversa {with}",
+  "newThread": "Nova conversa",
+  "now": "agora"
 }

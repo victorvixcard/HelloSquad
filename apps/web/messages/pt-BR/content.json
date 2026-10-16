@@ -79,7 +79,15 @@
     },
     "talk": "Conversar com {name}",
     "notFound": "Este trabalho não existe mais ou não é deste negócio.",
-    "prepSubAdjusted": "{agent} criou e ajustou"
+    "prepSubAdjusted": "{agent} criou e ajustou",
+    "newProposal": "Pedir nova proposta",
+    "cancelWork": "Cancelar trabalho",
+    "waitsDecision": "{agent} aguarda a decisão",
+    "makingAdjust": "{agent} ajustando a versão {version}",
+    "makingRevise": "{agent} criando uma nova proposta",
+    "makingText": "Você recebe a nova versão aqui e na conversa.",
+    "cancelled": "Trabalho cancelado",
+    "cancelledText": "{agent} não segue com esta entrega."
   },
   "today": "Hoje"
 }

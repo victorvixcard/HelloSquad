@@ -22,8 +22,8 @@ const DATA: DeliveryDetailData = {
   history: [],
 };
 
-function approval(decision: "approved" | "changes_requested") {
-  return { ok: true as const, data: { id: "ap-1", status: "decided", decision } as never };
+function approval(decision: "approved" | "changes_requested" | "rejected", follow_up: "cancel" | "revise" | null = null) {
+  return { ok: true as const, data: { id: "ap-1", status: "decided", decision, follow_up } as never };
 }
 
 describe("Precisa de você", () => {
@@ -79,5 +79,66 @@ describe("Precisa de você", () => {
     await user.click(screen.getByRole("button", { name: /Aprovar v1/ }));
     expect(await screen.findByRole("alert")).toHaveTextContent("Não foi possível registrar a sua decisão agora.");
     expect(screen.getByText("Otto aguarda você")).toBeInTheDocument();
+  });
+
+  it("rejeitar tem duas saídas: Pedir nova proposta devolve ao agente (follow_up revise)", async () => {
+    const user = userEvent.setup();
+    const decide = vi.fn(async () => approval("rejected", "revise"));
+    const shell = makeShell();
+    renderWithShell(<DeliveryDetail data={DATA} decide={decide} />, shell);
+    await user.click(screen.getByRole("button", { name: "Pedir nova proposta" }));
+    await waitFor(() => expect(decide).toHaveBeenCalledWith("ap-1", "rejected", undefined, "revise"));
+    expect(await screen.findByText("Otto criando uma nova proposta")).toBeInTheDocument();
+    expect(screen.getByText("Você recebe a nova versão aqui e na conversa.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Aprovar v1/ })).toBeNull();
+    expect(shell.openConversation).not.toHaveBeenCalled();
+  });
+
+  it("rejeitar tem duas saídas: Cancelar trabalho encerra (follow_up cancel)", async () => {
+    const user = userEvent.setup();
+    const decide = vi.fn(async () => approval("rejected", "cancel"));
+    renderWithShell(<DeliveryDetail data={DATA} decide={decide} />);
+    await user.click(screen.getByRole("button", { name: "Cancelar trabalho" }));
+    await waitFor(() => expect(decide).toHaveBeenCalledWith("ap-1", "rejected", undefined, "cancel"));
+    expect(await screen.findByText("Trabalho cancelado")).toBeInTheDocument();
+    expect(screen.getByText("Otto não segue com esta entrega.")).toBeInTheDocument();
+  });
+
+  it("depois de pedir ajuste, a decisão mostra o agente trabalhando na nova versão", async () => {
+    const user = userEvent.setup();
+    renderWithShell(<DeliveryDetail data={DATA} decide={vi.fn(async () => approval("changes_requested"))} />);
+    await user.click(screen.getByRole("button", { name: "Pedir ajuste" }));
+    expect(await screen.findByText("Otto ajustando a versão 1")).toBeInTheDocument();
+  });
+
+  it("quem não é o dono da conta vê a pendência em modo leitura, sem botões de decisão", () => {
+    const decide = vi.fn();
+    renderWithShell(<DeliveryDetail data={DATA} decide={decide} />, makeShell({ canDecide: false }));
+    expect(screen.getByText("Otto aguarda a decisão")).toBeInTheDocument();
+    expect(screen.getByText("Quem decide é o dono da conta")).toBeInTheDocument();
+    for (const name of [/Aprovar v1/, "Pedir ajuste", "Pedir nova proposta", "Cancelar trabalho"]) {
+      expect(screen.queryByRole("button", { name })).toBeNull();
+    }
+    expect(screen.getByText(DATA.version!.caption, { selector: ".ps-mesa .ps-caption" })).toBeInTheDocument();
+    expect(decide).not.toHaveBeenCalled();
+  });
+
+  it("na faixa, quem não é o dono da conta vê a pendência sem a ação de decidir", () => {
+    renderWithShell(
+      <NeedsStrip
+        items={[{ approvalId: "ap-1", agent: "otto", kind: "Para você revisar", title: DATA.title, sub: "Legenda, versão 1", cta: "Revisar a legenda", href: "/x" }]}
+      />,
+      makeShell({ canDecide: false }),
+    );
+    expect(screen.getByRole("button", { name: `Otto · Para você revisar: ${DATA.title}. Quem decide é o dono da conta` })).toBeInTheDocument();
+    expect(screen.queryByText("Revisar a legenda")).toBeNull();
+  });
+
+  it("o dono da conta vê as quatro decisões da entrega", () => {
+    renderWithShell(<DeliveryDetail data={DATA} decide={vi.fn()} />);
+    for (const name of [/Aprovar v1/, "Pedir ajuste", "Pedir nova proposta", "Cancelar trabalho"]) {
+      expect(screen.getByRole("button", { name })).toBeInTheDocument();
+    }
+    expect(screen.queryByText("Quem decide é o dono da conta")).toBeNull();
   });
 });

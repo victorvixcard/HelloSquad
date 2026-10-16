@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { ApiUnavailable } from "@/components/ApiUnavailable";
 import { ProductShell, SIDEBAR_COOKIE } from "@/components/product/ProductShell";
+import type { DirectThread } from "@/components/product/shell-context";
 import { loadMe } from "@/lib/api";
 import { loadWorkspaceCore } from "@/lib/core";
 import "@hellosquad/ui/ds-bundle.css";
@@ -27,11 +28,13 @@ export default async function WorkspaceLayout({
   const core = await loadWorkspaceCore(workspace.id);
   const saved = (await cookies()).get(SIDEBAR_COOKIE)?.value;
   const room = core.conversations.find((c) => c.kind === "squad_room")?.id ?? null;
-  const direct: Partial<Record<AgentId, string>> = {};
-  for (const c of core.conversations) {
-    if (c.kind === "agent_direct" && c.primary_agent_id && isAgentId(c.primary_agent_id) && !direct[c.primary_agent_id]) {
-      direct[c.primary_agent_id] = c.id;
-    }
+  // Conversas diretas por especialista, da mais recente para a mais antiga (V4.6: abrir retoma a mais recente;
+  // "Nova conversa" cria outra e o seletor lista as anteriores).
+  const directThreads: Partial<Record<AgentId, DirectThread[]>> = {};
+  const recent = (c: { last_message_at: string | null; created_at: string }) => c.last_message_at ?? c.created_at;
+  for (const c of [...core.conversations].sort((a, b) => Date.parse(recent(b)) - Date.parse(recent(a)))) {
+    if (c.kind !== "agent_direct" || c.archived_at || !c.primary_agent_id || !isAgentId(c.primary_agent_id)) continue;
+    (directThreads[c.primary_agent_id] ??= []).push({ id: c.id, title: c.title, at: recent(c) });
   }
   const waiting = [...new Set(core.approvals.map((a) => a.requested_by_agent_id).filter(isAgentId))];
   const firstName = (me.user.full_name || me.user.email || "").trim().split(/\s+/)[0] ?? "";
@@ -46,7 +49,9 @@ export default async function WorkspaceLayout({
       }}
       needsCount={core.approvals.length}
       waitingAgents={waiting}
-      conversationIds={{ room, direct }}
+      room={room}
+      directThreads={directThreads}
+      canDecide={membership.role === "owner"}
       initialSideMin={saved === "min" ? true : saved === "full" ? false : null}
     >
       {children}

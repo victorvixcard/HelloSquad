@@ -14,6 +14,14 @@ export function makeShell(overrides: Partial<ShellApi> = {}): ShellApi {
     openConversation: vi.fn(),
     closeConversation: vi.fn(),
     conversationIds: { room: "room-1", direct: { otto: "otto-1" } },
+    directThreads: {
+      otto: [
+        { id: "otto-1", title: "Conversa com o Otto", at: "2026-10-16T09:10:00-03:00" },
+        { id: "otto-0", title: "Ideias para o Dia do Pão", at: "2026-09-23T15:00:00-03:00" },
+      ],
+    },
+    rememberThread: vi.fn(),
+    canDecide: true,
     toast: vi.fn(),
     ...overrides,
   };

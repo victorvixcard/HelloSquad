@@ -19,6 +19,7 @@ vi.mock("next/link", async () => {
 // Server Actions só existem no servidor do Next; os testes passam as suas por props ou espiam estas.
 vi.mock("@/app/app/[workspace]/actions", () => ({
   loadConversationAction: vi.fn(),
+  loadOlderMessagesAction: vi.fn(),
   sendMessageAction: vi.fn(),
   decideApprovalAction: vi.fn(),
   createDirectConversationAction: vi.fn(),

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { productLayout, type ConversationMode } from "@/lib/product-layout";
 import type { AccountMenuProps } from "./AccountMenu";
 import { ConversationPanel } from "./ConversationPanel";
-import { ShellContext, type ConversationTarget, type ShellApi } from "./shell-context";
+import { ShellContext, type ConversationTarget, type DirectThread, type ShellApi } from "./shell-context";
 import { ENV_OF_AGENT, Sidebar, type NavId } from "./Sidebar";
 
 export const SIDEBAR_COOKIE = "hs_sb";
@@ -21,7 +21,12 @@ export type ProductShellProps = {
   needsCount: number;
   /** Especialistas com decisão pendente: olhos grandes (expressão "big" da V4.6 para quem espera). */
   waitingAgents: AgentId[];
-  conversationIds: ShellApi["conversationIds"];
+  /** Sala do Squad do workspace (null = ainda não existe). */
+  room: string | null;
+  /** Conversas diretas por especialista, da mais recente para a mais antiga. */
+  directThreads: ShellApi["directThreads"];
+  /** Papel owner no workspace: só ele vê os botões de decisão. */
+  canDecide: boolean;
   /** Escolha salva da pessoa (null = automático pela largura, como no protótipo). */
   initialSideMin: boolean | null;
   children: ReactNode;
@@ -58,7 +63,7 @@ function useViewport() {
  * com as medidas do renderVals() do protótipo. A conversa vive aqui para persistir entre ambientes.
  */
 export function ProductShell(props: ProductShellProps) {
-  const { workspace, account, needsCount, waitingAgents, conversationIds, initialSideMin, children } = props;
+  const { workspace, account, needsCount, waitingAgents, room, canDecide, initialSideMin, children } = props;
   const t = useTranslations("shell");
   const tc = useTranslations("common");
   const pathname = usePathname();
@@ -69,6 +74,18 @@ export function ProductShell(props: ProductShellProps) {
   const [toastState, setToastState] = useState<{ text: string; agent: AgentId; key: number } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const where = navOf(pathname, workspace.slug);
+  const [directThreads, setDirectThreads] = useState(props.directThreads);
+  useEffect(() => setDirectThreads(props.directThreads), [props.directThreads]);
+  const conversationIds = useMemo<ShellApi["conversationIds"]>(() => {
+    const direct: Partial<Record<AgentId, string>> = {};
+    for (const [agent, threads] of Object.entries(directThreads) as Array<[AgentId, DirectThread[]]>) {
+      if (threads[0]) direct[agent] = threads[0].id;
+    }
+    return { room, direct };
+  }, [room, directThreads]);
+  const rememberThread = useCallback<ShellApi["rememberThread"]>((agent, thread) => {
+    setDirectThreads((prev) => ({ ...prev, [agent]: [thread, ...(prev[agent] ?? []).filter((x) => x.id !== thread.id)] }));
+  }, []);
 
   // A Sala do Squad é a conversa com todo o squad, em tela cheia (V4.6: _openConv('squad', { mode: 'full' })).
   const roomRoute = where.room;
@@ -111,9 +128,12 @@ export function ProductShell(props: ProductShellProps) {
       openConversation,
       closeConversation,
       conversationIds,
+      directThreads,
+      rememberThread,
+      canDecide,
       toast,
     }),
-    [workspace, layout, mode, target, openConversation, closeConversation, conversationIds, toast],
+    [workspace, layout, mode, target, openConversation, closeConversation, conversationIds, directThreads, rememberThread, canDecide, toast],
   );
 
   function toggleSide() {

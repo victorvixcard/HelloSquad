@@ -64,7 +64,7 @@ export default async function TrabalhoPage({ params }: Params) {
         }
       : null,
     versions: versions.map((x) => ({ no: x.version_no, at: shortDate(x.created_at, locale) })),
-    approval: approval ? { id: approval.id, status: approval.status, decision: approval.decision } : null,
+    approval: approval ? { id: approval.id, status: approval.status, decision: approval.decision, followUp: approval.follow_up } : null,
     brief: briefRows,
     history: item.steps.map((s) => ({
       agent: s.agent_id && isAgentId(s.agent_id) ? s.agent_id : null,

@@ -7,6 +7,7 @@ type Message = components["schemas"]["Message"];
 type ConversationDetail = components["schemas"]["ConversationDetail"];
 type Approval = components["schemas"]["Approval"];
 type Decision = components["schemas"]["ApprovalDecision"];
+export type FollowUp = "cancel" | "revise";
 
 export type ActionResult<T> = { ok: true; data: T } | { ok: false; code: string; message: string };
 
@@ -15,18 +16,38 @@ function fail(error: unknown): { ok: false; code: string; message: string } {
   throw error;
 }
 
-/** Abre uma conversa que já existe: detalhe (participantes e contexto) e as mensagens, em ordem. Só leitura. */
+/** Mensagens por página no painel: a conversa abre pelas mais recentes e carrega as anteriores ao subir. */
+const PAGE = 30;
+
+export type MessageSlice = { messages: Message[]; /** cursor das anteriores (`before`); null = começo da conversa */ older: string | null };
+
+/** Abre uma conversa que já existe: detalhe e a última página de mensagens (`before=latest`), em ordem. Só leitura. */
 export async function loadConversationAction(
   conversationId: string,
-): Promise<ActionResult<{ detail: ConversationDetail; messages: Message[] }>> {
+): Promise<ActionResult<{ detail: ConversationDetail } & MessageSlice>> {
   try {
     const api = await serverApi();
     const path = { conversation_id: conversationId };
     const [detail, page] = await Promise.all([
       unwrap(api.GET("/conversations/{conversation_id}", { params: { path } })),
-      unwrap(api.GET("/conversations/{conversation_id}/messages", { params: { path, query: { limit: 100 } } })),
+      unwrap(api.GET("/conversations/{conversation_id}/messages", { params: { path, query: { before: "latest", limit: PAGE } } })),
     ]);
-    return { ok: true, data: { detail, messages: page.items } };
+    return { ok: true, data: { detail, messages: page.items, older: page.next_cursor } };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+/** As mensagens anteriores a uma página já aberta (`before=<next_cursor>`), em ordem. Só leitura. */
+export async function loadOlderMessagesAction(conversationId: string, before: string): Promise<ActionResult<MessageSlice>> {
+  try {
+    const api = await serverApi();
+    const page = await unwrap(
+      api.GET("/conversations/{conversation_id}/messages", {
+        params: { path: { conversation_id: conversationId }, query: { before, limit: PAGE } },
+      }),
+    );
+    return { ok: true, data: { messages: page.items, older: page.next_cursor } };
   } catch (error) {
     return fail(error);
   }
@@ -48,18 +69,22 @@ export async function sendMessageAction(conversationId: string, body: string): P
   }
 }
 
-/** POST /approvals/{id}/decision (idempotente na API). Aprovar não publica nada (Documento Mestre). */
+/**
+ * POST /approvals/{id}/decision (idempotente na API; só o owner decide). Aprovar não publica nada (Documento Mestre).
+ * Rejeitar uma entrega leva `follow_up` (dono, 16/10 08:55): `cancel` cancela o trabalho; `revise` pede nova proposta.
+ */
 export async function decideApprovalAction(
   approvalId: string,
   decision: Decision,
   note?: string,
+  followUp?: FollowUp,
 ): Promise<ActionResult<Approval>> {
   try {
     const api = await serverApi();
     const approval = await unwrap(
       api.POST("/approvals/{approval_id}/decision", {
         params: { path: { approval_id: approvalId } },
-        body: { decision, note: note ?? null },
+        body: { decision, note: note ?? null, ...(followUp ? { follow_up: followUp } : {}) },
       }),
     );
     return { ok: true, data: approval };
@@ -68,17 +93,21 @@ export async function decideApprovalAction(
   }
 }
 
-/** Primeira mensagem para um especialista sem conversa ainda: cria a conversa direta (buscar ou criar na API). */
+/**
+ * Primeira mensagem de uma conversa direta nova: a API cria sempre uma conversa nova (`agent_direct`), nunca reaproveita.
+ * O título é o começo da primeira mensagem, como no protótipo.
+ */
 export async function createDirectConversationAction(
   workspaceId: string,
   agent: components["schemas"]["AgentId"],
+  title?: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const api = await serverApi();
     const conversation = await unwrap(
       api.POST("/workspaces/{workspace_id}/conversations", {
         params: { path: { workspace_id: workspaceId } },
-        body: { kind: "agent_direct", primary_agent_id: agent },
+        body: { kind: "agent_direct", primary_agent_id: agent, title: title ?? null },
       }),
     );
     return { ok: true, data: { id: conversation.id } };

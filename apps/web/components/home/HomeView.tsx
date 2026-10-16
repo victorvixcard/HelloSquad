@@ -430,9 +430,13 @@ export function HomeView({ firstName, business, needs, inProgress, actions }: Ho
                               <b>{n.title}</b>
                               <small>{t("work.pendSub", { kind: n.kindLabel, agent: getAgent(n.agent).name })}</small>
                             </span>
-                            <button type="button" className="hm-btn is-dark is-xs" aria-label={`${n.cta}: ${n.title}`} onClick={() => router.push(n.href)}>
-                              {n.cta.split(" ")[0]}
-                            </button>
+                            {shell.canDecide ? (
+                              <button type="button" className="hm-btn is-dark is-xs" aria-label={`${n.cta}: ${n.title}`} onClick={() => router.push(n.href)}>
+                                {n.cta.split(" ")[0]}
+                              </button>
+                            ) : (
+                              <span className="ps-dec-n">{tc("ownerDecides")}</span>
+                            )}
                           </div>
                         ))}
                       </>
