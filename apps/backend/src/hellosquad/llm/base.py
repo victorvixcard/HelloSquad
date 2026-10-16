@@ -69,9 +69,19 @@ class LLMError(Exception):
     code = "llm_error"
     transient = False
 
-    def __init__(self, message: str, *, details: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self,
+        message: str,
+        *,
+        details: dict[str, Any] | None = None,
+        usage: Usage | None = None,
+        model: str | None = None,
+    ) -> None:
         super().__init__(message)
         self.details = details or {}
+        # Recusa e corte no limite chegam com HTTP 200 e são cobrados: o custo da etapa conta.
+        self.usage = usage
+        self.model = model
 
 
 class LLMTransientError(LLMError):

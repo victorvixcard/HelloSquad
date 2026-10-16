@@ -140,6 +140,9 @@ class StepCaller:
             await self._finish(step_id, "failed", usage, cost, started, served_by, error)
             raise error from exc
         except LLMError as exc:
+            if exc.usage is not None:
+                usage, served_by = exc.usage, exc.model or served_by
+                cost = cost_usd(usage, served_by, self.squad.prices)
             await self._finish(step_id, "failed", usage, cost, started, served_by, exc)
             raise
         data: dict[str, Any] = {

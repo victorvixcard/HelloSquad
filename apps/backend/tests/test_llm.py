@@ -146,6 +146,7 @@ async def test_refusal_and_truncation_raise_typed_errors() -> None:
     with pytest.raises(LLMRefusalError) as refusal:
         await llm.complete(messages=MESSAGES, system=SYSTEM, model="claude-opus-5-5", tag=TAG)
     assert refusal.value.details["category"] == "cyber"
+    assert refusal.value.usage == Usage(640, 520, 0, 2900)  # recusa também é cobrada
 
     llm, _ = adapter_with(FakeStream(fake_message(stop_reason="max_tokens")))
     with pytest.raises(LLMOutputError):

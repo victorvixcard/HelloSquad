@@ -25,7 +25,11 @@ FINISHED_RUN = {"succeeded", "failed", "cancelled", "waiting_approval"}
 RUNNABLE_WORK = {"draft", "in_progress", "failed"}
 REDACTED_KEYS = ("key", "token", "secret", "password", "authorization", "cookie")
 
-ClaimOutcome = Literal["claimed", "finished", "busy", "capped", "missing", "skipped"]
+ClaimOutcome = Literal["claimed", "finished", "busy", "capped", "missing", "skipped", "exhausted"]
+
+
+class RunLost(RuntimeError):
+    """O run foi retomado por outro worker (tentativa nova): este resultado não vale mais."""
 
 
 @dataclass(frozen=True)
@@ -81,12 +85,14 @@ class RunStore:
         self.pool = pool
         self.workspace_id = workspace_id
         self.run_id = run_id
+        # Tentativa reivindicada por este worker: serve de ficha (fencing) nas escritas finais.
+        self.attempt: int | None = None
 
     # ------------------------------------------------------------------------------------------
     # Reivindicação e início
     # ------------------------------------------------------------------------------------------
 
-    async def begin(self, *, workspace_cap: int, lease_seconds: int) -> Claim:
+    async def begin(self, *, workspace_cap: int, lease_seconds: int, max_attempts: int) -> Claim:
         """Reivindica o run e o põe em execução, com o teto do workspace, numa transação só.
 
         O lock por workspace serializa a contagem de runs em execução e o UPDATE, então dois workers
@@ -116,6 +122,16 @@ class RunStore:
                 return Claim("finished", run["attempts"])
             if run["status"] == "running" and not run["stale"]:
                 return Claim("busy", run["attempts"])
+            if run["attempts"] >= max_attempts:
+                # Worker que morreu no meio de cada tentativa também gasta o limite.
+                self.attempt = run["attempts"]
+                return Claim(
+                    "exhausted",
+                    run["attempts"],
+                    run["agent_id"],
+                    run["work_item_id"],
+                    run["locale"],
+                )
             running = await fetchval(
                 conn,
                 """
@@ -165,6 +181,7 @@ class RunStore:
                 """,
                 (self.run_id, self.workspace_id),
             )
+            self.attempt = attempts
             if item["status"] != "in_progress":
                 await transition(
                     conn, run["work_item_id"], "in_progress", "agent", "nexo", item["status"]
@@ -444,6 +461,7 @@ class RunStore:
     ) -> dict[str, Any]:
         """Entrega pronta: versão, mensagem do agente, revisão pedida, trabalho em needs_you."""
         async with self.pool.connection() as conn, conn.transaction():
+            await self._fence(conn)
             delivery = await fetchone(
                 conn,
                 """
@@ -547,6 +565,7 @@ class RunStore:
         fica na etapa da triagem.
         """
         async with self.pool.connection() as conn, conn.transaction():
+            await self._fence(conn)
             await self._start_step(conn, "tool_call", None, tool_data, status="succeeded")
             message_id = await self._agent_message(conn, work_item, agent_id, question, [])
             approval_id = await fetchval(
@@ -573,13 +592,14 @@ class RunStore:
         async with self.pool.connection() as conn:
             await conn.execute(
                 "update public.runs set status = 'queued', error = %s "
-                "where id = %s and workspace_id = %s and status = 'running'",
-                (payload(error), self.run_id, self.workspace_id),
+                "where id = %s and workspace_id = %s and status = 'running' and attempts = %s",
+                (payload(error), self.run_id, self.workspace_id, self.attempt),
             )
 
     async def fail(self, error: dict[str, Any], *, work_item_id: UUID | None) -> str | None:
         """Falha definitiva: run failed com erro legível; trabalho e etapas abertas em failed."""
         async with self.pool.connection() as conn, conn.transaction():
+            await self._fence(conn, statuses=("running", "queued"))
             await conn.execute(
                 """
                 update public.run_steps set status = 'failed'
@@ -630,9 +650,21 @@ class RunStore:
             )
             await conn.execute(
                 "update public.runs set status = 'queued', attempts = greatest(attempts - 1, 0) "
-                "where id = %s and workspace_id = %s and status = 'running'",
-                (self.run_id, self.workspace_id),
+                "where id = %s and workspace_id = %s and status = 'running' and attempts = %s",
+                (self.run_id, self.workspace_id, self.attempt),
             )
+
+    async def _fence(
+        self, conn: AsyncConnection[DictRow], statuses: tuple[str, ...] = ("running",)
+    ) -> None:
+        owned = await fetchone(
+            conn,
+            "select 1 as ok from public.runs where id = %s and workspace_id = %s "
+            "and status::text = any(%s) and attempts = %s for update",
+            (self.run_id, self.workspace_id, list(statuses), self.attempt),
+        )
+        if owned is None:
+            raise RunLost(f"run {self.run_id} não está mais na tentativa {self.attempt}")
 
     async def _agent_message(
         self,

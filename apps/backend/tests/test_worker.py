@@ -20,7 +20,7 @@ from psycopg.rows import dict_row
 from hellosquad.config import Settings
 from hellosquad.llm.simulated import FIXTURES_DIR, SimulatedLLM
 from hellosquad.squad.loader import SquadLoader
-from hellosquad.squad.store import RunStore
+from hellosquad.squad.store import RunLost, RunStore
 from hellosquad.worker.main import Worker
 
 pytestmark = pytest.mark.integration
@@ -461,7 +461,7 @@ async def test_workspace_cap_and_stale_runs_on_dequeue(admin_db, miolo) -> None:
 
         async def claim(workspace: str, run_id: UUID) -> str:
             store = RunStore(worker.pool, workspace_id=UUID(workspace), run_id=run_id)
-            result = await store.begin(workspace_cap=3, lease_seconds=120)
+            result = await store.begin(workspace_cap=3, lease_seconds=120, max_attempts=3)
             return result.outcome
 
         running = [await new_run(miolo, "running") for _ in range(3)]
@@ -525,3 +525,65 @@ async def test_shutdown_returns_unfinished_run_to_the_queue(
         admin_db, "select status::text, attempts from public.runs where id = %s", run_id
     )
     assert run == {"status": "succeeded", "attempts": 1}
+
+
+async def test_attempt_limit_holds_even_when_workers_die_mid_run(admin_db, miolo) -> None:
+    # Duas tentativas já gastas por workers que morreram: run em running sem batimento há 1 hora.
+    work_item_id = await scalar(
+        admin_db,
+        "insert into public.work_items "
+        "(workspace_id, title, delivery_type, primary_agent_id, status) "
+        "values (%s, 'Legenda do sábado', '04.01', 'otto', 'in_progress') returning id",
+        miolo,
+    )
+    run_id = str(
+        await scalar(
+            admin_db,
+            """
+            insert into public.runs (
+              workspace_id, work_item_id, agent_id, status, attempts, idempotency_key, updated_at
+            ) values (%s, %s, 'otto', 'running', 2, %s, now() - interval '1 hour')
+            returning id
+            """,
+            miolo,
+            work_item_id,
+            str(uuid4()),
+        )
+    )
+    await admin_db.execute(
+        "select pgmq.send('runs_interactive', %s::jsonb)",
+        (json.dumps({"run_id": run_id, "workspace_id": miolo, "kind": "interactive"}),),
+    )
+
+    assert await drain(worker_settings(worker_max_attempts=2)) == ["failed"]
+
+    run = await one(admin_db, "select status::text, error from public.runs where id = %s", run_id)
+    assert run["status"] == "failed" and run["error"]["code"] == "attempts_exhausted"
+    assert run["error"]["message"] == "O trabalho não terminou depois de 2 tentativas."
+    assert await scalar(
+        admin_db, "select status::text from public.work_items where id = %s", work_item_id
+    ) == ("failed")
+    assert await queue_state(admin_db, run_id) == {"queued": 0, "archived": 1}
+
+
+async def test_run_taken_over_by_another_worker_cannot_finish_twice(
+    api, access_token, admin_db, miolo
+) -> None:
+    ids = await request_work(api, access_token, miolo, COMPLETE_REQUEST)
+    async with Worker(worker_settings(), llm=SimulatedLLM()) as worker:
+        store = RunStore(worker.pool, workspace_id=UUID(miolo), run_id=UUID(ids["run_id"]))
+        claim = await store.begin(workspace_cap=3, lease_seconds=120, max_attempts=3)
+        assert (claim.outcome, claim.attempts) == ("claimed", 1)
+        # Outro worker retomou o run (nova tentativa): a ficha deste não vale mais.
+        await admin_db.execute(
+            "update public.runs set attempts = 2 where id = %s", (ids["run_id"],)
+        )
+        await store.retry_later({"code": "llm_unavailable"})
+        with pytest.raises(RunLost):
+            await store.fail({"code": "llm_unavailable"}, work_item_id=UUID(ids["work_item_id"]))
+    run = await one(
+        admin_db,
+        "select status::text, attempts, error from public.runs where id = %s",
+        ids["run_id"],
+    )
+    assert run == {"status": "running", "attempts": 2, "error": None}

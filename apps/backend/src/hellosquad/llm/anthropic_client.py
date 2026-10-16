@@ -102,11 +102,15 @@ def completion_from(message: Any) -> Completion:
                 "category": getattr(details, "category", None),
                 "request_id": request_id,
             },
+            usage=usage_from(message),
+            model=message.model,
         )
     if message.stop_reason == "max_tokens":
         raise LLMOutputError(
             "A resposta do modelo foi cortada no limite de tokens.",
             details={"request_id": request_id},
+            usage=usage_from(message),
+            model=message.model,
         )
     blocks = [block.to_dict() for block in message.content]
     text = "".join(block.text for block in message.content if block.type == "text")

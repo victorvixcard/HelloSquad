@@ -26,7 +26,7 @@ from hellosquad.llm.factory import build_llm_client
 from hellosquad.runtime import configure_logging
 from hellosquad.squad.flow import FlowError, Squad, run_flow
 from hellosquad.squad.loader import SquadLoader
-from hellosquad.squad.store import Claim, RunStore, redact
+from hellosquad.squad.store import Claim, RunLost, RunStore, redact
 
 log = logging.getLogger("hellosquad.worker")
 
@@ -36,6 +36,10 @@ CAPPED_DELAY_SECONDS = 5
 
 class WorkerConfigError(RuntimeError):
     pass
+
+
+class AttemptsExhausted(Exception):
+    """O run já gastou todas as tentativas (inclusive em worker que morreu no meio)."""
 
 
 def worker_conninfo(settings: Settings) -> str:
@@ -51,6 +55,8 @@ def classify(exc: BaseException) -> tuple[bool, str, dict[str, Any]]:
         return exc.transient, exc.code, exc.details
     if isinstance(exc, FlowError):
         return False, exc.code, exc.details
+    if isinstance(exc, AttemptsExhausted):
+        return False, "attempts_exhausted", {}
     if isinstance(exc, psycopg.OperationalError):
         return True, "database_unavailable", {"error_type": type(exc).__name__}
     return True, "internal", {"error_type": type(exc).__name__}
@@ -131,6 +137,7 @@ class Worker:
         claim = await store.begin(
             workspace_cap=self.settings.worker_workspace_cap,
             lease_seconds=self.settings.worker_visibility_timeout_seconds,
+            max_attempts=self.settings.worker_max_attempts,
         )
         if claim.outcome in ("finished", "missing", "skipped"):
             await self.queue_call("delete", msg_id)
@@ -151,6 +158,8 @@ class Worker:
                 CAPPED_DELAY_SECONDS,
             )
             return "capped"
+        if claim.outcome == "exhausted":
+            return await self.failed(store, msg_id, claim, AttemptsExhausted())
 
         log.info(
             "run %s (workspace %s, %s): tentativa %s de %s",
@@ -166,6 +175,11 @@ class Worker:
         except asyncio.CancelledError:
             await asyncio.shield(self.release(store, msg_id))
             raise
+        except RunLost:
+            log.warning(
+                "run %s foi retomado por outro worker; este resultado foi descartado", run_id
+            )
+            return "lost"
         except Exception as exc:
             return await self.failed(store, msg_id, claim, exc)
         finally:
