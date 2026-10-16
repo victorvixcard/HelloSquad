@@ -35,3 +35,19 @@ export const loadMemory = cache(async (workspaceId: string): Promise<MemoryResul
     return { ok: false };
   }
 });
+
+/** Número suave da barra lateral (V4.6 L10508: `memN` = sugestões abertas, "N informações para confirmar"). Leitura leve. */
+export const loadMemoryPending = cache(async (workspaceId: string): Promise<number> => {
+  try {
+    const api = await serverApi();
+    const page = await unwrap(
+      api.GET("/workspaces/{workspace_id}/memory/suggestions", {
+        params: { path: { workspace_id: workspaceId }, query: { state: "open", limit: 100 } },
+      }),
+    );
+    return page.items.length;
+  } catch (error) {
+    if (!isApiError(error)) throw error;
+    return 0;
+  }
+});

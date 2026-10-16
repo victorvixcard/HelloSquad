@@ -98,4 +98,13 @@ describe("barra lateral V4.6", () => {
     await user.click(screen.getByRole("button", { name: "Recolher a barra lateral" }));
     expect(onToggle).toHaveBeenCalledOnce();
   });
+
+  it("Memória da Marca com o número suave das sugestões abertas e a dica da V4.6", () => {
+    const { container } = renderWithShell(<Sidebar {...props({ memoryCount: 2 })} />);
+    const mem = container.querySelector('a[data-nav="mem"]') as HTMLElement;
+    expect(mem.querySelector(".sb-nb.is-soft")).toHaveTextContent("2");
+    expect(mem).toHaveAttribute("aria-label", "Memória da Marca, 2 informações para confirmar");
+    const none = renderWithShell(<Sidebar {...props({ memoryCount: 0 })} />).container.querySelector('a[data-nav="mem"]') as HTMLElement;
+    expect(none.querySelector(".sb-nb")).toBeNull();
+  });
 });

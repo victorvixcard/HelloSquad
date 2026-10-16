@@ -21,6 +21,8 @@ export type ProductShellProps = {
   workspace: { id: string; slug: string; name: string };
   account: Omit<AccountMenuProps, "onUnavailable">;
   needsCount: number;
+  /** Sugestões da Memória à espera do seu ok: número suave na barra (V4.6). */
+  memoryCount?: number;
   /** Pendências ("Precisa de você") lidas pelo servidor: ponto de partida do estado ao vivo. */
   pending: PendingApproval[];
   /** Conversa de cada trabalho (responder à pergunta do agente acontece onde ele perguntou). */
@@ -75,7 +77,7 @@ export function ProductShell(props: ProductShellProps) {
 }
 
 function Shell(props: ProductShellProps) {
-  const { workspace, account, needsCount, room, canDecide, initialSideMin, workConversations, children } = props;
+  const { workspace, account, needsCount, memoryCount = 0, room, canDecide, initialSideMin, workConversations, children } = props;
   const live = useLive();
   const t = useTranslations("shell");
   const tc = useTranslations("common");
@@ -198,6 +200,7 @@ function Shell(props: ProductShellProps) {
           min={layout.min}
           onToggle={toggleSide}
           needsCount={needsCount}
+          memoryCount={memoryCount}
           agentExpression={expression}
           roomLive={roomLive}
           account={{ ...account, onUnavailable: () => toast(tc("unavailable")) }}

@@ -6,6 +6,7 @@ import { ProductShell, SIDEBAR_COOKIE } from "@/components/product/ProductShell"
 import type { DirectThread } from "@/components/product/shell-context";
 import { loadMe } from "@/lib/api";
 import { loadWorkspaceCore } from "@/lib/core";
+import { loadMemoryPending } from "@/lib/memory";
 import "@hellosquad/ui/ds-bundle.css";
 import "@hellosquad/ui/product-ui.css";
 import "./product.css";
@@ -25,7 +26,7 @@ export default async function WorkspaceLayout({
   const membership = me.memberships.find((m) => m.workspace.slug === slug);
   if (!membership) notFound();
   const workspace = { id: membership.workspace.id, slug: membership.workspace.slug, name: membership.workspace.name };
-  const core = await loadWorkspaceCore(workspace.id);
+  const [core, memoryPending] = await Promise.all([loadWorkspaceCore(workspace.id), loadMemoryPending(workspace.id)]);
   const saved = (await cookies()).get(SIDEBAR_COOKIE)?.value;
   const room = core.conversations.find((c) => c.kind === "squad_room")?.id ?? null;
   // Conversas diretas por especialista, da mais recente para a mais antiga (V4.6: abrir retoma a mais recente;
@@ -59,6 +60,7 @@ export default async function WorkspaceLayout({
           : null,
       }}
       needsCount={core.approvals.length}
+      memoryCount={memoryPending}
       pending={pending}
       workConversations={workConversations}
       room={room}

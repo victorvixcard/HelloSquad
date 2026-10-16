@@ -41,6 +41,8 @@ export type SidebarProps = {
   onToggle: () => void;
   /** Decisões pendentes ("Precisa de você"): badge de Projetos, como na V4.6. */
   needsCount: number;
+  /** Sugestões abertas da Memória da Marca: número suave e a dica "N informações para confirmar" (V4.6 L10533). */
+  memoryCount?: number;
   /** Expressão de cada especialista (quem aguarda você fica de olhos grandes). */
   agentExpression: (agent: AgentId) => AgentExpression;
   /** Run em curso na Sala do Squad: a dica vira "o squad está trabalhando" (V4.6). */
@@ -93,7 +95,17 @@ function AutoSwitch() {
 }
 
 /** Barra lateral da Product UI V4.6: Principal, Seu squad e Gestão; conta e notificações na base. */
-export function Sidebar({ slug, current, min, onToggle, needsCount, agentExpression, roomLive = false, account }: SidebarProps) {
+export function Sidebar({
+  slug,
+  current,
+  min,
+  onToggle,
+  needsCount,
+  memoryCount = 0,
+  agentExpression,
+  roomLive = false,
+  account,
+}: SidebarProps) {
   const t = useTranslations("shell");
   const tc = useTranslations("common");
   const base = `/app/${slug}`;
@@ -126,7 +138,14 @@ export function Sidebar({ slug, current, min, onToggle, needsCount, agentExpress
       key: "mgmt",
       items: [
         { id: "auto", label: t("items.auto"), href: `${base}/modo-autonomo`, sw: true, soft: true, say: t("say.autoNone") },
-        { id: "mem", label: t("items.mem"), href: `${base}/memoria-da-marca`, soft: true },
+        {
+          id: "mem",
+          label: t("items.mem"),
+          href: `${base}/memoria-da-marca`,
+          soft: true,
+          n: memoryCount,
+          say: memoryCount ? t("say.memPending", { count: memoryCount }) : undefined,
+        },
         { id: "team", label: t("items.team"), href: `${base}/equipe` },
       ],
     },
