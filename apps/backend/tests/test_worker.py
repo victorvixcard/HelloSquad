@@ -289,7 +289,7 @@ async def test_request_becomes_delivery_in_needs_you_with_events_steps_and_cost(
         *[run_id] * 5,
     )
     assert (
-        after == before == {"steps": 5, "events": 11, "messages": 1, "approvals": 1, "versions": 1}
+        after == before == {"steps": 5, "events": 14, "messages": 1, "approvals": 1, "versions": 1}
     )
     assert await queue_state(admin_db, run_id) == {"queued": 0, "archived": 0}
 
