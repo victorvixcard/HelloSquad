@@ -15,6 +15,11 @@ declare
   v_user_id uuid;
   v_pedro_id uuid;
 begin
+  -- Usuário com senha conhecida nunca entra em banco com gente de verdade (DIRETRIZES_DO_DONO.md).
+  if exists (select 1 from auth.users where email is not null and email not like '%.example') then
+    raise exception 'Seed fictício recusado: este banco tem usuário com e-mail fora de .example.';
+  end if;
+
   for v_user in
     select * from (values
       ('marina@miolo.example', 'Marina Costa'),
