@@ -26,6 +26,8 @@ Realtime, eventos do run).
 | P-06 | CRM · frase "Nada é enviado sem consentimento…" | Colada na borda esquerda e no pé do cartão dos números, fora do respiro dos outros blocos | ℹ️ |
 | P-07 | Growth · objeto da conversa do ambiente | Nome "Growth Marketing" no nome acessível do botão e no cartão; na V4.6 o objeto se chama "Growth" (`ENVS.media.l`) | ℹ️ |
 | P-08 | Conversas de objeto novas (Indicador na tela; Publicação e Oportunidade pelo código) | Abrem mudas: sem "Hoje", sem a primeira fala do agente, sem o cartão do objeto no histórico e sem "Pergunte à <Nome>"; a V4.6 abre cada uma com fala, cartão e três sugestões do tipo | 🟡 |
+| P-09 | Documento (Bia, Íris, Kiwi, Max) · cartão da decisão | Falta a regra da V4.4 "Aprovar o diagnóstico não cria trabalhos…" / "Aprovar o plano define a direção…"; no lugar, textos da legenda do Otto: "…com a legenda à vista." e, aprovado, "Aprovar não publica: a publicação pede autorização própria." | 🟡 |
+| P-10 | Documento · migalha, botão de conversa e cartão extra | Migalha com o título do trabalho ("Quero analisar meu negócio") e o h1 com o do documento (na V4.6 os dois são `bd.title`); "Conversar com a Bia" no lugar de "Conversar sobre o diagnóstico"/"…as prioridades"; cartão com o rosto "Bia" que a V4.6 não tem | ℹ️ |
 
 (Tabela em construção: as telas da Miolo com documentos entram depois das entregas reais do Hulk.)
 
@@ -165,6 +167,40 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 6. **Severidade:** 🟡. **Conferido:** A2b §4 item 2 (sem fala roteirizada) é só a conversa do **pedido**; item 5 é só a
    hora da primeira fala do **ambiente**; item 6 é a faixa de período. A1b §4 item 9 cobre a conversa do conhecimento
    da Memória. Nenhum registra que as conversas de indicador, publicação e oportunidade abrem vazias.
+
+### P-09 · Cartão da decisão do documento sem a regra "aprovar não cria trabalhos" e com texto da legenda · 🟡
+
+1. **Tela e rota:** detalhe de qualquer entrega em documento, `/app/miolo/squad/<bia|iris|kiwi|max>/trabalho/<id>`,
+   primeiro cartão da coluna da direita.
+2. **Protótipo (V4.4, que a A2b adotou):** `apL` (L12605): pendente, "Aprovar o diagnóstico não cria trabalhos: cada
+   recomendação vira ação quando você pedir." (plano: "Aprovar o plano define a direção. Cada iniciativa vira trabalho só
+   quando você pedir."); aprovado, "Aprovado por você." (plano: "Aprovado por você. O Nexo organiza a execução das
+   iniciativas."). É a regra "Aprovar ≠ executar" que a V4.6 repete onde a decisão acontece (FLUXOS §5, "Aprovar não cria
+   trabalhos.", L13786). Template do cartão: L5077.
+3. **Nosso:** `apps/web/components/env/docs/DocumentDetail.tsx:116-121` usa a nota da versão ("Primeira versão.") ou
+   "A versão N está pronta para você.", e `:197` acrescenta `content.work.adjustNote`: "O ajuste abre a conversa com a
+   Bia ao lado, com a legenda à vista." Aprovado, mostra `content.work.approvedText`: "Aprovar não publica: a publicação
+   pede autorização própria." (`apps/web/messages/pt-BR/content.json:65` e a chave `approvedText`). São os textos da
+   legenda 04.01 do Otto, aplicados a diagnóstico, plano, relatório, plano de mídia e segmento.
+4. **Como reproduzir:** Marina → Estratégia → "Planos e diagnósticos" → abrir o diagnóstico (pendente ou aprovado).
+5. **Prova:** pendente, `docs/parciais/a2b/nosso-a2b-bia-documento.png` (captura da própria A2b, mesmo código) ×
+   `proto-bia-doc.png`; aprovado, `nosso-bia-doc.png` (captura desta rodada, depois das entregas do Hulk).
+6. **Severidade:** 🟡 (some uma regra combinada da tela e entra uma regra de outro objeto).
+**Conferido:** A2b §4 item 9 registra só os botões extras ("Pedir nova proposta", "Cancelar trabalho") e o item 10 o
+"Baixar PDF"; os textos do cartão não estão registrados.
+
+### P-10 · Documento: migalha, rótulo da conversa e cartão de equipe diferentes · ℹ️
+
+1. **Tela e rota:** a mesma do P-09.
+2. **Protótipo:** a migalha e o h1 mostram o mesmo `{{bd.title}}` (L5072–L5073); o botão é "Conversar sobre o
+   diagnóstico" ou "Conversar sobre as prioridades" (`talkL`, L12608); a coluna tem estado, Versões, ações e Histórico
+   (L5077); "Especialistas envolvidos" é seção do corpo do plano (L5075).
+3. **Nosso:** migalha com `data.title`, o título do trabalho (= o pedido: "Quero analisar meu negócio"), e h1 com o
+   `titulo` do conteúdo ("Diagnóstico de marketing da Miolo") (`apps/web/components/env/docs/DocumentDetail.tsx:133` e
+   `:142`); botão "Conversar com a Bia" (`:226`); cartão extra com o rosto e o nome do time entre as ações e o Histórico
+   (`:235-246`).
+4. **Prova:** `docs/parciais/a2b/nosso-a2b-bia-documento.png` e `nosso-bia-doc.png` × `proto-bia-doc.png`.
+5. **Severidade:** ℹ️.
 
 ## Conferido e bateu
 

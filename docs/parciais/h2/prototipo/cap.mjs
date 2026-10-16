@@ -110,10 +110,21 @@ await step("otto-post", async () => {
 // Bia: primeiro documento da prateleira (só leitura)
 await step("bia-doc", async () => {
   await go("bia");
-  const d = side === "proto" ? p.getByText("Plano de marketing", { exact: false }).last() : p.locator("main .st-docs a, main .st-doc a, main [class*=st-shelf] a, main [class*=st-doc] button").first();
-  if (await d.count()) { await d.click(); await wait(2500); await snap("bia-doc"); await snapScroll("bia-doc"); }
+  const d = side === "proto" ? p.getByText("Plano de marketing", { exact: false }).last() : p.locator("main a.bi-doc").first();
+  if (await d.count()) { await d.click(); await wait(3000); await snap("bia-doc"); await snapScroll("bia-doc"); }
   else errors.push("bia-doc: nenhum documento");
 });
+// nosso: um documento de cada outro ambiente (só leitura), quando existir
+if (side === "nosso") {
+  for (const [k, sel] of [["iris", "main a.v41-doc"], ["kiwi", 'main a[href*="/trabalho/"]'], ["max", 'main a[href*="/trabalho/"]']]) {
+    await step(`${k}-doc`, async () => {
+      await go(k);
+      const d = p.locator(sel).first();
+      if (await d.count()) { await d.click(); await p.waitForURL(/trabalho\//, { timeout: 20000 }); await wait(3000); await snap(`${k}-doc`); await snapScroll(`${k}-doc`); }
+      else errors.push(`${k}-doc: nenhum documento`);
+    });
+  }
+}
 // Minha Equipe & Conversas, aba Conversas
 await step("equipe-conversas", async () => {
   if (side === "proto") { await p.locator("nav.sb a, nav.sb button").filter({ hasText: /Minha Equipe/ }).first().click(); await wait(1500); }
