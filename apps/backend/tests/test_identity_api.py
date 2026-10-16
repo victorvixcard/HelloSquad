@@ -11,6 +11,7 @@ import pytest
 
 from hellosquad.api.main import app
 from hellosquad.config import get_settings
+from hellosquad.db import Database, UnsafeDatabaseRoleError
 
 pytestmark = pytest.mark.integration
 
@@ -291,6 +292,13 @@ async def test_api_role_alone_has_no_access() -> None:
         assert role == (False, False)
         with pytest.raises(psycopg.errors.InsufficientPrivilege):
             await conn.execute("select 1 from public.workspaces")
+
+
+async def test_api_refuses_a_database_role_that_bypasses_rls() -> None:
+    database = Database(get_settings().database_url.get_secret_value(), min_size=1, max_size=1)
+
+    with pytest.raises(UnsafeDatabaseRoleError):
+        await database.open()
 
 
 async def test_missing_token_is_unauthorized(api) -> None:
