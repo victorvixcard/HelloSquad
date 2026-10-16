@@ -138,7 +138,17 @@ async def test_pedro_creates_workspace_and_becomes_owner(
             (created["id"],),
         )
     ).fetchall()
-    assert audit == [("user", me["user"]["id"], "workspace.created", created["id"])]
+    # S2c: o negócio nasce com a conversa de boas-vindas do Nexo (A2a §5 item 3).
+    welcome = await (
+        await admin_db.execute(
+            "select id::text from public.conversations where workspace_id = %s and welcome",
+            (created["id"],),
+        )
+    ).fetchone()
+    assert sorted(audit, key=lambda row: row[2]) == [
+        ("user", me["user"]["id"], "conversation.created", welcome[0]),
+        ("user", me["user"]["id"], "workspace.created", created["id"]),
+    ]
 
 
 async def test_short_slug_gets_validation_error_in_portuguese(api, access_token) -> None:
