@@ -1,0 +1,30 @@
+{
+  "delivery_type": "04.01",
+  "step": "otto.produce",
+  "cases": [
+    {
+      "name": "legenda_instagram",
+      "usage": {"input_tokens": 640, "output_tokens": 520, "cache_write_tokens": 2900},
+      "output": {
+        "entrega": {
+          "canal": "instagram",
+          "objetivo": "Levar clientes à loja no sábado de manhã",
+          "versoes": [
+            {
+              "texto": "Sábado tem pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo de manhã e leve o seu ainda morno.",
+              "hashtags": ["#fermentacaonatural", "#pinheiros", "#paodesabado"],
+              "cta": "Passe na loja no sábado de manhã."
+            },
+            {
+              "texto": "O pão que a semana inteira espera chega no sábado.\nFermentação longa, casca que estala e miolo macio.\nVenha cedo: a fornada da manhã é a mais disputada.",
+              "hashtags": ["#fermentacaonatural", "#padariadebairro", "#sabadodemanha"],
+              "cta": "Venha buscar o seu no sábado de manhã."
+            }
+          ],
+          "notas": "A primeira versão destaca o processo; a segunda, o ritual do sábado. As duas evitam a palavra vetada e não citam horário, que não veio no briefing."
+        },
+        "mensagem": "Escrevi duas versões da legenda de sábado para o Instagram: uma destaca a fermentação longa e a outra o ritual do sábado de manhã. As duas chamam para a loja. Agora é com você: aprove uma ou peça ajuste."
+      }
+    }
+  ]
+}

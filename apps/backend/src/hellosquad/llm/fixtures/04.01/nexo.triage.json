@@ -1,0 +1,45 @@
+{
+  "delivery_type": "04.01",
+  "step": "nexo.triage",
+  "cases": [
+    {
+      "name": "briefing_sem_canal",
+      "when": {"not_matches": "\\b(instagram|facebook|linkedin|tiktok|whatsapp|e-?mail|site|blog)\\b"},
+      "usage": {"input_tokens": 1480, "output_tokens": 160},
+      "output": {
+        "delivery_type": "04.01",
+        "briefing": {
+          "canal": null,
+          "objetivo": null,
+          "tema": "divulgação da padaria",
+          "tom": null,
+          "restricoes": [],
+          "cta": null,
+          "data": null
+        },
+        "faltam": ["canal", "objetivo"],
+        "pergunta": "Para o Otto começar: em qual canal o texto vai sair (Instagram, WhatsApp ou site) e o que você quer que a pessoa faça depois de ler?",
+        "resumo": "Pedido de texto de divulgação sem canal e sem objetivo definidos."
+      }
+    },
+    {
+      "name": "briefing_completo",
+      "usage": {"input_tokens": 1850, "output_tokens": 210},
+      "output": {
+        "delivery_type": "04.01",
+        "briefing": {
+          "canal": "instagram",
+          "objetivo": "Levar clientes à loja no sábado de manhã",
+          "tema": "Pão de fermentação longa no sábado",
+          "tom": "acolhedor, direto, sem gíria",
+          "restricoes": ["não usar a palavra \"artesanal\""],
+          "cta": "Passar na loja no sábado de manhã",
+          "data": "sábado"
+        },
+        "faltam": [],
+        "pergunta": null,
+        "resumo": "Legenda de Instagram sobre o pão de fermentação longa de sábado; objetivo: visita à loja de manhã; sem a palavra \"artesanal\"."
+      }
+    }
+  ]
+}

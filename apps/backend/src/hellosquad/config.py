@@ -1,10 +1,13 @@
 """Configuração lida do ambiente e, em máquina local, do `.env` da raiz do monorepo."""
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import SecretStr, field_validator, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+from hellosquad.llm.pricing import DEFAULT_PRICES, ModelPrice
 
 JwtAlgorithm = Literal["ES256", "RS256", "HS256"]
 
@@ -49,8 +52,30 @@ class Settings(BaseSettings):
     api_database_url: SecretStr | None = None
     api_db_pool_min_size: int = 1
     api_db_pool_max_size: int = 10
-    # Usuário postgres do Supabase local: só ferramentas locais (seed, senha do papel, testes).
+    # Usuário postgres do Supabase local: ferramentas locais (seed, senha do papel, testes) e, até o
+    # papel próprio do worker existir, o papel privilegiado do worker local.
     database_url: SecretStr | None = None
+
+    # LLM do runtime do squad. anthropic sem ANTHROPIC_API_KEY cai no simulado (com aviso no log).
+    llm_provider: Literal["anthropic", "simulated"] = "anthropic"
+    anthropic_api_key: SecretStr | None = None
+    llm_timeout_seconds: float = 600.0
+    llm_max_retries: int = 2
+    # USD por milhão de tokens, por modelo. JSON no .env para trocar sem mudar código.
+    llm_prices: dict[str, ModelPrice] = Field(default_factory=lambda: dict(DEFAULT_PRICES))
+    # Pasta squad/ (agent.yaml, SOUL.md, skills/). Vazio: a do monorepo.
+    squad_dir: Path | None = None
+
+    # Worker: runs simultâneos no processo, teto por workspace (aplicado ao tirar da fila) e
+    # tentativas.
+    worker_concurrency: int = Field(default=4, ge=1)
+    worker_workspace_cap: int = Field(default=3, ge=1)
+    worker_visibility_timeout_seconds: int = Field(default=120, ge=10)
+    worker_max_attempts: int = Field(default=3, ge=1)
+    worker_retry_base_seconds: float = Field(default=5.0, ge=0)
+    worker_poll_seconds: float = Field(default=1.0, gt=0)
+    worker_shutdown_grace_seconds: float = Field(default=30.0, ge=0)
+    worker_history_messages: int = Field(default=20, ge=1)
 
     @field_validator("auth_jwt_algorithms", "api_cors_origins", mode="before")
     @classmethod

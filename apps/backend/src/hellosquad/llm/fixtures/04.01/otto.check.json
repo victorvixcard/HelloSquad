@@ -1,0 +1,29 @@
+{
+  "delivery_type": "04.01",
+  "step": "otto.check",
+  "cases": [
+    {
+      "name": "palavra_vetada",
+      "when": {"tag": "versao", "matches": "artesanal"},
+      "usage": {"input_tokens": 980, "output_tokens": 190, "cache_read_tokens": 2900},
+      "output": {
+        "aderencia_ao_briefing": {"ok": false, "observacao": "A restrição do briefing não foi respeitada."},
+        "consistencia_de_marca": {"ok": false, "observacao": "A versão usa a palavra \"artesanal\", vetada pela marca."},
+        "qualidade_profissional": {"ok": true, "observacao": "Frases curtas e concretas."},
+        "aplicabilidade_no_canal": {"ok": true, "observacao": "Tamanho e hashtags adequados ao Instagram."},
+        "ajustes": ["Trocar \"artesanal\" por uma descrição concreta do processo de fermentação."]
+      }
+    },
+    {
+      "name": "aprovada",
+      "usage": {"input_tokens": 980, "output_tokens": 150, "cache_read_tokens": 2900},
+      "output": {
+        "aderencia_ao_briefing": {"ok": true, "observacao": "Canal, objetivo e tema atendidos; restrição respeitada."},
+        "consistencia_de_marca": {"ok": true, "observacao": "Tom acolhedor e direto, sem gíria."},
+        "qualidade_profissional": {"ok": true, "observacao": "Frases curtas, uma ideia por versão."},
+        "aplicabilidade_no_canal": {"ok": true, "observacao": "Pronta para o Instagram, com 3 hashtags e CTA."},
+        "ajustes": []
+      }
+    }
+  ]
+}

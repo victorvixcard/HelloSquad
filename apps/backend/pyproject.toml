@@ -4,12 +4,14 @@ version = "0.1.0"
 description = "Backend do HelloSquad: API (FastAPI), worker e scheduler."
 requires-python = ">=3.12"
 dependencies = [
+    "anthropic>=1.0",
     "fastapi>=0.143.2",
     "httpx>=0.28.1",
     "psycopg-pool>=3.3.3",
     "psycopg[binary]>=3.3.6",
     "pydantic-settings>=2.16.0",
     "pyjwt[crypto]>=2.15.1",
+    "pyyaml>=6.0.3",
     "uvicorn[standard]>=0.54.0",
 ]
 
