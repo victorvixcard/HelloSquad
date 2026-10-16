@@ -1,5 +1,6 @@
 import { createTranslator } from "next-intl";
 import { describe, expect, it } from "vitest";
+import { currentWeek } from "@/components/env/week";
 import { icuArguments, icuTags } from "@/i18n/icu";
 import { PUBLIC_LOCALE_PATHS, publicLocaleOf, resolveLocale, userLocaleFromClaims } from "@/i18n/resolve";
 import enMessages from "@/messages/en";
@@ -95,5 +96,22 @@ describe("frases montadas com nome de agente nos três idiomas (artigo só no pt
     expect(es("home.and" as never, { next: "bia" } as never)).toBe(" y ");
     expect(pt("home.and" as never, { next: "iris" } as never)).toBe(" e ");
     expect(en("home.and" as never, { next: "iris" } as never)).toBe(" and ");
+  });
+});
+
+describe("datas por idioma (Intl, sem texto fixo)", () => {
+  const friday = new Date("2026-10-16T12:00:00-03:00");
+
+  it("semana do calendário editorial: 'out' em pt-BR, 'oct' em es, 'Oct' em en", () => {
+    expect(currentWeek(friday, "pt-BR")).toMatchObject({ from: 12, to: 18, month: "out", sameMonth: true });
+    expect(currentWeek(friday, "es").month).toBe("oct");
+    expect(currentWeek(friday, "en").month).toBe("Oct");
+  });
+
+  it("dia e mês na ordem de cada idioma", () => {
+    const dm = (locale: string) => new Intl.DateTimeFormat(locale, { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit" }).format(friday);
+    expect(dm("pt-BR")).toBe("16/10");
+    expect(dm("es")).toBe("16/10");
+    expect(dm("en")).toBe("10/16");
   });
 });
