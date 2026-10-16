@@ -200,8 +200,9 @@ O mesmo conjunto de verificações roda local com `make test` e `make build`.
 | Login de teste responde 429 | Limite de login da Auth local (300 a cada 5 min por IP) | Esperar alguns minutos. |
 | `Seed fictício recusado` | Há usuário com e-mail fora de `.example` no banco local | Remover esse usuário (dados de teste são só fictícios) ou `pnpm exec supabase db reset`. |
 | Página em branco ou erro estranho no `make dev` depois de `make build` | `next build` e `next dev` dividem a pasta `.next` | Pare o `make dev`, rode o build, suba de novo. |
-| Web responde 500 com "Faltam NEXT_PUBLIC_SUPABASE_URL…" | Variáveis do web ausentes no `.env` da raiz | Preencha `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (ver "Chaves locais") e reinicie o web. |
+| next build ou next start abortam com "Configuração do web inválida…" | Variável do web ausente ou errada no .env da raiz | Corrija o item que a mensagem lista (ver "Chaves locais") e rode de novo. |
 | Login volta sempre para `/entrar` | Navegador alternando entre `127.0.0.1` e `localhost` (cookies por host) | Use um host só. |
 | Área logada mostra "Não deu para carregar o seu squad agora." | API fora do ar | `make dev-api` e "Tentar de novo". |
 | `make e2e` falha com "Executable doesn't exist" | Chromium do Playwright não instalado | `pnpm --filter web exec playwright install chromium`. |
 | `make test-db` falha em "Pedro sem membership" depois de testar o cadastro de workspace à mão | Workspace de teste do Pedro | `make seed`. |
+| Quer ver o que está nas filas de execução (pgmq: `runs_interactive`, `runs_scheduled`, `external_actions`, `memory_reflect`) | Só o papel privilegiado lê as filas; a Data API e o usuário logado não enxergam o schema `pgmq` | `docker exec -it supabase_db_hellosquad psql -U postgres -c "select * from pgmq.metrics_all()"` (tamanho de cada fila) e `... -c "select msg_id, read_ct, message from pgmq.q_runs_interactive"` (mensagens). `make seed` esvazia as quatro. |
