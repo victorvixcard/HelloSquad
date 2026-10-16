@@ -178,6 +178,7 @@ a{color:inherit}
 .sa-tabs.is-line{padding:0;gap:4px;background:transparent;box-shadow:none;flex-wrap:wrap}
 .sa-tabs.is-line .sa-tab{height:30px;padding:0 12px;box-shadow:inset 0 0 0 1px var(--hs-l2)}
 .sa-tabs.is-line .sa-tab[aria-selected="true"]{background:var(--hs-tinta);color:var(--hs-papel);box-shadow:none}
+.sa-tabs.is-line .sa-tab[aria-selected="true"] .sa-nb{background:rgba(247,247,245,.18);color:var(--hs-papel)}
 
 /* ================================================= barra de ferramentas, busca e filtros */
 .sa-tool{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}

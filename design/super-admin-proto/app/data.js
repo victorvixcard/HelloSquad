@@ -167,7 +167,7 @@
   /* ---------------------------------------------------------------- auditoria (nada é apagado) */
   var auditoria = [
     { em: '2026-10-16T09:01', quem: 'admin', nome: 'Vic', conta: 'miolo', tipo: 'Acesso do suporte', acao: 'Entrou no ambiente do cliente', det: 'Motivo: conferir o erro de publicação no Instagram (run_8f2611). Sessão de 30 min.' },
-    { em: '2026-10-16T08:58', quem: 'sistema', nome: 'Worker', conta: 'vitta', tipo: 'Execução', acao: 'Run iniciado', det: 'run_8f2bd4 · Bia · 02.03 · prompt fc8a1e2' },
+    { em: '2026-10-16T08:58', quem: 'sistema', nome: 'Worker', conta: 'vitta', tipo: 'Execução', acao: 'Run iniciado', det: 'run_8f2bd4 · Bia · 02.03 · etapa produzir' },
     { em: '2026-10-16T08:41', quem: 'cliente', nome: 'Marina Costa', conta: 'miolo', tipo: 'Aprovação', acao: 'Aprovou as legendas do Dia Mundial do Pão', det: 'Otto · 04.01 · versão 2 · decisão do owner' },
     { em: '2026-10-16T08:30', quem: 'sistema', nome: 'Otto', conta: 'vitta', tipo: 'Aprovação', acao: 'Pediu revisão das legendas de Natal', det: 'approval kind=review' },
     { em: '2026-10-16T08:12', quem: 'cliente', nome: 'Carla Dias', conta: 'vitta', tipo: 'Memória', acao: 'Sugeriu correção na memória', det: 'Editor sugere; só o owner confirma' },

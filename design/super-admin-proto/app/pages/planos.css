@@ -1,0 +1,3 @@
+/* Planos e recargas: cartões da mesma linha com a mesma altura e o rodapé de gravação alinhado embaixo. */
+.pl-oferta{display:flex;flex-direction:column}
+.pl-oferta>.sa-card-b{flex:1;display:flex;flex-direction:column}
