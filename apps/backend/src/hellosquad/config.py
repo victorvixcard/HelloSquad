@@ -100,6 +100,21 @@ class Settings(BaseSettings):
     # Motor de imagem da Kaia: é do dono e ainda não chegou; só o stub "aguardando o motor".
     image_engine_provider: Literal["pending"] = "pending"
 
+    # Cobrança (S2e, ADR-0008): provedor das cobranças novas. mock = simulado, só em local/test.
+    # O webhook de cada provedor só é aceito com o segredo dele preenchido (assinatura obrigatória).
+    payment_provider: Literal["asaas", "mercadopago", "mock"] = "mock"
+    payment_timeout_seconds: float = Field(default=60.0, gt=0)
+    payment_back_url: str = "http://127.0.0.1:3100"
+    payment_mock_webhook_secret: SecretStr | None = None
+    asaas_api_key: SecretStr | None = None
+    asaas_base_url: str = "https://api-sandbox.asaas.com/v3"
+    asaas_webhook_token: SecretStr | None = None
+    mercadopago_access_token: SecretStr | None = None
+    mercadopago_base_url: str = "https://api.mercadopago.com"
+    mercadopago_webhook_secret: SecretStr | None = None
+    # Scheduler: intervalo mínimo entre duas conciliações da mesma assinatura vencida.
+    billing_recheck_minutes: int = Field(default=60, ge=1)
+
     @field_validator("auth_jwt_algorithms", "api_cors_origins", mode="before")
     @classmethod
     def split_comma_separated(cls, value: object) -> object:

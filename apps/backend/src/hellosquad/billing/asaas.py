@@ -122,15 +122,24 @@ class AsaasProvider:
         status = response.status_code
         if status == 401:
             raise PaymentProviderError(
-                "provider_unauthorized", "Chave do Asaas recusada.", transient=False, status_code=401
+                "provider_unauthorized",
+                "Chave do Asaas recusada.",
+                transient=False,
+                status_code=401,
             )
         if status == 429 or status >= 500:
             raise PaymentProviderError(
-                "provider_unavailable", f"Asaas respondeu {status}.", transient=True, status_code=status
+                "provider_unavailable",
+                f"Asaas respondeu {status}.",
+                transient=True,
+                status_code=status,
             )
         if status == 404:
             raise PaymentProviderError(
-                "provider_not_found", "Recurso não encontrado no Asaas.", transient=False, status_code=404
+                "provider_not_found",
+                "Recurso não encontrado no Asaas.",
+                transient=False,
+                status_code=404,
             )
         if status >= 400:
             errors = (response.json() or {}).get("errors") or [{}]

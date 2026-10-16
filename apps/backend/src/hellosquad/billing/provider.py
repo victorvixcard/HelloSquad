@@ -118,7 +118,10 @@ class WebhookEvent:
             "payload": self.payload,
             "payment": self.payment.as_event() if self.payment else None,
             "subscription": (
-                {"provider_subscription_id": self.subscription_id, "status": self.subscription_status}
+                {
+                    "provider_subscription_id": self.subscription_id,
+                    "status": self.subscription_status,
+                }
                 if self.subscription_id
                 else None
             ),
