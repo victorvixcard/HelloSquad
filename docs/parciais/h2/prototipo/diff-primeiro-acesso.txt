@@ -1,0 +1,49 @@
+
+######## bia
+  [heads] só no protótipo: A Bia ainda não conhece a Miolo o bastante para propor uma direção.
+  [heads] só no nosso:     A Bia ainda não conhece Trilha Urbana o bastante para propor uma direção.
+
+######## kaia
+  [heads] só no nosso:     Aguardando o motor de imagem
+  [buttons] só no protótipo: Todas # ‖ Redes sociais # ‖ Carrosséis # ‖ Identidade # ‖ Promocionais # ‖ Imagens # ‖ Vídeo e motion #
+  [buttons] só no nosso:     [Todas: nenhuma criação] Todas # ‖ [Redes sociais: nenhuma criação] Redes sociais # ‖ [Carrosséis: nenhuma criação] Carrosséis # ‖ [Identidade: nenhuma criação] Identidade # ‖ [Promocionais: nenhuma criação] Promocionais # ‖ [Imagens: nenhuma criação] Imagens # ‖ [Vídeo e motion: nenhuma criação] Vídeo e motion #
+
+######## otto
+
+######## kiwi
+  [heads] só no protótipo: Mais encomendas pelo site no Natal, sem depender só do Instagram. ‖ Presença no Google
+  [heads] só no nosso:     Nenhum objetivo de crescimento combinado ainda.
+  [buttons] só no protótipo: [Ver o que dá para pedir ao Kiwi] O que pedir ao Kiwi ‖ [Conversar com Kiwi sobre Growth, ao lado] Conversar com Kiwi ‖ [Kiwi · Para você autorizar: Teste de anúncios perto da loja. Ver a proposta] KIWI · PARA VOCÊ AUTORIZAR Teste de anúncios perto da loja Até R$ # por dia, # dias. Nada é investido sem a s ‖ [Ver mais # pendência] +# ‖ Aquisição orgânica # oportunidades A busca trouxe #% das encomendas ‖ Campanhas pagas Nada no ar # proposta aguarda você ‖ Conversão e testes # teste rodando # planejado · # hipóteses na fila ‖ [panetone artesanal: Não aparece. Criar a página do panetone. Conversar com o Kiwi] Comece por aqui “panetone artesanal” Alto Não aparece Criar a página do panetone ‖ [padaria em pinheiros: No mapa, atrás de duas. Mais avaliações com foto. Conversar com o Kiwi] “padaria em pinheiros” Alto No mapa, atrás de duas Mais avaliações com foto ‖ [encomenda de panetone: Não aparece. Anúncio de busca no Natal. Conversar com o Kiwi] “encomenda de panetone” Médio Não aparece Anúncio de busca no Natal ‖ [pão de fermentação natural: Às vezes, pelo Perfil. Artigo no site. Conversar com o Kiwi] “pão de fermentação natural” Médio Às vezes, pelo Perfil Artigo no site
+  [buttons] só no nosso:     [Ver o que dá para pedir à Kiwi] O que pedir à Kiwi ‖ [Conversar com Kiwi sobre Growth Marketing, ao lado] Conversar com Kiwi ‖ Ver conexões ‖ Aquisição orgânica Sem dados nenhuma busca para mostrar ‖ Campanhas pagas Nada no ar nada é investido sem a sua autorização ‖ Conversão e testes Nenhum teste nenhuma hipótese na fila
+  [regions] só no protótipo: section:Precisa de você: #
+
+######## max
+  [buttons] só no protótipo: Importar ‖ Conectar ‖ Saber mais
+  [buttons] só no nosso:     [Importar a planilha de clientes] Importar ‖ [Conectar o e-mail] Conectar ‖ [Saber mais sobre o WhatsApp] Saber mais
+
+######## iris
+
+######## catalogo
+  [heads] só no protótipo: A Bia ainda não conhece a Miolo o bastante para propor uma direção.
+  [heads] só no nosso:     A Bia ainda não conhece Trilha Urbana o bastante para propor uma direção.
+  [buttons] só no protótipo: DEMO ‖ [Minha Equipe & Conversas, mensagens novas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo · Pinheiros ‖ [Definir o posicionamento. Como a Miolo quer ser lembrada, em uma frase.. Abre a conversa com a Bia.] Definir o posicionamento Como a Miolo quer ser lembrada, em uma frase. ‖ [Encontrar oportunidades. Onde a Miolo pode crescer com o que já tem.. Abre a conversa com a Bia.] Encontrar oportunidades Onde a Miolo pode crescer com o que já tem.
+  [buttons] só no nosso:     Pular para o conteúdo ‖ [Minha Equipe & Conversas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Juliana, Trilha Urbana] J T Juliana Trilha Urbana ‖ [Definir o posicionamento. Como Trilha Urbana quer ser lembrada, em uma frase.. Abre a conversa com a Bia.] Definir o posicionamento Como Trilha Urbana quer ser lembrada, em uma frase. ‖ [Encontrar oportunidades. Onde Trilha Urbana pode crescer com o que já tem.. Abre a conversa com a Bia.] Encontrar oportunidades Onde Trilha Urbana pode crescer com o que já tem.
+  [regions] só no protótipo: div:O que você quer fazer com a Bia?
+
+######## max-importar
+  [heads] só no nosso:     Importar uma planilha CSV
+  [buttons] só no protótipo: DEMO ‖ [Minha Equipe & Conversas, mensagens novas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo · Pinheiros ‖ [Ver o que dá para pedir ao Max] O que pedir ‖ Conectar ‖ Saber mais ‖ Importar clientes ‖ [Expandir a conversa] ‖ [Fechar a conversa] ‖ Usar a planilha de exemplo ‖ Conectar a plataforma da loja ‖ [Anexar] ‖ [O que mais pedir ao Max] ‖ [Enviar pedido]
+  [buttons] só no nosso:     Pular para o conteúdo ‖ [Minha Equipe & Conversas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Juliana, Trilha Urbana] J T Juliana Trilha Urbana ‖ [Ver o que dá para pedir ao Max] O que pedir ao Max ‖ [Importar a planilha de clientes] Importar ‖ [Conectar o e-mail] Conectar ‖ [Saber mais sobre o WhatsApp] Saber mais ‖ Cancelar
+  [regions] só no protótipo: section:Conversa ‖ input:Mensagem para o Max…
+  [inputs] só no protótipo: Mensagem para o Max… | Mensagem para o Max…
+  [inputs] só no nosso:     | ‖ | Ex.: Planilha de clientes do balcão
+
+######## equipe-conversas
+  [buttons] só no protótipo: Importar clientes Max · CRM · pedido: Importar clientes Max: Para começar, anexe a planilha pelo clipe ao lado ‖ Boas-vindas Nexo · Projetos Nexo: Oi, Marina. Eu sou o Nexo e coordeno o squad da Miolo. Você pode pedir qualq ‖ Sala do Squad todos os especialistas Nexo: Esta é a Sala do Squad. Use para pedidos maiores, como uma campanha
+  [buttons] só no nosso:     Limpar filtros
+
+######## conversa-bia
+  [heads] só no protótipo: Estratégia ‖ A Bia ainda não conhece a Miolo o bastante para propor uma direção.
+  [buttons] só no protótipo: DEMO ‖ [Recolher a barra lateral] ‖ [Início] Início ‖ [Sala do Squad, todos os especialistas] Sala do Squad ‖ [Projetos, com Nexo] Projetos Nexo ‖ [Estratégia, com Bia] Estratégia ‖ [Marca & Criação, com Kaia] Marca & Criação Kaia ‖ [Conteúdo, com Otto] Conteúdo Otto ‖ [Growth, com Kiwi] Growth Kiwi ‖ [CRM, com Max] CRM Max ‖ [Resultados, com Íris] Resultados Íris ‖ [Modo Autônomo, não configurado] Modo Autônomo ‖ [Memória da Marca] Memória da Marca ‖ [Minha Equipe & Conversas, mensagens novas] Minha Equipe & Conversas ‖ [Conta, negócio e configurações. Marina, Miolo] M M Marina Miolo · Pinheiros ‖ [Notificações] ‖ [Ver o que dá para pedir à Bia] O que pedir ‖ [Conversar com Bia sobre Estratégia, ao lado] Conversar com Bia ‖ Analisar meu negócio ‖ Estratégia ‖ [Expandir a conversa] ‖ [Fechar a conversa] ‖ Onde a Miolo pode crescer até o Natal? ‖ Crie uma promoção para esta semana ‖ Analisar as padarias do bairro ‖ [Anexar] ‖ [O que mais pedir à Bia] ‖ [Enviar pedido]
+  [regions] só no protótipo: nav:HelloSquad ‖ div:Principal ‖ div:Seu squad ‖ div:Gestão ‖ main:Conteúdo ‖ section:Conversa ‖ div:Pergunte à Bia ‖ input:Mensagem para a Bia…
+  [inputs] só no protótipo: Mensagem para a Bia… | Mensagem para a Bia…
