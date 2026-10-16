@@ -10,12 +10,17 @@ type CspOptions = {
   dev: boolean;
 };
 
-/** Origem da Auth do Supabase. Local, 127.0.0.1 e localhost são origens diferentes: vão as duas. */
-function supabaseOrigins(supabaseUrl: string | undefined): string[] {
+/**
+ * Origens do Supabase que o browser chama: a Auth (http/https) e o WebSocket do Realtime (ws/wss, A1a),
+ * na mesma porta. Local, 127.0.0.1 e localhost são origens diferentes: vão as duas.
+ */
+export function supabaseOrigins(supabaseUrl: string | undefined): string[] {
   if (!supabaseUrl) return [];
-  const { protocol, hostname, port, origin } = new URL(supabaseUrl);
+  const { protocol, hostname, port } = new URL(supabaseUrl);
   const loopback = { "127.0.0.1": "localhost", localhost: "127.0.0.1" }[hostname];
-  return loopback ? [origin, `${protocol}//${loopback}${port ? `:${port}` : ""}`] : [origin];
+  const hosts = [hostname, ...(loopback ? [loopback] : [])].map((h) => `${h}${port ? `:${port}` : ""}`);
+  const socket = protocol === "https:" ? "wss:" : "ws:";
+  return [...hosts.map((h) => `${protocol}//${h}`), ...hosts.map((h) => `${socket}//${h}`)];
 }
 
 export function contentSecurityPolicy({ nonce, supabaseUrl, dev }: CspOptions): string {
