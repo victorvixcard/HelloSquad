@@ -1,0 +1,208 @@
+{
+  "title": "Memoria de Marca",
+  "sub": "Lo que tu squad sabe sobre ti y tu negocio.",
+  "search": "Buscar en la memoria",
+  "add": "Agregar conocimiento",
+  "addForm": {
+    "ask": "¿Qué necesita saber el squad?",
+    "placeholder": "Ej.: los domingos la tienda cierra a las 13:00",
+    "area": "Tema",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "note": "Entra como declarado por ti, ya confirmado. Todo el squad pasa a usarlo.",
+    "saved": "Guardado en la Memoria de Marca. Todo el squad pasa a usarlo."
+  },
+  "unavailableApi": "La Memoria de Marca no respondió en este momento. No se cambió nada; inténtalo de nuevo en unos instantes.",
+  "dossier": {
+    "know": "Lo que el squad sabe",
+    "sumFirst": "El squad aún sabe poco sobre {business}: solo lo que contaste en el registro. Cada fuente conectada y cada conversación ayudan a completarlo. Nada se convierte en orientación sin tu visto bueno.",
+    "footFirst": "Síntesis a partir del registro",
+    "from": "De dónde viene",
+    "fromAria": "De dónde viene lo que el squad sabe",
+    "pillAria": "{name}: {state}. Ver las fuentes",
+    "keys": "Conocimientos principales",
+    "keyMiss": "Aún no lo sabe · contar ahora",
+    "keyAria": "{key}: {value}. Abrir",
+    "keyMissAria": "{key}: aún no lo sabe. Contar ahora",
+    "key": {
+      "value": "Propuesta de valor",
+      "audience": "Público",
+      "products": "Productos",
+      "differentials": "Diferenciales",
+      "positioning": "Posicionamiento",
+      "visual": "Identidad visual",
+      "tone": "Tono de comunicación"
+    }
+  },
+  "pend": {
+    "title": "El squad notó",
+    "sub": "nada se convierte en orientación sin tu visto bueno",
+    "kickHypo": "{name} notó · {topic}",
+    "kickConf": "Información en conflicto · {key}",
+    "kickOld": "Desactualizado · {key}",
+    "origin": "Origen: {origin}",
+    "note": "Nada cambia en las entregas hasta que lo confirmes.",
+    "confQ": "Dos fuentes dicen cosas distintas sobre {key}. Mientras no decidas, el squad no usa ninguna de las dos.",
+    "keep": "Usar este",
+    "keepAria": "Usar este: {value}",
+    "neither": "Ninguno de los dos: corregir",
+    "keepUsing": "Sigue vigente",
+    "oldNote": "El squad avisa cuando use este dato.",
+    "more": "Ver {count} más",
+    "less": "Ver menos",
+    "none": "Todo revisado. Cuando el squad note algo nuevo, aparecerá aquí para que lo confirmes, lo corrijas o lo descartes.",
+    "noneFirst": "Cuando Nexo lea el sitio web o hables con el squad, lo que note aparecerá aquí para que lo confirmes. Nada se convierte en orientación sin tu visto bueno.",
+    "today": "hoy"
+  },
+  "act": {
+    "confirm": "Confirmar",
+    "fix": "Corregir",
+    "discard": "Descartar",
+    "saveConfirmed": "Guardar como confirmado",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "editAria": "Corregir el conocimiento",
+    "off": "Dejar de usar",
+    "on": "Volver a usar",
+    "talk": "Hablar de esto"
+  },
+  "toast": {
+    "confirmed": "Confirmado. Todo el squad pasa a usarlo.",
+    "corrected": "Corregido. El squad usa la nueva versión.",
+    "discarded": "Descartado. No se convierte en regla y nadie del squad lo usa.",
+    "resolved": "Conflicto resuelto. La otra versión sale de la memoria."
+  },
+  "log": {
+    "title": "Cambios recientes",
+    "none": "Las confirmaciones, correcciones y descartes aparecen aquí.",
+    "more": "Ver todos los cambios ({count})",
+    "confirmed": "Confirmaste: {value}",
+    "corrected": "Corregiste: {value}",
+    "discarded": "Descartaste: {value}",
+    "decided": "Decidiste: {value}",
+    "suggested": "{who} sugirió: {value}",
+    "resolved": "Resolviste el conflicto de {key}: queda {value}",
+    "today": "hoy · {time}"
+  },
+  "browse": {
+    "title": "Todo lo que el squad sabe",
+    "sub": "por tema · abre un elemento para ver el origen y quién lo usa",
+    "byAgent": "Ver por especialista",
+    "byAgentAria": "Ver lo que consulta cada especialista",
+    "agentAria": "Ver lo que consulta {who}",
+    "tabsAria": "Temas",
+    "all": "Todo",
+    "sources": "Conexiones y fuentes",
+    "results": "{count, plural, one {# resultado} other {# resultados}} para “{q}”",
+    "clear": "Limpiar la búsqueda",
+    "agentTitle": "{who} consulta {count} conocimientos",
+    "agentSub": "Los usa {uses}. Las sugerencias y los conflictos quedan fuera hasta que decidas.",
+    "seeAll": "Ver todo",
+    "rowAria": "{key}: {value}. {state}. {action}",
+    "rowOpen": "Ver detalles",
+    "rowClose": "Ocultar",
+    "origin": "Origen",
+    "changes": "Cambios",
+    "prev": "Antes: “{value}”",
+    "entered": "Entró en la memoria: {origin}",
+    "usesHow": "Cómo lo usa el squad",
+    "usesAfter": "Quién lo usará después de tu visto bueno",
+    "usesNone": "Nadie lo usa ahora",
+    "usesAll": "Todo el squad lo consulta cuando lo necesita",
+    "agentRole": "{name} · {role}",
+    "empty": "Aún no hay nada aquí.",
+    "emptyQ": "No encontramos nada. Prueba con otra palabra o agrega ese conocimiento.",
+    "showHidden": "Mostrar descartados y fuera de uso ({count})",
+    "hideHidden": "Ocultar descartados y fuera de uso",
+    "factCount": "{count, plural, one {# conocimiento} other {# conocimientos}}"
+  },
+  "areas": {
+    "business": "Mi negocio",
+    "brand": "Mi marca",
+    "audience": "Mi público",
+    "knowledge": "Conocimiento y aprendizajes"
+  },
+  "areaDesc": {
+    "business": "Historia, ubicación, productos, diferenciales y operación",
+    "brand": "Identidad visual, tono de voz, posicionamiento, preferencias creativas y referencias",
+    "audience": "Quién compra, qué necesita y cómo se comporta",
+    "knowledge": "Investigaciones, descubrimientos, decisiones y orientaciones confirmadas"
+  },
+  "states": {
+    "confirmed": "Confirmado",
+    "decision": "Decisión tuya",
+    "from_source": "De la fuente",
+    "observed": "Observado",
+    "suggested": "Sugerido",
+    "outdated": "Desactualizado",
+    "discarded": "Descartado",
+    "conflicting": "En conflicto",
+    "unused": "Sin uso"
+  },
+  "stateLine": {
+    "confirmed": "Confirmado por ti · {date}",
+    "decision": "Decisión tuya · {date}",
+    "from_source": "Leído en {source} · {date} · en uso, sin tu confirmación",
+    "observed": "Observado por el squad · usado como contexto, no como regla",
+    "suggested": "Sugerencia · nadie lo usa hasta que lo confirmes",
+    "outdated": "Desactualizado · el squad avisa cuando lo use",
+    "conflicting": "En conflicto · no se usa hasta que decidas",
+    "discarded": "Descartado por ti · no se convierte en regla",
+    "unused": "Fuera de uso a petición tuya"
+  },
+  "sourceStates": {
+    "declared": "Declarado por ti",
+    "connected": "Conectada",
+    "outdated": "Desactualizada",
+    "needs_reconnect": "Necesita reconexión",
+    "not_connected": "No conectada",
+    "unavailable": "No disponible"
+  },
+  "sourceKinds": {
+    "onboarding": "Registro",
+    "conversation": "Conversaciones",
+    "correction": "Declarado por ti",
+    "approval": "Conversaciones",
+    "file": "Documentos",
+    "connection": "Conexión",
+    "agent_observation": "Especialistas"
+  },
+  "sourceShort": {
+    "onboarding": "Tú",
+    "conversation": "Conversaciones",
+    "correction": "Tú",
+    "approval": "Conversaciones",
+    "file": "Documentos",
+    "agent_observation": "Especialistas"
+  },
+  "roles": {
+    "nexo": "Coordinación",
+    "bia": "Estrategia",
+    "kaia": "Creación",
+    "otto": "Contenido",
+    "kiwi": "Growth",
+    "max": "CRM",
+    "iris": "Resultados"
+  },
+  "uses": {
+    "nexo": "para organizar proyectos y plazos",
+    "bia": "para definir prioridades y campañas",
+    "kaia": "para crear piezas, diseños y la identidad",
+    "otto": "para planificar y escribir contenidos",
+    "kiwi": "en búsquedas, anuncios y pruebas",
+    "max": "en segmentos y mensajes para clientes",
+    "iris": "para leer y explicar los resultados"
+  },
+  "strip": {
+    "suggestions": "{count, plural, one {# sugerencia} other {# sugerencias}}",
+    "conflicts": "{count} en conflicto",
+    "outdated": "{count} desactualizado",
+    "and": " y ",
+    "sub": "Nada se convierte en orientación del squad sin tu visto bueno.",
+    "cta": "Revisar",
+    "who": "Squad"
+  },
+  "context": {
+    "meta": "Memoria de Marca · {state}"
+  }
+}

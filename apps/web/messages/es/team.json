@@ -1,0 +1,179 @@
+{
+  "title": "Mi Equipo y Conversaciones",
+  "sub": {
+    "team": "Siete especialistas que conocen {business}. Elige uno para ver qué está haciendo.",
+    "chats": "Todo lo que hablaste con el squad, por tema y por contexto."
+  },
+  "openRoom": "Abrir la Sala del Squad",
+  "tabsLabel": "Mi Equipo y Conversaciones",
+  "tabs": {
+    "team": "Equipo",
+    "chats": "Conversaciones"
+  },
+  "stageLabel": "Elige un especialista",
+  "nameAria": "{name} · {role}",
+  "talk": "Hablar {with}",
+  "ask": "Pedir algo",
+  "askTitle": "Pedidos comunes",
+  "profileTabs": {
+    "now": "Ahora",
+    "skills": "Habilidades",
+    "made": "Entregas",
+    "with": "Trabaja con"
+  },
+  "noNow": "Nada en curso ahora. {intro}",
+  "noMade": "Aún no hay entregas para {business}.",
+  "now": {
+    "idle": "Disponible.",
+    "idleNexo": "Disponible. Pide lo que quieras.",
+    "care": "Da seguimiento a {count, plural, one {# trabajo} other {# trabajos}} y te avisa cuando la decisión es tuya.",
+    "irisIdle": "Espera una fuente de datos, como Instagram.",
+    "wait": "Espera tu aprobación de la v{version} {object}.",
+    "waitObject": {
+      "d0401": "del pie de foto",
+      "default": "del trabajo"
+    },
+    "waitPlain": "Te espera.",
+    "work": "{verb} “{title}”.",
+    "verb": {
+      "creating": "Creando",
+      "writing": "Escribiendo",
+      "researching": "Investigando",
+      "working": "Trabajando en"
+    }
+  },
+  "work": {
+    "waitVersion": "v{version} espera tu aprobación"
+  },
+  "agents": {
+    "nexo": {
+      "pitch": "Organizo el squad y solo te aviso cuando la decisión es tuya.",
+      "intro": "Coordino el squad de {business}. Recibo tus pedidos, armo el equipo adecuado para cada trabajo y le doy seguimiento hasta el final.",
+      "skills": {
+        "k1": "Organizar pedidos",
+        "k2": "Armar el equipo adecuado",
+        "k3": "Controlar los plazos",
+        "k4": "Resumir lo importante"
+      },
+      "asks": {
+        "q1": "¿Qué necesita de mí esta semana?",
+        "q2": "Vamos a planificar una campaña",
+        "q3": "Quiero organizar mi marketing"
+      }
+    },
+    "bia": {
+      "pitch": "Encuentro dónde está la oportunidad de {business}.",
+      "intro": "Diagnóstico, posicionamiento y planes con prioridades claras. Leo el mercado y el barrio antes de proponer.",
+      "skills": {
+        "k1": "Diagnóstico de marketing",
+        "k2": "Investigación de mercado",
+        "k3": "Posicionamiento",
+        "k4": "Estrategia de campaña"
+      },
+      "asks": {
+        "q1": "¿Dónde puede crecer {business} antes de Navidad?",
+        "q2": "Crea una promoción para esta semana",
+        "q3": "Analizar las panaderías del barrio"
+      }
+    },
+    "kaia": {
+      "pitch": "Le doy forma a la marca de {business} en cada pieza.",
+      "intro": "Posts, campañas, materiales para la tienda e identidad visual, siempre con el sello de {business}.",
+      "skills": {
+        "k1": "Dirección de arte",
+        "k2": "Piezas para redes sociales",
+        "k3": "Materiales para la tienda",
+        "k4": "Identidad visual"
+      },
+      "asks": {
+        "q1": "Crear un post para el Día Mundial del Pan",
+        "q2": "Un cartel de pedidos para el mostrador",
+        "q3": "Nuevas portadas para las historias destacadas"
+      }
+    },
+    "otto": {
+      "pitch": "Mantengo a {business} presente, con su propia voz.",
+      "intro": "Calendario, pies de foto, guiones y textos para cada canal, con el tono cálido de {business}.",
+      "skills": {
+        "k1": "Calendario editorial",
+        "k2": "Pies de foto y guiones",
+        "k3": "Textos para el sitio web",
+        "k4": "Correos para clientes"
+      },
+      "asks": {
+        "q1": "¿Cómo va el plan de la próxima semana?",
+        "q2": "Quiero mejorar mi Instagram",
+        "q3": "Un guion de reels sobre la fermentación"
+      }
+    },
+    "kiwi": {
+      "pitch": "Hago crecer {business}: más gente que lo encuentra, más visitas que se convierten en pedidos.",
+      "intro": "Búsqueda en Google, anuncios, conversión y pruebas de crecimiento. No se invierte ni un centavo sin tu autorización.",
+      "skills": {
+        "k1": "Búsqueda en Google",
+        "k2": "Anuncios con criterio",
+        "k3": "Visitas que se convierten en pedidos",
+        "k4": "Pruebas de crecimiento"
+      },
+      "asks": {
+        "q1": "¿Dónde puede aparecer más {business} en Google?",
+        "q2": "¿Cuánto invertir en anuncios en Navidad?",
+        "q3": "¿Por qué tantas visitas no se convierten en pedidos?"
+      }
+    },
+    "max": {
+      "pitch": "Hago que los clientes de {business} vuelvan.",
+      "intro": "Segmentos, recorridos y mensajes para quienes ya compraron, siempre con consentimiento.",
+      "skills": {
+        "k1": "Segmentación de clientes",
+        "k2": "Reactivación",
+        "k3": "Recorridos por correo y WhatsApp",
+        "k4": "Fidelización"
+      },
+      "asks": {
+        "q1": "Reactivar clientes que desaparecieron",
+        "q2": "Un correo para quienes hicieron pedidos la Navidad pasada",
+        "q3": "Ideas de fidelidad para el mostrador"
+      }
+    },
+    "iris": {
+      "pitch": "Leo los números y te digo qué hacer con ellos.",
+      "intro": "Indicadores, informes y recomendaciones, siempre con la fuente y sin inventar causas.",
+      "skills": {
+        "k1": "Indicadores del mes",
+        "k2": "Informes",
+        "k3": "Análisis de campañas",
+        "k4": "Recomendaciones"
+      },
+      "asks": {
+        "q1": "Analiza mis últimos resultados",
+        "q2": "¿Qué post llevó más gente al sitio web?",
+        "q3": "Armar el informe de octubre"
+      }
+    }
+  },
+  "chats": {
+    "search": "Buscar conversaciones",
+    "filterRoom": "Sala del Squad",
+    "room": "Sala del Squad",
+    "roomWho": "todos los especialistas",
+    "who": "{name} · {area}",
+    "about": "{who} · acerca de {what}",
+    "roomTopic": "Sala del Squad · {topic}",
+    "groupWho": "conversación en grupo · demostración",
+    "aboutWhat": {
+      "calendar_post": "una publicación",
+      "project": "un proyecto",
+      "metric": "un indicador",
+      "other": "un contexto"
+    },
+    "request": "{who} · pedido: {name}",
+    "untitled": "Conversación {with}",
+    "lastYou": "Tú: {text}",
+    "lastAgent": "{name}: {text}",
+    "material": "envió un material",
+    "none": "Ninguna conversación con ese filtro.",
+    "clear": "Limpiar filtros",
+    "newWith": "Nueva conversación {with}"
+  }
+}
