@@ -31,7 +31,87 @@ Na V4, cada especialista passa a ser apresentado pela especialidade do seu ambie
 
 ## 2. Objetos e estados visíveis
 
-<!-- §2 em redação -->
+**Um desenho por status** (V4.6, L13841–13859). O sinal de situação é forma, não cor (L6393): "anel, ponto, relógio, check, pausa", e o coral fica só para o que precisa de você. A V4.6 leva todo texto de status antigo a cinco famílias (`STK6`):
+
+| Família | Sinal | Rótulos que caem nela |
+|---|---|---|
+| `you` | anel com "!" (coral) | "Aguarda você", "Aguardando você", "Aguarda aprovação", "Aguarda a sua aprovação" (e todo texto que começa por "aguarda") |
+| `and` | ponto | "Em andamento", "Em produção" (e o que não casar com as outras) |
+| `prog` | relógio | "Programado", "Programada", "Planejado" (e "agendad…") |
+| `done` | check | "Concluído", "Concluída", "Aprovado", "Aprovado por você", "Entregue", "Publicado" |
+| `pause` | duas barras | "Pausado", "Pausada" |
+
+O comentário da L13856 cita ainda "Bloqueado" e "Erro" na família, mas nenhum trabalho usa esses estados. Bloqueio e falha só aparecem em responsabilidades e execuções do Modo Autônomo (§7). Detalhe dos objetos em `docs/parciais/x1/notas_objetos_seed.md` §A.
+
+### 2.1 Trabalho
+
+"Trabalhos agora vive em Projetos" (L9722): não há item de menu próprio; a seção "Todos os trabalhos" da página Projetos tem "Quadro", "Lista" e "Biblioteca" (L4833).
+
+**Campos** (`_works`, L8006–8030): título, tipo ("Entrega", "Projeto" ou "Ciclo"; na tela, "Entrega", "Projeto" e "Modo Autônomo"), etiqueta ("entrega pontual", "projeto coordenado", "trabalho do projeto"), responsável e colaboradores, família de status, rótulo e detalhe curto do estado ("v2", "qui, 9h", "desde 05/10"), frase de status, próximo passo, prazo, resumo, documento, origem, histórico (agente ou você, texto, quando, marca "automático" ou "aprovado por você"), projeto, conversa e um destaque "novo". O protótipo tem `pct`, mas a V4.6 tira a barra onde não há medição real (L13957): **não exibir progresso inventado**.
+
+**Colunas do Quadro** (L8875): "Precisa de você" ("Nenhuma decisão pendente"), "Em andamento" ("Nada em produção"; os pausados vão por último), "Programados" ("Nada programado") e "Concluídos" ("Nada concluído ainda"). Filtros: "Todos os tipos", "Entregas pontuais", "Projetos" e por especialista. Vazio, na conta nova: "Nenhum trabalho ainda" · "Peça algo ao squad em Novo pedido. O Nexo organiza quem faz, e o que precisar de você aparece aqui primeiro." (L9103). Com filtros: "Nenhum trabalho com esses filtros" · "Limpar filtros".
+
+**Cartão:** o responsável e até dois colaboradores. Mostra "<Nome> está trabalhando nisso" quando há alguém em ação, ou "<Nome> responde", mais " · com <colaborador>" (L8867).
+
+**Estados que o protótipo percorre** (post e campanha, L8010–8023):
+
+| Situação | Família · rótulo | Frase de status | Próximo passo |
+|---|---|---|---|
+| post em criação | `and` · "Em andamento" | "Kaia criando a primeira versão" ou "Kaia ajustando a data" | "Kaia entrega a v2" |
+| post em revisão | `you` · "Aguarda você" | "v2 aguarda sua aprovação" | "Aprovar a v2 até sex, 16/10" |
+| aprovado, publicação por decidir | `you` · "Aguarda você" | "Aprovado. Falta decidir a publicação." | "Autorizar ou não a publicação" |
+| publicação autorizada | `prog` · "Programado" | "Publicação agendada para sex, 16/10, 9h" | "Otto publica sex, 9h" |
+| publicação recusada por ora | `done` · "Concluído" | "v2 aprovada · publicação não autorizada" | "Publicação quando você quiser" |
+| campanha com pergunta | `you` · "Aguarda você" | "O Nexo quer saber: site, loja ou os dois?" | "Responder ao Nexo" |
+| campanha em estratégia | `and` · "Em andamento" · "etapa 1 de 5" | "Bia desenvolvendo a estratégia" | "Bia apresenta o conceito" |
+| conceito por aprovar | `you` · "Aguarda você" | "Conceito aguarda sua aprovação" | "Aprovar o conceito" |
+| campanha em produção | `and` · "Em andamento" · "etapa 2 de 5" | "Kaia preparando as peças · 3 de 5 prontas" | "Revisão das peças · qui, 15/10" |
+| ciclo da rotina | `prog` · "Programado" · "qui, 9h" | "Otto entrega para sua aprovação" | "Aprovar o plano na quinta" |
+| trabalho pausado | `pause` · "Pausado" · "desde 05/10" | "Pausado por você · falta a lista com consentimento" | — |
+| concluído | `done` · "Concluído" | "Entregue e aprovado por você" | — |
+
+O post publicado de fato ("Publicado", depois da confirmação do canal) não acontece na sessão: a etapa "Confirmação" fica sempre por fazer (L9149–9157). Cancelar, excluir, reatribuir ou mudar o prazo de um trabalho não aparece no protótipo (§11).
+
+**Origem** (`origin`, literal): "pedido na conversa com a Kaia · 10/10", "pedido na Sala do Squad · 05/10", "pedido pelo Nexo · 08/10", "combinado com a Íris · 01/10", "primeiro pedido da conta · 14/09", "Identidade visual da Miolo · etapa 1", "pedido em <Ambiente> · <assunto> · hoje", "conversa sobre <assunto> · hoje", "criado a partir de um insight da Íris · hoje", "Modo Autônomo · Planejar conteúdos toda semana · execução PL-43 (simulação)" (L9164, L9211, L6212–6236, L11856, L12005, L7002, L13119).
+
+**Detalhe do trabalho** (L9131–9250; V4.3 L12081): título, etiqueta, origem, resumo, "Próximo passo", arquivo ("Arquivo final na Biblioteca" ou "Arquivo final depois da sua aprovação"), time, histórico, "Conversar" ou "Abrir a conversa do pedido" e o link do projeto. O post tem as abas "Legenda", "Briefing" e "Histórico"; a campanha, "Entregas", "Decisões", "Squad" e "Histórico" (L9161, L9209).
+
+### 2.2 Entrega, versão e etapas
+
+- **Peça:** fundo, texto, destaque, etiqueta do topo ou selo, título, subtítulo, ilustração, faixa e botão (`MioloPeca`, proporção 4:5).
+- **Versões:** "v1", "v2"… com data e o que mudou ("data em destaque", "título mais curto", "fundo verde", "fornada em destaque", "nova abordagem"); selo na peça "mudou: data em destaque"; "Comparar" com "Antes" e "Agora"; "Você está vendo a v1 · versão anterior" (L9176–9181).
+- **Estados da versão no cartão:** "Aguarda sua aprovação", "Aprovada por você", "Nova versão a caminho", "Substituída pela v3" (L8615).
+- **Etapas do post** (L9149): "Preparação" ("Kaia cria a peça" → "Kaia criou e ajustou"), "Sua aprovação" ("v2 aguarda você" → "v2 aprovada"), "Publicação" ("só com autorização sua" → "precisa da sua autorização" → "autorizada · sex, 9h") e "Confirmação" ("quando o Instagram confirmar").
+- **Etapas da campanha** (L9202): "Estratégia" (Bia: "Conceito aguarda você" → "Conceito aprovado"), "Peças" (Kaia: "3 de 5 prontas"), "Textos" (Otto: "Legendas e e-mail"), "Divulgação" (Kiwi: "Verba depende de você") e "Acompanhamento" (Íris: "A partir de 26/10"). Etapa sem medição fica indeterminada, sem barra (L13958).
+- **Decisões da campanha** (L9227): "Aprovar o conceito" ou "Conceito aprovado", "Revisão das peças", "Verba de anúncios", "Publicação".
+
+### 2.3 Projeto
+
+- **Roadmap** (L9675, L10105–10173; V4.3 L12071): uma janela de 21/09 a 27/12, com faixas na cor de quem conduz e marcos. A legenda tem "projeto", "marco", "previsto" e "decisão sua" (L4779).
+- **Cabeçalho:** "<n> ativos · <n> pausados · <n> decisões suas por perto" (L11115).
+- **Detalhe:** "Objetivo", "Responsáveis", "Status", "Próximo marco", "Prazo", "Trabalhos pedidos neste projeto · N". Vazio: "Nenhum projeto ainda" · "Começar pela Campanha de Natal" (L4799–4812).
+- **Rótulos de status do projeto:** "Em produção · etapa 2 de 5", "Em estratégia · etapa 1 de 5", "O conceito aguarda você", "Uma pergunta aguarda você", "Ativo no Modo Autônomo · desde 28/09", "Pausado no Modo Autônomo", "O combinado aguarda você", "2 de 3 etapas concluídas · a última ainda sem data", "Ativo · leitura toda segunda, 9h" e "Pausado por você desde 05/10".
+- **Prazos:** "20/12" · "meta: 400 panetones", "Contínuo", "Sem prazo", "Sem data".
+- **Trabalho pedido dentro de um projeto** vira marco "novo trabalho · <agente>" e entra na equipe do projeto (L12076).
+
+### 2.4 Aprovação e pendência
+
+Tipos, rótulos, catálogo e efeitos em §5. Cada pendência guarda o tipo, o objeto, quem pede, o título, a linha de apoio e o rótulo da ação. O Início não usa a faixa:
+
+- No cartão "Trabalhos" (L8362–8369), mostra "1 aguarda você" ou "N aguardam você" e "Hoje, uma decisão é sua" ou "Hoje, <número por extenso> decisões são suas".
+- Lista até três pendências; cada botão é a primeira palavra da ação ("Revisar", "Decidir", "Responder").
+- Na barra lateral, o item "Projetos" leva o número de decisões, com a dica "N aguarda você" (L10533).
+
+### 2.5 Rotina, conhecimento e conexão
+
+| Objeto | Estados (rótulo exato) | Onde |
+|---|---|---|
+| Responsabilidade do Modo Autônomo | "Ativa", "Pausada", "Bloqueada por integração", "Falha na execução", "Encerrada", "Aguarda sua confirmação" | §7 |
+| Execução | "Concluída", "Falhou", "Não executada", "Aguarda sua aprovação", "Aprovada por você", "Programada" | §7 |
+| Conhecimento da Memória | "Confirmado", "Decisão sua", "Da fonte", "Observado", "Sugerido", "Desatualizado", "Descartado", "Em conflito", "Não usado" | §6 |
+| Fonte e conexão | "Declarado por você", "Conectada", "Desatualizada", "Precisa reconectar", "Não conectada", "Indisponível" | §8 |
+| "<Agente> percebeu" | aberto → visto → feito (vira trabalho ou conversa) | §1, §4.7 |
+| Status vivo de cada agente | "disponível", "criando", "escrevendo", "pesquisando", "na estratégia", "trabalhando", "aguarda você", "coordenando", "acompanhando", "pausado" (L8063–8065), mais a frase longa ("Acompanha 3 trabalhos e te chama quando a decisão é sua.", "Aguarda a sua aprovação na v2 do post.", L8067–8075) | Início e Minha Equipe |
 
 ## 3. Jornadas guiadas (botão "Demo")
 
@@ -427,7 +507,29 @@ As conexões aparecem na Memória da Marca, na aba "Conexões e fontes" e nas p�
 
 ## 9. Dados demo da Miolo (seed)
 
-<!-- §9 em redação -->
+Todos os dados são fictícios ("dados ilustrativos"). **Regra do dono:** o seed usa `docs/DADOS_FICTICIOS.md`; o que o protótipo traz e colide com a regra muda no seed. Exemplos: o domínio "miolo.com.br" vira um domínio `.example`, e o "@miolo.padaria" e a cidade só entram como texto de exemplo. Listas completas, com campos e exemplos literais, em `docs/parciais/x1/notas_objetos_seed.md` §B e `notas_memoria_autonomo_conexoes.md` §A15 e §B3.
+
+| Conjunto | Origem | Itens | Resumo |
+|---|---|---|---|
+| Conta | `ACCOUNT` (L5819) | 1 | Marina, "dona da Miolo"; negócio "Miolo", "Padaria · Pinheiros" |
+| Conversas | `TH_META` e `threadsFor` (L6250, L6273) | 9 | "Sala do Squad" (tópico "Campanha de Natal"), "Organização da semana" (Nexo), "O que os clientes dizem" (Bia), "Post do Dia do Pão" (Kaia), "Planejamento semanal" (Otto), "Anúncios de Natal" (Kiwi), "Reativação de clientes" (Max), "Análise de resultados" (Íris), "Identidade da Miolo" (Kaia). No primeiro acesso: "Boas-vindas" do Nexo e uma "Apresentação" de cada agente |
+| Trabalhos | `GEN` (L6208–6246) + post, campanha e ciclo | 12 no Quadro (1 · 3 · 2 · 6 por coluna) | ex.: "O que os clientes dizem da Miolo" (Bia, "Em andamento", até qua 14/10), "Reativação de clientes inativos" (Max, "Pausado"), "Diagnóstico de marketing" ("Concluído", 18/09), "Relatório de outubro" ("Programado", 02/11) |
+| Projetos | `_projs` (L10106), `PJ_OF` (L11782) | 5 | "Campanha de Natal", "Planejamento de conteúdos", "Identidade visual da Miolo", "Acompanhamento de performance", "Reativação de clientes" |
+| Peças | `PIECES` (L5772, L9635), `ADJ` (L5783) | 9 peças, 5 ajustes | post do Dia Mundial do Pão (v1 e v2), três peças de Natal, "Fornada de segunda", "Bastidores", abóbora, focaccia, levain |
+| Calendário | `CAL_POSTS`, `CAPS`, `CAP_ALT`, `MORE_LINE`, `CAL_PLANS` (L9639–9673) | 6 posts, planos das semanas 41 a 46 | ex.: "36 horas de paciência" (14/10, agendado), "Dia Mundial do Pão" (16/10, segue o post) |
+| Resultados | `KPIS`, `RES`, `RS_*` (L6030–6061, L9679–9711) | 4 indicadores × 12 semanas; 3 períodos | "Encomendas pelo site" (128 em setembro, "+18%"), "Visitas vindas do Instagram", "Alcance no Instagram", "Nota no Google"; canais: Instagram 54, "Busca no Google" 31, "Direto no site" 27, WhatsApp 16 |
+| Recomendações e oportunidades | `RECS` (L6063), `_opps` (L10175), `OPSRC6` (L13848) | 3 + 6 | "Manter um post de bastidores por semana", "Abrir as encomendas de panetone em 26/10", "Reforçar o sábado, dia com mais encomendas" |
+| Notificações | `NOTIFS` (L6070) | 4 | "A Kaia entregou a v2 do post", "“Fornada de segunda” foi publicado", "Leitura semanal pronta", "A Bia começou a ler as avaliações". No primeiro acesso: "Boas-vindas ao HelloSquad" |
+| Memória | `memItems` (L6148), `MX5`, `MEM5_ADD`, `LOG5` (L12722–12917) | 33 conhecimentos, 6 alterações | inclui uma sugestão ("Peças de oferta"), um conflito ("Horário"), um desatualizado ("Mais vendidos") e um descartado ("Emojis") |
+| Fontes | `src5` (L12783) | 9 | §8 |
+| Responsabilidades e execuções | `TPL` (L6077, L12806), `EX5` (L12866) | 8 modelos, 4 ativas na conta, 8 execuções | §7 |
+| Kaia | `KA_*` (L11863–11873) | carrossel de 3 telas, 4 imagens, 5 capas, 7 categorias | "Do levain ao forno." |
+| Kiwi | `GX` (L11799) | 11 objetos | "Teste perto da loja" (até R$ 40 por dia, 7 dias, 3 km da loja), "Busca: panetone artesanal" |
+| Bia | `BX`, `DX_SEP`, `DX_OCT`, `PLAN` (L12251–12394) | 11 objetos, 2 diagnósticos, 1 plano (v1 e v2) | "Plano de marketing · outubro a dezembro"; objetivo "Vender 400 panetones até 20/12 e depender menos do Instagram…" |
+| Max | `MX_SEG`, `MX`, `M_REAT`, `RE_MSG` (L12238–12348) | 5 segmentos, 12 objetos | "Inativos há 60 dias" (138, 23 com consentimento); "Clientes frequentes" 62/31; mensagens da reativação em duas etapas |
+| Sugestões do Início | `HOME_SUG` (L5821), `HOME_SUG_FIRST` (L5831), `SUGG` (L5805) | 8 (conta em uso), 6 (primeiro acesso), 9 (V3) | pedidos de exemplo com quem participa, ex.: "Planejar meus próximos conteúdos" (Otto e Kaia), "Analisar os resultados da semana" (Íris), "Criar uma promoção para esta semana" (Bia e Kaia) |
+
+**Primeiro acesso:** nada de post, campanha, rotina ou trabalho; a memória só tem o cadastro (Nome "Miolo", Segmento "Padaria", Cidade "São Paulo"); créditos em 4%. Esse é o estado vazio honesto de referência.
 
 ## 10. Cruzamento com o banco e a API (S1a, S1b)
 
