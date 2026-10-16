@@ -42,6 +42,15 @@ class AttemptsExhausted(Exception):
     """O run já gastou todas as tentativas (inclusive em worker que morreu no meio)."""
 
 
+class CreditsRefused(Exception):
+    """A reserva de créditos foi recusada ao começar (sem saldo ou sem preço): nada é cobrado."""
+
+    def __init__(self, code: str, details: dict[str, Any]) -> None:
+        super().__init__(code)
+        self.code = code
+        self.details = details
+
+
 def worker_conninfo(settings: Settings) -> str:
     if settings.worker_database_url is not None:
         return settings.worker_database_url.get_secret_value()
@@ -57,6 +66,8 @@ def classify(exc: BaseException) -> tuple[bool, str, dict[str, Any]]:
         return False, exc.code, exc.details
     if isinstance(exc, AttemptsExhausted):
         return False, "attempts_exhausted", {}
+    if isinstance(exc, CreditsRefused):
+        return False, exc.code, exc.details
     if isinstance(exc, psycopg.OperationalError):
         return True, "database_unavailable", {"error_type": type(exc).__name__}
     return True, "internal", {"error_type": type(exc).__name__}
@@ -161,6 +172,8 @@ class Worker:
             return "capped"
         if claim.outcome == "exhausted":
             return await self.failed(store, msg_id, claim, AttemptsExhausted())
+        if claim.outcome == "unbillable":
+            return await self.failed(store, msg_id, claim, CreditsRefused(**claim.error))
 
         log.info(
             "run %s (workspace %s, %s): tentativa %s de %s",
@@ -324,7 +337,8 @@ def summary(result: dict[str, Any]) -> str:
         return f"briefing incompleto ({missing}); pergunta enviada, trabalho em needs_you; {cost}"
     revised = ", revisada uma vez na autoverificação" if result.get("revisions") else ""
     return (
-        f"entrega v{result['version_no']}{revised}; revisão pedida, trabalho em needs_you; {cost}"
+        f"entrega v{result['version_no']}{revised}; revisão pedida, trabalho em needs_you; "
+        f"{result['credits_charged']} créditos cobrados; {cost}"
     )
 
 

@@ -31,9 +31,13 @@ REDACTED_KEYS = ("key", "token", "secret", "password", "authorization", "cookie"
 ClaimOutcome = Literal[
     "claimed", "finished", "busy", "capped", "missing", "skipped", "exhausted", "unbillable"
 ]
-# Reserva recusada: HS001 = créditos insuficientes; P0002 = delivery sem preço (ou workspace sem conta);
-# 22023 = trabalho sem tipo de delivery.
-CREDIT_ERRORS = {"HS001": "insufficient_credits", "P0002": "credit_price_missing"}
+# Reserva recusada: HS001 = sem saldo; P0002 = delivery sem preço ou workspace sem conta; 22023 =
+# trabalho sem tipo de delivery.
+CREDIT_ERRORS = {
+    "HS001": "insufficient_credits",
+    "P0002": "credit_price_missing",
+    "22023": "credit_price_missing",
+}
 
 
 class RunLost(RuntimeError):
@@ -219,8 +223,6 @@ class RunStore:
                 )
         except psycopg.Error as exc:
             code = CREDIT_ERRORS.get(exc.sqlstate or "")
-            if code is None and exc.sqlstate == "22023":
-                code = "credit_price_missing"
             if code is None:
                 raise
             details: dict[str, Any] = {}

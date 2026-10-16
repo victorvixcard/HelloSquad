@@ -17,6 +17,8 @@
   "run_error.tool_not_allowed": "O agente tentou usar uma ferramenta que não tem permissão para usar.",
   "run_error.database_unavailable": "O banco de dados não respondeu depois de {attempts} tentativas.",
   "run_error.attempts_exhausted": "O trabalho não terminou depois de {attempts} tentativas.",
+  "run_error.insufficient_credits": "Não há créditos disponíveis para esta entrega. Nada foi cobrado.",
+  "run_error.credit_price_missing": "Esta entrega ainda não tem preço em créditos. Nada foi cobrado.",
   "run_error.internal": "Erro interno ao executar o trabalho. Tente de novo; se repetir, fale com o suporte.",
   "memory.area.business": "Meu negócio",
   "memory.area.brand": "Minha marca",
