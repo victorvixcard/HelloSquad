@@ -133,7 +133,8 @@ function PaidCards({ items }: { items: KiwiWork[] }) {
   const format = useFormatter();
   const brl = (v: number | null) => (v === null ? "—" : format.number(v, { style: "currency", currency: "BRL", maximumFractionDigits: 0 }));
   const channel = (c: string) => (c === "meta_ads" || c === "google_ads" ? tg(`channel.${c}`) : c);
-  const variable = (v: string) => (["publico", "mensagem", "criativo", "formato"].includes(v) ? tg(`variable.${v}`) : v);
+  const variable = (v: string) =>
+    v === "publico" || v === "mensagem" || v === "criativo" || v === "formato" ? tg(`variable.${v}`) : v;
   return (
     <div className="kw-camps">
       {items.map((w) => {

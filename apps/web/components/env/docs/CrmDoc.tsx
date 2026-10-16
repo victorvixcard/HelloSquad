@@ -6,7 +6,8 @@ import { DocList, DocSection, list, obj, str } from "./doc-parts";
 import "../crm/crm.css";
 
 const num = (v: unknown) => (typeof v === "number" ? v : null);
-const SEGMENT_IDS = ["todos", "ativos_30", "esfriando_31_90", "inativos_90", "sem_compra", "recorrentes"];
+const SEGMENT_IDS = ["todos", "ativos_30", "esfriando_31_90", "inativos_90", "sem_compra", "recorrentes"] as const;
+const isSegment = (v: string): v is (typeof SEGMENT_IDS)[number] => (SEGMENT_IDS as readonly string[]).includes(v);
 
 /**
  * Documento do Max (A2b): segmentos (06.03), campanha (06.01) e sequência de mensagens (06.02, só texto), nas seções
@@ -21,7 +22,7 @@ export function CrmDoc({ type, content }: DocProps) {
   const day = (d: string) =>
     /^\d{4}-\d{2}-\d{2}$/.test(d) ? format.dateTime(new Date(`${d}T12:00:00Z`), { day: "2-digit", month: "2-digit", year: "numeric" }) : d;
   const channel = (c: string) => (c === "email" || c === "whatsapp" ? t(`channel.${c}`) : c);
-  const segment = (id: string) => (SEGMENT_IDS.includes(id) ? t(`segment.${id}`) : id);
+  const segment = (id: string) => (isSegment(id) ? t(`segment.${id}`) : id);
   const reach = (o: Record<string, unknown>) => {
     const ok = obj(o.elegiveis);
     return `${t("doc.segSize", { n: num(o.tamanho) ?? 0 })} · ${t("seg.receiveV", { email: n(num(ok.email)), wa: n(num(ok.whatsapp)) })}`;

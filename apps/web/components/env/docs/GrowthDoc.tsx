@@ -6,6 +6,9 @@ import { DocList, DocSection, list, obj, str } from "./doc-parts";
 import "../growth/growth.css";
 
 const num = (v: unknown) => (typeof v === "number" ? v : null);
+const VARIABLES = ["publico", "mensagem", "criativo", "formato"] as const;
+const FORMATS = ["post", "carousel", "reels", "stories", "status", "article", "email", "video"] as const;
+const isOf = <T extends string>(all: readonly T[], v: string): v is T => (all as readonly string[]).includes(v);
 
 /**
  * Documento da Kiwi (A2b): plano de mídia e orçamento (05.01) e públicos e testes (05.02), nas seções do formato que o
@@ -17,8 +20,8 @@ export function GrowthDoc({ type, content }: DocProps) {
   const format = useFormatter();
   const brl = (v: number | null) => (v === null ? "" : format.number(v, { style: "currency", currency: "BRL", maximumFractionDigits: 0 }));
   const channel = (c: string) => (c === "meta_ads" || c === "google_ads" ? t(`channel.${c}`) : c);
-  const variable = (v: string) => (["publico", "mensagem", "criativo", "formato"].includes(v) ? t(`variable.${v}`) : v);
-  const fmt = (v: string) => (["post", "carousel", "reels", "stories", "status", "article", "email", "video"].includes(v) ? t(`format.${v}`) : v);
+  const variable = (v: string) => (isOf(VARIABLES, v) ? t(`variable.${v}`) : v);
+  const fmt = (v: string) => (isOf(FORMATS, v) ? t(`format.${v}`) : v);
   const premises = list(content.premissas).map(str).filter(Boolean);
   const lead = str(content.resumo) ? (
     <DocSection title="">
