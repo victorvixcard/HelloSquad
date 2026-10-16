@@ -448,12 +448,13 @@ class FakeMercadoPago:
             return JSONResponse(payment, status_code=201)
 
         @router.get("/v1/payments/{payment_id}")
-        async def get_payment(payment_id: int, request: Request):
+        async def get_payment(payment_id: str, request: Request):
             if denied := self._auth(request):
                 return denied
-            if payment_id not in self.payments:
+            key = int(payment_id) if payment_id.isdigit() else None
+            if key not in self.payments:
                 return _mp_error(404, "not_found", "Payment not found", 2000)
-            return self.payments[payment_id]
+            return self.payments[key]
 
         @router.post("/preapproval")
         async def create_preapproval(request: Request):

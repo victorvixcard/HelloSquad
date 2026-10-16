@@ -8,7 +8,6 @@ from decimal import Decimal
 
 import httpx
 import pytest
-
 from billing_fakes import (
     APPROVED_CARD,
     ASAAS_KEY,
@@ -20,6 +19,7 @@ from billing_fakes import (
     FakeMercadoPago,
     fake_app,
 )
+
 from hellosquad.billing.asaas import AsaasProvider
 from hellosquad.billing.factory import active_provider, configured_providers
 from hellosquad.billing.mercadopago import MercadoPagoProvider
