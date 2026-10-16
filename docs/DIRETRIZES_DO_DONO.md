@@ -33,6 +33,8 @@
 
 Consequência imediata: as divergências que a A0 introduziu por conta própria (bolinha de cor em vez do agente mini na barra lateral, menu da pessoa no cabeçalho em vez do pé da barra, gaveta no celular, nome do agente em cor diferente) ficam **marcadas para reverter** à V4.6, salvo decisão explícita do Vic e do Diogo.
 
+| 16/10/2026 10:20 | **"Segue todas as regras do protótipo sempre."** Onde faltar botão ou tela, mantém o que foi feito; depois de subir, o Vic e o Diogo ajustam o front e as regras e passam ao Thor. | Resolve as perguntas abertas de interface sem nova consulta: barra lateral com o rótulo curto **"Growth"** (como na V4.6; o papel segue Growth Marketing); **"Pedir ajuste"** abre a conversa com "Quero pedir um ajuste nesta versão." como no protótipo, e o envio dessa mensagem é o que registra `changes_requested` com a nota; botões de rejeição ficam onde o Aranha pôs até o Diogo desenhar; conversa em grupo segue o protótipo (um especialista responde por vez) quando entrar na S1f; celular: barra recolhida como o protótipo, sem gaveta, até haver desenho. As perguntas 1 a 18 da A1f e 1 a 14 da SA0 ficam registradas, sem bloquear nada. |
+
 ## Regras herdadas do Documento Mestre (valem como decisão do dono)
 
 1. Decisão comercial pendente (preço, créditos, planos, paywall) **não vira regra hardcoded**. Vai para tabela configurável com valor provisório marcado como provisório.

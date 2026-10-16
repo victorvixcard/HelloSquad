@@ -67,6 +67,10 @@ A chave da API da Anthropic ainda não foi fornecida. Todo o núcleo (schema, es
 
 **Perguntas da §11 para o Vic (só o que o protótipo não responde):** 4 (o que "Pausado" do Modo Autônomo interrompe), 5 (cadastro e login reais: link mágico, código ou senha; termos e LGPD), 7 (canais de aviso fora do produto), 8 (conversa em grupo: um especialista por vez ou vários; "@Nome" chama?). **Para o Vic com o Diogo (precisam de desenho):** 1 (o que admin, editor e viewer veem), 2 (rótulos dos dois botões da rejeição), 3 (trabalho cancelado, bloqueado, com falha, rascunho), 6 ("Minha conta" e "Configurações", onde se escolhe o idioma), 9 (celular), 11 (troca entre negócios na barra). **Para o Diogo:** 10 (vazios de Marca & Criação e Growth no primeiro acesso).
 
+## Regra do Vic (16/10 10:20): segue o protótipo sempre; o que faltar, ajustamos depois
+
+Vale para A1a, A1b e qualquer fatia de interface: onde a V4.6 mostra, faz igual; onde não mostra, mantém o que já foi feito e registra; nada bloqueia esperando resposta. Aplicações imediatas: rótulo "Growth" na barra; "Pedir ajuste" abre a conversa com o texto do protótipo e o envio registra a decisão; rejeição como está; conversa em grupo com um especialista por vez (S1f); barra recolhida no celular.
+
 ## Método corrigido pelo Vic (16/10 09:05): o protótipo responde primeiro
 
 O template do Diogo já traz a lógica que o usuário percorre e as decisões prontas. Fatia **X1** (analista, em execução desde 09:05) extrai do `ProductUIV4.dc.html` a especificação `docs/FLUXOS_DA_V46.md` (telas, objetos e estados, as quatro jornadas guiadas, conversa, "Precisa de você", Memória, Modo Autônomo, conexões, dados da Miolo, cruzamento com o banco e a API, e o que o protótipo não responde). **A partir da X1, `FLUXOS_DA_V46.md` é PASSO 0 de toda fatia de produto; perguntas ao Vic ficam restritas ao que o protótipo não responde.**
