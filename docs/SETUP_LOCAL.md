@@ -405,6 +405,40 @@ curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" \
 - **Busca web da 02.07** (`WEB_SEARCH_PROVIDER`): `disabled` (padrão) não busca nada e a entrega diz que tudo é sugestão sem validação; `mock` devolve três resultados fictícios fixos (`.example`), bom para ver a entrega com fontes (`env WEB_SEARCH_PROVIDER=mock uv run hellosquad-worker --drain`); `brave` faz a busca real com `WEB_SEARCH_API_KEY`. As fontes da entrega saem da busca, com link, data de publicação e data de coleta; achado marcado como pesquisa sem fonte coletada vira sugestão.
 - **Créditos.** Cada pedido reserva 10 créditos provisórios e cobra ao entregar. A Miolo do seed tem 36: o quarto pedido seguido termina em `failed` com `insufficient_credits`, sem cobrar. O roteiro completo `docs/parciais/s2a/curl_bia_otto.sh` (nove pedidos) concede antes um bônus local de 100 pelo papel privilegiado; a saída está em `docs/parciais/s2a/curl_bia_otto.txt`. `make seed` devolve o saldo.
 
+### Kiwi, Max e Íris (S2b)
+
+Oito deliveries novas pelo mesmo caminho da S2a (`05.xx` = Kiwi, `06.xx` = Max, `07.xx` = Íris), com `pedir` do bloco acima. Os números das entregas saem do banco, nunca do modelo: a base de contatos (`contacts` + `consents`) para o Max e a série diária (`metrics_daily`) para a Íris. Nada é investido, criado na conta de anúncios ou enviado.
+
+| Delivery | Pedido de exemplo | Entrega (`kind`) e o que o fluxo acrescenta |
+|---|---|---|
+| 05.01 | "Kiwi, quanto investir em anúncios no Natal? Quero mais encomendas pelo site e tenho até R$ 1.500 por mês." | `media_plan`: objetivos, canais, teto proposto (≤ o informado; verba é do cliente, não crédito), limites, hipóteses; `execucao` = nada investido, conta não conectada |
+| 05.02 | "Kiwi, quero testar dois anúncios das encomendas de Natal no Instagram." | `ad_tests`: públicos, mensagens, variações e testes; `plano_de_midia` = a 05.01 aprovada e o teto dela |
+| 06.03 | "Max, organize minha base de clientes em segmentos." | `customer_segments`: `base` (total, consentimento por canal, origens) e, em cada segmento, tamanho e elegíveis por canal |
+| 06.01 | "Max, quero reativar os clientes que sumiram, com uma oferta para as encomendas de Natal." | `retention_campaign`: objetivo, segmento com os números, oferta, calendário; `envio` = `nao_autorizado` |
+| 06.02 | "Max, escreva a sequência de e-mails e mensagens da reativação." | `message_sequence`: etapas com descadastro; `campanha` = a 06.01 aprovada; `envio` = `nao_autorizado` |
+| 07.02 | "Íris, analise meus últimos resultados." | `performance_analysis`: leituras `fato` (com evidência) ou `hipotese`; `dados` (períodos, lacunas, fontes) e `evidencias` (E1…E4 calculadas) |
+| 07.03 | "Íris, compare o último mês com o anterior e monte o relatório." | `period_report`: destaques e leitura por canal sobre a tabela de evidências; `relatorio_anterior` aprovado |
+| 07.04 | "Íris, o que devemos fazer primeiro a partir dos números?" | `prioritized_recommendations`: ações em ordem, `base` dado/hipótese, com quem discutir; `analises` aprovadas usadas |
+
+```bash
+# Importação de contatos (owner ou admin): CSV em texto, nada é guardado além das linhas aceitas
+python3 -c 'import json, sys; print(json.dumps({"file_name": "clientes.csv", "source": "Planilha do balcão", "csv": open(sys.argv[1]).read()}))' clientes.csv \
+  | curl -s -X POST $API/workspaces/$WS/contacts/imports -H "$AUTH" -H "$JSON" -d @-
+# {"total_rows": 4, "accepted_rows": 1, "refused": [{"line": 3, "reason": "no_consent"}, …]}
+curl -s $API/workspaces/$WS/contacts/summary -H "$AUTH"      # total, consentimento por canal, origens
+curl -s "$API/workspaces/$WS/metrics?from=2026-07-18&to=2026-10-15&channel=site" -H "$AUTH"   # pontos e dias sem dado
+# Conversa sobre uma série: a chave <canal>.<métrica> põe a Íris à frente, com período e origem da tabela
+curl -s -X POST $API/workspaces/$WS/conversations -H "$AUTH" -H "$JSON" \
+  -d '{"kind":"object","context":{"type":"metric","key":"site.sessions","title":"Sessões no site"}}'
+# Idioma do negócio (owner ou admin); o da pessoa vem do cadastro e sai no GET /me
+curl -s -X PATCH $API/workspaces/$WS -H "$AUTH" -H "$JSON" -d '{"locale":"en"}'
+```
+
+- **CSV** (vírgula ou ponto e vírgula): `nome`, `email` e/ou `telefone`, `consentimento_email` e `consentimento_whatsapp` (sim/não), `data_consentimento` (AAAA-MM-DD ou DD/MM/AAAA), opcionais `ultima_compra` e `compras`. Linha recusada (número e motivo, sem o dado): sem consentimento, consentimento sem endereço ou sem data, data no futuro, duplicata no arquivo ou na base e, em `APP_ENV=local`/`test`, e-mail fora de `.example`. O consentimento é somente inserção: revogar é uma linha nova.
+- **Estado vazio.** Sem base (06.03, 06.01) ou sem métrica (07.02–07.04), o especialista pergunta na conversa ("Ainda não tenho números da Trilha Urbana para ler…") e nada é cobrado. A Trilha do seed serve para ver isso.
+- **Causa.** Leitura `fato` sem evidência citada e `causa` sem teste controlado (que a plataforma ainda não tem) viram `hipotese` no fluxo; o pytest varre as fixtures da Íris atrás de linguagem causal.
+- Roteiro completo: `docs/parciais/s2b/curl_kiwi_max_iris.sh` (bônus local de 100, as oito deliveries, importação, métricas, idioma e a Trilha), saída em `curl_kiwi_max_iris.txt`; termina com `make seed`.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
