@@ -3,8 +3,43 @@
   "step": "otto.revise",
   "cases": [
     {
+      "name": "legenda_revisada_sem_dia",
+      "usage": {
+        "input_tokens": 1150,
+        "output_tokens": 540,
+        "cache_read_tokens": 2900
+      },
+      "output": {
+        "entrega": {
+          "canal": "instagram",
+          "objetivo": "Levar clientes à loja",
+          "versoes": [
+            {
+              "texto": "Pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo e leve o seu ainda morno.",
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#padariadebairro"
+              ],
+              "cta": "Passe na loja e leve o seu."
+            }
+          ],
+          "notas": "Revisada na autoverificação: a palavra vetada saiu e a fermentação longa ficou descrita pelo processo."
+        },
+        "mensagem": "Escrevi a legenda para o Instagram e revisei uma palavra que a marca não usa. Ela chama para a loja. Agora é com você: aprove ou peça ajuste."
+      },
+      "when": {
+        "tag": "pedido",
+        "not_matches": "s[áa]bado"
+      }
+    },
+    {
       "name": "legenda_revisada",
-      "usage": {"input_tokens": 1150, "output_tokens": 540, "cache_read_tokens": 2900},
+      "usage": {
+        "input_tokens": 1150,
+        "output_tokens": 540,
+        "cache_read_tokens": 2900
+      },
       "output": {
         "entrega": {
           "canal": "instagram",
@@ -12,18 +47,17 @@
           "versoes": [
             {
               "texto": "Sábado tem pão de fermentação longa saindo do forno.\nCasca crocante, miolo macio e o tempo que a massa pede.\nPasse na Miolo de manhã e leve o seu ainda morno.",
-              "hashtags": ["#fermentacaonatural", "#pinheiros", "#paodesabado"],
+              "hashtags": [
+                "#fermentacaonatural",
+                "#pinheiros",
+                "#paodesabado"
+              ],
               "cta": "Passe na loja no sábado de manhã."
-            },
-            {
-              "texto": "O pão que a semana inteira espera chega no sábado.\nFermentação longa, casca que estala e miolo macio.\nVenha cedo: a fornada da manhã é a mais disputada.",
-              "hashtags": ["#fermentacaonatural", "#padariadebairro", "#sabadodemanha"],
-              "cta": "Venha buscar o seu no sábado de manhã."
             }
           ],
           "notas": "Revisada na autoverificação: a palavra vetada saiu e a fermentação longa ficou descrita pelo processo."
         },
-        "mensagem": "Escrevi duas versões da legenda de sábado para o Instagram e revisei uma palavra que a marca não usa. As duas chamam para a loja de manhã. Agora é com você: aprove uma ou peça ajuste."
+        "mensagem": "Escrevi a legenda de sábado para o Instagram e revisei uma palavra que a marca não usa. Ela chama para a loja de manhã. Agora é com você: aprove ou peça ajuste."
       }
     }
   ]

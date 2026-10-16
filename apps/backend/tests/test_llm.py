@@ -1,5 +1,6 @@
 """Adaptador de LLM: requisição da Anthropic, mapeamento de usage e erros, simulado e custo."""
 
+import json
 import logging
 from decimal import Decimal
 from types import SimpleNamespace
@@ -196,6 +197,59 @@ async def test_simulated_is_deterministic_and_follows_fixture_cases() -> None:
     ok = await llm.complete(messages=clean, system=SYSTEM, model="claude-opus-5-5", tag=check)
     bad = await llm.complete(messages=vetoed, system=SYSTEM, model="claude-opus-5-5", tag=check)
     assert ok.extra["case"] == "aprovada" and bad.extra["case"] == "palavra_vetada"
+
+
+@pytest.mark.parametrize("step", ["otto.produce", "otto.revise"])
+@pytest.mark.parametrize(
+    ("request_text", "mentions_saturday"),
+    [
+        ("Legenda para o Instagram do pão de centeio da semana", False),
+        ("Legenda para o Instagram: levar clientes à loja no sábado de manhã", True),
+    ],
+)
+async def test_simulated_caption_says_what_it_delivers(
+    step: str, request_text: str, mentions_saturday: bool
+) -> None:
+    llm = SimulatedLLM()
+    messages = [ChatMessage("user", f"<pedido>{request_text}</pedido>")]
+    completion = await llm.complete(
+        messages=messages, system=SYSTEM, model="claude-opus-5-5", tag=CallTag("04.01", step)
+    )
+    body = completion.json()
+
+    assert len(body["entrega"]["versoes"]) == 1
+    assert not any(word in body["mensagem"] for word in ("duas versões", "As duas", "aprove uma"))
+    assert ("sábado" in json.dumps(body, ensure_ascii=False).lower()) is mentions_saturday
+
+
+async def test_simulated_feedback_keeps_the_day_only_when_the_conversation_has_it() -> None:
+    llm = SimulatedLLM()
+    tag = CallTag("04.01", "otto.produce")
+    feedback = '<retorno_da_pessoa decisao="changes_requested">{note}</retorno_da_pessoa>'
+    neutral = [
+        ChatMessage(
+            "user",
+            "<pedido>Legenda do pão de centeio</pedido>" + feedback.format(note="Mais curta."),
+        )
+    ]
+    saturday = [
+        ChatMessage(
+            "user",
+            "<pedido>Legenda</pedido>" + feedback.format(note="Quero o sábado na primeira linha."),
+        )
+    ]
+
+    plain = await llm.complete(messages=neutral, system=SYSTEM, model="claude-opus-5-5", tag=tag)
+    with_day = await llm.complete(
+        messages=saturday, system=SYSTEM, model="claude-opus-5-5", tag=tag
+    )
+
+    assert plain.extra["case"] == "nova_versao_com_retorno_sem_dia"
+    assert "sábado" not in json.dumps(plain.json(), ensure_ascii=False).lower()
+    assert with_day.extra["case"] == "nova_versao_com_retorno"
+    assert (
+        len(plain.json()["entrega"]["versoes"]) == len(with_day.json()["entrega"]["versoes"]) == 1
+    )
 
 
 async def test_simulated_failure_is_transient() -> None:
