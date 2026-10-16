@@ -103,6 +103,8 @@ describe("Resultados · Íris com dado real", () => {
         period,
         origin: "Resultados · mês",
         ref: { type: "metric", key: "site.sessions", title: "Sessões no site", period, origin: "Resultados · mês" },
+        // A2d (P-09/P-10): o número, a variação e a curva do período vão com a conversa, lidos da mesma série.
+        figure: expect.objectContaining({ delta: "-14,3%", up: false, period: "16/09 a 15/10", points: expect.any(Array) }),
       },
     });
   });
