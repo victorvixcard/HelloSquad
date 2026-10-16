@@ -105,6 +105,14 @@ class ApprovalKind(StrEnum):
     confirm = "confirm"
     reconnect = "reconnect"
     respond = "respond"
+    decide = "decide"
+
+
+class WorkItemOriginType(StrEnum):
+    message = "message"
+    insight = "insight"
+    routine_run = "routine_run"
+    project = "project"
 
 
 class ApprovalStatus(StrEnum):
