@@ -27,6 +27,7 @@ Realtime, eventos do run).
 | P-02 | Conversa do ambiente da Íris · primeira fala | Sempre "Ainda não tenho números da Miolo para ler…", mesmo com as séries que a página ao lado mostra; na V4.6 (conta em uso) a fala lê a última semana | 🟡 |
 | P-03 | Resultados · "Desempenho por canal" | Variação e valor se sobrepõem ("-13,9%" em cima de "3.694 sessões"), rótulos cortados ("Seguidores no Inst…"); a V4.6 tem nome, barra e valor em colunas | 🟡 |
 | P-04 | Resultados · gráfico de 12 semanas | As duas faixas do período não têm rótulo ("SETEMBRO" e "AGOSTO" na V4.6) | 🟡 |
+| P-12 | Resultados · cards "Análises recentes" e "Desempenho por canal" | Sem o botão de conversa no cabeçalho do card ("Conversar com Íris sobre as análises", "Analisar os canais com Íris"); as chaves existem no catálogo e não são usadas | 🟡 |
 | P-05 | Conversa do ambiente · sugestões de Bia, Kaia, Kiwi e Max | Vêm de `pedidos_sugeridos` do `agent.yaml`, não dos `asks` da V4.6 (ex.: "Analisar os concorrentes do bairro" × "Analisar as padarias do bairro") | ℹ️ |
 | P-06 | CRM · frase "Nada é enviado sem consentimento…" | Colada na borda esquerda e no pé do cartão dos números, fora do respiro dos outros blocos | ℹ️ |
 | P-07 | Growth · objeto da conversa do ambiente | Nome "Growth Marketing" no nome acessível do botão e no cartão; na V4.6 o objeto se chama "Growth" (`ENVS.media.l`) | ℹ️ |
@@ -101,6 +102,20 @@ antes das séries da Miolo; não registra o caso com números. A A2b §4 não fa
 5. **Prova:** `proto-iris.png` × `nosso-iris.png` (faixas do gráfico).
 6. **Severidade:** 🟡. **Conferido:** A2b §4 item 29 registra só as linhas de média e as marcas "1" e "2"; item 27, o
    texto do período. O rótulo das faixas não está registrado.
+
+### P-12 · "Análises recentes" e "Desempenho por canal" sem o botão de conversa do card · 🟡
+
+1. **Tela e rota:** Resultados, `/app/miolo/squad/iris`, os dois cards abaixo do gráfico.
+2. **Protótipo:** cada card tem, no cabeçalho, o botão redondo de conversa: "Análises recentes" com
+   `aria-label="Conversar com Íris sobre as análises"` (L5354) e "Desempenho por canal" com
+   `aria-label="Analisar os canais com Íris"` (L5358), como os cards de Conteúdo.
+3. **Nosso:** os cabeçalhos só têm o título: `apps/web/components/env/results/ResultsEnvironment.tsx:203-205` e
+   `:217-219`. As chaves `results.analyses.talk` e `results.channelsCard.talk` existem em
+   `apps/web/messages/pt-BR/results.json:56` e `:62` e não são usadas.
+4. **Como reproduzir:** Marina → Resultados → rolar até os cards.
+5. **Prova:** `proto-iris-r1.png` (ícone de conversa no canto dos dois cards) × `nosso-iris-r1.png`.
+6. **Severidade:** 🟡 (falta um caminho de conversa que a V4.6 desenha; as linhas de canal continuam clicáveis). A2b §4
+   item 30 registra só "Íris percebeu", "Oportunidades" e a barra por canal.
 
 ### P-05 · Sugestões da conversa do ambiente não são as da V4.6 (Bia, Kaia, Kiwi, Max) · ℹ️
 
