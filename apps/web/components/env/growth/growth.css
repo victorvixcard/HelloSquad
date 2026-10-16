@@ -1,0 +1,8 @@
+/* Growth · Kiwi (A1b): só o que o CSS portado da V4.6 não tem. O vazio honesto do objetivo leva às conexões,
+   como o de Resultados; o botão precisa de respiro abaixo do texto (na V4.6 ali ficam os números ilustrativos). */
+.kw-gh-m > .kw-empty-a {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
