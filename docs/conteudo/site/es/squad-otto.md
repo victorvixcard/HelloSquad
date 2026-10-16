@@ -31,7 +31,7 @@ Cuando el tono de voz aún no está definido, propone dos direcciones breves y t
 | Programar y publicar con autorización | Publicación solo después de una conexión válida, un contenido aprobado y una autorización específica, con registro de éxito o falla. |
 | Contenido para el perfil local de la empresa en los buscadores | Posts y ofertas para el perfil del negocio, con revisión y publicación autorizada. |
 | Borradores de respuestas a comentarios públicos | Sugerencias de respuesta de la marca para comentarios autorizados, publicadas solo después de tu aprobación. |
-| Artículos para buscadores | Artículos a partir de las palabras clave y las pautas que definió Kiwi, con revisión antes de publicar. |
+| Artículos para buscadores | Artículos a partir de las palabras clave y las directrices que definió Kiwi, con revisión antes de publicar. |
 
 ## Cómo trabaja Otto con el resto del squad
 
