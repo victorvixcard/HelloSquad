@@ -87,6 +87,14 @@ class Settings(BaseSettings):
     worker_history_messages: int = Field(default=20, ge=1)
     # Orçamento (tokens estimados) da Memória da Marca no contexto de cada run (S1d).
     memory_context_tokens: int = Field(default=1500, ge=0)
+    # Camada 3 (S2c): quantos aprendizados promovidos entram por run (dentro do mesmo orçamento),
+    # depois de quantos dias sem "continua valendo" o aprendizado entra marcado para revisar, e as
+    # regras de promoção automática: correção explícita com confiança mínima, ou a mesma lição em N
+    # trabalhos diferentes (Arquitetura §5.3).
+    learning_top_k: int = Field(default=5, ge=0)
+    learning_review_days: int = Field(default=90, ge=1)
+    learning_promotion_confidence: float = Field(default=0.7, ge=0, le=1)
+    learning_promotion_repeats: int = Field(default=2, ge=2)
 
     @field_validator("auth_jwt_algorithms", "api_cors_origins", mode="before")
     @classmethod

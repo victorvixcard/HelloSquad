@@ -1,4 +1,5 @@
-"""Entrypoint `hellosquad-worker`: consome `runs_interactive` (pgmq) e executa o fluxo do squad.
+"""Entrypoint `hellosquad-worker`: consome `runs_interactive` (pgmq) e executa o fluxo do squad; com
+vaga sobrando, consome `memory_reflect` (reflexão do trabalho fechado, S2c).
 
 Cada mensagem fica invisível por WORKER_VISIBILITY_TIMEOUT_SECONDS; o batimento estende o prazo
 enquanto o run roda. Concluído: `delete`. Falha passageira: o run volta para queued e a mensagem
@@ -27,11 +28,13 @@ from hellosquad.research.websearch import WebSearch, build_web_search
 from hellosquad.runtime import configure_logging
 from hellosquad.squad.flow import FlowError, Squad, run_flow, run_reply
 from hellosquad.squad.loader import SquadLoader
+from hellosquad.squad.reflect import PromotionRules, ReflectionStore, run_reflection
 from hellosquad.squad.store import Claim, RunLost, RunStore, redact
 
 log = logging.getLogger("hellosquad.worker")
 
 QUEUE = "runs_interactive"
+REFLECT_QUEUE = "memory_reflect"
 CAPPED_DELAY_SECONDS = 5
 
 
@@ -98,6 +101,8 @@ class Worker:
             prices=settings.llm_prices,
             history_limit=settings.worker_history_messages,
             memory_budget=settings.memory_context_tokens,
+            learning_top_k=settings.learning_top_k,
+            learning_review_days=settings.learning_review_days,
             web_search=web_search
             or build_web_search(
                 settings.web_search_provider,
@@ -128,18 +133,18 @@ class Worker:
     # Fila
     # ------------------------------------------------------------------------------------------
 
-    async def read(self, qty: int) -> list[dict[str, Any]]:
+    async def read(self, qty: int, queue: str = QUEUE) -> list[dict[str, Any]]:
         async with self.pool.connection() as conn:
             cursor = await conn.execute(
                 "select msg_id, read_ct, message from pgmq.read(%s, %s, %s)",
-                (QUEUE, self.settings.worker_visibility_timeout_seconds, qty),
+                (queue, self.settings.worker_visibility_timeout_seconds, qty),
             )
             return await cursor.fetchall()
 
-    async def queue_call(self, function: str, msg_id: int, *args: int) -> None:
+    async def queue_call(self, function: str, msg_id: int, *args: int, queue: str = QUEUE) -> None:
         placeholders = ", ".join(["%s"] * (2 + len(args)))
         async with self.pool.connection() as conn:
-            await conn.execute(f"select pgmq.{function}({placeholders})", (QUEUE, msg_id, *args))
+            await conn.execute(f"select pgmq.{function}({placeholders})", (queue, msg_id, *args))
 
     # ------------------------------------------------------------------------------------------
     # Um run
@@ -219,6 +224,64 @@ class Worker:
         await self.queue_call("delete", msg_id)
         log.info("run %s concluído: %s", run_id, summary(result))
         return result["outcome"]
+
+    # ------------------------------------------------------------------------------------------
+    # Uma reflexão (fila memory_reflect)
+    # ------------------------------------------------------------------------------------------
+
+    async def handle_reflection(self, msg: dict[str, Any]) -> str:
+        msg_id, message = msg["msg_id"], msg["message"] or {}
+        try:
+            reflection_id = UUID(message["reflection_id"])
+            workspace_id = UUID(message["workspace_id"])
+        except (KeyError, TypeError, ValueError):
+            log.error("reflexão %s sem reflection_id ou workspace_id válidos: arquivada", msg_id)
+            await self.queue_call("archive", msg_id, queue=REFLECT_QUEUE)
+            return "invalid"
+        store = ReflectionStore(self.pool, workspace_id=workspace_id, reflection_id=reflection_id)
+        state, claim = await store.claim(self.settings.worker_max_attempts)
+        if claim is None:
+            if state == "exhausted":
+                await store.fail({"code": "attempts_exhausted"})
+            await self.queue_call("delete", msg_id, queue=REFLECT_QUEUE)
+            return state
+        rules = PromotionRules(
+            min_confidence=self.settings.learning_promotion_confidence,
+            repeats=self.settings.learning_promotion_repeats,
+        )
+        try:
+            result = await run_reflection(self.squad, store, claim, rules)
+        except Exception as exc:
+            transient, code, details = classify(exc)
+            error = {"code": code, "attempts": claim.attempts, "details": redact(details)}
+            if transient and claim.attempts < self.settings.worker_max_attempts:
+                delay = self.settings.worker_retry_base_seconds * 2 ** (claim.attempts - 1)
+                await store.retry_later(error)
+                await self.queue_call("set_vt", msg_id, math.ceil(delay), queue=REFLECT_QUEUE)
+                log.warning("reflexão %s: %s; nova tentativa em %ss", reflection_id, code, delay)
+                return "retry"
+            await store.fail(error)
+            await self.queue_call("archive", msg_id, queue=REFLECT_QUEUE)
+            log.error("reflexão %s falhou (%s); mensagem %s arquivada", reflection_id, code, msg_id)
+            return "failed"
+        await self.queue_call("delete", msg_id, queue=REFLECT_QUEUE)
+        log.info(
+            "reflexão %s do trabalho %s: %s aprendizado(s) gravado(s)",
+            reflection_id,
+            result["work_item_id"],
+            len(result["learnings"]),
+        )
+        return result["outcome"]
+
+    async def drain_reflections(self, max_rounds: int = 100) -> list[str]:
+        """Processa a fila memory_reflect até não ter mensagem visível (testes e `--drain`)."""
+        outcomes: list[str] = []
+        for _ in range(max_rounds):
+            batch = await self.read(self.settings.worker_concurrency, REFLECT_QUEUE)
+            if not batch:
+                break
+            outcomes += await asyncio.gather(*(self.handle_reflection(m) for m in batch))
+        return outcomes
 
     async def heartbeat(self, store: RunStore, msg_id: int) -> None:
         timeout = self.settings.worker_visibility_timeout_seconds
@@ -307,14 +370,20 @@ class Worker:
                 continue
             try:
                 batch = await self.read(free)
+                reflections = (
+                    await self.read(free - len(batch), REFLECT_QUEUE) if len(batch) < free else []
+                )
             except psycopg.OperationalError:
                 log.warning("banco indisponível ao ler a fila; nova leitura em instantes")
-                batch = []
-            if not batch:
+                batch, reflections = [], []
+            if not batch and not reflections:
                 await self.pause(self.settings.worker_poll_seconds)
                 continue
-            for msg in batch:
-                task = asyncio.create_task(self.handle(msg))
+            jobs = [self.handle(m) for m in batch] + [
+                self.handle_reflection(m) for m in reflections
+            ]
+            for job in jobs:
+                task = asyncio.create_task(job)
                 self.inflight.add(task)
                 task.add_done_callback(self.task_done)
         await self.shutdown()
@@ -367,6 +436,8 @@ async def main(settings: Settings, *, drain: bool) -> None:
         if drain:
             outcomes = await worker.drain()
             log.info("fila esvaziada: %s mensagem(ns) tratada(s) %s", len(outcomes), outcomes)
+            reflections = await worker.drain_reflections()
+            log.info("reflexões: %s mensagem(ns) tratada(s) %s", len(reflections), reflections)
         else:
             await worker.serve()
 

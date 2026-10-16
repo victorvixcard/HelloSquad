@@ -18,6 +18,8 @@ SHARED_RULES_HEADING = "## Regras que todos os agentes compartilham"
 FRONT_MATTER = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
 # Resposta na conversa (run sem trabalho): squad/conversa.md no lugar da skill.
 REPLY_SKILL = "conversa"
+# Reflexão depois do trabalho fechado (Memória camada 3): squad/reflexao.md no lugar da skill.
+REFLECT_SKILL = "reflexao"
 
 
 class SquadDefinitionError(RuntimeError):
@@ -136,6 +138,14 @@ class SquadLoader:
         shared = self.shared_rules(files)
         agent = self.agent(agent_id, files)
         skill = parse_skill(REPLY_SKILL, self._read(f"{REPLY_SKILL}.md", files))
+        return self._assemble(agent, skill, shared, files)
+
+    def reflect_prompt(self, agent_id: str) -> SquadPrompt:
+        """Reflexão depois do trabalho fechado (S2c): squad/reflexao.md faz o papel da skill."""
+        files: dict[str, str] = {}
+        shared = self.shared_rules(files)
+        agent = self.agent(agent_id, files)
+        skill = parse_skill(REFLECT_SKILL, self._read(f"{REFLECT_SKILL}.md", files))
         return self._assemble(agent, skill, shared, files)
 
     def _assemble(
