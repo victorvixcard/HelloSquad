@@ -164,7 +164,7 @@ describe("Growth Marketing · Kiwi (sem número inventado)", () => {
 
 describe("CRM · Max (primeiro acesso da V4.6)", () => {
   it("Central de relacionamento vazia com as quatro fontes e os estados exatos", () => {
-    const { container } = renderWithShell(<CrmEnvironment business="Miolo" needs={[]} />, shellWith());
+    const { container } = renderWithShell(<CrmEnvironment business="Miolo" needs={[]} canImport />, shellWith());
     expect(screen.getByRole("heading", { level: 1, name: "CRM" })).toBeInTheDocument();
     const box = screen.getByRole("region", { name: "Sua base de clientes ainda não está aqui." });
     expect(within(box).getByText("Central de relacionamento")).toHaveClass("ka-k");
@@ -180,14 +180,16 @@ describe("CRM · Max (primeiro acesso da V4.6)", () => {
     expectNoNumbers(container);
   });
 
-  it("Importar, Conectar e Saber mais mostram o aviso padrão e não abrem nada", async () => {
+  it("Conectar e Saber mais mostram o aviso padrão; Importar (A2b) abre o formulário da planilha", async () => {
     const user = userEvent.setup();
-    const { shell } = renderWithShell(<CrmEnvironment business="Miolo" needs={[]} />, shellWith());
-    for (const name of ["Importar a planilha de clientes", "Conectar o e-mail", "Saber mais sobre o WhatsApp"]) {
+    const { shell } = renderWithShell(<CrmEnvironment business="Miolo" needs={[]} canImport />, shellWith());
+    for (const name of ["Conectar o e-mail", "Saber mais sobre o WhatsApp"]) {
       await user.click(screen.getByRole("button", { name }));
     }
-    expect(shell.toast).toHaveBeenCalledTimes(3);
+    expect(shell.toast).toHaveBeenCalledTimes(2);
     expect(shell.toast).toHaveBeenNthCalledWith(1, UNAVAILABLE, "max");
+    await user.click(screen.getByRole("button", { name: "Importar a planilha de clientes" }));
+    expect(screen.getByRole("form", { name: "Importar uma planilha CSV" })).toBeInTheDocument();
     expect(shell.openConversation).not.toHaveBeenCalled();
   });
 });
