@@ -44,7 +44,7 @@ jobs:
       - run: uv run pytest -m "not integration"
 
   web:
-    name: Web (lint + build)
+    name: Web (lint + tipos + testes + build)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
@@ -61,5 +61,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter web lint
-      - run: pnpm --filter web typecheck
+      # tsc do web e dos pacotes (@hellosquad/ui, @hellosquad/contracts)
+      - run: pnpm -r --if-present typecheck
+      # Vitest dos pacotes: componentes do DS, tokens e identidade em dia com o handoff, tipos em dia
+      # com o openapi.json e o cliente da API. O Playwright (make e2e) precisa do Supabase local.
+      - run: pnpm -r --if-present test
       - run: pnpm --filter web build
