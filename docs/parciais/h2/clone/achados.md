@@ -1,6 +1,6 @@
 # H2 · Clone limpo seguindo só o `docs/SETUP_LOCAL.md`
 
-Auditor auxiliar do Hulk (QA), 16/10/2026, 18:58 → 19:2x.
+Auditor auxiliar do Hulk (QA), 16/10/2026, 18:58 → 19:16.
 
 **Objetivo.** Provar (ou refutar) que um clone limpo sobe e passa seguindo só o `docs/SETUP_LOCAL.md`.
 
@@ -116,6 +116,10 @@ Bate com o log das linhas 561–564 do guia. SIGTERM no grupo do processo (o mes
 - **Reproduzir.** No clone, `WEB_PORT=3199 make dev-web` e entrar: as chamadas do servidor do Next vão para `API_URL` (8100).
 - **Prova.** `/tmp/h2_clone_web.txt`, `/tmp/h2_clone_status.txt`.
 
-## Estado final
+## Estado final (19:15)
 
-(preenchido na limpeza)
+- `make seed` final pelo `Makefile` do clone, com a trava: exit 0 às 19:15:32. Levou 23 s porque esperou a trava de outra sessão. Saiu "seed aplicado" e "já confere com API_DATABASE_URL; nada gravado".
+- Banco: 3 negócios do seed; nenhum bônus "H2 QA"; filas `runs_interactive`, `runs_scheduled`, `external_actions`, `memory_reflect` e `email_outbox` vazias. **Ficaram 2 convites na Vitta** (`fulano.real@gmail.com`, `quase@contatos.example.com`), do bloco de e-mail do QA. O seed não os apaga (C-04). Não são do clone e não foram removidos, mas enquanto estiverem lá o `make test-db` desta máquina falha em `02_workspace_isolation` #16 e `04_invitations` #11.
+- API do dono: `GET :8100/me` 200 e `GET :8100/workspaces` 200 às 19:15:33; web do dono `:3100` 200. Os 11 containers `supabase_*_hellosquad` não foram tocados.
+- Processos do clone: nenhum. O worker saiu com 0 no SIGTERM, a API (8199) e a web (3199) foram paradas e as duas portas estão livres. Nenhum processo tem o diretório de trabalho no clone.
+- `/tmp/h2_clone/.env` apagado às 19:15:46, depois o diretório `/tmp/h2_clone` inteiro. As saídas em `/tmp/h2_clone_*.txt` não têm chave nem token em claro (conferido com `grep`).

@@ -38,3 +38,9 @@ hora      comando                                                         exit  
 
 Contagens: ruff ok (118 arquivos) · pytest 220 passed (66 unit + 154 integração) · ESLint ok · tsc 3×Done · Vitest 9+49+327=385 · pgTAP 700/700 PASS (banco no seed) · autosave 8/8.
 Achados: C-04 🟡 (make seed não apaga convites; pgTAP quebra) · C-03 ℹ️ (trava solta entre pytest e pgTAP) · C-01 ℹ️ · C-02 ℹ️ · C-05 ℹ️.
+
+Limpeza
+19:15:09  make seed (final, trava, Makefile do clone)                     0     23s      esperou a trava de outra sessão; seed aplicado; "já confere…; nada gravado"
+19:15:33  [conferência] API do dono                                       -     -        200 / 200; web do dono :3100 200
+19:15:39  estado do banco                                                 -     -        3 negócios; 0 bônus "H2 QA"; 5 filas vazias; 2 convites do QA na Vitta (o seed não apaga; C-04)
+19:15:46  rm /tmp/h2_clone/.env ; rm -rf /tmp/h2_clone                    0     1s       nenhum processo do clone; portas 8199 e 3199 livres
