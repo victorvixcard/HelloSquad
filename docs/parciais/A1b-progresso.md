@@ -12,3 +12,23 @@ Fatia A1b, "Projetos, Memória e os outros ambientes" (Fase 1). Início: 16/10/2
 | 12:05 | Faixa da Memória com "Squad" e `nd is-tight` (V4.6 L13868, L13832); capturas do protótipo (`proto-memoria-*`) | feito | `b97515a` (autosave) |
 | 12:06 | Vitest da Memória: 15 testes (modelo, owner confirma e corrige, leitura de quem não é owner, abas e busca, por especialista, linha aberta, fontes, vazio do primeiro acesso, Realtime) | feito | `6015364` |
 | 12:07 | Barra "Plano Squad · créditos do mês" no menu da conta (V4.6 L4559) com `cycle_used / cycle_credits` de `GET /me` (S1e); 2 testes | feito | `857538e` |
+| 12:00 | Sub-agente (a) Projetos: Projetos, catálogo e mapa de situação do Quadro (STK6, colunas da V4.6, filtros) | feito | `e42f2c0` |
+| 12:02 | Sub-agente (c) ambientes: Estratégia · Bia no primeiro acesso da V4.6 (Direção estratégica e Analisar meu negócio) e catálogo dos cinco ambientes | feito | `5195d7a` |
+| 12:02 | Sub-agente (c) ambientes: Resultados · Íris e CRM · Max com o vazio honesto da V4.6 (Ver conexões; as quatro fontes com estado e o aviso padrão) | feito | `87b9db3` |
+| 12:03 | Sub-agente (c) ambientes: Marca & Criação · Kaia, estúdio da V4.6 (Bancada da Kaia com Em produção real e Criações com filtros, contagens reais e novo pedido) | feito | `29b7dbd` |
+| 12:03 | Sub-agente (b) Equipe/Autônomo: Modo Autônomo com o estado vazio da V4.6 e os limites; catálogo da Minha Equipe | feito | `4d88e1a` |
+| 12:03 | Sub-agente (a) Projetos: Projetos · Nexo com roadmap (vazio da V4.6), quem está trabalhando, próximos marcos e Todos os trabalhos (Quadro, Lista, Biblioteca, filtros) | feito | `16e395f` |
+| 12:04 | Sub-agente (c) ambientes: Growth Marketing · Kiwi sem número inventado (objetivo vazio pede conexão, três frentes e regras da V4.6) e linha de identidade da V4.2 | feito | `3dc70f5` |
+| 12:05 | Sub-agente (c) ambientes: testes dos cinco ambientes (textos exatos do vazio, nenhum número inventado, botões e aria) e Kiwi sem CSS próprio | feito | `7a39f04` |
+| 12:06 | Sub-agente (b) Equipe/Autônomo: Minha Equipe & Conversas com os sete perfis, o agora do estado vivo e a lista real de conversas | feito | `c936369` |
+| 12:06 | Sub-agente (c) ambientes: capturas lado a lado de Bia, Kaia, Kiwi, Max e Íris (protótipo no primeiro acesso × nosso, Marina, 1440×900) | feito | `0431e79` |
+| 12:06 | Sub-agente (a) Projetos: detalhe do trabalho com origem da conversa, time (pilha), projeto e histórico montado da API (pedido, runs, versões, decisões); quatro colunas lado a lado em Projetos (is-2) | feito | `897229b` |
+| 12:08 | Sub-agente (b) Equipe/Autônomo: testes da Minha Equipe & Conversas e do Modo Autônomo; Nova conversa ao lado dos filtros | feito | `82fd9ac` |
+| 12:08 | Sub-agente (a) Projetos: testes de Projetos (vazios da V4.6, colunas e mapa de status, filtros e Limpar filtros, Lista, Biblioteca, cartão abre o detalhe); plural com =1 como o protótipo (0 trabalhos) | feito | `22dc43a` |
+| 12:08 | Sub-agente (a) Projetos: testes do detalhe do trabalho (origem, histórico montado da API, time, voltar para Projetos, conversa do pedido, link do projeto) | feito | `b5e8573` |
+| 12:09 | Sub-agente (a) Projetos: capturas lado a lado de Projetos e do detalhe do trabalho (V4.6 x nosso, 1440x900, Marina com o seed) | feito | `95f18fc` |
+| 12:10 | Sub-agente (a) Projetos: captura do Começar pela Campanha de Natal (Sala do Squad em tela cheia com o pedido no campo) | feito | `37bd6f8` |
+| 12:10 | Sub-agente (b) Equipe/Autônomo: capturas lado a lado da Minha Equipe & Conversas e do Modo Autônomo (protótipo × nosso, 1440×900) | feito | `7c3813b` |
+| 12:10 | Sub-agente (a) Projetos: tira duas capturas repetidas do protótipo (a página rola por dentro; a captura inteira saía igual à da tela) | feito | `ba738e5` |
+| 12:09 | e2e do Quadro com o trabalho do seed, do dossiê da Miolo e da sugestão confirmada pela Marina com a outra aba ao vivo | feito | `094eec9` |
+| 12:11 | número suave da Memória na barra (sugestões abertas, 'N informações para confirmar'); capturas lado a lado da Memória e da barra de créditos | feito | `6b9c19d` |
