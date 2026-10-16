@@ -232,9 +232,15 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const nexo = getAgent("nexo");
   const title = room ? t("roomTitle") : (agent?.name ?? "");
   const messages = loaded?.key === key ? loaded.messages : [];
-  const agentSpoke = messages.some((m) => m.author_type === "agent");
+  // Status vivo da conversa (V4.6 L8511 e `.ps-cstat`): run em curso (trabalho), pendência desta conversa (espera)
+  // ou conexão perdida (estado técnico). "<Nome> está escrevendo" enquanto um agente está numa etapa.
+  const convLive = conversationLive(live.state, target.conversationId);
+  const typingAgent = convLive?.typing ?? null;
+  // V4.6 `hasSug: !userAfter && !o.typing` (L10898, L10912): as sugestões somem na primeira mensagem da pessoa. Com
+  // páginas anteriores ainda não carregadas, a conversa já teve mensagem da pessoa.
+  const userWrote = messages.some((m) => m.author_type === "user") || !!(loaded?.key === key && loaded.older);
   const suggestions: string[] =
-    !room && target.agent && !agentSpoke && ["nexo", "otto", "iris"].includes(target.agent)
+    !room && target.agent && !userWrote && !typingAgent && ["nexo", "otto", "iris"].includes(target.agent)
       ? (t.raw(`suggestions.${target.agent as "nexo" | "otto" | "iris"}`) as string[])
       : [];
   const placeholder = room
@@ -243,9 +249,6 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   const sameMode = mode === "full" ? "full" : "panel";
   const today = now ?? new Date();
 
-  // Status vivo da conversa (V4.6 L8511 e `.ps-cstat`): run em curso (trabalho), pendência desta conversa (espera)
-  // ou conexão perdida (estado técnico). "<Nome> está escrevendo" enquanto um agente está numa etapa.
-  const convLive = conversationLive(live.state, target.conversationId);
   const waitHere = target.conversationId
     ? Object.values(live.state.pending).find((p) => shell.workConversations[p.workItemId] === target.conversationId)
     : undefined;
@@ -265,7 +268,6 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
           d: waitHere.kind === "respond" ? tl("detail.waitAnswer") : tl("detail.waitApproval"),
         }
       : null;
-  const typingAgent = convLive?.typing ?? null;
   const md = agent ? live.modes[agent.id] : "idle";
   const headStatus = room
     ? st

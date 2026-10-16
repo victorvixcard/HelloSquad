@@ -67,9 +67,45 @@ describe("painel de conversa universal", () => {
     expect(await screen.findByText("Otto, preciso de uma legenda para o post de sábado.")).toBeInTheDocument();
     expect(acts.load).toHaveBeenCalledWith("otto-1");
     expect(screen.getByText("Ontem")).toBeInTheDocument();
-    expect(screen.getByRole("group", { name: "Pergunte ao Otto" })).toBeInTheDocument();
+    // A pessoa já escreveu nesta conversa: sem as sugestões (V4.6 `hasSug: !userAfter`, H1-03).
+    expect(screen.queryByRole("group", { name: "Pergunte ao Otto" })).toBeNull();
     // Conversa sobre um objeto não tem o seletor de conversas (V4.6: showThr só na conversa direta).
     expect(container.querySelector(".ps-thb")).toBeNull();
+  });
+
+  it("sugestões 'Pergunte ao Otto' ficam até a primeira mensagem da pessoa, mesmo depois da fala do agente (V4.6 L10912)", async () => {
+    const user = userEvent.setup();
+    const acts = actions({
+      load: vi.fn(async () => ({
+        ok: true as const,
+        data: { detail: {} as never, messages: [message("a1", "Oi, Marina. Sobre o que vamos falar?", "2026-10-16T10:50:00-03:00", "agent")], older: null },
+      })),
+    });
+    const { container } = renderWithShell(<ConversationPanel actions={acts} now={NOW} />, openShell());
+    expect(await screen.findByText("Oi, Marina. Sobre o que vamos falar?")).toBeInTheDocument();
+    const sug = screen.getByRole("group", { name: "Pergunte ao Otto" });
+    expect(within(sug).getAllByRole("button")).toHaveLength(3);
+    expect(container.querySelector(".ps-conv")).toHaveClass("has-sug");
+    await user.type(screen.getByRole("textbox", { name: "Mensagem para o Otto…" }), "obrigada{Enter}");
+    // Some já com a mensagem da pessoa na tela (antes da resposta da API), e não volta quando ela chega.
+    expect(screen.queryByRole("group", { name: "Pergunte ao Otto" })).toBeNull();
+    await waitFor(() => expect(acts.send).toHaveBeenCalledWith("otto-1", "obrigada"));
+    expect(await screen.findByText("obrigada")).toBeInTheDocument();
+    expect(screen.queryByRole("group", { name: "Pergunte ao Otto" })).toBeNull();
+    expect(container.querySelector(".ps-conv")).not.toHaveClass("has-sug");
+  });
+
+  it("conversa com páginas anteriores ainda não carregadas não mostra as sugestões (a pessoa já escreveu antes)", async () => {
+    const acts = actions({
+      load: vi.fn(async () => ({
+        ok: true as const,
+        data: { detail: {} as never, messages: [message("a9", "Pronto, ajustei.", "2026-10-16T10:50:00-03:00", "agent")], older: "cur-1" },
+      })),
+      older: vi.fn(async () => ({ ok: false as const, code: "unavailable", message: "" })),
+    });
+    renderWithShell(<ConversationPanel actions={acts} now={NOW} />, openShell());
+    expect(await screen.findByText("Pronto, ajustei.")).toBeInTheDocument();
+    expect(screen.queryByRole("group", { name: "Pergunte ao Otto" })).toBeNull();
   });
 
   it("abre pelas mensagens mais recentes e traz as anteriores pelo cursor (before)", async () => {
