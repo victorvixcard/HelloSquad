@@ -10,7 +10,7 @@ Fundação do ambiente local. Atualizado a cada item verde.
 | 4 | `apps/web` (Next.js 15, porta 3100, lint + build) | ✅ Next.js 15.5.28 via `create-next-app`; `lint`, `typecheck` e `build` verdes (build em ~13 s); `make dev` serviu `GET /` 200 na 3100 e `/health` na 8100 |
 | 5 | `.env.example` | ✅ chaves vazias com instrução de cópia (`supabase status -o env`); `.env` local preenchido sem imprimir chave; anon key respondeu 200 em `/rest/v1/` e `/auth/v1/health`; `.env` ignorado pelo git |
 | 6 | `.github/workflows/ci.yml` | 🔴 bloqueado no push: o token não tem escopo `workflow` (GitHub recusou). Workflow versionado em `infra/github/workflows/ci.yml` até o Vic ativar; passos validados em clone limpo |
-| 7 | `docs/SETUP_LOCAL.md` | ⚪ |
+| 7 | `docs/SETUP_LOCAL.md` | ✅ pré-requisitos, subida do zero, chaves locais, mapa de portas, comandos, como parar, CI e problemas comuns; README aponta para ele |
 | 8 | `docs/parciais/J0-relatorio.md` | ⚪ |
 
 ## Notas
@@ -26,4 +26,4 @@ Fundação do ambiente local. Atualizado a cada item verde.
 
 ## Próximo passo
 
-CI (`.github/workflows/ci.yml`) e confirmação da execução verde no GitHub.
+Verificação final (`make up && make test` limpo) e relatório `J0-relatorio.md`.

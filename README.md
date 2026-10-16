@@ -13,7 +13,8 @@ SaaS multi-tenant, cobrado por assinatura mais créditos avulsos (SPOT). Projeta
 | `docs/adr/` | Decisões de arquitetura registradas (ADRs curtos). |
 | `squad/` | Definição oficial dos 7 agentes: `agent.yaml` (contrato máquina) + `SOUL.md` (identidade e regras). Fonte de verdade dos prompts; versionada. |
 | `design/handoff-v4.6/` | Handoff de design (Landing V1 R32 + Product UI V4.6 + Documento Mestre v1.0 + catálogo). Referência, não código de produção. |
-| `apps/`, `packages/`, `supabase/`, `infra/` | Esqueleto do monorepo. Vazio até a Fase 0 ser aprovada. |
+| `apps/backend`, `apps/web`, `supabase/` | Esqueleto da Fase 0 rodando local (FastAPI, Next.js 15, Supabase CLI). Como subir: `docs/SETUP_LOCAL.md`. |
+| `packages/`, `infra/` | `packages/` vazio até a A0; `infra/` guarda o workflow de CI aguardando ativação. |
 
 ## Ordem de leitura
 
