@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hellosquad/contracts": "workspace:*",
     "@hellosquad/ui": "workspace:*",
     "@next/env": "15.5.28",
     "next": "15.5.28",

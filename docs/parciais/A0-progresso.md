@@ -5,8 +5,8 @@
 | # | Item | Estado | Commit |
 |---|---|---|---|
 | 0 | PASSO 0: diretrizes, plano, S0 §4.12 e §7, SETUP_LOCAL, arquitetura §7 e §12, handoff (A, B, C), DS, squad | ✅ lido | este |
-| 1 | `packages/ui`: tokens gerados de `tokens.json`, fontes locais, primitivos (Button, CommandField, StatePill, Agent, Icon, AgentDot) | ✅ 01:36 — Vitest 43/43, `tsc` ok, `next build` ok com as fontes locais (0 referência a Google Fonts no `.next`); mutação no CSS e nos ícones gerados derruba o teste de defasagem | este |
-| 2 | `packages/contracts`: tipos do OpenAPI e cliente `fetch` tipado | ⚪ | — |
+| 1 | `packages/ui`: tokens gerados de `tokens.json`, fontes locais, primitivos (Button, CommandField, StatePill, Agent, Icon, AgentDot) | ✅ 01:36 — Vitest 43/43, `tsc` ok, `next build` ok com as fontes locais (0 referência a Google Fonts no `.next`); mutação no CSS e nos ícones gerados derruba o teste de defasagem | `d7b278c` |
+| 2 | `packages/contracts`: tipos do OpenAPI e cliente `fetch` tipado | ✅ 01:39 — `pnpm --filter contracts generate` ok; Vitest 9/9 (tipos em dia, Bearer, 409 `slug_taken`, 422 com detalhes, 401, 502 fora do envelope, API fora do ar); mutação no `schema.ts` derruba o teste | este |
 | 3 | Auth no web (`@supabase/ssr`): `/entrar`, `/criar-conta`, `/sair`, middleware de `/app/*` | ⚪ | — |
 | 4 | Casca do app: `/app/[workspace]` com barra lateral V4.6, `/app/novo-workspace` | ⚪ | — |
 | 5 | Página pública `/` com SEO (Metadata, JSON-LD, sitemap, robots, llms.txt) | ⚪ | — |

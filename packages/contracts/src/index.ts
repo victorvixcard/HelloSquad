@@ -1,0 +1,20 @@
+export {
+  ApiError,
+  createApiClient,
+  isApiError,
+  toApiError,
+  unwrap,
+  type AccessToken,
+  type ApiClient,
+  type ApiClientOptions,
+  type ErrorBody,
+  type ErrorDetail,
+  type KnownErrorCode,
+  type Me,
+  type Membership,
+  type Schemas,
+  type Workspace,
+  type WorkspaceCreate,
+  type WorkspaceRole,
+} from "./client";
+export type { components, operations, paths } from "./schema";
