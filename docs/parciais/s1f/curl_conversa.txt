@@ -1,0 +1,26 @@
+$ POST /workspaces/{miolo}/conversations {"kind":"group","agent_ids":["otto","bia","kaia"]}
+{"kind": "group", "primary_agent_id": "bia", "agent_ids": ["bia", "kaia", "otto"], "unread_count": 0}
+$ POST /conversations/{grupo}/messages + POST /messages/{id}/reply (duas vezes)
+{"run_id":"3f9ce41a-aba9-4f23-9c45-8f7002839fd3","conversation_id":"427e3f15-0962-43cf-8c42-f26253acc2e1","message_id":"3db74653-eaab-4e5f-aa7d-f0af7672db55","agent_id":"bia","status":"queued"} -> 201
+{"run_id":"3f9ce41a-aba9-4f23-9c45-8f7002839fd3","conversation_id":"427e3f15-0962-43cf-8c42-f26253acc2e1","message_id":"3db74653-eaab-4e5f-aa7d-f0af7672db55","agent_id":"bia","status":"queued"} -> 200
+{"run_id":"9f0491d9-5e27-46ec-ba77-ea5d0a8b5ecd","conversation_id":"427e3f15-0962-43cf-8c42-f26253acc2e1","message_id":"fb0775db-e82d-499d-b24b-01412dbdeb97","agent_id":"kaia","status":"queued"} -> 201
+$ make worker (LLM simulado; --drain duas vezes: na mesma conversa, um especialista por vez)
+INFO hellosquad.worker: run 9f0491d9-5e27-46ec-ba77-ea5d0a8b5ecd: outro especialista está respondendo nesta conversa; volta em 5s
+INFO hellosquad.worker: run 3f9ce41a-aba9-4f23-9c45-8f7002839fd3 concluído: bia respondeu na conversa; 920 tokens de entrada, 48 de saída, 0 lidos e 0 gravados no cache, US$ 0.004640
+INFO hellosquad.worker: fila esvaziada: 2 mensagem(ns) tratada(s) ['replied', 'waiting']
+INFO hellosquad.worker: run 9f0491d9-5e27-46ec-ba77-ea5d0a8b5ecd concluído: kaia respondeu na conversa; 920 tokens de entrada, 48 de saída, 0 lidos e 0 gravados no cache, US$ 0.004640
+INFO hellosquad.worker: fila esvaziada: 1 mensagem(ns) tratada(s) ['replied']
+$ GET /conversations/{grupo}/messages?before=latest (autor e texto)
+[["pessoa", "Quero entender o mercado e a concorrência do bairro."], ["pessoa", "@Kaia, o que você acha?"], ["bia", "Anotei o que você escreveu. Sigo com isso por aqui e te cham"], ["kaia", "Anotei o que você escreveu. Sigo com isso por aqui e te cham"]]
+$ GET /workspaces/{miolo}/conversations/unread (Marina) e POST /conversations/{grupo}/read
+{"conversations":1,"messages":2,"squad_room":{"conversations":0,"messages":0},"by_agent":[{"conversations":1,"messages":2,"agent_id":"bia"}]}
+{"unread_count": 0}
+{"conversations":0,"messages":0,"squad_room":{"conversations":0,"messages":0},"by_agent":[]}
+$ POST /workspaces/{miolo}/conversations (indicador, pela chave, com período e origem)
+{"type": "metric", "id": null, "key": "alcance:semana", "title": "Alcance da semana", "status": null, "summary": null, "period": "Semana 42", "origin": "Resultados · semana"}
+$ GET /workspaces/{miolo}/memory (perfil) e POST /memory/facts/{tom}/state
+{"description": "Padaria de fermentação natural em Pinheiros, São Paulo.", "squad_summary": null, "summary_agent_id": null, "summary_updated_at": null}
+{"key": "Tom de voz", "state": "unused", "unused_from": "confirmed"}
+{"key": "Tom de voz", "state": "confirmed", "unused_from": null}
+{"topic": "História", "key": "Contado por você", "state": "confirmed", "source_type": "correction"}
+["Aos domingos a loja fecha às 13h"]

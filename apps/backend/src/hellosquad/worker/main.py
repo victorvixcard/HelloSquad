@@ -170,6 +170,14 @@ class Worker:
                 CAPPED_DELAY_SECONDS,
             )
             return "capped"
+        if claim.outcome == "waiting":
+            await self.queue_call("set_vt", msg_id, CAPPED_DELAY_SECONDS)
+            log.info(
+                "run %s: outro especialista está respondendo nesta conversa; volta em %ss",
+                run_id,
+                CAPPED_DELAY_SECONDS,
+            )
+            return "waiting"
         if claim.outcome == "exhausted":
             return await self.failed(store, msg_id, claim, AttemptsExhausted())
         if claim.outcome == "unbillable":

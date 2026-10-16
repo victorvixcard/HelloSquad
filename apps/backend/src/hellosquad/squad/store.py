@@ -29,7 +29,15 @@ RUNNABLE_WORK = {"draft", "in_progress", "failed"}
 REDACTED_KEYS = ("key", "token", "secret", "password", "authorization", "cookie")
 
 ClaimOutcome = Literal[
-    "claimed", "finished", "busy", "capped", "missing", "skipped", "exhausted", "unbillable"
+    "claimed",
+    "finished",
+    "busy",
+    "capped",
+    "waiting",
+    "missing",
+    "skipped",
+    "exhausted",
+    "unbillable",
 ]
 # Reserva recusada: HS001 = sem saldo; P0002 = delivery sem preço ou workspace sem conta; 22023 =
 # trabalho sem tipo de delivery.
@@ -233,7 +241,7 @@ class RunStore:
         self, conn: AsyncConnection[DictRow], run: DictRow, lease_seconds: int
     ) -> Claim:
         """Run de resposta: sem trabalho, sem reserva (crédito é por entrega). Um especialista por
-        vez: com outro run em execução na mesma conversa, espera a vez como no teto."""
+        vez: com outro run em execução na mesma conversa, espera a vez (volta à fila)."""
         speaking = await fetchval(
             conn,
             """
@@ -244,7 +252,7 @@ class RunStore:
             (self.workspace_id, run["conversation_id"], self.run_id, lease_seconds),
         )
         if speaking:
-            return Claim("capped", run["attempts"])
+            return Claim("waiting", run["attempts"])
         attempts = await fetchval(
             conn,
             """

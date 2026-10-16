@@ -145,7 +145,7 @@ async def test_one_specialist_answers_each_message_in_the_group(
         await admin_db.execute(
             "select pgmq.set_vt('runs_interactive', msg_id, 0) from pgmq.q_runs_interactive"
         )
-    assert rounds == [["capped", "capped", "replied"], ["capped", "replied"], ["replied"]]
+    assert rounds == [["replied", "waiting", "waiting"], ["replied", "waiting"], ["replied"]]
     answers = await rows(
         admin_db,
         """
@@ -225,7 +225,7 @@ async def test_a_second_reply_waits_while_someone_is_speaking(api, access_token,
         )
         claimed = await store.begin(workspace_cap=3, lease_seconds=120, max_attempts=3)
         waiting = await other.begin(workspace_cap=3, lease_seconds=120, max_attempts=3)
-    assert (claimed.outcome, waiting.outcome) == ("claimed", "capped")
+    assert (claimed.outcome, waiting.outcome) == ("claimed", "waiting")
 
 
 async def test_unread_is_per_person_and_isolated(api, access_token, admin_db) -> None:
