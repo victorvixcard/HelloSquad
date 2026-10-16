@@ -119,7 +119,79 @@ Se a preferência já existe, a Kaia responde "O preço já está em destaque ne
 
 ## 4. Conversa
 
-<!-- §4 em redação -->
+"A conversa é a interface principal" (handoff §A). Um só componente serve todos os ambientes (V4, L9762); a camada final de cada método está mapeada em `docs/parciais/x1/notas_conversa_pendencias.md` §0, e o detalhe completo em §A da mesma nota.
+
+**Regra do Nexo** (L6694): "Dá para organizar em três frentes: o que é pontual vira pedido, o que é grande vira projeto na Sala do Squad e o que se repete vai para o Modo Autônomo."
+
+### 4.1 Tipos de conversa
+
+| Tipo | Como nasce | O que a tela diz |
+|---|---|---|
+| Sala do Squad (uma por negócio) | item "Sala do Squad" da barra; Início com os sete selecionados (L7063); "Responder" ou "Revisar conceito" na faixa | título "Sala do Squad", subtítulo com o tópico ou "Pedidos grandes"; "7 especialistas"; "todos os especialistas · o Nexo coordena"; campo "Escreva para o squad…"; dica "O Nexo distribui para quem precisa" (L8511–8546) |
+| Conversa direta com um especialista (várias por agente) | Início com um selecionado (L7064); "Conversar com…" na identidade do ambiente; "Nova conversa" | campo "Mensagem para a Kaia…"; dica "Conversa direta com a Kaia" |
+| Conversa em grupo (2 a 6) | Início com dois a seis selecionados (L7130) | sistema: "Conversa em grupo com <nomes>"; nota "Conversa em grupo demonstrativa: aqui, responde um especialista por vez."; dica "Conversa em grupo · demonstração: responde um especialista por vez". Responde o especialista mais ligado ao pedido, por palavra-chave (`GKEYS`, L5876–5884), e o Nexo desempata |
+| Conversa a partir de um objeto (uma por objeto) | "Conversar com <agente> sobre…", "Analisar com Íris", "Conversar sobre isso" etc. (`_openCtx`, L9831) | tipos: "Ambiente", "Projeto", "Resumo" ("Precisa de você", "Seu Squad está trabalhando", "Próximos marcos"), "Publicação", "Plano semanal", "Data da campanha", "Espaço no calendário", "Indicador", "Canal", "Análise da Íris", "Oportunidade", "Pedido", "Conversa sobre", "Conhecimento", "Responsabilidade", "Nova responsabilidade" (L9777–9825, L11936, L13301–13313) |
+| Pedido do catálogo (uma por pedido) | "O que você quer fazer com <agente>?" e cada capacidade (§1) | tipo "Pedido"; novo pedido da mesma capacidade abre outra conversa: "Mais um, separado do anterior." (L11959) |
+| Delegação (Modo Autônomo) | "Delegar uma responsabilidade" etc. | "Nova responsabilidade" (§3.3) |
+
+Com o dono (16/10 08:55): a conversa de objeto é reaproveitada; a conversa direta tem histórico e "Nova conversa" cria um diálogo novo, como no protótipo.
+
+### 4.2 Abrir, fechar, expandir e retomar
+
+- **Modos:** fechada, painel à direita (380 px a partir de 1360 px de largura, 364 px abaixo disso, por cima da página quando espremeria o conteúdo) e tela cheia (L6526, L10444–10447). Conversa de objeto e pedido abrem em painel a partir de 1080 px; as outras, em tela cheia.
+- **Botões do cabeçalho** (L5515–5518): "Mostrar o contexto" ("Contexto"), "Expandir a conversa" ("Expandir", do painel para a tela cheia), "Abrir ao lado da tela" ("Abrir ao lado", da tela cheia para o painel) e "Fechar a conversa" ("Fechar").
+- **Esc** (L9747–9758): fecha o que estiver aberto por cima; no painel, fecha a conversa e devolve o foco ao botão que a abriu; em tela cheia, não fecha.
+- **Retomar:** reabrir sobre o mesmo objeto volta à mesma conversa, com o histórico e sem não lidas. Se o objeto mudou, entra "Contexto atualizado: <resumo>" e uma nova primeira mensagem (L9846). Conversa nova começa com "Hoje" e a primeira fala do especialista, em 720 ms.
+- **Não lida:** mensagem em conversa fechada soma uma não lida; com a pessoa em outra tela, chega um aviso curto (ex.: "A Kaia entregou a v1 do post") e aparece o ponto na barra.
+
+### 4.3 Cartão de contexto
+
+O contexto não é uma mensagem; aparece em três lugares:
+
+1. **Cabeçalho:** "Conversando sobre" + o nome do objeto, com o link de volta ("Ver no calendário", "Ver no roadmap", "Ver <Ambiente>").
+2. **Faixa de período:** "A página está em outro período." + "Atualizar para <período>", em indicadores e canais (L11274, L10900).
+3. **Coluna "Contexto da conversa"**, em tela cheia a partir de 940 px (L5571, L10920–10926): título e resumo do objeto; "Ambiente", "Tipo", "Período" (quando há), "Negócio" ("Miolo · <lugar>"), "Origem" (ex.: "Calendário · semana", "Resultados · mês"); pessoas "responde · <Ambiente>" e "participa · <Ambiente>"; e "Voltar para <Ambiente>".
+
+Sugestões de pergunta ("Pergunte à Kaia") somem depois da primeira mensagem da pessoa (L11276, L10912). Para o backend, o contexto que a conversa carrega é: negócio, ambiente, tipo e id do objeto, nome, resumo, período, filtros de origem, agente que responde e participantes (handoff §E.2).
+
+### 4.4 Histórico e "Nova conversa"
+
+- **Minha Equipe & Conversas**, aba "Conversas" (contagem e ponto de não lida): "Tudo o que você conversou com o squad, por assunto e por contexto."; busca "Buscar conversas"; filtros "Sala do Squad" e os sete rostos; vazio "Nenhuma conversa com esse filtro." · "Limpar filtros" (L10884–10885, L9581).
+- **Linha:** título (ou "Sala do Squad · <tópico>"), "<Nome> · <Ambiente>" + "· sobre uma publicação" (um projeto, um indicador, o ambiente, um contexto) ou "pedido: <nome>", a última mensagem ("Você: …", "<Nome>: …" ou "enviou um material"), hora e ponto de não lida. Clicar abre em tela cheia.
+- **"Nova conversa"** (L5507, L6537–6545), no seletor de conversas do cabeçalho de uma conversa direta: cria "Nova conversa", que começa com "<Oi, eu sou …> <pitch> O que você precisa?" e os três pedidos de exemplo do agente. Na primeira mensagem da pessoa, o título vira o texto dela (até 34 caracteres) e a conversa passa a constar no histórico. O seletor lista as conversas com o mesmo especialista.
+
+### 4.5 Como o agente responde
+
+- **Envio:** "Enter" envia; a mensagem da pessoa entra com hora e nome dos anexos. Só anexo também envia (L6593–6598).
+- **"Digitando":** "<Nome> está escrevendo" e o status "escrevendo…" por 700 a 2400 ms, conforme o roteiro (L6576, L8540).
+- **Roteiro:** a cadeia de roteadores (V4.5 → V4.4 → V4 → V3, L13394, L12492, L9871, L6606) reconhece as jornadas, os pedidos de cada especialista (`_intent`, L6647) e as intenções sobre o objeto da conversa.
+- **Resposta-padrão para texto fora do roteiro** (L6727–6728, L9942):
+  - Conversa comum: "Anotei. Neste protótipo eu respondo a alguns roteiros de exemplo. Experimente:" + dois pedidos de exemplo.
+  - Conversa de objeto: "Anotei, sobre “<objeto>”. Neste protótipo eu respondo a alguns roteiros de exemplo; experimente um destes:" + até três sugestões.
+  - **Na produção, é aqui que entra o agente real; a resposta-padrão não vai para o produto.**
+- **Pedido para o especialista certo:** pedir um post fora da conversa da Kaia faz o agente responder "Isso a Kaia resolve direto, sem reunir o squad. Passei o seu pedido para ela." (L6606); promoção pedida ao Nexo vai à Bia ("Promoção é com a Bia, que cuida da estratégia. Pedi a ela uma proposta que combine com a Miolo.", L6698).
+- **Anexo:** "Anexar" abre "Anexar à conversa" com "Foto ou vídeo", "Arquivo", "Da Memória da Marca" e "Peça da Biblioteca" (L10478). Resposta: "Recebi o anexo e guardei junto com “<objeto>”. Vou considerar no que estou preparando." (L9937); a Kaia diz "Vou usar como referência visual." (L6650). O anexo do Início passa para a conversa.
+- **Mensagens de sistema e notas:** "O Nexo chamou a Bia, a Kaia, o Otto e o Kiwi", "Você aprovou a v2 · 10:31", "Contexto atualizado: …".
+- **Cartões:** 24 tipos, com os botões em `docs/parciais/x1/cartoes_da_conversa.txt` e os campos em §A9 da nota. Escolher uma opção desabilita as outras e marca a escolhida.
+
+### 4.6 Colaboração entre agentes na mesma conversa
+
+- **Convite:** "<O Nexo> chamou <a Bia> para esta conversa" entra como mensagem de sistema, e o convidado fala em seguida ("Aqui é a Bia. …") (`_cxJoin`, L9862). O cabeçalho mostra os rostos e "com Kaia e Otto"; a coluna lateral separa quem "responde" de quem "participa".
+- **Na Sala:** o popover de pessoas tem "Chamar", "Conversar" e "Chamar alguém" (L5509, L5595). "Chamar" só escreve "@<Nome> " no campo; o protótipo não interpreta a menção (L8514).
+- **Regra:** "Quando o pedido envolve outra especialidade, <o Nexo> chama quem precisa na mesma conversa." (L11896). Nada é duplicado: o convidado trabalha na mesma conversa e no mesmo trabalho.
+
+### 4.7 Como um pedido vira trabalho
+
+1. **Entrega pontual** (§3.1): o especialista confirma o escopo e cria o trabalho na hora, com o cartão "Trabalho criado · entrega pontual". A origem é "pedido na conversa com a Kaia · 10/10" (L9164). O status começa em "Kaia criando a primeira versão" · "Em andamento".
+2. **Projeto** (§3.2): o Nexo esclarece, monta o squad e cria o projeto ("Projeto criado: Campanha de Natal", cartão "Projeto criado · Sala do Squad").
+3. **Rotina** (§3.3): vira responsabilidade no Modo Autônomo, não trabalho.
+4. **Pedido do catálogo** (V4.3, `_capAskWork`, L11979):
+   - O especialista conduz o briefing por perguntas com opções e depois diz "Antes de começar, confere o trabalho:". O cartão "Confirmar o trabalho" traz a relação ("Projeto novo", "Entrega pontual" ou "Trabalho do projeto <nome>"), "Responsável", "Com", "Próximo passo" e "Prazo", com "Criar o trabalho" e "Ajustar" (L5554).
+   - "Criar o trabalho" cria o trabalho "Em andamento" ("<Líder> preparando"), com origem "pedido em <Ambiente> · <pedido> · hoje" e histórico "Você pediu…", "Você confirmou o trabalho", "<Líder> assumiu o trabalho, com …". Mensagem: "Pronto. Está em Projetos, dentro de <projeto>." (ou "Está em Projetos, em Todos os trabalhos.") + "Te chamo quando tiver a primeira versão." + "Fazer outro pedido assim". Aviso: "Trabalho criado · <título>". O cartão vira "Trabalho criado", com "Abrir o trabalho" e "Ver o projeto".
+   - "Ajustar" responde "Claro. Me diga aqui o que mudar (prazo, projeto, formato) e eu ajusto antes de criar." (L11995).
+5. **"<Agente> percebeu":** "Transformar em trabalho" cria o trabalho com origem "criado a partir de um insight da Íris · hoje", com o aviso "Virou trabalho do Otto: bastidores semanais" (L7001–7006).
+
+Regra do Documento Mestre §8, que o protótipo respeita: pedido recebido não é trabalho criado. O trabalho só nasce quando o escopo foi confirmado na conversa: na entrega pontual, pela resposta do especialista; no catálogo, por "Criar o trabalho".
 
 ## 5. "Precisa de você"
 
