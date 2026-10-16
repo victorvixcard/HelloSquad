@@ -3,12 +3,12 @@
 Sai do catálogo do backend, no idioma do workspace, e do estado de agora, lido com a RLS da pessoa:
 o Nexo fala das decisões que esperam por ela; o Otto, do calendário editorial; a Íris, dos números
 conectados (ainda nenhum); os outros se apresentam com o que estão fazendo ("Oi, eu sou a Bia.
-Disponível. O que você precisa?"). As sugestões do Nexo, do Otto e da Íris são as do ambiente no
-protótipo; as dos outros, os três primeiros pedidos de exemplo do `agent.yaml`.
+Disponível. O que você precisa?"). As sugestões são as do ambiente no protótipo: as do Nexo, do Otto
+e da Íris, fixas do `_cx('env')`; as dos outros, os três primeiros `asks` do agente na V4.6. A
+saudação é a `saudacao` do `agent.yaml`, traduzida no catálogo.
 """
 
 from datetime import date, datetime, timedelta
-from functools import cache
 from uuid import UUID
 
 from psycopg import AsyncConnection
@@ -16,11 +16,8 @@ from psycopg.rows import DictRow
 
 from hellosquad.conversations.schemas import ConversationOpening
 from hellosquad.i18n import t
-from hellosquad.squad.loader import SquadLoader
-from hellosquad.squad.prompt import BRAND_NAME_PLACEHOLDER
 from hellosquad.work.live import DISPLAY_TZ
 
-ENV_SUGGESTIONS = {"nexo", "otto", "iris"}
 SUGGESTION_COUNT = 3
 
 WORKSPACE = "select s.name, s.locale from public.workspaces s where s.id = %s"
@@ -52,15 +49,6 @@ limit 50
 """
 
 
-@cache
-def loader() -> SquadLoader:
-    return SquadLoader()
-
-
-def brand(text: str, name: str) -> str:
-    return text.replace(BRAND_NAME_PLACEHOLDER, name)
-
-
 def day_label(locale: str, value: date) -> str:
     """ "sex, 16/10" (V4.6)."""
     return t(
@@ -73,13 +61,10 @@ def day_label(locale: str, value: date) -> str:
 
 
 def suggestions(locale: str, agent_id: str, brand_name: str) -> list[str]:
-    if agent_id in ENV_SUGGESTIONS:
-        return [
-            t(locale, f"environment.suggestion.{agent_id}.{n}")
-            for n in range(1, SUGGESTION_COUNT + 1)
-        ]
-    asks = loader().agent(agent_id).config.get("pedidos_sugeridos") or []
-    return [brand(ask, brand_name) for ask in asks[:SUGGESTION_COUNT]]
+    return [
+        t(locale, f"environment.suggestion.{agent_id}.{n}", brand=brand_name)
+        for n in range(1, SUGGESTION_COUNT + 1)
+    ]
 
 
 async def nexo_first(conn: AsyncConnection[DictRow], workspace_id: UUID, locale: str) -> str:
@@ -120,7 +105,7 @@ async def otto_first(
 async def specialist_first(
     conn: AsyncConnection[DictRow], workspace_id: UUID, locale: str, agent_id: str, brand_name: str
 ) -> str:
-    greeting = brand(loader().agent(agent_id).config.get("saudacao") or "", brand_name)
+    greeting = t(locale, f"agent.{agent_id}.greeting", brand=brand_name)
     pending = await (await conn.execute(PENDING, (workspace_id,))).fetchall()
     waiting = next((p for p in pending if p["agent_id"] == agent_id), None)
     if waiting is not None and waiting["version_no"] is not None:

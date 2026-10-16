@@ -12,11 +12,15 @@ import psycopg
 import pytest
 from psycopg.rows import dict_row
 
+from hellosquad.i18n import t
+
 pytestmark = pytest.mark.integration
 
 MARINA = "marina@miolo.example"
 RAFAEL = "rafael@vitta.example"
 SEED_FILE = Path(__file__).resolve().parents[3] / "supabase" / "seed.sql"
+SQUAD = ["nexo", "bia", "kaia", "otto", "kiwi", "max", "iris"]
+SPECIALISTS = ["bia", "kaia", "kiwi", "max"]
 
 
 def bearer(token: str) -> dict[str, str]:
@@ -69,7 +73,7 @@ async def test_environment_conversation_reused_with_opening(api, access_token, a
         "suggestions": [
             "Onde a Miolo pode crescer até o Natal?",
             "Crie uma promoção para esta semana",
-            "Analisar os concorrentes do bairro",
+            "Analisar as padarias do bairro",
         ],
     }
 
@@ -125,6 +129,40 @@ async def test_environment_first_lines_follow_the_prototype(api, access_token, a
     expected = {0: "Nada esperando por você agora.", 1: "Hoje tem uma decisão sua: “"}
     assert nexo["message"].startswith(expected.get(needs["count"], f"Hoje tem {needs['count']}"))
     assert nexo["suggestions"][0] == "O que precisa de mim esta semana?"
+
+
+async def test_environment_suggestions_are_the_v46_asks_in_the_workspace_locale(
+    api, access_token, admin_db
+):
+    """H2-29: as sugestões dos sete ambientes são os asks da V4.6, no idioma do negócio."""
+    miolo = await workspace_id(admin_db, "miolo")
+    token = access_token(MARINA)
+    seen: dict[str, dict[str, list[str]]] = {}
+    for locale in ("pt-BR", "en"):
+        await admin_db.execute(
+            "update public.workspaces set locale = %s where id = %s", (locale, miolo)
+        )
+        for agent in SQUAD:
+            response = await open_environment(api, token, miolo, agent, agent)
+            assert response.status_code in (200, 201), response.text
+            opening = response.json()["opening"]
+            expected = [
+                t(locale, f"environment.suggestion.{agent}.{n}", brand="Miolo") for n in (1, 2, 3)
+            ]
+            assert opening["suggestions"] == expected, (locale, agent)
+            if agent in SPECIALISTS:
+                assert opening["message"].startswith(t(locale, f"agent.{agent}.greeting"))
+            seen.setdefault(agent, {})[locale] = opening["suggestions"]
+
+    for agent in SPECIALISTS:
+        assert seen[agent]["en"] != seen[agent]["pt-BR"], agent
+    assert seen["kiwi"]["pt-BR"] == [
+        "Onde a Miolo pode aparecer mais no Google?",
+        "Quanto investir em anúncios no Natal?",
+        "Por que tanta visita não vira encomenda?",
+    ]
+    assert seen["kiwi"]["en"][0] == "Where can Miolo show up more on Google?"
+    assert seen["max"]["pt-BR"][1] == "Um e-mail para quem encomendou no Natal passado"
 
 
 async def test_environment_outside_squad_is_rejected(api, access_token, admin_db):
