@@ -170,3 +170,66 @@ export async function runEventsAction(runId: string, after: number): Promise<Act
     return fail(error);
   }
 }
+
+export type DeliveryCardState = "review" | "approved" | "making" | "superseded";
+
+export type DeliveryCard = {
+  workItemId: string;
+  title: string;
+  agentId: string;
+  versionNo: number;
+  state: DeliveryCardState;
+  /** Pendência de revisão desta versão (decidir pelo cartão); null quando não há. */
+  approvalId: string | null;
+  /** Começo do texto da versão, para a miniatura (a entrega da Fase 1 é texto: legenda da 04.01). */
+  excerpt: string;
+};
+
+/** Primeiro texto de uma versão: a skill 04.01 do worker (`versoes[].texto`) ou o formato do seed (`legenda`). */
+function excerptOf(content: unknown): string {
+  const c = (content ?? {}) as { legenda?: unknown; versoes?: unknown };
+  if (typeof c.legenda === "string") return c.legenda;
+  const first = Array.isArray(c.versoes) ? (c.versoes[0] as { texto?: unknown } | undefined) : undefined;
+  return typeof first?.texto === "string" ? first.texto : "";
+}
+
+/**
+ * Cartão "Material · vN" da mensagem do agente (V4.6 L5539, `isMat`): o run da mensagem leva ao trabalho, e o
+ * trabalho diz o estado da versão (aguarda sua aprovação, aprovada por você, nova versão a caminho, substituída).
+ * Só leitura: GET /runs/{id} e GET /work-items/{id}.
+ */
+export async function deliveryCardAction(runId: string, versionId: string): Promise<ActionResult<DeliveryCard>> {
+  try {
+    const api = await serverApi();
+    const run = await unwrap(api.GET("/runs/{run_id}", { params: { path: { run_id: runId } } }));
+    if (!run.work_item_id) return { ok: false, code: "not_found", message: "" };
+    const item = await unwrap(api.GET("/work-items/{work_item_id}", { params: { path: { work_item_id: run.work_item_id } } }));
+    const delivery = item.deliveries.find((d) => d.versions.some((v) => v.id === versionId));
+    const version = delivery?.versions.find((v) => v.id === versionId);
+    if (!delivery || !version) return { ok: false, code: "not_found", message: "" };
+    const latest = Math.max(...delivery.versions.map((v) => v.version_no));
+    const approval = item.approvals.find((a) => a.delivery_version_id === versionId && a.status === "pending") ?? null;
+    const state: DeliveryCardState =
+      version.status === "approved"
+        ? "approved"
+        : version.version_no < latest || version.status === "superseded"
+          ? "superseded"
+          : approval
+            ? "review"
+            : "making";
+    return {
+      ok: true,
+      data: {
+        workItemId: item.id,
+        title: item.title,
+        agentId: item.primary_agent_id,
+        versionNo: version.version_no,
+        state,
+        approvalId: approval?.id ?? null,
+        excerpt: excerptOf(version.content),
+      },
+    };
+  } catch (error) {
+    return fail(error);
+  }
+}

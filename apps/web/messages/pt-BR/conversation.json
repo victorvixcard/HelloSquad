@@ -44,5 +44,16 @@
   "threadsH": "Conversas Nova conversa {with}",
   "threadUntitled": "Conversa {with}",
   "newThread": "Nova conversa",
-  "now": "agora"
+  "now": "agora",
+  "card": {
+    "material": "Material · v{version}",
+    "open": "Abrir a v{version}: {title}",
+    "state": {
+      "review": "Aguarda sua aprovação",
+      "approved": "Aprovada por você",
+      "making": "Nova versão a caminho",
+      "superseded": "Substituída pela v{next}"
+    },
+    "error": "Não deu para registrar agora. Tente de novo."
+  }
 }

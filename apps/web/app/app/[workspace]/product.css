@@ -22,3 +22,20 @@
   background: #fff;
 }
 .ps .ps-capf .ps-tags { margin-top: 10px; color: #6E6B80; }
+
+/* A1a: miniatura do cartão "Material · vN" para entrega em texto (legenda); a V4.6 só desenha peça visual. */
+.ps .ps-thumb .ps-capm {
+  display: -webkit-box;
+  width: 96px;
+  height: 120px;
+  padding: 10px 9px;
+  overflow: hidden;
+  background: #fff;
+  color: #2c2a3a;
+  font-size: 9px;
+  line-height: 1.4;
+  text-align: left;
+  white-space: normal;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+}

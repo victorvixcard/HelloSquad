@@ -16,6 +16,7 @@ import {
 import { conversationLive, shortNowKey } from "@/lib/live/live-state";
 import { dayKey, dayLabel, shortTime, threadAt, threadTitleFrom } from "./conversation-format";
 import { useLive } from "./live";
+import { MaterialCard, type MaterialCardActions } from "./MaterialCard";
 import { usePopoverDismiss } from "./Popover";
 import { useShell, type ConversationTarget } from "./shell-context";
 import { SquadStatus, type SquadStatusKind } from "./SquadStatus";
@@ -30,7 +31,18 @@ export type ConversationActions = {
   create: typeof createDirectConversationAction;
   createWork: typeof createWorkItemAction;
   decide: typeof decideApprovalAction;
+  /** Cartão "Material · vN" das mensagens com entrega (padrão: as Server Actions). */
+  card?: MaterialCardActions;
 };
+
+/** Anexo que o worker põe na mensagem do agente quando entrega uma versão (S1c, `store.py`). */
+function deliveryAttachment(m: Message): string | null {
+  if (!m.run_id || !Array.isArray(m.attachments)) return null;
+  for (const a of m.attachments as Array<Record<string, unknown> | null>) {
+    if (a && a.type === "delivery_version" && typeof a.delivery_version_id === "string") return a.delivery_version_id;
+  }
+  return null;
+}
 
 const DEFAULT_ACTIONS: ConversationActions = {
   load: loadConversationAction,
@@ -555,6 +567,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                 }
                 if (m.author_type === "agent" && m.author_agent_id) {
                   const who = getAgent(m.author_agent_id as AgentId);
+                  const mat = deliveryAttachment(m);
                   return [
                     sep,
                     <div className="ps-msg" key={m.id}>
@@ -568,6 +581,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                           <i>{at}</i>
                         </div>
                         <div className="ps-msg-t">{m.body}</div>
+                        {mat && m.run_id ? <MaterialCard runId={m.run_id} versionId={mat} target={target} actions={actions.card} /> : null}
                       </div>
                     </div>,
                   ];
