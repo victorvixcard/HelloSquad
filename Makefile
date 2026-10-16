@@ -12,7 +12,9 @@ BACKEND_DIR := apps/backend
 # Duas sessões rodando make test ao mesmo tempo colidiam (uma reaplicava o seed no meio da outra).
 # -o: o descritor da trava não passa aos processos que o alvo sobe (o worker do make e2e); a trava acaba com o alvo,
 # mesmo que sobre um órfão. Espera até 10 min; quem está com ela: lsof /tmp/hellosquad-db.lock.
-DB_LOCK := flock -o -w 600 /tmp/hellosquad-db.lock
+# Quem já está com a trava (make test, make e2e) avisa os filhos com HELLOSQUAD_DB_LOCK_HELD=1 e, para eles, a trava
+# vira no-op: o filho não herda o descritor (-o) e, se pedisse a mesma trava, esperaria pelo próprio pai até o limite.
+DB_LOCK := $(if $(filter 1,$(HELLOSQUAD_DB_LOCK_HELD)),,flock -o -w 600 /tmp/hellosquad-db.lock)
 # make status e make up não imprimem chaves nem a senha da URL do banco (valores: pnpm exec supabase status -o env).
 MASK_KEYS := sed -E -f infra/mask-keys.sed
 
@@ -54,7 +56,8 @@ migrate: ## Aplica migrations pendentes e grava a senha do papel hellosquad_api 
 seed: ## Dados fictícios de docs/DADOS_FICTICIOS.md no banco local (idempotente)
 	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run hellosquad-local-db seed ../../supabase/seed.sql'
 
-test: test-backend test-web test-db test-infra ## Roda todos os testes locais (backend, web, banco e infra); os que usam o banco esperam a trava
+test: test-infra test-web ## Roda todos os testes locais (infra, web, backend e banco); backend e banco numa trava só, do pytest ao pgTAP
+	$(DB_LOCK) env HELLOSQUAD_DB_LOCK_HELD=1 $(MAKE) --no-print-directory test-backend test-db
 
 test-backend: ## Backend: ruff (lint e formato) e pytest (integração usa o banco: com trava)
 	cd $(BACKEND_DIR) && uv run ruff check . && uv run ruff format --check .
