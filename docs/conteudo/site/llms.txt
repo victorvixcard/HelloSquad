@@ -45,7 +45,7 @@ HelloSquad is an AI marketing team for small and medium-sized businesses. Seven 
 - Max (CRM & Relationships): consented segmentation, reactivation, loyalty, email and message sequences and journeys; sends only to contacts who opted in.
 - Íris (Data & Results): consolidated metrics with source and period, period comparisons, reports and prioritized recommendations, without claiming causes without evidence.
 
-Pages: [Home](/en), [How it works](/en/how-it-works), [The squad](/en/squad), [FAQ](/en/faq), [About](/en/about).
+Pages: [Home](/en), [How it works](/en/how-it-works), [The squad](/en/squad), [FAQ](/en/faq), [About](/en/about). Specialists: [Nexo](/en/squad/nexo), [Bia](/en/squad/bia), [Kaia](/en/squad/kaia), [Otto](/en/squad/otto), [Kiwi](/en/squad/kiwi), [Max](/en/squad/max), [Íris](/en/squad/iris).
 
 ## Español
 
@@ -59,4 +59,4 @@ HelloSquad es un equipo de marketing con inteligencia artificial para pequeños 
 - Max (CRM y Relación con Clientes): segmentación con consentimiento, reactivación, fidelización, secuencias de correo y mensajes; envía solo a contactos que aceptaron recibirlos.
 - Íris (Datos y Resultados): métricas consolidadas con fuente y período, comparaciones, informes y recomendaciones priorizadas, sin afirmar causas sin evidencia.
 
-Páginas: [Inicio](/es), [Cómo funciona](/es/como-funciona), [El squad](/es/squad), [Preguntas frecuentes](/es/preguntas-frecuentes), [Sobre HelloSquad](/es/sobre).
+Páginas: [Inicio](/es), [Cómo funciona](/es/como-funciona), [El squad](/es/squad), [Preguntas frecuentes](/es/preguntas-frecuentes), [Sobre HelloSquad](/es/sobre). Especialistas: [Nexo](/es/squad/nexo), [Bia](/es/squad/bia), [Kaia](/es/squad/kaia), [Otto](/es/squad/otto), [Kiwi](/es/squad/kiwi), [Max](/es/squad/max), [Íris](/es/squad/iris).

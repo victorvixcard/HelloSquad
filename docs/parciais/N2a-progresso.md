@@ -11,9 +11,9 @@
 | 15:47 | 1. `docs/conteudo/site/README.md` (rotas, promessa, palavras-chave, perguntas GEO, metadados, JSON-LD, termos por idioma). Verificado por script: 12 titles entre 39 e 54 caracteres, 12 descriptions entre 134 e 151 | feito | 8f7d04c |
 | 15:46 | 2. Conteúdo pt-BR das 12 rotas (início, como funciona, squad, 7 agentes, faq, sobre) | escrito; falta a varredura de termos proibidos | 00c9dc7, ff0ffe4, f3e930b, a52d2b4 |
 | 15:50 | 4. `llms.txt` e `robots.txt` (rascunho) | no autosave; conferência pendente | 4f352bc |
-| 16:16 | Retomada: PASSO 0 relido (diretrizes, este progresso, `git log`, mapa do site, `llms.txt`, `robots.txt`) | feito | este |
-| | 2. Varredura por script dos termos proibidos no pt-BR e correção | em andamento | |
-| | 3. en e es | pendente | |
-| | 4. `llms.txt` e `robots.txt` conferidos | pendente | |
+| 16:16 | Retomada: PASSO 0 relido (diretrizes, este progresso, `git log`, mapa do site, `llms.txt`, `robots.txt`) | feito | 3e1efb5 |
+| 16:17 | 2. Varredura por script (`/tmp/n2a/scan.sh`: termos comerciais em pt/en/es, fornecedores, HelloOtto, domínio) nas 12 páginas pt-BR e no `llms.txt`: 0 fornecedor, 0 HelloOtto, 0 domínio; 25 ocorrências de "plano" são entregas (plano de marketing, de mídia, de testes); "grátis" e "créditos" só em notas de implementação, reescritas como pergunta ao dono (P1, P2); `cta` do frontmatter marcado como proposta nas 12 páginas | feito | ad57c21 |
+| 16:19 | 3. en e es: dois sub-agentes em paralelo, um por idioma, com regras, termos do §6 e verificação por script; eu confiro a consistência no fim | em andamento | |
+| 16:23 | 4. `llms.txt`: links das páginas de agente nos blocos en e es. `robots.txt`: `/admin` (Super Admin, decisão de 16/10 09:15) bloqueado; robôs de busca dos assistentes nomeados; Disallow antes de Allow. Verificado com dois leitores (primeira regra, `urllib.robotparser`, e RFC 9309, regra mais longa): 80/80 combinações corretas em cada (8 robôs x 10 caminhos); antes da reordenação, o leitor de primeira regra liberava `/app`, `/admin` e `/sair` (32 falhas) | feito | este |
 | | 5. Revisão do squad (`docs/conteudo/revisao_squad.md`), refeita por mim | pendente | |
 | | 6. Relatório | pendente | |

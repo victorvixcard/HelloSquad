@@ -1,23 +1,38 @@
-# robots.txt sugerido para o site público da HelloSquad (N2a, 16/10/2026).
+# robots.txt sugerido para o site público da HelloSquad (N2a, 16/10/2026; conferido na retomada às 16:20).
 # A implementação viva é apps/web/app/robots.ts; este arquivo é a referência de conteúdo.
 # Público (/, /como-funciona, /squad, /squad/<agente>, /faq, /sobre e as versões /en e /es): liberado.
-# Área logada (/app) e saída (/sair): bloqueadas para todos.
+# Área logada (/app), saída (/sair) e painel Super Admin (/admin, previsto na decisão do Vic de 16/10 09:15): bloqueados para todos.
 # /entrar não é bloqueada aqui: ela leva <meta name="robots" content="noindex">, que o robô só lê se puder rastrear a página.
+# Diferença para o robots.ts de hoje: /admin entra na lista de bloqueio e os robôs de busca e de leitura sob demanda
+# dos assistentes de IA aparecem nomeados. O grupo "*" já libera esses robôs; nomear documenta a intenção. Decisão do Aranha e do Thor.
+# Ordem: Disallow antes de Allow. Pela RFC 9309 vale a regra mais longa (a ordem não importa), mas há leitores que
+# usam a primeira regra que casa (o urllib.robotparser do Python é um deles); com "Allow: /" primeiro, eles liberariam /app.
 
 User-agent: *
-Allow: /
 Disallow: /app
 Disallow: /app/
+Disallow: /admin
+Disallow: /admin/
 Disallow: /sair
+Allow: /
 
-# Assistentes de IA: liberados no site público, bloqueados no app.
+# Assistentes de IA: liberados no site público, bloqueados no app e no Super Admin.
+# Os quatro primeiros são os que o robots.ts já nomeia; os demais são os robôs de busca e de leitura sob demanda.
 User-agent: GPTBot
 User-agent: ClaudeBot
 User-agent: PerplexityBot
 User-agent: Google-Extended
-Allow: /
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: Perplexity-User
+User-agent: Applebot-Extended
 Disallow: /app
 Disallow: /app/
+Disallow: /admin
+Disallow: /admin/
 Disallow: /sair
+Allow: /
 
 Sitemap: {{SITE_URL}}/sitemap.xml
