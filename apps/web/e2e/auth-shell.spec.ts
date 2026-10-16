@@ -63,8 +63,11 @@ test.describe("área logada", () => {
     await snap(page, "03-marina-barra-recolhida");
 
     // A área logada não entra em buscador.
-    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
-    expect(robots).toContain("noindex");
+    // No build de produção, depois do login, o meta do /entrar ("noindex, follow") fica no body ao lado do da área
+    // logada (metadado em streaming do Next 15): todos precisam dizer noindex.
+    const robots = await page.locator('meta[name="robots"]').evaluateAll((els) => els.map((e) => e.getAttribute("content") ?? ""));
+    expect(robots.length).toBeGreaterThan(0);
+    for (const content of robots) expect(content).toContain("noindex");
 
     await page.getByRole("button", { name: /^Conta, negócio e configurações/ }).click();
     await page.getByRole("dialog", { name: "Conta, negócio e configurações" }).getByRole("button", { name: "Sair" }).click();
