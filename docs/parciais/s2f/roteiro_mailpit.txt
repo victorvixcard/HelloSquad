@@ -24,3 +24,5 @@ $ psql -c "select status, count(*) from public.email_messages where updated_at e
  sent   |    50
 (1 row)
 
+$ psql -c "delete from public.invitations where email = 'nova.pessoa@miolo.example'"   (executado às 18:45, depois que o make test-db acusou o convite)
+DELETE 1

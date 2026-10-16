@@ -542,6 +542,8 @@ psql "$DATABASE_URL" -c "insert into public.invitations (workspace_id, email, ro
 (cd apps/backend && uv run hellosquad-worker --drain)
 curl -s 'http://127.0.0.1:56324/api/v1/messages?limit=5' | python3 -m json.tool | grep -E '"(Subject|Address)"'
 psql "$DATABASE_URL" -c "select template, locale, status, attempts, provider_message_id from public.email_messages order by created_at desc limit 5"
+# O make seed não apaga convites e os testes pgTAP esperam a Miolo sem nenhum: remova o do exemplo
+psql "$DATABASE_URL" -c "delete from public.invitations where email = 'nova.pessoa@miolo.example'"
 ```
 
 ## Worker do squad (S1c)
