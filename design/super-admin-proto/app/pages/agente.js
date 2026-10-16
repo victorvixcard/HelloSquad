@@ -291,7 +291,7 @@
     ];
     return h(SA.Page, { nav: 'agente', agent: a.id, crumbs: [{ l: 'Squad', href: 'squad.html' }, { l: a.name }], title: a.name,
       avatar: h(HS.Agent, { agent: a.forma, size: 44, title: a.name }),
-      desc: [a.papel_completo + ' · ' + a.area_ui + '. ', h('b', { key: 'p' }, inline(a.pitch, 'pt'))],
+      desc: [a.papel_completo + (a.area_ui !== a.papel_completo ? ' · ' + a.area_ui : '') + '. ', h('b', { key: 'p' }, inline(a.pitch, 'pt'))],
       actions: [
         h(HS.IconButton, { key: 'p', icon: 'left', label: 'Agente anterior: ' + ags[(i + 6) % 7].name, onClick: function () { location.href = 'agente.html?a=' + ags[(i + 6) % 7].id + location.hash; } }),
         h(HS.IconButton, { key: 'n', icon: 'right', label: 'Próximo agente: ' + ags[(i + 1) % 7].name, onClick: function () { location.href = 'agente.html?a=' + ags[(i + 1) % 7].id + location.hash; } })
