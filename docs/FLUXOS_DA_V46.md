@@ -5,7 +5,7 @@
 ## Como ler
 
 - Texto entre aspas é o **rótulo exato do protótipo**, copiado do código. Não troque palavra, maiúscula nem pontuação.
-- Quando o código monta o texto (nome do agente + frase, número + palavra), as aspas mostram o resultado na tela, e `<…>`, `N` ou `vN` marcam a parte variável. A conferência automática (`python3 docs/parciais/x1/verifica_rotulos.py`) acha 1.567 aspas literais e 112 montadas no protótipo. As 96 restantes são frases montadas com nome, frases do handoff ou termos deste documento ("Rejeitar", "a Kiwi"), listadas em `docs/parciais/x1/verifica_rotulos.txt`.
+- Quando o código monta o texto (nome do agente + frase, número + palavra), as aspas mostram o resultado na tela, e `<…>`, `N` ou `vN` marcam a parte variável. A conferência automática (`python3 docs/parciais/x1/verifica_rotulos.py`) acha 1.567 aspas literais e 112 montadas no protótipo. As 98 restantes são frases montadas com nome, frases do handoff ou termos deste documento ("Rejeitar", "a Kiwi"), listadas em `docs/parciais/x1/verifica_rotulos.txt`.
 - `(L1234)` é a linha em `ProductUIV4.dc.html`; `(Land L1234)` é a linha na landing. Os extratos por linha ficam em `docs/parciais/x1/out/` (regenerar com `python3 docs/parciais/x1/extract.py`); as notas de leitura, em `docs/parciais/x1/notas_*.md`.
 - O protótipo é feito em **camadas**: classe base V3 (L6408–9587) e camadas V4, V4.1, V4.2, V4.3, V4.4, V4.5 e V4.6 que sobrescrevem métodos com `Object.assign(Component.prototype, …)`. **Vale a camada mais tardia.** Quando a V4.x reaproveita a V3, isto é dito.
 - Tudo no protótipo é simulado: "Nada é publicado, enviado ou pago." (L5612). Relógio fixo em segunda, 12/10/2026, a partir de 10:24 (L6404). Respostas dos agentes são roteiros locais, sem IA.

@@ -12,8 +12,9 @@ Início: 16/10/2026 08:40. Alvo: 60 min. Escopo de escrita: `docs/FLUXOS_DA_V46.
 - 08:48 Esqueleto de `docs/FLUXOS_DA_V46.md` (convenções, agentes) commitado (`80a3004`).
 - 08:49 Lado do banco para o cruzamento levantado: enums e tabelas do núcleo (S1a), rotas (S1b), tipos de contexto aceitos por `app.create_conversation` (`project`, `work_item`, `delivery`).
 
-## Em andamento
-- Aguardando as notas dos leitores; em paralelo, leitura própria de `initState`, guia DEMO, Início (pedido e quem participa, conversa em grupo), insights, status da V4.6 (STK6, NDK5).
+- 08:55–09:05 Seções escritas e commitadas, cada uma com push: §3.1–3.2 e §5 (`d7c8db1`), §10 (`e7d4f8b`), §3.3–3.4 e §6–§8 (`c19ab04`), §4 (`36967d3`), §2 e §9 (`3d253b8`), §1 (`b015aaf`), §11 (`65a03e9`).
+- 09:07 Conferência automática das aspas (`verifica_rotulos.py`): 1.567 literais, 112 montadas e 98 frases montadas, citações do handoff ou termos do documento; cinco aspas corrigidas (`4f89d72`).
+- 09:10 Relatório `X1-relatorio.md`.
 
-## Próximo
-- Seções 1–11 de `docs/FLUXOS_DA_V46.md`, commit por seção.
+## Estado
+Concluída. Documento: `docs/FLUXOS_DA_V46.md` (716 linhas). Perguntas ao dono: só a §11.
