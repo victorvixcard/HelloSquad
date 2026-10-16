@@ -16,5 +16,13 @@
   },
   "empty": "This version has no content to show.",
   "viewingOld": "You are viewing v{version} · previous version",
-  "pdf": "Download PDF"
+  "pdf": "Download PDF",
+  "decision": {
+    "dxPending": "Approving the diagnosis doesn’t create work: each recommendation becomes an action when you ask.",
+    "planPending": "Approving the plan sets the direction. Each initiative becomes work only when you ask.",
+    "approved": "Approved by you.",
+    "planApproved": "Approved by you. Nexo organizes how the initiatives get done."
+  },
+  "talkDiagnosis": "Talk about the diagnosis",
+  "talkPriorities": "Talk about the priorities"
 }

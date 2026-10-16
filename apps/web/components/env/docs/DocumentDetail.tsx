@@ -42,6 +42,16 @@ export type DocumentDetailData = {
 type Choice = "approve" | "adjust" | FollowUp;
 
 /**
+ * Família do documento no "Documento da Bia" da V4.4 (L12583-12608): diagnóstico (`dx`) ou plano (`plan`, o mesmo
+ * recorte do rótulo "Aprovar o direcionamento"). As outras entregas em documento não têm cartão próprio no protótipo.
+ */
+function docKind(type: DeliveryType): "dx" | "plan" | null {
+  if (type === "02.01") return "dx";
+  if (type === "02.02" || type === "02.03" || type === "02.04") return "plan";
+  return null;
+}
+
+/**
  * Documento revisável da A2b, na leitura editorial do "Documento da Bia" da V4.4 (template L5069): o documento à
  * esquerda (`bd-doc`, seções da entrega) e, ao lado, o estado com a decisão, as versões, conversar e o histórico.
  * Vale para todas as entregas em documento (Bia, Otto, Kiwi, Max e Íris). A decisão é a da S1f (só o owner decide):
@@ -113,12 +123,17 @@ export function DocumentDetail({
         : cancelled
           ? t("cancelled")
           : tc("states.in_progress");
+  // Texto do cartão da decisão (V4.4 `apL`, L12605): a regra "aprovar não cria trabalhos" no diagnóstico e no plano.
+  // Os outros documentos não têm `apL` no protótipo: pendente, a nota da versão; aprovado, o "Aprovado por você." genérico.
+  const kind = docKind(data.type);
   const note = pending
     ? shell.canDecide
-      ? latest?.note || t("waitsText", { version: v })
+      ? kind
+        ? td(kind === "dx" ? "decision.dxPending" : "decision.planPending")
+        : latest?.note || t("waitsText", { version: v })
       : t("waitsDecision", { agent: member.name })
     : approved
-      ? t("approvedText")
+      ? td(kind === "plan" ? "decision.planApproved" : "decision.approved")
       : making
         ? t("makingText")
         : cancelled
@@ -131,6 +146,11 @@ export function DocumentDetail({
       context: { kind: "work_item", label: data.title, origin: data.origin },
     });
   const docTitle = (typeof shown?.content.titulo === "string" && shown.content.titulo) || data.title;
+  // V4.4 `talkL` (L12608): "Conversar sobre o diagnóstico" / "Conversar sobre as prioridades"; sem rótulo no protótipo
+  // para os outros documentos, fica o "Conversar com <agente>".
+  const talkLabel = kind
+    ? td(kind === "dx" ? "talkDiagnosis" : "talkPriorities")
+    : t("talk", { article: member.article, name: member.name });
 
   return (
     <div className="ps-v is-wide bd" style={{ maxWidth: shell.layout.contentW }}>
@@ -140,7 +160,8 @@ export function DocumentDetail({
           <span>{data.envLabel}</span>
         </Link>
         <span className="ps-crumb-s">/</span>
-        <span>{data.title}</span>
+        {/* A migalha e o h1 levam o mesmo título, o do documento (V4.4 `bd.title`, L5072-5073). */}
+        <span>{docTitle}</span>
       </nav>
       <div className="bd-g">
         <article className="bd-doc" aria-labelledby="bd-title">
@@ -193,9 +214,12 @@ export function DocumentDetail({
                     <span>{t("cancelWork")}</span>
                   </button>
                 </div>
-                <p className="bd-ap" role={error ? "alert" : undefined}>
-                  {error ? t("decideError") : t("adjustNote", { article: member.article, agent: member.name })}
-                </p>
+                {/* O cartão da V4.4 (L5077) tem um parágrafo só, o `apL` acima: a nota do ajuste da legenda não entra. */}
+                {error ? (
+                  <p className="bd-ap" role="alert">
+                    {t("decideError")}
+                  </p>
+                ) : null}
               </>
             ) : pending ? (
               <p className="bd-ap">{tc("ownerDecides")}</p>
@@ -204,11 +228,13 @@ export function DocumentDetail({
           {data.versions.length ? (
             <div className="bd-card">
               <h3 className="bd-ck">{t("versions")}</h3>
+              {/* Uma linha por versão, número numa ponta e data na outra (`.bd-v`, V4.6 L3498); a aberta com `.is-cur` (L3499). */}
               {[...data.versions].reverse().map((x) => (
                 <button
                   key={x.no}
                   type="button"
-                  className={`bd-v${x.no === shown?.no ? " is-on" : ""}`}
+                  className={`bd-v${x.no === shown?.no ? " is-cur" : ""}`}
+                  style={{ width: "100%" }}
                   aria-pressed={x.no === shown?.no}
                   onClick={() => setSeen(x.no)}
                 >
@@ -223,7 +249,7 @@ export function DocumentDetail({
               <svg className="sb-ic" viewBox="0 0 18 18" aria-hidden="true">
                 <path d={PRODUCT_ICONS.ask} />
               </svg>
-              <span>{t("talk", { article: member.article, name: member.name })}</span>
+              <span>{talkLabel}</span>
             </button>
             <button type="button" className="hm-link" onClick={() => shell.toast(tc("unavailable"), data.agent)}>
               <svg className="ps-ic" viewBox="0 0 18 18" aria-hidden="true">

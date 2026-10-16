@@ -16,5 +16,13 @@
   },
   "empty": "Esta versión no tiene contenido para mostrar.",
   "viewingOld": "Estás viendo la v{version} · versión anterior",
-  "pdf": "Descargar PDF"
+  "pdf": "Descargar PDF",
+  "decision": {
+    "dxPending": "Aprobar el diagnóstico no crea trabajos: cada recomendación se vuelve acción cuando la pidas.",
+    "planPending": "Aprobar el plan define el rumbo. Cada iniciativa se vuelve trabajo solo cuando la pidas.",
+    "approved": "Aprobado por ti.",
+    "planApproved": "Aprobado por ti. Nexo organiza la ejecución de las iniciativas."
+  },
+  "talkDiagnosis": "Conversar sobre el diagnóstico",
+  "talkPriorities": "Conversar sobre las prioridades"
 }
