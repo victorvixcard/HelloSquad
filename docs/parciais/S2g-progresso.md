@@ -33,6 +33,16 @@ Horas = hora do commit (`git log --date=format:%H:%M`).
 | 20:03 | H2-28/H2-27: guia do segundo checkout, trava única e convites no `SETUP_LOCAL.md` | `cf0b330` | aux. infra | feito |
 | 20:06 | `make openapi` + `pnpm --filter contracts generate`: 58 → 59 operações, nada removido | `efe6e1f` | Stark | feito |
 | 20:08 | pgTAP `27_consent_revocation` (12); `supabase test db` 712/712 | `0f74e39` | Stark | feito |
-| 20:12 | Verificação final: `make test-infra` 21/21; backend + pgTAP numa trava: ruff ok, pytest 267 passed, pgTAP 700/700 (712 com o 27); `make test` inteiro vermelho só no `test-web` (3 testes do `apps/web`, A2d em andamento); relatório; H2 anotada | este | Stark | feito |
+| 20:12 | Verificação final: `make test-infra` 21/21; backend + pgTAP numa trava: ruff ok, pytest 267 passed, pgTAP 700/700 (712 com o 27); `make test` inteiro vermelho só no `test-web` (3 testes do `apps/web`, A2d em andamento); relatório; H2 anotada | `faa06d2` | Stark | feito |
 
 **Fatia fechada às 20:12.** Relatório: `docs/parciais/S2g-relatorio.md`.
+
+## Retomada (20:15)
+
+A main achou a fatia sem relatório: o `faa06d2` foi publicado do worktree e só chegou à árvore do dono no rebase da A2d
+(`2540657`, 20:15). Nada refeito; conferência e `make test` completo no worktree `/tmp/s2g-final`.
+
+| Hora | Item | Commit | Quem | Estado |
+|---|---|---|---|---|
+| 20:19 | PASSO 0; H2-20 (`e34c4ac`: 0021/0022, nenhum telefone fora de `+55 11 99999-00NN` em `apps/backend/tests`) e guia do 2º checkout (`cf0b330`) conferidos; `make openapi` + `pnpm --filter contracts generate` sem diferença (59 operações) | este | Stark | feito |
+| — | `make test` completo (infra, web, backend, pgTAP) | — | Stark | em andamento |
