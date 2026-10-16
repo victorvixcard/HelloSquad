@@ -74,31 +74,8 @@ test.describe("área logada", () => {
     await expect(page).toHaveURL(/\/entrar$/);
   });
 
-  test("Pedro entra sem workspace, cria pedro-teste-<timestamp> e cai no shell dele", async ({ page }) => {
-    const slug = `pedro-teste-${Date.now()}`;
-    await page.goto("/entrar");
-    await signIn(page, "pedro@semconta.example");
-    await expect(page).toHaveURL(/\/app\/novo-workspace$/);
-    await expect(page.getByRole("heading", { level: 1, name: "Comece pelo seu negócio." })).toBeVisible();
-    await snap(page, "04-pedro-novo-workspace");
-
-    // Endereço em uso: 409 slug_taken vira mensagem em português no campo.
-    await page.getByLabel("Nome do negócio").fill("Miolo");
-    await expect(page.getByLabel("Endereço do seu squad")).toHaveValue("miolo");
-    await page.getByRole("button", { name: "Criar e entrar" }).click();
-    await expect(page.locator(".hs-tf-err")).toHaveText("Esse endereço já está em uso. Escolha outro.");
-    await expect(page.getByLabel("Endereço do seu squad")).toHaveAttribute("aria-invalid", "true");
-    await snap(page, "05-pedro-endereco-em-uso");
-
-    await page.getByLabel("Nome do negócio").fill("Pedro Teste");
-    await page.getByLabel("Endereço do seu squad").fill(slug);
-    await page.getByRole("button", { name: "Criar e entrar" }).click();
-    await expect(page).toHaveURL(new RegExp(`/app/${slug}$`));
-    await expect(page.getByRole("button", { name: /^Conta, negócio e configurações\. Pedro, Pedro Teste$/ })).toBeVisible();
-    await expect(page.getByText("Hello, Pedro.")).toBeVisible();
-    await expect(page.getByRole("navigation", { name: "HelloSquad" })).toBeVisible();
-    await snap(page, "06-pedro-shell");
-  });
+  // O Pedro sem negócio (cria o negócio e faz o onboarding) ficou em onboarding.spec.ts (A2a): um caminho só, para a
+  // ordem dos arquivos não importar.
 });
 
 test.describe("site público", () => {
