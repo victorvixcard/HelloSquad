@@ -131,7 +131,13 @@ class Message(BaseModel):
 
 
 class MessagePage(BaseModel):
-    items: list[Message] = Field(description="Em ordem cronológica (mais antiga primeiro).")
+    items: list[Message] = Field(
+        description="Em ordem cronológica (mais antiga primeiro), também com `before`."
+    )
     next_cursor: str | None = Field(
-        description="Cursor das mensagens seguintes; nulo quando esta é a última página."
+        description=(
+            "Cursor da próxima página no sentido da leitura: sem `before`, das mensagens mais "
+            "novas (passe em `cursor`); com `before`, das mais antigas (passe em `before`). Nulo "
+            "quando não há mais."
+        )
     )

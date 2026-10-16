@@ -99,7 +99,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Mensagens da conversa em ordem cronológica (paginação por cursor) */
+        /**
+         * Mensagens da conversa em ordem cronológica (paginação por cursor)
+         * @description Sem `before`, a primeira página é a das mensagens mais antigas e `cursor` avança para as mais novas. Com `before=latest`, a primeira página é a das mais recentes e `before` recua para as mais antigas. Nos dois sentidos, `next_cursor` continua a leitura no mesmo parâmetro.
+         */
         get: operations["list_messages_conversations__conversation_id__messages_get"];
         put?: never;
         /** Envia uma mensagem na conversa (editor ou acima) */
@@ -792,12 +795,12 @@ export interface components {
         MessagePage: {
             /**
              * Items
-             * @description Em ordem cronológica (mais antiga primeiro).
+             * @description Em ordem cronológica (mais antiga primeiro), também com `before`.
              */
             items: components["schemas"]["Message"][];
             /**
              * Next Cursor
-             * @description Cursor das mensagens seguintes; nulo quando esta é a última página.
+             * @description Cursor da próxima página no sentido da leitura: sem `before`, das mensagens mais novas (passe em `cursor`); com `before`, das mais antigas (passe em `before`). Nulo quando não há mais.
              */
             next_cursor: string | null;
         };
@@ -1692,6 +1695,8 @@ export interface operations {
             query?: {
                 /** @description Valor de `next_cursor` da página anterior. Vazio = primeira página. */
                 cursor?: string | null;
+                /** @description Lê de trás para frente. `latest` traz as mensagens mais recentes; para as anteriores, passe aqui o `next_cursor` da resposta. A página continua em ordem cronológica. Não combina com `cursor`. */
+                before?: string | null;
                 /** @description Itens por página (1 a 100). */
                 limit?: number;
             };

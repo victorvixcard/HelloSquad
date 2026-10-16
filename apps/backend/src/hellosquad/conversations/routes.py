@@ -3,7 +3,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Query, Response, status
 from psycopg import AsyncConnection
 from psycopg.rows import DictRow
 
@@ -86,6 +86,32 @@ where m.conversation_id = %(conversation_id)s
 order by m.created_at, m.id
 limit %(limit)s
 """
+
+# Para trás: lê das mais novas para as mais antigas; a rota devolve a página cronológica.
+LIST_MESSAGES_BEFORE = f"""
+select {MESSAGE_COLUMNS}
+from public.messages m
+where m.conversation_id = %(conversation_id)s
+  and (%(cursor_at)s::timestamptz is null
+       or (m.created_at, m.id) < (%(cursor_at)s, %(cursor_id)s::uuid))
+order by m.created_at desc, m.id desc
+limit %(limit)s
+"""
+
+LATEST = "latest"
+
+BeforeQuery = Annotated[
+    str | None,
+    Query(
+        min_length=1,
+        max_length=200,
+        description=(
+            "Lê de trás para frente. `latest` traz as mensagens mais recentes; para as anteriores, "
+            "passe aqui o `next_cursor` da resposta. A página continua em ordem cronológica. Não "
+            "combina com `cursor`."
+        ),
+    ),
+]
 
 POST_MESSAGE = f"select {MESSAGE_COLUMNS} from app.post_message(%s, %s) m"
 
@@ -204,6 +230,12 @@ async def get_conversation(
 @router.get(
     "/conversations/{conversation_id}/messages",
     summary="Mensagens da conversa em ordem cronológica (paginação por cursor)",
+    description=(
+        "Sem `before`, a primeira página é a das mensagens mais antigas e `cursor` avança para as "
+        "mais novas. Com `before=latest`, a primeira página é a das mais recentes e `before` recua "
+        "para as mais antigas. Nos dois sentidos, `next_cursor` continua a leitura no mesmo "
+        "parâmetro."
+    ),
     responses=error_responses(401, 404, 422, 503),
 )
 async def list_messages(
@@ -211,9 +243,16 @@ async def list_messages(
     principal: CurrentPrincipal,
     db: DatabaseDep,
     cursor: CursorQuery = None,
+    before: BeforeQuery = None,
     limit: Annotated[int, limit_query(100)] = 50,
 ) -> MessagePage:
-    cursor_at, cursor_id = decode_cursor(cursor)
+    if cursor and before:
+        raise ApiError(422, "invalid_cursor", "Use cursor ou before, não os dois.")
+    if before is None:
+        query, (cursor_at, cursor_id) = LIST_MESSAGES, decode_cursor(cursor)
+    else:
+        query = LIST_MESSAGES_BEFORE
+        cursor_at, cursor_id = (None, None) if before == LATEST else decode_cursor(before)
     async with db.transaction_as(principal) as conn:
         await load_conversation(conn, conversation_id)
         params = {
@@ -222,8 +261,10 @@ async def list_messages(
             "cursor_id": cursor_id,
             "limit": limit + 1,
         }
-        rows = await (await conn.execute(LIST_MESSAGES, params)).fetchall()
+        rows = await (await conn.execute(query, params)).fetchall()
     page, next_cursor = split_page(rows, limit, "created_at")
+    if before is not None:
+        page = page[::-1]
     return MessagePage(items=[Message(**row) for row in page], next_cursor=next_cursor)
 
 

@@ -413,6 +413,52 @@ async def test_messages_paginate_by_cursor_in_chronological_order(api, access_to
     assert (broken.status_code, broken.json()["error"]["code"]) == (422, "invalid_cursor")
 
 
+async def test_messages_open_at_the_latest_and_page_backwards(api, access_token, miolo):
+    headers = bearer(access_token(MARINA))
+    conversation = (
+        await api.post(
+            f"/workspaces/{miolo}/conversations",
+            headers=headers,
+            json={"kind": "agent_direct", "primary_agent_id": "bia"},
+        )
+    ).json()["id"]
+    for body in ("primeira", "segunda", "terceira"):
+        sent = await api.post(
+            f"/conversations/{conversation}/messages", headers=headers, json={"body": body}
+        )
+        assert sent.status_code == 201
+    url = f"/conversations/{conversation}/messages"
+
+    latest = await api.get(url, headers=headers, params={"before": "latest", "limit": 2})
+    older = await api.get(
+        url, headers=headers, params={"before": latest.json()["next_cursor"], "limit": 2}
+    )
+    whole = await api.get(url, headers=headers, params={"before": "latest"})
+    forward = await api.get(url, headers=headers, params={"limit": 2})
+    behind_forward = await api.get(
+        url, headers=headers, params={"before": forward.json()["next_cursor"]}
+    )
+    both = await api.get(
+        url, headers=headers, params={"before": "latest", "cursor": forward.json()["next_cursor"]}
+    )
+    broken = await api.get(url, headers=headers, params={"before": "nao-e-cursor"})
+    empty = await api.get(f"{url}?before=", headers=headers)
+    foreign = await api.get(url, headers=bearer(access_token(RAFAEL)), params={"before": "latest"})
+
+    assert [m["body"] for m in latest.json()["items"]] == ["segunda", "terceira"]
+    assert latest.json()["next_cursor"]
+    assert [m["body"] for m in older.json()["items"]] == ["primeira"]
+    assert older.json()["next_cursor"] is None
+    assert [m["body"] for m in whole.json()["items"]] == ["primeira", "segunda", "terceira"]
+    assert whole.json()["next_cursor"] is None
+    assert [m["body"] for m in forward.json()["items"]] == ["primeira", "segunda"]
+    assert [m["body"] for m in behind_forward.json()["items"]] == ["primeira"]
+    assert (both.status_code, both.json()["error"]["code"]) == (422, "invalid_cursor")
+    assert (broken.status_code, broken.json()["error"]["code"]) == (422, "invalid_cursor")
+    assert (empty.status_code, empty.json()["error"]["code"]) == (422, "validation_error")
+    assert foreign.status_code == 404
+
+
 async def test_idempotency_key_is_bound_to_one_request(api, access_token, miolo) -> None:
     headers = bearer(access_token(MARINA))
     conversation = (
