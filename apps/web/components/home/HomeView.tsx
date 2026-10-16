@@ -601,26 +601,26 @@ function OnboardingCard({ business, onb }: { business: string; onb: Onboarding }
  * de Resultados ("A Íris ainda não tem números para ler"), com "Abrir Resultados" e "Conversar com a Íris".
  */
 function ResultsCard() {
-  const t = useTranslations("home.res");
+  const t = useTranslations("home");
   const te = useTranslations("envs.iris");
   const shell = useShell();
   return (
     <article className="hm-res" aria-labelledby="hm-res-t">
       <header className="hm-res-h">
-        <h3 id="hm-res-t">{t("title")}</h3>
+        <h3 id="hm-res-t">{t("res.title")}</h3>
       </header>
       <div className="hm-say is-empty">
         <span className="hm-say-av" aria-hidden="true">
           <Agent agent="iris" size={32} expression="oval" />
         </span>
         <p className="hm-say-t">
-          <span className="ps-srl">{t("irisSays")}</span>
+          <span className="ps-srl">{t("res.irisSays")}</span>
           <b>{te("emptyTitle")}</b> {te("emptyText")}
         </p>
       </div>
       <footer className="hm-res-f">
         <Link className="hm-btn is-dark is-s" href={`/app/${shell.workspace.slug}/squad/iris`}>
-          <span>{t("open")}</span>
+          <span>{t("res.open")}</span>
           <Icon name="arrow" size={16} strokeWidth={2} />
         </Link>
         <button
@@ -628,7 +628,7 @@ function ResultsCard() {
           className="hm-link is-soft"
           onClick={() => shell.openConversation({ conversationId: shell.conversationIds.direct.iris ?? null, agent: "iris" })}
         >
-          <span>{t("talk")}</span>
+          <span>{t("res.talk")}</span>
         </button>
       </footer>
     </article>

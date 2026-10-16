@@ -5,6 +5,7 @@ import { HomeView } from "@/components/home/HomeView";
 import { loadMe } from "@/lib/api";
 import { loadWorkspaceCore } from "@/lib/core";
 import { inProgressItems, needItems } from "@/lib/needs";
+import { loadOnboarding } from "@/lib/onboarding";
 
 type Params = { params: Promise<{ workspace: string }> };
 
@@ -19,7 +20,7 @@ export default async function InicioPage({ params }: Params) {
   if (!me.ok) notFound();
   const membership = me.me.memberships.find((m) => m.workspace.slug === slug);
   if (!membership) notFound();
-  const core = await loadWorkspaceCore(membership.workspace.id);
+  const [core, onboarding] = await Promise.all([loadWorkspaceCore(membership.workspace.id), loadOnboarding(membership.workspace.id)]);
   const t = await getTranslations("pages.needs");
   const tc = await getTranslations("common");
   const needs = needItems(slug, core.approvals).map((n) => ({
@@ -32,5 +33,13 @@ export default async function InicioPage({ params }: Params) {
   }));
   const inProgress = inProgressItems(slug, core.workItems).map((w) => ({ ...w, status: tc(`states.${w.status}`) }));
   const firstName = (me.me.user.full_name || me.me.user.email || "").trim().split(/\s+/)[0] ?? "";
-  return <HomeView firstName={firstName} business={membership.workspace.name} needs={needs} inProgress={inProgress} />;
+  return (
+    <HomeView
+      firstName={firstName}
+      business={membership.workspace.name}
+      needs={needs}
+      inProgress={inProgress}
+      onboarding={onboarding}
+    />
+  );
 }
