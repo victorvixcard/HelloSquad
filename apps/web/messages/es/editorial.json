@@ -92,8 +92,8 @@
     "visual": "Visual",
     "hashtags": "Hashtags",
     "cta": "Llamada a la acción",
-    "kaiaWait": "La pieza visual espera el motor de imagen: Kaia todavía no crea imágenes en esta versión de HelloSquad.",
     "kaia": "Pedido para Kaia",
+    "kaiaWait": "La pieza visual espera el motor de imagen: Kaia todavía no crea imágenes en esta versión de HelloSquad.",
     "strategy": "Estrategia seguida",
     "strategyText": "{concept} · v{version}",
     "strategyPlain": "v{version}"
