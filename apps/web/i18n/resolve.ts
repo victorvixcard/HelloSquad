@@ -31,7 +31,13 @@ export const LOCALE_HEADER = "X-NEXT-INTL-LOCALE";
 /** Rotas públicas por idioma (ADR-0010): `/` é pt-BR, `/en` e `/es` as traduções, com `hreflang` entre elas. */
 export const PUBLIC_LOCALE_PATHS: Record<Locale, string> = { "pt-BR": "/", en: "/en", es: "/es" };
 
+/**
+ * Idioma do site público pelo prefixo da rota (A2c): `/en` e `/en/...` são en, `/es` e `/es/...` são es. O pt-BR fica
+ * na raiz, sem prefixo, e não passa por aqui (as páginas dele são estáticas).
+ */
 export function publicLocaleOf(pathname: string): Locale | null {
-  const hit = (Object.entries(PUBLIC_LOCALE_PATHS) as [Locale, string][]).find(([, path]) => path === pathname);
-  return hit && hit[0] !== DEFAULT_LOCALE ? hit[0] : null;
+  const hit = (Object.entries(PUBLIC_LOCALE_PATHS) as [Locale, string][]).find(
+    ([locale, path]) => locale !== DEFAULT_LOCALE && (pathname === path || pathname.startsWith(`${path}/`)),
+  );
+  return hit ? hit[0] : null;
 }

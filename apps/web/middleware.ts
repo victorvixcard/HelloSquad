@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   // O idioma da tela só vem do middleware (ADR-0010); o cabeçalho que chegar do browser não vale.
   request.headers.delete(LOCALE_HEADER);
   const { pathname } = request.nextUrl;
-  // Site público por idioma: /en e /es (a / é pt-BR e estática, fora do middleware).
+  // Site público por idioma: /en, /es e as páginas abaixo deles (o pt-BR é estático, fora do middleware).
   const publicLocale = publicLocaleOf(pathname);
   if (publicLocale) {
     request.headers.set(LOCALE_HEADER, publicLocale);
@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-// Só onde a sessão ou o idioma importam: a área logada, as telas de entrar, criar conta e sair, e /en e /es.
+// Só onde a sessão ou o idioma importam: a área logada, as telas de entrar, criar conta e sair, e o site em en e es.
 // A página pública fica estática e não depende da Auth; nela o middleware só vê os POSTs de Server Action.
 export const config = {
   matcher: [
@@ -45,7 +45,9 @@ export const config = {
     "/criar-conta",
     "/sair",
     "/en",
+    "/en/:path*",
     "/es",
+    "/es/:path*",
     { source: "/((?!_next/static|_next/image).*)", has: [{ type: "header", key: "next-action" }] },
   ],
 };

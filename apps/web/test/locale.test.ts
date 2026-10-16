@@ -48,10 +48,21 @@ describe("rotas públicas por idioma", () => {
     expect(publicLocaleOf("/es")).toBe("es");
   });
 
-  it("a / (estática) e as outras rotas não passam idioma pela rota", () => {
+  it("as páginas abaixo de /en e /es levam o idioma do prefixo (A2c)", () => {
+    expect(publicLocaleOf("/en/how-it-works")).toBe("en");
+    expect(publicLocaleOf("/en/squad/otto")).toBe("en");
+    expect(publicLocaleOf("/es/preguntas-frecuentes")).toBe("es");
+    // Endereço que não existe abaixo do prefixo cai no 404 do próprio idioma.
+    expect(publicLocaleOf("/en/app")).toBe("en");
+  });
+
+  it("a / (estática), o pt-BR sem prefixo e as outras rotas não passam idioma pela rota", () => {
     expect(publicLocaleOf("/")).toBeNull();
+    expect(publicLocaleOf("/squad/otto")).toBeNull();
     expect(publicLocaleOf("/app")).toBeNull();
-    expect(publicLocaleOf("/en/app")).toBeNull();
+    // Prefixo é segmento inteiro: /english e /esqueci-a-senha não são en nem es.
+    expect(publicLocaleOf("/english")).toBeNull();
+    expect(publicLocaleOf("/esqueci-a-senha")).toBeNull();
   });
 });
 
