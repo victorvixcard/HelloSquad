@@ -1,0 +1,7 @@
+POST /workspaces: 201 Padaria <b>X</b><img src=x onerror=alert(1)> & "Cia"
+worker: exit=0 concluídos=0 falhas=0
+e-mail: [['sent', 'mailpit']]
+Subject: 'Pedro Teste convidou você para Padaria <b>X</b><img src=x onerror=alert(1)> & "Cia" no HelloSquad'
+HTML tem <img src=x cru? False | tem <b>X</b> cru? False | escapado? True
+HTML trecho: Padaria &lt;b&gt;X&lt;/b&gt;&lt;img src=x onerror=alert(1)&gt; &amp; &quot;Cia&quot; no HelloSquad</title></he
+convites com CRLF que ficaram na fila: []

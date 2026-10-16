@@ -1,0 +1,25 @@
+== 1. idioma: Carla (editora) escolhe es; Vitta passa a en; Rafael sem idioma próprio
+  PATCH Vitta en (owner): 200 | editora tenta: 403
+  worker: exit=0 concluídos=1 falhas=0
+  email_messages Vitta: [['rafael@vitta.example', 'approval_pending', 'en', 'sent']]
+  Mailpit carla@vitta.example: []
+  Mailpit rafael@vitta.example: [('Needs you: Legenda H2 e-mail', 'HelloSquad Hi Rafael, Otto needs you in Vitta Estética to re')]
+  Marina recebeu algo da Vitta? []
+== 2. preferência: Carla desliga delivery_ready; nova entrega na Vitta
+  PUT: 200 | GET: {'items': [{'template': 'approval_pending', 'enabled': True}, {'template': 'delivery_ready', 'enabled': False}, {'template': 'payment_confirmed', 'enabled': True}, {'template': 'payment_problem', 'ena
+  convite não é opcional: 422
+  worker: exit=0 concluídos=2 falhas=0
+  email_messages p/ Carla depois de desligar: []
+  Mailpit Carla novas: []
+== 3. destinatário fora de .example (convite por SQL, como o roteiro da S2f)
+  worker: exit=0 concluídos=2 falhas=0
+  e-mails dos convites: [['fulano.real@gmail.com', 'refused', '{"code": "recipient_domain_not_allowed"}'], ['quase@contatos.example.com', 'refused', '{"code": "recipient_domain_not_allowed"}']]
+  Mailpit gmail: 0 | .example.com: 0
+== 4. injeção pelo nome do negócio (Pedro cria um negócio com CRLF e HTML no nome)
+  POST /workspaces com CRLF no nome: 201 Padaria <b>X</b><img src=x onerror=alert(1)>
+Bcc: espiao@contatos.example
+  worker: exit=0 concluídos=2 falhas=0
+  e-mail do convite: [['queued', '{"code": "internal", "details": {"error_type": "ValueError"}, "attempts": 1}']]
+  Mailpit convidado: 0 | espião (Bcc injetado): 0
+== 5. volta: Vitta pt-BR, Carla sem idioma, preferência ligada
+  falhas no worker: 0
