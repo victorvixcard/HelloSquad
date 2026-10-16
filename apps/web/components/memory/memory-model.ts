@@ -2,6 +2,9 @@ import { AGENT_IDS, isAgentId, PRODUCT_ICONS, type AgentId } from "@hellosquad/u
 import { dayKey, shortTime } from "@/components/product/conversation-format";
 import { TIME_ZONE } from "@/i18n/config";
 import type { BrandFact, FactSource, MemoryConflict, MemoryData, MemorySuggestion } from "@/lib/memory";
+import enMemory from "@/messages/en/memory.json";
+import esMemory from "@/messages/es/memory.json";
+import ptBRMemory from "@/messages/pt-BR/memory.json";
 
 /**
  * Modelo da Memória da Marca (V4.5 `_vMem5`, L13610–13707, com a linguagem da V4.6, L13927): conhecimentos e
@@ -12,23 +15,48 @@ import type { BrandFact, FactSource, MemoryConflict, MemoryData, MemorySuggestio
 export type Area = "business" | "brand" | "audience" | "knowledge";
 export const AREAS: readonly Area[] = ["business", "brand", "audience", "knowledge"];
 
-/** Ordem dos assuntos de cada área (`TOPIC5`, L12711). O assunto é texto do idioma do workspace; fora da lista, vai ao fim. */
-const TOPIC_ORDER: Record<Area, readonly string[]> = {
-  business: ["História", "Proposta de valor", "Localização", "Produtos", "Diferenciais", "Operação", "Objetivos"],
-  brand: ["Posicionamento", "Identidade visual", "Tom de voz", "Preferências criativas", "Referências"],
-  audience: ["Perfil dos clientes", "Necessidades", "Comportamentos conhecidos", "Preferências identificadas"],
-  knowledge: ["Pesquisas", "Descobertas", "Decisões", "Preferências", "Orientações confirmadas"],
-};
+/**
+ * Ordem dos assuntos de cada área (`TOPIC5`, L12711), por id estável (H2-06): o rótulo de cada id está no catálogo
+ * (`memory.topics.<área>.<id>`), nos três idiomas. Assunto fora da lista vai ao fim.
+ */
+const TOPIC_ORDER = {
+  business: ["history", "value", "location", "products", "differentials", "operation", "goals"],
+  brand: ["positioning", "visual", "tone", "creative", "references"],
+  audience: ["profile", "needs", "behaviors", "preferences"],
+  knowledge: ["research", "findings", "decisions", "preferences", "guidance"],
+} as const satisfies Record<Area, readonly string[]>;
+export type TopicId<A extends Area = Area> = (typeof TOPIC_ORDER)[A][number];
 
-/** "Principais conhecimentos" do dossiê (`KEY5`, L12919): a chave do catálogo e o assunto onde o squad procura. */
-export const KEY_TOPICS: ReadonlyArray<{ key: KeyName; area: Area; topic: string }> = [
-  { key: "value", area: "business", topic: "Proposta de valor" },
-  { key: "audience", area: "audience", topic: "Perfil dos clientes" },
-  { key: "products", area: "business", topic: "Produtos" },
-  { key: "differentials", area: "business", topic: "Diferenciais" },
-  { key: "positioning", area: "brand", topic: "Posicionamento" },
-  { key: "visual", area: "brand", topic: "Identidade visual" },
-  { key: "tone", area: "brand", topic: "Tom de voz" },
+/**
+ * Id estável de um assunto gravado (H2-06). A API ainda devolve o assunto só como texto, no idioma em que foi gravado
+ * (o do negócio; o que veio antes da tradução do backend está em pt-BR), então o id sai do rótulo do catálogo em
+ * qualquer um dos três idiomas, sem diferenciar maiúsculas nem espaços. Assunto que não é da lista: null.
+ */
+const TOPIC_BY_LABEL: ReadonlyMap<string, TopicId> = new Map(
+  [ptBRMemory, enMemory, esMemory].flatMap((catalog) =>
+    AREAS.flatMap((area) =>
+      Object.entries(catalog.topics[area]).map(([id, label]) => [`${area}:${normalizeTopic(label)}`, id as TopicId] as const),
+    ),
+  ),
+);
+
+function normalizeTopic(topic: string): string {
+  return topic.trim().replace(/\s+/g, " ").toLocaleLowerCase("pt-BR");
+}
+
+export function topicIdOf(area: Area, topic: string): TopicId | null {
+  return TOPIC_BY_LABEL.get(`${area}:${normalizeTopic(topic)}`) ?? null;
+}
+
+/** "Principais conhecimentos" do dossiê (`KEY5`, L12919): a chave do catálogo e o id do assunto onde o squad procura. */
+export const KEY_TOPICS: ReadonlyArray<{ key: KeyName; area: Area; topic: TopicId }> = [
+  { key: "value", area: "business", topic: "value" },
+  { key: "audience", area: "audience", topic: "profile" },
+  { key: "products", area: "business", topic: "products" },
+  { key: "differentials", area: "business", topic: "differentials" },
+  { key: "positioning", area: "brand", topic: "positioning" },
+  { key: "visual", area: "brand", topic: "visual" },
+  { key: "tone", area: "brand", topic: "tone" },
 ];
 export type KeyName = "value" | "audience" | "products" | "differentials" | "positioning" | "visual" | "tone";
 
@@ -179,10 +207,13 @@ export function groupItems(items: readonly MemItem[], f: Filters): AreaGroup[] {
   return areas
     .map((area) => {
       const rows = items.filter((x) => x.area === area && visible(x, f));
-      const order = TOPIC_ORDER[area];
+      const order: readonly string[] = TOPIC_ORDER[area];
       const topics: string[] = [];
       for (const x of rows) if (!topics.includes(x.topic)) topics.push(x.topic);
-      const rank = (t: string) => (order.includes(t) ? order.indexOf(t) : order.length);
+      const rank = (t: string) => {
+        const at = order.indexOf(topicIdOf(area, t) ?? "");
+        return at < 0 ? order.length : at;
+      };
       topics.sort((a, b) => rank(a) - rank(b));
       const groups = topics.map((topic) => ({ topic, rows: rows.filter((x) => x.topic === topic) }));
       return { area, topics: groups, count: rows.length };
@@ -224,8 +255,10 @@ export function rowActions(x: MemItem) {
 }
 
 /** Um dos "Principais conhecimentos": o primeiro em uso do assunto (Confirmado e Decisão sua antes). */
-export function keyFact(items: readonly MemItem[], area: Area, topic: string): MemItem | null {
-  const pool = items.filter((x) => x.kind === "fact" && x.area === area && x.topic === topic && !isHidden(x) && x.state !== "conflicting");
+export function keyFact(items: readonly MemItem[], area: Area, topic: TopicId): MemItem | null {
+  const pool = items.filter(
+    (x) => x.kind === "fact" && x.area === area && topicIdOf(area, x.topic) === topic && !isHidden(x) && x.state !== "conflicting",
+  );
   return pool.find((x) => IN_USE_FIRST.has(x.state)) ?? pool[0] ?? null;
 }
 

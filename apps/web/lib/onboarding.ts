@@ -1,13 +1,27 @@
 import { isApiError, unwrap } from "@hellosquad/contracts";
 import { cache } from "react";
+import { topicIdOf } from "@/components/memory/memory-model";
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/config";
+import enMemory from "@/messages/en/memory.json";
+import esMemory from "@/messages/es/memory.json";
+import ptBRMemory from "@/messages/pt-BR/memory.json";
 import { serverApi } from "./api";
 import type { BrandFact, FactSource, MemoryDossier } from "./memory";
 
+const MEMORY_CATALOG: Record<Locale, typeof ptBRMemory> = { "pt-BR": ptBRMemory, en: enMemory, es: esMemory };
+
 /**
  * Onde o objetivo contado ao Nexo entra na Memória da Marca (V4.6 `OBJ_FIND`, L6194: "Meu negócio" · "Objetivos" ·
- * "Objetivo atual", confirmado). O assunto e a chave são texto do idioma do workspace, como os outros do dossiê.
+ * "Objetivo atual", confirmado). O assunto e a chave são texto do idioma do negócio, como os outros do dossiê, e vêm do
+ * catálogo (`memory.topics.business.goals` e `memory.objectiveKey`, H2-06); sem o idioma do negócio, pt-BR.
  */
-export const OBJECTIVE_FACT = { area: "business", topic: "Objetivos", key: "Objetivo atual" } as const;
+export function objectiveFact(locale?: unknown) {
+  const catalog = MEMORY_CATALOG[isLocale(locale) ? locale : DEFAULT_LOCALE];
+  return { area: "business", topic: catalog.topics.business.goals, key: catalog.objectiveKey } as const;
+}
+
+/** O objetivo com os nomes em pt-BR (quem grava ainda não passa o idioma do negócio: `objectiveFact(locale)`). */
+export const OBJECTIVE_FACT = objectiveFact(DEFAULT_LOCALE);
 
 /** Estados que orientam o squad (o que a Memória "sabe"); sugestão, conflito, descartado e fora de uso não contam. */
 const KNOWN: ReadonlySet<BrandFact["state"]> = new Set(["confirmed", "decision", "from_source", "observed"]);
@@ -34,7 +48,8 @@ function connected(sources: FactSource[], name: RegExp): boolean {
   return sources.some((s) => s.kind === "connection" && name.test(s.name) && s.state === "connected");
 }
 
-const isObjective = (f: BrandFact) => f.area === OBJECTIVE_FACT.area && f.topic === OBJECTIVE_FACT.topic;
+/** O objetivo pelo id estável do assunto ("Objetivos", "Goals" ou "Objetivos"), não pelo texto em pt-BR (H2-06). */
+const isObjective = (f: BrandFact) => f.area === "business" && topicIdOf("business", f.topic) === "goals";
 
 /**
  * Progresso real do primeiro acesso, sem nada simulado: o site e o Instagram contam quando a fonte existe e está

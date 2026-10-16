@@ -714,8 +714,9 @@ export function MemoryView({ data, business, userInitial }: { data: MemoryData; 
                     className={fact ? "me-key" : "me-key is-miss"}
                     aria-label={fact ? t("dossier.keyAria", { key: label, value: fact.value }) : t("dossier.keyMissAria", { key: label })}
                     onClick={() => {
-                      // "Ainda não sabe · contar agora" abre "Adicionar conhecimento" no assunto da chave (FLUXOS §6).
-                      if (!fact) return openAdd(k.area, k.topic);
+                      // "Ainda não sabe · contar agora" abre "Adicionar conhecimento" no assunto da chave (FLUXOS §6),
+                      // com o rótulo do assunto pelo catálogo (H2-06).
+                      if (!fact) return openAdd(k.area, t(`topics.${k.area}.${k.topic}` as Parameters<typeof t>[0]));
                       setFilters((f) => ({ ...f, area: "all", q: "", agent: null }));
                       toggleRow(fact);
                       requestAnimationFrame(() => document.querySelector(`[data-mid="${fact.id}"]`)?.scrollIntoView({ block: "center" }));
