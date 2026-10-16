@@ -26,12 +26,35 @@ class ConversationKind(StrEnum):
     squad_room = "squad_room"
     agent_direct = "agent_direct"
     object = "object"
+    group = "group"
 
 
+# Objeto de onde a conversa foi aberta (FLUXOS_DA_V46.md §4.1). Os cinco primeiros moram no banco e vêm
+# pelo id; os outros ainda não têm tabela e vêm por uma chave, com título e estado no cartão.
 class ContextType(StrEnum):
     project = "project"
     work_item = "work_item"
     delivery = "delivery"
+    memory_fact = "memory_fact"
+    insight = "insight"
+    calendar_post = "calendar_post"
+    metric = "metric"
+    opportunity = "opportunity"
+    responsibility = "responsibility"
+    segment = "segment"
+    document = "document"
+    capability = "capability"
+
+
+CONTEXT_TYPES_BY_ID = frozenset(
+    {
+        ContextType.project,
+        ContextType.work_item,
+        ContextType.delivery,
+        ContextType.memory_fact,
+        ContextType.insight,
+    }
+)
 
 
 class MessageAuthorType(StrEnum):
