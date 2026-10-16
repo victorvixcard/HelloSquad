@@ -124,7 +124,8 @@
   "kinds": {
     "delivery": "Entrega",
     "work": "Trabalho",
-    "workOf": "Trabalho de {project}"
+    "workOf": "Trabalho de {project}",
+    "project": "Projeto"
   },
   "sit": {
     "review": "v{version} aguarda sua aprovação",
@@ -181,6 +182,61 @@
       "rejected": "Você não aprovou",
       "today": "hoje · {time}",
       "at": "{date} · {time}"
+    }
+  },
+  "coord": {
+    "tag": "projeto coordenado",
+    "stack": "{lead} e {count}",
+    "talkRoom": "Conversar na Sala do Squad",
+    "stages": "Etapas do projeto",
+    "stageAria": "Etapa {seq} · {title} · {name} · {state}",
+    "entryWho": "{name} · {state}",
+    "approvedTag": "aprovado",
+    "tabs": {
+      "deliveries": "Entregas",
+      "decisions": "Decisões",
+      "squad": "Squad",
+      "history": "Histórico"
+    },
+    "step": {
+      "pending": "Na fila",
+      "in_progress": "{name} trabalhando",
+      "needs_you": "v{version} aguarda você",
+      "done": "Concluída",
+      "doneVersion": "v{version} aprovada",
+      "waiting_engine": "Aguardando o motor de imagem",
+      "blocked": "Bloqueada",
+      "failed": "Não concluída",
+      "skipped": "Não feita"
+    },
+    "entry": {
+      "in_progress": "{article, select, a {A} other {O}} {name} está trabalhando nesta etapa.",
+      "after": "Começa depois da etapa {step}.",
+      "queued": "Na fila do Nexo.",
+      "waiting_engine": "Nada é gerado nem cobrado até o motor chegar; as etapas que não dependem da peça seguem.",
+      "failed": "{article, select, a {A} other {O}} {name} não conseguiu concluir esta etapa."
+    },
+    "decision": {
+      "done": "{step} aprovada",
+      "todo": "Aprovar a etapa {step}",
+      "doneSub": "Aprovado por você.",
+      "waitSub": "{name} aguarda você.",
+      "laterSub": "Quando {name} entregar."
+    },
+    "nexoRole": "coordena e acompanha",
+    "next": {
+      "k": "Próxima decisão",
+      "approve": "Aprovar a etapa {step}",
+      "approveSub": "v{version} aguarda a sua aprovação",
+      "none": "Nenhuma decisão pendente",
+      "working": "{name} está na etapa {step}",
+      "closed": "As etapas que dependiam de você estão fechadas.",
+      "wait": "O Nexo te chama quando houver decisão."
+    },
+    "rules": {
+      "k": "Combinado",
+      "publish": "Peça aprovada não é publicada sozinha.",
+      "budget": "Nenhuma verba de anúncio sem a sua autorização."
     }
   }
 }

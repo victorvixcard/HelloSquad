@@ -20,6 +20,7 @@ import { conversationLive, shortNowKey } from "@/lib/live/live-state";
 import { dayKey, dayLabel, shortTime, threadAt, threadTitleFrom } from "./conversation-format";
 import { useLive } from "./live";
 import { MaterialCard, type MaterialCardActions } from "./MaterialCard";
+import { TeamCard } from "./TeamCard";
 import { usePopoverDismiss } from "./Popover";
 import { useShell, type ConversationTarget } from "./shell-context";
 import { SquadStatus, type SquadStatusKind } from "./SquadStatus";
@@ -743,6 +744,9 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                         </div>
                         <div className="ps-msg-t">{m.body}</div>
                         {mat && m.run_id ? <MaterialCard runId={m.run_id} versionId={mat} target={target} actions={actions.card} /> : null}
+                        {m.card?.type === "team" && m.card.members?.length ? (
+                          <TeamCard members={m.card.members} workItemId={m.card.work_item_id ?? null} />
+                        ) : null}
                       </div>
                     </div>,
                   ];

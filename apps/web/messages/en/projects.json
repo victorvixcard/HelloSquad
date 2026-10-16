@@ -124,7 +124,8 @@
   "kinds": {
     "delivery": "Delivery",
     "work": "Work",
-    "workOf": "Work for {project}"
+    "workOf": "Work for {project}",
+    "project": "Project"
   },
   "sit": {
     "review": "v{version} waiting for your approval",
@@ -181,6 +182,61 @@
       "rejected": "You didn’t approve",
       "today": "today · {time}",
       "at": "{date} · {time}"
+    }
+  },
+  "coord": {
+    "tag": "coordinated project",
+    "stack": "{lead} and {count}",
+    "talkRoom": "Talk in the Squad Room",
+    "stages": "Project steps",
+    "stageAria": "Step {seq} · {title} · {name} · {state}",
+    "entryWho": "{name} · {state}",
+    "approvedTag": "approved",
+    "tabs": {
+      "deliveries": "Deliveries",
+      "decisions": "Decisions",
+      "squad": "Squad",
+      "history": "History"
+    },
+    "step": {
+      "pending": "Queued",
+      "in_progress": "{name} working",
+      "needs_you": "v{version} waits for you",
+      "done": "Done",
+      "doneVersion": "v{version} approved",
+      "waiting_engine": "Waiting for the image engine",
+      "blocked": "Blocked",
+      "failed": "Not completed",
+      "skipped": "Not done"
+    },
+    "entry": {
+      "in_progress": "{name} is working on this step.",
+      "after": "Starts after the {step} step.",
+      "queued": "Queued by Nexo.",
+      "waiting_engine": "Nothing is generated or charged until the engine arrives; the steps that don't depend on the piece keep going.",
+      "failed": "{name} couldn't complete this step."
+    },
+    "decision": {
+      "done": "{step} approved",
+      "todo": "Approve the {step} step",
+      "doneSub": "Approved by you.",
+      "waitSub": "{name} is waiting for you.",
+      "laterSub": "When {name} delivers."
+    },
+    "nexoRole": "coordinates and follows up",
+    "next": {
+      "k": "Next decision",
+      "approve": "Approve the {step} step",
+      "approveSub": "v{version} waits for your approval",
+      "none": "No pending decisions",
+      "working": "{name} is on the {step} step",
+      "closed": "The steps that depended on you are closed.",
+      "wait": "Nexo calls you when there is a decision."
+    },
+    "rules": {
+      "k": "Agreed",
+      "publish": "An approved piece is never published on its own.",
+      "budget": "No ad budget without your authorization."
     }
   }
 }

@@ -3,6 +3,7 @@
 import { isApiError, unwrap, type components } from "@hellosquad/contracts";
 import { headers } from "next/headers";
 import { serverApi } from "@/lib/api";
+import { excerptOf } from "@/lib/delivery-excerpt";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ACTION_PATH_HEADER, isAppPath } from "@/lib/supabase/session-cookie";
 
@@ -211,20 +212,9 @@ export type DeliveryCard = {
   approvalId: string | null;
   /** Começo do texto da versão, para a miniatura (a entrega da Fase 1 é texto: legenda da 04.01). */
   excerpt: string;
+  /** Etapa do projeto coordenado que entregou a versão (S2d): número e título; null fora de projeto coordenado. */
+  step?: { seq: number; title: string } | null;
 };
-
-/**
- * Primeiro texto de uma versão: a skill 04.01 do worker (`versoes[].texto`) ou o formato do seed (`legenda`); nos
- * documentos da A2b, o resumo (ou o título) que o agente escreveu.
- */
-function excerptOf(content: unknown): string {
-  const c = (content ?? {}) as { legenda?: unknown; versoes?: unknown; resumo?: unknown; titulo?: unknown; tema?: unknown };
-  if (typeof c.legenda === "string") return c.legenda;
-  if (typeof c.resumo === "string") return c.resumo;
-  const first = Array.isArray(c.versoes) ? (c.versoes[0] as { texto?: unknown } | undefined) : undefined;
-  if (typeof first?.texto === "string") return first.texto;
-  return typeof c.titulo === "string" ? c.titulo : typeof c.tema === "string" ? c.tema : "";
-}
 
 /**
  * Cartão "Material · vN" da mensagem do agente (V4.6 L5539, `isMat`): o run da mensagem leva ao trabalho, e o
@@ -242,6 +232,7 @@ export async function deliveryCardAction(runId: string, versionId: string): Prom
     if (!delivery || !version) return { ok: false, code: "not_found", message: "" };
     const latest = Math.max(...delivery.versions.map((v) => v.version_no));
     const approval = item.approvals.find((a) => a.delivery_version_id === versionId && a.status === "pending") ?? null;
+    const step = delivery.step_id ? (item.steps.find((x) => x.id === delivery.step_id) ?? null) : null;
     const state: DeliveryCardState =
       version.status === "approved"
         ? "approved"
@@ -260,6 +251,7 @@ export async function deliveryCardAction(runId: string, versionId: string): Prom
         state,
         approvalId: approval?.id ?? null,
         excerpt: excerptOf(version.content),
+        step: step ? { seq: step.seq, title: step.title } : null,
       },
     };
   } catch (error) {

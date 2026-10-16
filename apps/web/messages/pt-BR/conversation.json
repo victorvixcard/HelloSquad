@@ -56,7 +56,8 @@
       "making": "Nova versão a caminho",
       "superseded": "Substituída pela v{next}"
     },
-    "error": "Não deu para registrar agora. Tente de novo."
+    "error": "Não deu para registrar agora. Tente de novo.",
+    "stepTitle": "Etapa {seq} · {title}"
   },
   "rail": {
     "label": "Contexto da conversa",
@@ -89,5 +90,9 @@
     ],
     "saved": "Anotado na Memória da Marca: “{objective}”.",
     "error": "O objetivo não foi guardado. Tente de novo."
+  },
+  "team": {
+    "kicker": "Squad da campanha · o Nexo coordena",
+    "open": "Abrir o projeto"
   }
 }

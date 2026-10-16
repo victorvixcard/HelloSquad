@@ -5,12 +5,14 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { DeliveryDetail, type DeliveryDetailData } from "@/components/env/DeliveryDetail";
 import { DocumentDetail, type DocumentDetailData } from "@/components/env/docs/DocumentDetail";
+import { CoordinatedWork, type CoordinatedStep, type CoordinatedWorkData } from "@/components/env/projects/CoordinatedWork";
 import { originOf, workEvents, type WorkEvent } from "@/components/env/projects/work-history";
 import { dayKey, shortTime } from "@/components/product/conversation-format";
 import { TIME_ZONE } from "@/i18n/config";
 import { loadMe, serverApi } from "@/lib/api";
 import { loadWorkItem, loadWorkspaceCore, type Conversation } from "@/lib/core";
-import { deliveryTypeKey, isDocumentDelivery } from "@/lib/delivery-types";
+import { excerptOf } from "@/lib/delivery-excerpt";
+import { deliveryTypeKey, isCoordinated, isDocumentDelivery } from "@/lib/delivery-types";
 
 type Params = { params: Promise<{ workspace: string; agente: string; id: string }> };
 
@@ -122,6 +124,51 @@ export default async function TrabalhoPage({ params }: Params) {
     at: when(e.at),
   }));
 
+  // Projeto coordenado (S2d, A2d): o trabalho do Nexo com uma etapa por especialista, na tela da campanha da V4.6.
+  if (isCoordinated(item.delivery_type)) {
+    const projectInfo = item.project_id ? await projectOf(item.project_id) : null;
+    const versionsOf = (stepId: string) => item.deliveries.filter((d) => d.step_id === stepId).flatMap((d) => d.versions);
+    const steps: CoordinatedStep[] = [...item.steps]
+      .sort((a, b) => a.seq - b.seq)
+      .map((s) => {
+        const vs = versionsOf(s.id);
+        const shown = vs.find((x) => x.id === s.delivery_version_id) ?? vs[vs.length - 1] ?? null;
+        const ids = new Set(vs.map((x) => x.id));
+        const mine = item.approvals.filter((a) => a.delivery_version_id && ids.has(a.delivery_version_id));
+        return {
+          seq: s.seq,
+          title: s.title,
+          agent: s.agent_id && isAgentId(s.agent_id) ? s.agent_id : "nexo",
+          status: s.status,
+          responsibility: s.responsibility ?? null,
+          reason: s.status_reason_label ?? null,
+          dependsOn: s.depends_on ?? [],
+          version: shown ? { no: shown.version_no, excerpt: excerptOf(shown.content) } : null,
+          approvalId: mine.find((a) => a.status === "pending")?.id ?? null,
+          approved: mine.some((a) => a.decision === "approved"),
+        };
+      });
+    // O histórico que a API escreve (pedido, equipe, etapas, entregas e decisões, já no idioma do negócio).
+    const apiHistory = (item.history ?? []).map((h) => ({
+      agent: h.actor_type === "agent" && h.agent_id && isAgentId(h.agent_id) ? h.agent_id : null,
+      text: h.text,
+      at: when(h.created_at),
+    }));
+    const coordinated: CoordinatedWorkData = {
+      workItemId: item.id,
+      conversationId: item.conversation_id,
+      room: conversation?.kind === "squad_room",
+      name: projectInfo?.name ?? item.title,
+      goal: projectInfo?.objective ?? null,
+      origin: originL,
+      envHref: `/app/${slug}/squad/${agente}`,
+      envLabel: tc(`areas.${agente}`),
+      steps,
+      history: apiHistory.length ? apiHistory.reverse() : history,
+    };
+    return <CoordinatedWork key={`${item.status}:${item.updated_at}`} data={coordinated} />;
+  }
+
   const projectName = item.project_id ? await projectNameOf(item.project_id) : null;
 
   const approvalData = approval
@@ -197,10 +244,14 @@ export default async function TrabalhoPage({ params }: Params) {
 
 /** Nome do projeto do trabalho (`GET /projects/{id}`); sem resposta, sem link (nunca um nome inventado). */
 async function projectNameOf(projectId: string): Promise<string | null> {
+  return (await projectOf(projectId))?.name ?? null;
+}
+
+async function projectOf(projectId: string): Promise<{ name: string; objective: string | null } | null> {
   try {
     const api = await serverApi();
     const p = await unwrap(api.GET("/projects/{project_id}", { params: { path: { project_id: projectId } } }));
-    return p.name;
+    return { name: p.name, objective: p.objective };
   } catch (error) {
     if (isApiError(error)) return null;
     throw error;

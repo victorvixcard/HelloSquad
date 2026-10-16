@@ -16,7 +16,8 @@ export const MATERIAL_CARD_ACTIONS: MaterialCardActions = { card: deliveryCardAc
  * Cartão "Material · vN" na mensagem do agente que entregou uma versão (V4.6 L5539, `isMat`; dados em L8611):
  * miniatura que abre o trabalho, "Material · vN", o título, o estado da versão e, enquanto ela aguarda a decisão
  * do dono, "Aprovar vN" e "Pedir ajuste". O estado se relê a cada novidade do canal (decisão, versão nova).
- * A entrega da Fase 1 é texto: a miniatura mostra o começo da legenda (a V4.6 só desenha peça visual).
+ * A entrega da Fase 1 é texto: a miniatura mostra o começo da legenda (a V4.6 só desenha peça visual). No projeto
+ * coordenado (A2d), o título é a etapa que entregou ("Etapa 1 · Estratégia") e o cartão abre o projeto.
  */
 export function MaterialCard({
   runId,
@@ -87,7 +88,7 @@ export function MaterialCard({
       <button
         type="button"
         className="ps-thumb"
-        aria-label={t("open", { version: card.versionNo, title: card.title })}
+        aria-label={t("open", { version: card.versionNo, title: card.step ? t("stepTitle", { seq: card.step.seq, title: card.step.title }) : card.title })}
         onClick={() => href && router.push(href)}
       >
         <span className="ps-capm">{card.excerpt}</span>
@@ -96,7 +97,7 @@ export function MaterialCard({
         <div className="ps-mat-k">
           <span className="ps-card-k">{t("material", { version: card.versionNo })}</span>
         </div>
-        <b className="ps-mat-t">{card.title}</b>
+        <b className="ps-mat-t">{card.step ? t("stepTitle", { seq: card.step.seq, title: card.step.title }) : card.title}</b>
         <small className="ps-mat-s">{stateL}</small>
         {live_ ? (
           <div className="ps-mat-a">

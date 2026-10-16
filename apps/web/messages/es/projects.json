@@ -124,7 +124,8 @@
   "kinds": {
     "delivery": "Entrega",
     "work": "Trabajo",
-    "workOf": "Trabajo de {project}"
+    "workOf": "Trabajo de {project}",
+    "project": "Proyecto"
   },
   "sit": {
     "review": "v{version} espera tu aprobación",
@@ -181,6 +182,61 @@
       "rejected": "No lo aprobaste",
       "today": "hoy · {time}",
       "at": "{date} · {time}"
+    }
+  },
+  "coord": {
+    "tag": "proyecto coordinado",
+    "stack": "{lead} y {count}",
+    "talkRoom": "Conversar en la Sala del Squad",
+    "stages": "Etapas del proyecto",
+    "stageAria": "Etapa {seq} · {title} · {name} · {state}",
+    "entryWho": "{name} · {state}",
+    "approvedTag": "aprobado",
+    "tabs": {
+      "deliveries": "Entregas",
+      "decisions": "Decisiones",
+      "squad": "Squad",
+      "history": "Historial"
+    },
+    "step": {
+      "pending": "En cola",
+      "in_progress": "{name} trabajando",
+      "needs_you": "v{version} te espera",
+      "done": "Concluida",
+      "doneVersion": "v{version} aprobada",
+      "waiting_engine": "Esperando el motor de imagen",
+      "blocked": "Bloqueada",
+      "failed": "No concluida",
+      "skipped": "No hecha"
+    },
+    "entry": {
+      "in_progress": "{name} está trabajando en esta etapa.",
+      "after": "Empieza después de la etapa {step}.",
+      "queued": "En la cola de Nexo.",
+      "waiting_engine": "No se genera ni se cobra nada hasta que llegue el motor; las etapas que no dependen de la pieza siguen.",
+      "failed": "{name} no pudo concluir esta etapa."
+    },
+    "decision": {
+      "done": "{step} aprobada",
+      "todo": "Aprobar la etapa {step}",
+      "doneSub": "Aprobado por ti.",
+      "waitSub": "{name} te espera.",
+      "laterSub": "Cuando {name} entregue."
+    },
+    "nexoRole": "coordina y acompaña",
+    "next": {
+      "k": "Próxima decisión",
+      "approve": "Aprobar la etapa {step}",
+      "approveSub": "v{version} espera tu aprobación",
+      "none": "Ninguna decisión pendiente",
+      "working": "{name} está en la etapa {step}",
+      "closed": "Las etapas que dependían de ti están cerradas.",
+      "wait": "Nexo te llama cuando haya una decisión."
+    },
+    "rules": {
+      "k": "Acordado",
+      "publish": "Una pieza aprobada no se publica sola.",
+      "budget": "Ningún presupuesto de anuncios sin tu autorización."
     }
   }
 }

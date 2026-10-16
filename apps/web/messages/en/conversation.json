@@ -56,7 +56,8 @@
       "making": "New version on the way",
       "superseded": "Replaced by v{next}"
     },
-    "error": "Couldn’t record that right now. Try again."
+    "error": "Couldn’t record that right now. Try again.",
+    "stepTitle": "Step {seq} · {title}"
   },
   "rail": {
     "label": "Conversation context",
@@ -89,5 +90,9 @@
     ],
     "saved": "Noted in Brand Memory: “{objective}”.",
     "error": "The goal wasn’t saved. Try again."
+  },
+  "team": {
+    "kicker": "Campaign squad · Nexo coordinates",
+    "open": "Open the project"
   }
 }
