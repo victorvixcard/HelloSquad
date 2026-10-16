@@ -1,0 +1,151 @@
+{
+  "title": "Inicio",
+  "hello": "Hello, {name}.",
+  "question": "¿En qué vamos a trabajar hoy?",
+  "composeLabel": "Pedir al squad",
+  "attach": "Adjuntar al pedido",
+  "attachTip": "Adjuntar",
+  "placeholderAll": "Pídele al squad. Nexo organiza quién lo hace…",
+  "placeholderOne": "Escríbele {to}…",
+  "placeholderMany": "Escríbeles a {names}…",
+  "requestTo": "Pedido {to}",
+  "toRoom": "a la Sala del Squad",
+  "toMany": "a {names}",
+  "send": "Enviar {to}",
+  "sendHint": "enviar",
+  "squad": "Squad",
+  "squadAllAria": "Todo el squad: todos participan, en la Sala del Squad",
+  "squadCallAria": "Llamar a todo el squad, en la Sala del Squad",
+  "whoLabel": "Quién participa. Elige uno o varios especialistas",
+  "selRoom": "Sala del Squad",
+  "selOne": "Conversación directa {with}",
+  "selMany": "{who} · conversación en grupo",
+  "selCount": "{count} especialistas",
+  "selHint": "Participa al menos un especialista",
+  "avAll": "{name}, {area}, participa con el squad. Elegir solo a {pronoun}",
+  "avOn": "{name}, {area}, participa",
+  "avOnRemove": "{name}, {area}, participa. Quitar",
+  "avOff": "{name}, {area}, fuera de esta conversación. Agregar",
+  "avTip": "{name} · {area}",
+  "pronoun": "{article, select, a {ella} other {él}}",
+  "and": " y ",
+  "bandLabel": "Sugerencias de pedidos. Elegir una completa el campo y prepara quién participa, sin enviar. Desliza hacia los lados para ver más",
+  "chipAria": "{text}. Completa el pedido; {who}",
+  "chipOnly": "solo {name} participa",
+  "chipMany": "{who} participan",
+  "suggestions": [
+    {
+      "t": "Planificar mis próximos contenidos",
+      "ags": [
+        "otto",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Analizar los resultados de la semana",
+      "ags": [
+        "iris"
+      ]
+    },
+    {
+      "t": "Crear una promoción para esta semana",
+      "ags": [
+        "bia",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Revisar mi identidad visual",
+      "ags": [
+        "kaia"
+      ]
+    },
+    {
+      "t": "Entender mejor a mis clientes",
+      "ags": [
+        "bia",
+        "max"
+      ]
+    },
+    {
+      "t": "Preparar un lanzamiento",
+      "ags": [
+        "nexo",
+        "bia",
+        "kaia"
+      ]
+    },
+    {
+      "t": "Reactivar clientes que desaparecieron",
+      "ags": [
+        "max"
+      ]
+    },
+    {
+      "t": "Quiero mejorar mi Instagram",
+      "ags": [
+        "otto"
+      ]
+    }
+  ],
+  "fold": {
+    "show": "Mostrar resúmenes",
+    "hide": "Ocultar resúmenes",
+    "hideAria": "Ocultar resúmenes y quedarte solo con el squad",
+    "showNeeds": "Mostrar resúmenes. {count, plural, one {Una decisión te espera} other {# decisiones te esperan}}"
+  },
+  "summaries": "Resúmenes de {business}",
+  "onb": {
+    "title": "Para que el squad conozca {business}",
+    "done": "{done} de {total}",
+    "site": "Envía tu sitio web",
+    "siteSub": "Nexo lo lee y separa lo que sirva.",
+    "siteLabel": "Dirección del sitio web",
+    "sitePlaceholder": "tunegocio.example",
+    "siteRead": "Leer el sitio web",
+    "insta": "Conecta Instagram",
+    "instaSub": "Conectar no autoriza a publicar.",
+    "instaConnect": "Conectar",
+    "talk": "Cuéntale el resto a Nexo",
+    "talkSub": "Objetivo, público, lo que más vende.",
+    "talkGo": "Hablar",
+    "objective": "Objetivo: {objective}"
+  },
+  "res": {
+    "title": "Resultados",
+    "irisSays": "Íris: ",
+    "open": "Ver Resultados",
+    "talk": "Hablar con Íris"
+  },
+  "open": ". Ocultar detalles",
+  "closed": ". Ver detalles",
+  "work": {
+    "title": "Trabajos",
+    "inProgress": "{count} en curso",
+    "none": "Nada en curso",
+    "needs": "{count, plural, one {# te espera} other {# te esperan}}",
+    "aria": "Trabajos: {summary}",
+    "needH": "{count, plural, one {Hoy, una decisión es tuya} other {Hoy, # decisiones son tuyas}}",
+    "rowsH": "En curso",
+    "empty": "Nada en producción ahora. Pídele algo al squad y Nexo organiza quién lo hace.",
+    "all": "Ver todos los trabajos",
+    "pendSub": "{kind} · {agent}",
+    "openWork": "Abrir el trabajo {title}: {status}"
+  },
+  "mem": {
+    "title": "El squad notó",
+    "none": "Nada que confirmar ahora",
+    "aria": "El squad notó: {summary}",
+    "empty": "Cuando el squad note algo nuevo sobre {business}, aparecerá aquí para que lo confirmes.",
+    "go": "Ver la Memoria de Marca"
+  },
+  "auto": {
+    "title": "Modo Autónomo",
+    "none": "Delega lo que se repite",
+    "aria": "Modo Autónomo: {summary}",
+    "empty": "Aún no hay nada configurado. Delega lo que se repite: el squad se encarga solo y pide tu aprobación cuando la necesita.",
+    "setup": "Configurar una rutina",
+    "go": "Ver el Modo Autónomo"
+  },
+  "sendError": "El pedido no se envió. Inténtalo de nuevo."
+}

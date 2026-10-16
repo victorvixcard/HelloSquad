@@ -1,0 +1,83 @@
+{
+  "label": "Conversación",
+  "roomTitle": "Sala del Squad",
+  "roomStatus": "todos los especialistas · Nexo coordina",
+  "about": "Hablando de",
+  "openContext": "Ir a {name}",
+  "expand": "Expandir la conversación",
+  "expandTip": "Expandir",
+  "collapse": "Abrir al lado de la pantalla",
+  "collapseTip": "Abrir al lado",
+  "close": "Cerrar la conversación",
+  "closeTip": "Cerrar",
+  "attach": "Adjuntar",
+  "placeholder": "Mensaje {to}…",
+  "placeholderRoom": "Escríbele al squad…",
+  "ask": "Pregúntale a {name}",
+  "loading": "Abriendo la conversación",
+  "loadError": "No se pudo abrir la conversación en este momento. Inténtalo de nuevo en unos instantes.",
+  "sendError": "El mensaje no se envió. Inténtalo de nuevo.",
+  "sending": "Enviando",
+  "empty": "Aún no hay mensajes en esta conversación.",
+  "you": "Tú",
+  "yesterday": "Ayer",
+  "today": "Hoy",
+  "suggestions": {
+    "nexo": [
+      "¿Qué necesita de mí esta semana?",
+      "¿Qué proyecto requiere más atención?",
+      "Quiero empezar un proyecto nuevo."
+    ],
+    "otto": [
+      "¿Cómo va el plan de la próxima semana?",
+      "¿Qué contenidos funcionaron mejor?",
+      "Quiero mejorar mi Instagram."
+    ],
+    "iris": [
+      "¿Cómo fue la última semana?",
+      "¿Qué trajo más pedidos?",
+      "¿Qué debo seguir de cerca en Navidad?"
+    ]
+  },
+  "capAria": "Qué más pedirle a {name}",
+  "roomHint": "Nexo lo distribuye a quien lo necesite",
+  "threadsH": "Conversaciones Nueva conversación {with}",
+  "threadUntitled": "Conversación {with}",
+  "newThread": "Nueva conversación",
+  "now": "ahora",
+  "card": {
+    "material": "Material · v{version}",
+    "open": "Abrir la v{version}: {title}",
+    "state": {
+      "review": "Espera tu aprobación",
+      "approved": "Aprobada por ti",
+      "making": "Nueva versión en camino",
+      "superseded": "Reemplazada por la v{next}"
+    },
+    "error": "No se pudo registrar en este momento. Inténtalo de nuevo."
+  },
+  "rail": {
+    "label": "Contexto de la conversación",
+    "toggle": "Mostrar el contexto",
+    "tip": "Contexto",
+    "env": "Espacio",
+    "type": "Tipo",
+    "period": "Periodo",
+    "business": "Negocio",
+    "origin": "Origen",
+    "typeEnv": "Espacio",
+    "typeMemory": "Conocimiento",
+    "responds": "responde · {env}",
+    "back": "Volver a {env}"
+  },
+  "objective": {
+    "ask": "Para empezar: ¿cuál es el objetivo más importante de {business} ahora?",
+    "options": [
+      "Conseguir más pedidos",
+      "Atraer gente nueva a la tienda",
+      "Fortalecer la marca"
+    ],
+    "saved": "Anotado en la Memoria de Marca: “{objective}”.",
+    "error": "El objetivo no se guardó. Inténtalo de nuevo."
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "skipToContent": "Saltar al contenido",
+  "navLabel": "HelloSquad",
+  "mainLabel": "Contenido",
+  "toggle": {
+    "collapse": "Contraer la barra lateral",
+    "expand": "Expandir la barra lateral"
+  },
+  "groups": {
+    "main": "Principal",
+    "squad": "Tu squad",
+    "mgmt": "Gestión"
+  },
+  "items": {
+    "home": "Inicio",
+    "room": "Sala del Squad",
+    "auto": "Modo Autónomo",
+    "mem": "Memoria de Marca",
+    "team": "Mi Equipo y Conversaciones"
+  },
+  "areas": {
+    "nexo": "Proyectos",
+    "bia": "Estrategia",
+    "kaia": "Marca y Creación",
+    "otto": "Contenido",
+    "kiwi": "Growth",
+    "max": "CRM",
+    "iris": "Resultados"
+  },
+  "itemAria": "{label}, con {agent}",
+  "itemAriaSay": "{label}, con {agent}, {say}",
+  "itemAriaSayOnly": "{label}, {say}",
+  "itemTip": "{label} · {agent}",
+  "itemTipSay": "{label} · {say}",
+  "say": {
+    "roomAll": "todos los especialistas",
+    "roomWorking": "el squad está trabajando",
+    "needs": "{count, plural, one {# te espera} other {# te esperan}}",
+    "autoNone": "sin configurar",
+    "memPending": "{count, plural, one {# dato por confirmar} other {# datos por confirmar}}",
+    "unread": "mensajes nuevos"
+  },
+  "account": {
+    "aria": "Cuenta, negocio y configuración. {name}, {business}",
+    "tip": "{name} · {business}",
+    "dialog": "Cuenta, negocio y configuración",
+    "business": "Negocio",
+    "addBusiness": "Agregar un negocio",
+    "addBusinessSub": "Otra marca en la misma cuenta",
+    "businessLanguage": "Idioma del negocio",
+    "businessLanguageSub": "El squad responde en este idioma",
+    "myAccount": "Mi cuenta",
+    "settings": "Configuración",
+    "signOut": "Cerrar sesión",
+    "credits": "Plan {plan} · créditos del mes",
+    "creditsNoPlan": "Créditos del mes",
+    "creditsPct": "{pct}%",
+    "language": "Idioma",
+    "languageOption": "{language}, idioma de la interfaz",
+    "languageError": "No se pudo cambiar el idioma. Inténtalo de nuevo.",
+    "roles": {
+      "owner": "Titular",
+      "admin": "Administración",
+      "editor": "Edición",
+      "viewer": "Lectura"
+    }
+  },
+  "notifications": {
+    "label": "Notificaciones",
+    "aria": "Notificaciones",
+    "ariaNew": "Notificaciones, hay novedades",
+    "empty": "Nada nuevo por aquí. Cuando el squad te necesite, aparecerá aquí."
+  }
+}
