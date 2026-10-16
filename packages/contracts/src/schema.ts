@@ -374,6 +374,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workspaces/{workspace_id}/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Calendário editorial no período (propostas e pauta; cancelados ficam de fora) */
+        get: operations["list_calendar_workspaces__workspace_id__calendar_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workspaces/{workspace_id}/approvals": {
         parameters: {
             query?: never;
@@ -1142,6 +1159,60 @@ export interface components {
              * @description Vazio ou nulo apaga.
              */
             description: string | null;
+        };
+        /** CalendarPage */
+        CalendarPage: {
+            /** Items */
+            items: components["schemas"]["CalendarPost"][];
+        };
+        /** CalendarPost */
+        CalendarPost: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Scheduled On
+             * Format: date
+             */
+            scheduled_on: string;
+            /** Scheduled Time */
+            scheduled_time: string | null;
+            /**
+             * Channel
+             * @description Id do canal; o web traduz.
+             * @example instagram
+             */
+            channel: string;
+            /**
+             * Format
+             * @description Id do formato; o web traduz.
+             * @example reels
+             */
+            format: string;
+            /**
+             * Theme
+             * @example Bastidores da fermentação longa
+             */
+            theme: string;
+            /** @description Responsável no squad. */
+            owner_agent_id: components["schemas"]["AgentId"];
+            /**
+             * Status
+             * @description `draft` (proposta na versão em revisão), `planned` (pauta aprovada), `scheduled` e `published` (Fase 3).
+             * @example planned
+             */
+            status: string;
+            /** Notes */
+            notes: string | null;
+            /**
+             * Work Item Id
+             * @description Trabalho da 04.02 que propôs o post.
+             */
+            work_item_id: string | null;
+            /** Delivery Version Id */
+            delivery_version_id: string | null;
         };
         /** CardAction */
         CardAction: {
@@ -4977,6 +5048,69 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SquadStatus"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_calendar_workspaces__workspace_id__calendar_get: {
+        parameters: {
+            query: {
+                /** @description Primeiro dia (AAAA-MM-DD). */
+                from: string;
+                /** @description Último dia, até 92 dias depois. */
+                to: string;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarPage"];
                 };
             };
             /** @description Token ausente, inválido ou expirado. */

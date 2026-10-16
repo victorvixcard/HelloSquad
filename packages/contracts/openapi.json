@@ -2364,6 +2364,108 @@
         }
       }
     },
+    "/workspaces/{workspace_id}/calendar": {
+      "get": {
+        "tags": [
+          "work"
+        ],
+        "summary": "Calendário editorial no período (propostas e pauta; cancelados ficam de fora)",
+        "operationId": "list_calendar_workspaces__workspace_id__calendar_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Primeiro dia (AAAA-MM-DD).",
+              "title": "From"
+            },
+            "description": "Primeiro dia (AAAA-MM-DD)."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Último dia, até 92 dias depois.",
+              "title": "To"
+            },
+            "description": "Último dia, até 92 dias depois."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/workspaces/{workspace_id}/approvals": {
       "get": {
         "tags": [
@@ -5350,6 +5452,134 @@
           "description"
         ],
         "title": "BrandProfileUpdate"
+      },
+      "CalendarPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarPost"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "CalendarPage"
+      },
+      "CalendarPost": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "scheduled_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Scheduled On"
+          },
+          "scheduled_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled Time"
+          },
+          "channel": {
+            "type": "string",
+            "title": "Channel",
+            "description": "Id do canal; o web traduz.",
+            "examples": [
+              "instagram"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "title": "Format",
+            "description": "Id do formato; o web traduz.",
+            "examples": [
+              "reels"
+            ]
+          },
+          "theme": {
+            "type": "string",
+            "title": "Theme",
+            "examples": [
+              "Bastidores da fermentação longa"
+            ]
+          },
+          "owner_agent_id": {
+            "$ref": "#/components/schemas/AgentId",
+            "description": "Responsável no squad."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "`draft` (proposta na versão em revisão), `planned` (pauta aprovada), `scheduled` e `published` (Fase 3).",
+            "examples": [
+              "planned"
+            ]
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "work_item_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Id",
+            "description": "Trabalho da 04.02 que propôs o post."
+          },
+          "delivery_version_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Version Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "scheduled_on",
+          "scheduled_time",
+          "channel",
+          "format",
+          "theme",
+          "owner_agent_id",
+          "status",
+          "notes",
+          "work_item_id",
+          "delivery_version_id"
+        ],
+        "title": "CalendarPost"
       },
       "CardAction": {
         "properties": {
