@@ -1,12 +1,13 @@
 """S2f — e-mail transacional: gatilho do domínio → email_messages + email_outbox → EmailProvider.
 
-Os testes de integração enviam de verdade pelo SMTP do Mailpit local (127.0.0.1:56325) e conferem pela
-API HTTP do Mailpit (127.0.0.1:56324): os e-mails chegam nos três idiomas para os três negócios, sem
-citar outro negócio; falha passageira volta para a fila e sai na tentativa seguinte; destinatário fora
-do TLD `.example` é recusado sem envio; a preferência da pessoa é respeitada; a troca de senha pela
-Auth gera o aviso.
+Os testes de integração enviam de verdade pelo SMTP do Mailpit local (127.0.0.1:56325) e conferem
+pela API HTTP do Mailpit (127.0.0.1:56324): os e-mails chegam nos três idiomas para os três
+negócios, sem citar outro negócio; falha passageira volta para a fila e sai na tentativa seguinte;
+destinatário fora do TLD `.example` é recusado sem envio; a preferência da pessoa é respeitada; a
+troca de senha pela Auth gera o aviso.
 """
 
+import re
 import secrets
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime
@@ -42,6 +43,7 @@ REQUEST = (
 TITLE = "Legenda do pão de abóbora"
 MIOLO_PIX = "5eed0000-0000-4000-8000-0000000009d2"
 NAMES = {"miolo": "Miolo", "vitta": "Vitta Estética", "trilha": "Trilha Urbana"}
+MISSING_KEY = re.compile(r"\b(email|agent)\.[a-z]")
 
 
 def bearer(token: str) -> dict[str, str]:
@@ -84,16 +86,24 @@ async def mailpit() -> AsyncIterator[httpx.AsyncClient]:
 
 @pytest.fixture
 async def clean_state(db) -> AsyncIterator[None]:
-    """Fila vazia antes (o que outros testes enfileiraram não entra na conta) e seed reaplicado depois
-    (idiomas, cobranças e convites voltam ao estado dos dados fictícios)."""
+    """Fila vazia antes (o que outros testes enfileiraram não entra na conta) e seed reaplicado
+    depois (idiomas, cobranças e convites voltam ao estado dos dados fictícios)."""
+    started = datetime.now(UTC)
     await db.execute("select pgmq.purge_queue('email_outbox')")
+    await db.execute(
+        "delete from public.email_messages where idempotency_key like %s",
+        (f"payment:{MIOLO_PIX}:%",),
+    )
     yield
+    await db.execute("delete from public.email_messages where created_at >= %s", (started,))
     await db.execute(
         "delete from public.email_preferences p using auth.users u "
         "where u.id = p.user_id and u.email like '%%.example'"
     )
     await db.execute("delete from public.invitations where email like '%%.s2f@%%'")
-    await db.execute("update public.workspaces set locale = 'pt-BR' where slug in ('vitta', 'trilha')")
+    await db.execute(
+        "update public.workspaces set locale = 'pt-BR' where slug in ('vitta', 'trilha')"
+    )
     await db.execute(SEED_FILE.read_text(encoding="utf-8"))
 
 
@@ -111,7 +121,8 @@ def outbox(pool: AsyncConnectionPool, provider=None, *, max_attempts: int = 3) -
 async def invite(db, slug: str, email: str, owner: str) -> None:
     await db.execute(
         """
-        insert into public.invitations (workspace_id, email, role, token_hash, expires_at, invited_by)
+        insert into public.invitations
+          (workspace_id, email, role, token_hash, expires_at, invited_by)
         select w.id, %s, 'editor', %s, now() + interval '7 days', u.id
         from public.workspaces w, auth.users u
         where w.slug = %s and u.email = %s
@@ -160,9 +171,7 @@ async def drain_runs() -> list[str]:
         return await worker.drain()
 
 
-pytestmark = pytest.mark.integration
-
-
+@pytest.mark.integration
 async def test_events_reach_mailpit_in_three_languages_for_three_tenants(
     api, access_token, db, pool, mailpit, clean_state
 ) -> None:
@@ -171,7 +180,7 @@ async def test_events_reach_mailpit_in_three_languages_for_three_tenants(
     await db.execute("update public.workspaces set locale = 'en' where slug = 'vitta'")
     await db.execute("update public.workspaces set locale = 'es' where slug = 'trilha'")
     await db.execute(
-        "update auth.users set raw_user_meta_data = raw_user_meta_data || '{\"locale\": \"es\"}' "
+        'update auth.users set raw_user_meta_data = raw_user_meta_data || \'{"locale": "es"}\' '
         "where email = %s",
         (CARLA,),
     )
@@ -251,9 +260,17 @@ async def test_events_reach_mailpit_in_three_languages_for_three_tenants(
     # Repetir o evento não duplica o e-mail (chave de idempotência por evento e pessoa).
     await db.execute("update public.payments set status = 'pending' where id = %s", (MIOLO_PIX,))
     await db.execute("update public.payments set status = 'overdue' where id = %s", (MIOLO_PIX,))
-    assert len(await emails(db, "m.template = 'payment_problem'", "m.created_at >= %s", params=(started,))) == 1
+    assert (
+        len(
+            await emails(
+                db, "m.template = 'payment_problem'", "m.created_at >= %s", params=(started,)
+            )
+        )
+        == 1
+    )
 
 
+@pytest.mark.integration
 async def test_transient_failure_retries_and_then_reaches_mailpit(
     db, pool, mailpit, clean_state
 ) -> None:
@@ -285,10 +302,14 @@ async def test_transient_failure_retries_and_then_reaches_mailpit(
     assert exhausted["status"] == "failed" and exhausted["attempts"] == 3
     assert exhausted["error"]["code"] == "smtp_unavailable"
     assert await (
-        await db.execute("select count(*) as n from pgmq.a_email_outbox where message->>'email_message_id' = %s", (str(exhausted["id"]),))
+        await db.execute(
+            "select count(*) as n from pgmq.a_email_outbox where message->>'email_message_id' = %s",
+            (str(exhausted["id"]),),
+        )
     ).fetchone() == {"n": 1}
 
 
+@pytest.mark.integration
 async def test_recipient_outside_example_is_refused_without_sending(
     db, pool, mailpit, clean_state
 ) -> None:
@@ -306,6 +327,7 @@ async def test_recipient_outside_example_is_refused_without_sending(
     assert found["messages_count"] == 0
 
 
+@pytest.mark.integration
 async def test_preference_turns_off_an_optional_email(api, access_token, db, clean_state) -> None:
     headers = bearer(access_token(MARINA))
     listed = await api.get("/me/email-preferences", headers=headers)
@@ -319,7 +341,10 @@ async def test_preference_turns_off_an_optional_email(api, access_token, db, cle
     off = await api.put(
         "/me/email-preferences/payment_problem", headers=headers, json={"enabled": False}
     )
-    assert off.status_code == 200 and off.json() == {"template": "payment_problem", "enabled": False}
+    assert off.status_code == 200 and off.json() == {
+        "template": "payment_problem",
+        "enabled": False,
+    }
     refused = await api.put(
         "/me/email-preferences/password_changed", headers=headers, json={"enabled": False}
     )
@@ -334,6 +359,7 @@ async def test_preference_turns_off_an_optional_email(api, access_token, db, cle
     assert all(item["enabled"] for item in rafael.json()["items"])
 
 
+@pytest.mark.integration
 async def test_password_changed_by_auth_sends_the_notice(db, pool, mailpit, clean_state) -> None:
     settings = get_settings()
     key = settings.supabase_secret_key.get_secret_value()
@@ -397,7 +423,7 @@ def test_every_template_renders_in_the_three_languages_without_missing_keys() ->
             rendered = renderer.render(template, locale, variables)
             subjects.add(rendered.subject)
             for part in (rendered.subject, rendered.text, rendered.html):
-                assert "email." not in part and "{" not in part.replace("{}", ""), (
+                assert not MISSING_KEY.search(part) and "{" not in part, (
                     locale,
                     template,
                     part[:200],
