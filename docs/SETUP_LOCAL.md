@@ -100,7 +100,7 @@ As portas do Supabase ficam em `supabase/config.toml`; os alvos `make dev-api` e
 | `make seed` | Tenants e usuários fictícios de `docs/DADOS_FICTICIOS.md` (idempotente). |
 | `make test` | `test-backend` + `test-web` + `test-db`. O backend inclui testes de integração (marcados `integration`) que exigem Supabase no ar e seed aplicado. Só os unitários: `cd apps/backend && uv run pytest -m "not integration"`. |
 | `make test-web` | ESLint do web, `tsc` do web e dos pacotes (`@hellosquad/ui`, `@hellosquad/contracts`) e os testes Vitest dos pacotes. Não precisa de Supabase. |
-| `make e2e` | Build do web e Playwright (Chromium) contra o ambiente local: Marina entra e vê a casca da Miolo; Pedro cria um workspace de teste. No fim reaplica o seed. Exige `make up` e `make seed`. |
+| `make e2e` | Build do web e Playwright (Chromium) contra o ambiente local: Marina entra e vê a casca da Miolo; Pedro cria um workspace de teste; ao vivo (A1a), com o worker do squad em modo simulado: Marina pede uma legenda, vê o Otto escrevendo, recebe a v1 sem recarregar, revisa e aprova, e pede ajuste até a v2. No fim para o worker e reaplica o seed (com a trava do banco). Exige `make up` e `make seed`. |
 | `make openapi` | Exporta o contrato da API para `packages/contracts/openapi.json`. |
 | `make build` | Build de produção do web (o mesmo do CI). |
 | `make dev` | API e web juntas; Ctrl+C encerra as duas. Separadas: `make dev-api`, `make dev-web`. |
@@ -125,7 +125,7 @@ Banco:
 | `/app` | Depois do login: lê `GET /me` e vai para o primeiro workspace ou para `/app/novo-workspace`. |
 | `/app/<slug>` | Casca do app: barra lateral da V4.6 (Principal, Seu squad, Gestão), negócio e menu da pessoa no cabeçalho. Todo `/app/*` é `noindex`. |
 
-Use sempre o mesmo host no navegador (`127.0.0.1:3100` ou `localhost:3100`): os cookies da sessão são por host.
+Use sempre o mesmo host no navegador (`127.0.0.1:3100` ou `localhost:3100`): os cookies da sessão são por host. Os cookies da sessão são `httpOnly` (H0-03, A1a): login, cadastro, saída e renovação acontecem no servidor; o Realtime do browser (canal privado `workspace:<id>`) recebe só o token de acesso, pedido ao servidor.
 
 Design System e contrato:
 
@@ -135,9 +135,11 @@ Design System e contrato:
 Testes ponta a ponta (`make e2e`):
 
 1. Uma vez por máquina, o navegador do Playwright (só Chromium, uns 120 MB em `~/.cache/ms-playwright`): `pnpm --filter web exec playwright install chromium`.
-2. `make up && make seed`, depois `make e2e`. O Playwright sobe a API (`make dev-api`) e o `next start` se eles não estiverem no ar, e reaproveita os que estiverem.
-3. O fluxo do Pedro cria `pedro-teste-<timestamp>`; o teardown roda `make seed` e o Pedro volta a "sem membership", que o pgTAP e a integração esperam.
-4. Capturas de tela para relatório: `E2E_SCREENSHOTS=$PWD/docs/parciais/a0 pnpm --filter web e2e` (depois de um `make build`).
+2. `make up && make seed`, depois `make e2e`. O Playwright sobe a API (`make dev-api`) e o `next start` se eles não estiverem no ar, e reaproveita os que estiverem. **Com `make dev-web` no ar na 3100, pare-o antes**: o Playwright reaproveitaria o `next dev`, e o `next build` do `make e2e` quebra o `next dev` (suba de novo depois).
+3. **Worker do squad (fluxos ao vivo, A1a):** o setup do Playwright (`apps/web/e2e/global-setup.ts`) sobe `uv run hellosquad-worker` com `LLM_PROVIDER=simulated` (fixtures, sem custo e sem chave), espera "worker no ar" e grava o log em `/tmp/hellosquad-e2e-worker.log`. Para usar um worker que já está rodando (`make worker`), `E2E_WORKER=off`. O worker simulado termina um run em menos de um segundo: o teste segura os eventos do Realtime depois de "Otto começou a escrever" para conferir "escrevendo…" e depois solta na mesma ordem (só o tempo de entrega muda; os eventos são os do worker).
+4. O fluxo do Pedro cria `pedro-teste-<timestamp>` e o ao vivo cria trabalhos, entregas e decisões; o teardown para o worker e reaplica o seed, e o Pedro volta a "sem membership", que o pgTAP e a integração esperam. Dentro do `make e2e` a trava do banco já está com o próprio `make e2e` (`HELLOSQUAD_DB_LOCK_HELD=1`): o teardown roda o seed direto, sem `make seed` (que esperaria pela própria trava por 30 min). Rodando o Playwright fora do make, o teardown usa `make seed`, que pega a trava.
+5. Só os fluxos ao vivo, contra o que já está no ar (API e web): `flock -w 1800 /tmp/hellosquad-db.lock env HELLOSQUAD_DB_LOCK_HELD=1 pnpm --filter web exec playwright test e2e/live.spec.ts`.
+6. Capturas de tela para relatório: `E2E_SCREENSHOTS=$PWD/docs/parciais/a0 pnpm --filter web e2e` (depois de um `make build`).
 
 ## Seed e usuários de teste
 
