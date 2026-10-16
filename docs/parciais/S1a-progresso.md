@@ -9,9 +9,9 @@ funções, RLS, filas, Realtime e pgTAP. Início: 16/10/2026, 03:26.
 | 2. Máquina de estados dos trabalhos (`work_item_transitions`, `app.transition_work_item`) | feito: migration `20261016063600` (matriz de 23 transições em `app.work_item_transitions`, trigger que recusa UPDATE fora da matriz, `app.decide_approval` idempotente); pgTAP 10 (17) e 11 (20) verdes |
 | 3. Filas pgmq, `app.enqueue_run`, `app.create_work_item_from_message` | feito: migration `20261016063700` (4 filas, schema `pgmq` fechado para `authenticated`/`anon`/`service_role`, trabalho + run + fila na mesma transação, idempotente); pgTAP 12 (18) verde |
 | 4. Realtime Broadcast a partir do banco (`run_events`, `approvals`) | feito: migration `20261016063800` (triggers com `realtime.send` no tópico privado `workspace:<id>`, política de SELECT em `realtime.messages`, sem política de INSERT); pgTAP 13 (13) verde: membro lê, Vitta/Pedro/anon não |
-| 5. pgTAP das novas tabelas e funções | pendente |
-| 6. Seed da Miolo (conversas, mensagens, trabalho 04.01 em `needs_you`) | pendente |
-| 7. `docs/SETUP_LOCAL.md` (linha do web e filas pgmq) | pendente |
+| 5. pgTAP das novas tabelas e funções | feito: arquivos 08 a 13 (96 asserções novas); `make test-db` 14 arquivos, 216 testes, PASS |
+| 6. Seed da Miolo (conversas, mensagens, trabalho 04.01 em `needs_you`) | feito: bloco `$seed_nucleo$` com ids e horários fixos; `make seed` duas vezes seguidas, mesmo estado (Miolo 2 conversas, 3 mensagens, 1 trabalho, 1 review pendente; Vitta e Trilha vazias; filas vazias) |
+| 7. `docs/SETUP_LOCAL.md` (linha do web e filas pgmq) | feito: linha do web trocada pelo texto da A0b §3 item 6; linha nova sobre inspecionar as filas (comando conferido) |
 | 8. Relatório `S1a-relatorio.md` | pendente |
 
 ## Notas
