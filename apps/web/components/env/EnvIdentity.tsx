@@ -4,8 +4,9 @@ import { Agent, getAgent, PRODUCT_ICONS, type AgentId } from "@hellosquad/ui";
 import { useTranslations } from "next-intl";
 import { useLive } from "@/components/product/live";
 import { useShell } from "@/components/product/shell-context";
+import { CapCatalog } from "./CapCatalog";
 
-/** Camada de identidade dos ambientes V4: o especialista, o título, uma frase e a conversa com ele. */
+/** Camada de identidade dos ambientes V4: o especialista, o título, uma frase, o catálogo do que pedir e a conversa do ambiente. */
 export function EnvIdentity({ agent, business }: { agent: AgentId; business: string }) {
   const t = useTranslations("pages.env");
   const tc = useTranslations("common");
@@ -26,39 +27,23 @@ export function EnvIdentity({ agent, business }: { agent: AgentId; business: str
           <b>{member.name}</b> {t(`describe.${agent}`, { business })}
         </p>
       </div>
-      <div className="cap-w">
-        <button
-          type="button"
-          className="hm-btn is-soft is-s cap-trig"
-          aria-expanded={false}
-          aria-label={t("askAria", { article: member.article, name: member.name })}
-          onClick={() => shell.toast(tc("unavailable"), agent)}
-        >
-          <svg className="sb-ic" viewBox="0 0 18 18" aria-hidden="true">
-            <path d={PRODUCT_ICONS.capa} />
-          </svg>
-          <span>
-            {t("ask")}
-            <span className="cap-trig-ag">{t("askTo", { article: member.article, name: member.name })}</span>
-          </span>
-          <svg className="sb-ic cap-chev" viewBox="0 0 18 18" aria-hidden="true">
-            <path d={PRODUCT_ICONS.chevD} />
-          </svg>
-        </button>
-      </div>
+      <CapCatalog agent={agent} />
       <button
         type="button"
         className="hm-btn is-dark is-s v4-talk"
         aria-label={t("talkAria", { name: member.name, area })}
         onClick={() =>
+          // H1-04 (V4.6 L10572, `_openCtx('env')`): a conversa do ambiente, uma por ambiente e separada da direta, com a
+          // primeira fala do agente e as sugestões do ambiente (API da S2a, `context_type: environment`).
           shell.openConversation({
-            conversationId: shell.conversationIds.direct[agent] ?? null,
+            conversationId: null,
             agent,
             context: {
               kind: "env",
               label: area,
               href: `/app/${shell.workspace.slug}/squad/${agent}`,
               meta: `${member.name} ${t(`describe.${agent}`, { business })}`,
+              ref: { type: "environment", key: agent, title: area },
             },
           })
         }

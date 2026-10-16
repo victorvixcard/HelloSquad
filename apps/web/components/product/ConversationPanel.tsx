@@ -12,6 +12,7 @@ import {
   decideApprovalAction,
   loadConversationAction,
   loadOlderMessagesAction,
+  openObjectConversationAction,
   sendMessageAction,
 } from "@/app/app/[workspace]/actions";
 import { addObjectiveAction } from "@/app/app/[workspace]/memory-actions";
@@ -25,6 +26,8 @@ import { SquadStatus, type SquadStatusKind } from "./SquadStatus";
 import { useSquadEffect } from "./use-squad-effect";
 
 type Message = components["schemas"]["Message"];
+type Opening = components["schemas"]["ConversationOpening"];
+type ApiContext = components["schemas"]["ConversationContext"];
 
 export type ConversationActions = {
   load: typeof loadConversationAction;
@@ -37,6 +40,8 @@ export type ConversationActions = {
   card?: MaterialCardActions;
   /** Objetivo do primeiro acesso guardado na Memória da Marca (padrão: `addObjectiveAction`). */
   addObjective?: typeof addObjectiveAction;
+  /** Conversa de um objeto (A2b: ambiente, pedido do catálogo, post, indicador…; padrão: `openObjectConversationAction`). */
+  openObject?: typeof openObjectConversationAction;
 };
 
 /** Anexo que o worker põe na mensagem do agente quando entrega uma versão (S1c, `store.py`). */
@@ -63,11 +68,22 @@ const TEMP = "tmp-";
 /** Perto do topo (px), a rolagem traz as mensagens anteriores (`before=`). */
 const OLDER_AT = 48;
 
-type Loaded = { key: string; messages: Message[]; older: string | null; error: boolean };
+type Loaded = {
+  key: string;
+  messages: Message[];
+  older: string | null;
+  error: boolean;
+  /** Conversa do ambiente (H1-04): a primeira fala do agente e as sugestões, calculadas pela API a cada leitura. */
+  opening?: Opening | null;
+  /** Cartão do objeto como a API o lê agora (título, estado, resumo, período, origem). */
+  context?: ApiContext | null;
+};
 
 function targetKey(target: ConversationTarget | null): string {
   if (!target) return "";
-  return `${target.conversationId ?? "nova"}:${target.agent ?? "squad"}:${target.context?.label ?? ""}`;
+  const ref = target.context?.ref;
+  const obj = ref ? `${ref.type}:${ref.id ?? ref.key ?? ""}` : "";
+  return `${target.conversationId ?? "nova"}:${target.agent ?? "squad"}:${target.context?.label ?? ""}:${obj}`;
 }
 
 /**
@@ -146,10 +162,35 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     return () => cancelAnimationFrame(id);
   }, [open, key]);
 
+  // A2b: conversa de objeto que ainda não tem id (o ambiente, um post, um indicador, um segmento, um documento): a API
+  // cria ou devolve a que já existe, e o painel segue nela. O pedido do catálogo (`capability`) nasce na 1ª mensagem.
+  const pendingRef =
+    open && target && !target.conversationId && target.context?.ref && target.context.ref.type !== "capability"
+      ? target.context.ref
+      : null;
+  useEffect(() => {
+    if (!pendingRef || !target) return;
+    let alive = true;
+    const openObject = actions.openObject ?? openObjectConversationAction;
+    openObject(shell.workspace.id, pendingRef, target.agent ?? undefined).then((result) => {
+      if (!alive) return;
+      if (!result.ok) {
+        setLoaded({ key, messages: [], older: null, error: true });
+        return;
+      }
+      shell.openConversation({ ...target, conversationId: result.data.id }, mode === "full" ? "full" : "panel");
+    });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- o alvo é identificado pela chave (key)
+  }, [key, !!pendingRef]);
+
   // Reabrir sobre o mesmo objeto retoma o histórico: a última página de mensagens vem da API (só leitura).
   useEffect(() => {
     if (!open || !target) return;
     if (!target.conversationId) {
+      if (pendingRef) return;
       setLoaded((prev) => (prev?.key === key ? prev : { key, messages: [], older: null, error: false }));
       return;
     }
@@ -167,7 +208,14 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
           prev?.key === key
             ? prev.messages.filter((m) => !seen.has(m.id) && (m.id.startsWith(TEMP) || Date.parse(m.created_at) >= last))
             : [];
-        return { key, messages: [...fresh, ...sent], older: result.data.older, error: false };
+        return {
+          key,
+          messages: [...fresh, ...sent],
+          older: result.data.older,
+          error: false,
+          opening: result.data.detail.opening ?? null,
+          context: result.data.detail.context ?? null,
+        };
       });
     });
     return () => {
@@ -246,11 +294,14 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   // páginas anteriores ainda não carregadas, a conversa já teve mensagem da pessoa.
   const userWrote = messages.some((m) => m.author_type === "user") || !!(loaded?.key === key && loaded.older);
   const objectiveMode = !!target.objective && target.agent === "nexo" && !userWrote && !typingAgent;
+  const opening = loaded?.key === key ? (loaded.opening ?? null) : null;
   const suggestions: string[] = objectiveMode
     ? (t.raw("objective.options") as string[])
-    : !room && target.agent && !userWrote && !typingAgent && ["nexo", "otto", "iris"].includes(target.agent)
-      ? (t.raw(`suggestions.${target.agent as "nexo" | "otto" | "iris"}`) as string[])
-      : [];
+    : !room && target.agent && !userWrote && !typingAgent && opening?.suggestions.length
+      ? opening.suggestions
+      : !room && target.agent && !userWrote && !typingAgent && !target.context?.ref && ["nexo", "otto", "iris"].includes(target.agent)
+        ? (t.raw(`suggestions.${target.agent as "nexo" | "otto" | "iris"}`) as string[])
+        : [];
   const suggestionsLabel = objectiveMode
     ? t("objective.ask", { business: shell.workspace.name })
     : agent
@@ -366,7 +417,12 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
 
     let conversationId = target.conversationId;
     let created: string | null = null;
-    if (!conversationId && target.agent) {
+    const ref = target.context?.ref;
+    if (!conversationId && ref) {
+      // Pedido do catálogo (A2b): a conversa do pedido nasce com a primeira mensagem, uma por pedido.
+      const made = await (actions.openObject ?? openObjectConversationAction)(shell.workspace.id, ref, target.agent ?? undefined);
+      if (made.ok) conversationId = created = made.data.id;
+    } else if (!conversationId && target.agent) {
       const made = await actions.create(shell.workspace.id, target.agent, threadTitleFrom(body));
       if (made.ok) conversationId = created = made.data.id;
     }
@@ -376,14 +432,15 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
     const posted = result.data;
 
     // O que a mensagem faz no squad (ajuste, resposta ou pedido que vira trabalho): use-squad-effect.ts.
-    const done = await squadEffect({ conversationId, messageId: posted.id, body, adjust });
+    const done = await squadEffect({ conversationId, messageId: posted.id, body, adjust, deliveryType: target.deliveryType });
     if (!done) setSendError(true);
     setSending(false);
 
     if (created && target.agent) {
       // A conversa passou a existir: entra no topo do histórico do especialista e o painel segue nela.
       const next: ConversationTarget = { conversationId: created, agent: target.agent, context: target.context };
-      shell.rememberThread(target.agent, { id: created, title: threadTitleFrom(body), at: posted.created_at });
+      // Só a conversa direta entra no seletor "Conversas com…"; a de objeto fica na lista de Minha Equipe & Conversas.
+      if (!ref) shell.rememberThread(target.agent, { id: created, title: threadTitleFrom(body), at: posted.created_at });
       setLoaded({ key: targetKey(next), messages: [...messages.filter((m) => m.id !== tempId), posted], older: null, error: false });
       shell.openConversation(next, sameMode);
       return true;
@@ -412,17 +469,17 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
   // Cartão de contexto da V4.6 (`_vRail`, L10916): Ambiente, Tipo, Período (quando há), Negócio e Origem (quando há);
   // quem responde; "Voltar para <Ambiente>". O que o cartão sabe vem de quem abriu a conversa.
   const ctx = target.context;
+  const apiCtx = loaded?.key === key ? (loaded.context ?? null) : null;
   const wide = mode === "full" && shell.layout.convW >= 940;
   const envOf = agent ? tc(`areas.${agent.id}`) : "";
   const envHref = ctx?.href ?? (agent ? `/app/${shell.workspace.slug}/squad/${agent.id}` : null);
   const railFacts: Array<{ k: string; v: string }> = ctx
     ? [
         { k: t("rail.env"), v: envOf },
-        ...(ctx.kind === "env" ? [{ k: t("rail.type"), v: t("rail.typeEnv") }] : []),
-        ...(ctx.kind === "memory" ? [{ k: t("rail.type"), v: t("rail.typeMemory") }] : []),
-        ...(ctx.period ? [{ k: t("rail.period"), v: ctx.period }] : []),
+        ...(ctx.kind !== "work_item" ? [{ k: t("rail.type"), v: t(`rail.types.${ctx.kind}`) }] : []),
+        ...((ctx.period ?? apiCtx?.period) ? [{ k: t("rail.period"), v: (ctx.period ?? apiCtx?.period) as string }] : []),
         { k: t("rail.business"), v: shell.workspace.name },
-        ...(ctx.origin ? [{ k: t("rail.origin"), v: ctx.origin }] : []),
+        ...((ctx.origin ?? apiCtx?.origin) ? [{ k: t("rail.origin"), v: (ctx.origin ?? apiCtx?.origin) as string }] : []),
       ]
     : [];
   const showRail = wide && railOn && !!ctx && !!agent;
@@ -621,6 +678,28 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
                   <span>{t("loadError")}</span>
                 </div>
               ) : null}
+              {opening && loaded?.key === key && !loaded.older && !loaded.error ? (
+                // Conversa do ambiente (H1-04, V4.6 `_cxEnvFirst`): a primeira fala do agente, calculada pela API agora.
+                <>
+                  {messages.length === 0 ? (
+                    <div className="ps-day">
+                      <span>{t("today")}</span>
+                    </div>
+                  ) : null}
+                  <div className="ps-msg">
+                    <div className="ps-msg-av">
+                      <Agent agent={(opening.agent_id as AgentId) ?? target.agent ?? "nexo"} size={32} />
+                    </div>
+                    <div className="ps-msg-b">
+                      <div className="ps-msg-n">
+                        <b>{getAgent(opening.agent_id as AgentId).name}</b>
+                        <span className="ps-msg-r">{tc(`areas.${opening.agent_id as AgentId}`)}</span>
+                      </div>
+                      <div className="ps-msg-t">{opening.message}</div>
+                    </div>
+                  </div>
+                </>
+              ) : null}
               {messages.map((m) => {
                 const day = dayKey(m.created_at);
                 const sep =
@@ -709,7 +788,7 @@ export function ConversationPanel({ actions = DEFAULT_ACTIONS, now }: { actions?
             <aside className="ps-rail" aria-label={t("rail.label")}>
               <span className="ps-k">{t("rail.label")}</span>
               <b className="ps-rail-t">{ctx.label}</b>
-              {ctx.meta ? <small className="ps-rail-s">{ctx.meta}</small> : null}
+              {(ctx.meta ?? apiCtx?.summary) ? <small className="ps-rail-s">{ctx.meta ?? apiCtx?.summary}</small> : null}
               <dl className="ps-facts is-s">
                 {railFacts.map((f) => (
                   <div key={f.k}>

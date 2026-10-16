@@ -266,5 +266,6 @@
       "text": "Medir se uma ideia está dando certo.",
       "ask": "Quero acompanhar uma oportunidade."
     }
-  }
+  },
+  "opens": "Abre a conversa {with}."
 }

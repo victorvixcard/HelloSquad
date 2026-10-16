@@ -67,10 +67,17 @@
     "period": "Periodo",
     "business": "Negocio",
     "origin": "Origen",
-    "typeEnv": "Espacio",
-    "typeMemory": "Conocimiento",
     "responds": "responde · {env}",
-    "back": "Volver a {env}"
+    "back": "Volver a {env}",
+    "types": {
+      "env": "Espacio",
+      "memory": "Conocimiento",
+      "capability": "Pedido",
+      "calendar_post": "Publicación",
+      "metric": "Indicador",
+      "segment": "Segmento",
+      "document": "Documento"
+    }
   },
   "objective": {
     "ask": "Para empezar: ¿cuál es el objetivo más importante de {business} ahora?",

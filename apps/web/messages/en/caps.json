@@ -11,7 +11,7 @@
     "works": "{count, plural, one {# work item} other {# work items}}"
   },
   "noDelivery": "This request has no delivery in this version yet. Write what you need in the conversation.",
-  "kaiaWaiting": "Kaia's pieces are waiting for the image engine. Nothing is created before it arrives.",
+  "kaiaWaiting": "Kaia’s pieces are waiting for the image engine. Nothing is created before it arrives.",
   "placeholder": {
     "nexo": "Search: project, approval…",
     "bia": "Search: diagnosis, competitors…",
@@ -118,7 +118,7 @@
     },
     "kCar": {
       "label": "Create a carousel",
-      "text": "A story across several slides, with Otto's copy.",
+      "text": "A story across several slides, with Otto’s copy.",
       "ask": "I want to create a carousel."
     },
     "kPromo": {
@@ -266,5 +266,6 @@
       "text": "Measure whether an idea is working.",
       "ask": "I want to follow an opportunity."
     }
-  }
+  },
+  "opens": "Opens the conversation {with}."
 }

@@ -39,7 +39,9 @@ export function TeamChats({ chats, works, now }: { chats: ChatRow[]; works: Team
         const base = agent ? t("who", { name: agent.name, area: ts(`areas.${agent.id}`) }) : "";
         // V4 L10875: "<Nome> · <Ambiente>" e, na conversa de objeto, " · sobre …"; pedido do catálogo: " · pedido: <nome>" (L11648).
         const about = (type: string | null) =>
-          type === "calendar_post" || type === "project" || type === "metric" ? t(`aboutWhat.${type}`) : t("aboutWhat.other");
+          type === "calendar_post" || type === "project" || type === "metric" || type === "environment" || type === "segment" || type === "document"
+            ? t(`aboutWhat.${type}`)
+            : t("aboutWhat.other");
         const whoLine = room
           ? t("roomWho")
           : row.kind === "group"
@@ -69,6 +71,19 @@ export function TeamChats({ chats, works, now }: { chats: ChatRow[]; works: Team
       return;
     }
     const agent = row.agent ?? "nexo";
+    if (row.kind === "object" && row.contextType === "environment") {
+      // H1-04: a conversa do ambiente reabre como conversa do ambiente (cartão "Ambiente", primeira fala e sugestões).
+      const area = tc(`areas.${agent}`);
+      shell.openConversation(
+        {
+          conversationId: row.id,
+          agent,
+          context: { kind: "env", label: area, href: `/app/${shell.workspace.slug}/squad/${agent}`, ref: { type: "environment", key: agent, title: area } },
+        },
+        "full",
+      );
+      return;
+    }
     if (row.kind === "object") {
       shell.openConversation({ conversationId: row.id, agent, context: { kind: "work_item", label: work?.title ?? title, href: work?.href } }, "full");
       return;

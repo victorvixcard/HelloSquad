@@ -67,10 +67,17 @@
     "period": "Period",
     "business": "Business",
     "origin": "Origin",
-    "typeEnv": "Area",
-    "typeMemory": "Knowledge",
     "responds": "in charge · {env}",
-    "back": "Back to {env}"
+    "back": "Back to {env}",
+    "types": {
+      "env": "Area",
+      "memory": "Knowledge",
+      "capability": "Request",
+      "calendar_post": "Post",
+      "metric": "Metric",
+      "segment": "Segment",
+      "document": "Document"
+    }
   },
   "objective": {
     "ask": "To start: what’s the most important goal for {business} right now?",
