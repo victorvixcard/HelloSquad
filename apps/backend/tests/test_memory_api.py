@@ -19,6 +19,7 @@ CARLA = "carla@vitta.example"
 PEDRO = "pedro@semconta.example"
 
 SEED_FILE = Path(__file__).resolve().parents[3] / "supabase" / "seed.sql"
+SEED_DECLARED_SOURCE = "5eed0000-0000-4000-8000-000000000801"
 SEED_TONE = "5eed0000-0000-4000-8000-000000000813"
 SEED_FORBIDDEN_WORD = "5eed0000-0000-4000-8000-000000000816"
 SEED_SUGGESTION = "5eed0000-0000-4000-8000-000000000821"
@@ -272,6 +273,7 @@ async def test_correcting_a_fact_creates_a_version_and_keeps_history(
         "correction",
         None,
     )
+    assert version["source_id"] == SEED_DECLARED_SOURCE
 
     repeated = await api.post(
         f"/memory/facts/{SEED_TONE}/correct", headers=headers, json={"content": new_text}

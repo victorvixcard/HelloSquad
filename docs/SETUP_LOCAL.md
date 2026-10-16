@@ -215,6 +215,40 @@ curl -s $API/work-items/$(field work_item.id < /tmp/ap.json) -H "$AUTH" | field 
 
 Rotas da S1b: `GET|POST /workspaces/{id}/conversations`, `GET /conversations/{id}`, `GET|POST /conversations/{id}/messages`, `POST /messages/{id}/work-items`, `GET /workspaces/{id}/work-items`, `GET /work-items/{id}`, `GET /workspaces/{id}/approvals`, `POST /approvals/{id}/decision`, `GET /workspaces/{id}/projects`, `GET /projects/{id}`, `GET /runs/{id}`, `GET /runs/{id}/events?after=`. Erros das funções do banco: `not_found` 404, `forbidden` 403, `invalid_parameter`/`invalid_value` 422, `invalid_state` 409, `transition_not_allowed`/`status_changed` 409.
 
+### Memória da Marca (S1d)
+
+Com as variáveis do bloco acima (`API`, `AUTH`, `JSON`, `field`, `WS` da Miolo). O seed traz 5 conhecimentos "Confirmado", a "Decisão sua" de não usar a palavra 'artesanal', uma sugestão aberta do Otto e duas fontes; `make seed` devolve esse estado. Só o owner decide (Carla, editor da Vitta, recebe 403).
+
+```bash
+# 1. Dossiê: por área e assunto, com estado, fonte, quem usa e "O squad percebeu"
+curl -s $API/workspaces/$WS/memory -H "$AUTH" | field areas
+curl -s $API/workspaces/$WS/memory -H "$AUTH" | field pending          # {"suggestions": 1, ...}
+
+# 2. Busca textual (português, com radical): acha a palavra proibida por "palavra proibida" ou "tom"
+curl -s -G $API/workspaces/$WS/memory/search --data-urlencode 'q=palavra proibida' -H "$AUTH" | field items.0.content
+
+# 3. Decidir a sugestão do Otto (200; repetir devolve o mesmo estado, sem criar outro conhecimento)
+SUG=$(curl -s "$API/workspaces/$WS/memory/suggestions?state=open" -H "$AUTH" | field items.0.id)
+for i in 1 2; do
+  curl -s -o /tmp/sug.json -w '%{http_code} ' -X POST $API/memory/suggestions/$SUG/decision -H "$AUTH" -H "$JSON" \
+    -d '{"decision":"confirm"}'
+  echo "sugestão $(field decision < /tmp/sug.json), conhecimento $(field resulting_fact.id < /tmp/sug.json) $(field resulting_fact.state < /tmp/sug.json)"
+done
+# Corrigir em vez de confirmar: -d '{"decision":"correct","content":"Bastidores do forno uma vez por semana"}'
+# Descartar: -d '{"decision":"discard"}' (não vira conhecimento e o Otto não sugere de novo)
+
+# 4. Corrigir um conhecimento: versão nova Confirmado; a anterior fica no histórico
+TOM=$(curl -s $API/workspaces/$WS/memory -H "$AUTH" | field areas.1.topics.0.facts.0.id)  # Tom de voz
+curl -s -X POST $API/memory/facts/$TOM/correct -H "$AUTH" -H "$JSON" -d '{"content":"Acolhedor, direto e com humor leve"}' | field version
+curl -s $API/memory/facts/$TOM/history -H "$AUTH" | field versions
+
+# 5. Fontes ("De onde vem") e conflitos
+curl -s $API/workspaces/$WS/memory/sources -H "$AUTH" | field items
+curl -s "$API/workspaces/$WS/memory/conflicts?state=open" -H "$AUTH" | field items
+```
+
+O próximo run do worker já recebe a versão nova: os essenciais (decisões, Minha marca, Meu público) vão no bloco cacheado do prompt, a busca pelo pedido completa até `MEMORY_CONTEXT_TOKENS` (1.500) e tudo o que entrou fica em `run_context_items`. Rotas: `GET /workspaces/{id}/memory`, `GET /workspaces/{id}/memory/suggestions?state=`, `POST /memory/suggestions/{id}/decision`, `POST /memory/facts/{id}/correct`, `GET /memory/facts/{id}/history`, `GET /workspaces/{id}/memory/search?q=`, `GET /workspaces/{id}/memory/sources`, `GET /workspaces/{id}/memory/conflicts?state=`, `POST /memory/conflicts/{id}/resolve`.
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
