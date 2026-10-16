@@ -1,11 +1,11 @@
 # S2c — Relatório (Stark)
 
 **Fatia:** S2c, Memória camada 3: reflexão e aprendizados por cliente (Fase 2). **Data:** 16/10/2026, retomada às
-16:14 (a sessão das 15:50 morreu por cota sem commitar nada; árvore limpa na retomada) → fechamento às 16:5x.
+16:14 (a sessão das 15:50 morreu por cota sem commitar nada; árvore limpa na retomada) → fechamento às 16:44 (30 min).
 Área: `apps/backend`, `supabase/`, `squad/` (só o arquivo novo `squad/reflexao.md`; nenhuma SOUL ou skill mudou),
 `packages/contracts` (gerado) e docs da fatia. Commits em `main`, todos com push: `638fac3`, `d99af6c`, `76def2f`,
 `8045cd6`, `a85943c`, `0d110d4`, `136f59c`, `fd9cbbe`, `0659e0a`, `3dfcb74`, `adcda11`, o autosave `f42e64a` (levou o
-adaptador de embeddings antes do meu commit) e o deste relatório.
+adaptador de embeddings antes do meu commit), `4a37378` e o deste fechamento.
 
 ## 1. Entregue
 
@@ -30,8 +30,8 @@ make test-db        → …/23_agent_learnings.test.sql ............ ok
 make test-web       → packages/ui Tests 49 passed (49) · apps/web Tests 181 passed (181) · EXIT 0      (lint + tipos + Vitest, com o contrato novo)
 ```
 
-Depois dessas rodadas entraram `test_embeddings` (1, passou isolado: `1 passed in 0.05s`) e o caso do cancelamento sem
-recusa em `test_learnings` (`4 passed in 3.88s`); a rodada final está no §8.
+Depois dessas rodadas entraram `test_embeddings` (1) e o caso do cancelamento sem recusa em `test_learnings`; a rodada
+final (193/193) e o e2e (13/13) estão no §8.
 
 **Ponta a ponta contra a API no ar (8100) com o worker real em `--drain`** (`docs/parciais/s2c/curl_aprendizado.txt`, trechos):
 
@@ -126,4 +126,23 @@ usa um `distDir` próprio, ou roda em worktree/clone, como fiz.
 
 ## 8. Estado em que deixei a máquina
 
-(preenchido no fechamento)
+**Rodada final** (16:42–16:43):
+
+```
+make test-backend                       → All checks passed! · 92 files already formatted
+                                          ============================= 193 passed in 41.50s =============================
+e2e (worktree /tmp/hs-e2e, web :3199)   → ✓ 10 … Pedro entra sem negócio, cria o negócio e faz o onboarding inteiro em pt-BR até o primeiro pedido ao Nexo (4.0s)
+                                          13 passed (22.7s) · EXIT 0
+make test-db (16:38, sem mudança de banco depois) → Files=24, Tests=593  Result: PASS
+make test-web (16:38)                   → apps/web Tests 181 passed (181) · EXIT 0
+```
+
+- Banco no estado do seed: 0 reflexões, 0 aprendizados, filas `memory_reflect` e `runs_interactive` vazias, nenhuma
+  conversa de boas-vindas (os negócios do seed são "conta em uso"; a boas-vindas nasce só em negócio novo).
+- Migrations novas aplicadas por `make migrate` sobre o banco em uso (sem `db reset`): `20261016190000`, `…190100`,
+  `…190200`, `…190300`.
+- API (:8100) no ar desde 13:55, recarregou sozinha com as rotas novas (53 operações no `/openapi.json`); não reiniciei.
+- Web (:3100) no ar, reiniciado por mim às 16:43 depois do incidente do §7 (`make dev-web`, saída em
+  `/tmp/hellosquad-dev-web.log`), respondendo 200.
+- Nenhum `hellosquad-worker` rodando; worktree `/tmp/hs-e2e` removido (com a cópia do `.env`).
+- `docs/parciais/A2b-progresso.md` está solto no disco e não é meu (A2b do Aranha); não commitei.

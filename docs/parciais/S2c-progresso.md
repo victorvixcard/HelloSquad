@@ -12,3 +12,12 @@ Retomada às 16:14 de 16/10/2026. A sessão das 15:50 morreu por cota sem commit
 | 16:27 | 2–3. Worker `reflect` (fila `memory_reflect`, evidência conferida, promoção por regra) e aprendizados no contexto do run (top_k e orçamento) | `76def2f` | feito |
 | 16:29 | 2. Rotas do owner (listar, promover, descartar, continua valendo) e fixtures da 04.01 (pão de abóbora) | `8045cd6` | feito |
 | 16:31 | 4. pytest `test_learnings` 4/4 (critério da fase, decisões do owner, recusa e cancelamento, diff e rótulos); briefing da triagem na reflexão | `a85943c` | feito |
+| 16:35 | 5. Boas-vindas do Nexo no negócio novo (pt-BR, en, es), `locale` na criação, objetivo nomeado pela API e resposta do Nexo | `136f59c` | feito |
+| 16:36 | 6. pgTAP `23_agent_learnings` (39), contrato 51 → 53 operações, fixtures na ordem antiga | `fd9cbbe` | feito |
+| 16:37 | 6. `SETUP_LOCAL.md` e `.env.example` | `0659e0a` | feito |
+| 16:38 | 4. Cancelamento sem recusa no pytest; roteiro curl contra a API no ar com a saída | `3dfcb74`, `adcda11` | feito |
+| 16:40 | 3. Embeddings atrás de adaptador, desligados (ADR-0009) | `f42e64a` (autosave) | feito |
+| 16:39–16:43 | Incidente: o `next build` do `make e2e` quebrou o web do dono (:3100, 500); restaurado com `make dev-web`; e2e rodado em worktree isolado (13/13) | — | resolvido |
+| 16:44 | Verificação final (backend 193/193, pgTAP 593/593, web 181/181, e2e 13/13) e `S2c-relatorio.md` | este | feito |
+
+**Fatia fechada às 16:44.** Relatório: `docs/parciais/S2c-relatorio.md`.
