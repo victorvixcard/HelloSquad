@@ -90,7 +90,8 @@ describe("Precisa de você", () => {
     expect(shell.openConversation).toHaveBeenCalledWith({
       conversationId: "otto-1",
       agent: "otto",
-      context: { kind: "work_item", label: DATA.title },
+      // O cartão de contexto leva a origem do trabalho (V4.6 `_vRail`: "Origem").
+      context: { kind: "work_item", label: DATA.title, origin: DATA.origin },
       draft: "Quero pedir um ajuste nesta versão.",
       adjust: { approvalId: "ap-1", workItemId: DATA.workItemId, version: 1 },
     });
