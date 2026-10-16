@@ -43,13 +43,14 @@ async def main(settings: Settings, *, once: bool) -> None:
             report = await renew_due_subscriptions(
                 conn, providers, recheck_minutes=settings.billing_recheck_minutes
             )
-            log.info(
-                "renovação: %s vencidas, %s renovadas, %s em atraso, %s falhas de conciliação",
-                report.checked,
-                report.renewed,
-                report.past_due,
-                report.provider_errors,
-            )
+            if not report.skipped:
+                log.info(
+                    "renovação: %s vencidas, %s renovadas, %s em atraso, %s falhas de conciliação",
+                    report.checked,
+                    report.renewed,
+                    report.past_due,
+                    report.provider_errors,
+                )
             if once or stop.is_set():
                 break
             with contextlib.suppress(TimeoutError):

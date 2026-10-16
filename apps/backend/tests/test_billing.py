@@ -5,6 +5,7 @@ past_due sem bloquear leitura) e leitura só do owner, sem dinheiro. Cada teste 
 fim.
 """
 
+import asyncio
 import json
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
@@ -33,7 +34,7 @@ from hellosquad.billing import service
 from hellosquad.billing.factory import build_provider
 from hellosquad.billing.mock import MockProvider, mock_signature
 from hellosquad.billing.provider import CardToken, CustomerData
-from hellosquad.billing.renewal import renew_due_subscriptions
+from hellosquad.billing.renewal import RENEWAL_LOCK_KEY, RenewalReport, renew_due_subscriptions
 from hellosquad.billing.routes import get_payment_http
 from hellosquad.config import get_settings
 
@@ -418,6 +419,55 @@ async def test_renewal_grants_only_with_confirmed_payment_otherwise_past_due(
     )
     assert state.json()["status"] == "past_due"
     assert state.json()["next_cycle_at"] == state.json()["current_period_end"]
+
+
+async def test_two_schedulers_at_the_same_time_renew_the_cycle_once(billing_api, fakes, db) -> None:
+    vitta = await workspace(db, "vitta")
+    provider = build_provider("asaas", get_settings(), fakes.http)
+    subscription = await service.subscribe(
+        db, provider, workspace_id=vitta, plan_slug="squad", method="pix", customer=VITTA
+    )
+    [first] = fakes.asaas.payments.values()
+    fakes.asaas.set_status(first["id"], "RECEIVED")
+    await webhook(
+        billing_api, "asaas", *fakes.asaas.webhook("PAYMENT_RECEIVED", payment_id=first["id"])
+    )
+    period_end = await scalar(
+        db, "select current_period_end from public.subscriptions where id = %s", subscription["id"]
+    )
+    second = fakes.asaas.next_cycle(subscription["provider_subscription_id"])
+    fakes.asaas.set_status(second["id"], "RECEIVED")
+    later = period_end + timedelta(days=1)
+    providers = {"asaas": provider, "mock": MockProvider(webhook_secret=None)}
+    url = get_settings().database_url.get_secret_value()
+
+    async with (
+        await psycopg.AsyncConnection.connect(url, autocommit=True, row_factory=dict_row) as c1,
+        await psycopg.AsyncConnection.connect(url, autocommit=True, row_factory=dict_row) as c2,
+    ):
+        await c2.execute("select pg_advisory_lock(%s)", (RENEWAL_LOCK_KEY,))
+        assert await renew_due_subscriptions(c1, providers, now=later) == RenewalReport(
+            skipped=True
+        )
+        await c2.execute("select pg_advisory_unlock(%s)", (RENEWAL_LOCK_KEY,))
+
+        r1, r2 = await asyncio.gather(
+            renew_due_subscriptions(c1, providers, now=later),
+            renew_due_subscriptions(c2, providers, now=later),
+        )
+        ran, skipped = (r1, r2) if r2.skipped else (r2, r1)
+        assert skipped == RenewalReport(skipped=True)
+        assert (ran.skipped, ran.checked, ran.renewed, ran.past_due) == (False, 2, 1, 1)
+        assert await scalar(db, "select pg_try_advisory_lock(%s)", RENEWAL_LOCK_KEY)
+        await db.execute("select pg_advisory_unlock(%s)", (RENEWAL_LOCK_KEY,))
+
+    grants = await scalar(
+        db,
+        "select count(*) from public.payments p join public.credit_grants g on g.id = p.grant_id "
+        "where p.subscription_id = %s and g.origin = 'plan_cycle'",
+        subscription["id"],
+    )
+    assert grants == 2
 
 
 async def test_billing_reads_are_owner_only_and_carry_no_money(
