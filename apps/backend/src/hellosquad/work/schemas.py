@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
@@ -9,9 +9,13 @@ from hellosquad.approvals.schemas import Approval
 from hellosquad.autonomy.schemas import RunSummary
 from hellosquad.domain import (
     AgentId,
+    ApprovalKind,
+    ConversationKind,
     DeliveryVersionStatus,
+    MessageAuthorType,
     PrincipalType,
     ProjectStatus,
+    WorkItemOriginType,
     WorkItemStatus,
     WorkItemStepStatus,
 )
@@ -26,10 +30,152 @@ class Project(BaseModel):
     objective: str | None
     status: ProjectStatus
     owner_agent_id: AgentId
+    starts_at: datetime | None = Field(default=None, description="Início no roadmap.")
+    ends_at: datetime | None = Field(default=None, description='Prazo ("20/12"); nulo = sem prazo.')
     created_by: UUID | None
     archived_at: datetime | None
     created_at: datetime
     updated_at: datetime
+
+
+class ProjectParticipant(BaseModel):
+    agent_id: AgentId
+    responsibility: str | None = Field(examples=["estratégia e conceito"])
+
+
+class ProjectMilestone(BaseModel):
+    id: UUID
+    project_id: UUID
+    title: str = Field(examples=["Revisão das peças"])
+    summary: str | None = Field(examples=["você aprova cada uma"])
+    agent_id: AgentId | None
+    kind: Literal["milestone", "goal"] = Field(description="`goal` é a meta do projeto.")
+    due_at: datetime | None = Field(description="Nulo = sem data.")
+    needs_you: bool = Field(description='"decisão sua" no roadmap.')
+    planned: bool = Field(description='"previsto" no roadmap.')
+    done: bool
+    done_at: datetime | None
+    work_item_id: UUID | None = Field(description="Trabalho pedido dentro do projeto.")
+    approval_id: UUID | None = Field(description="Pendência em que o marco virou decisão.")
+    created_at: datetime
+    updated_at: datetime
+
+
+class ProjectDetail(Project):
+    participants: list[ProjectParticipant] = Field(description="Quem conduz primeiro.")
+    milestones: list[ProjectMilestone] = Field(description="Por data; sem data por último.")
+    work_item_count: int = Field(description='"Trabalhos pedidos neste projeto · N".')
+
+
+ProjectName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+ProjectObjective = Annotated[str, StringConstraints(strip_whitespace=True, max_length=4000)]
+Responsibility = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
+]
+MilestoneTitle = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)
+]
+MilestoneSummary = Annotated[str, StringConstraints(strip_whitespace=True, max_length=300)]
+
+
+class ProjectParticipantIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    agent_id: AgentId
+    responsibility: Responsibility | None = None
+
+
+class ProjectCreate(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
+            "examples": [
+                {
+                    "name": "Campanha de Natal",
+                    "objective": "Vender mais panetones pelo site e na loja.",
+                    "owner_agent_id": "nexo",
+                    "starts_at": "2026-10-05T09:00:00-03:00",
+                    "ends_at": "2026-12-20T18:00:00-03:00",
+                    "participants": [
+                        {"agent_id": "bia", "responsibility": "estratégia e conceito"},
+                        {"agent_id": "kaia", "responsibility": "peças da campanha"},
+                    ],
+                }
+            ]
+        },
+    )
+
+    name: ProjectName
+    objective: ProjectObjective | None = None
+    owner_agent_id: AgentId = Field(default=AgentId.nexo, description="Quem conduz.")
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+    participants: list[ProjectParticipantIn] = Field(default_factory=list, max_length=7)
+
+
+class ProjectUpdate(BaseModel):
+    """Só os campos enviados mudam; `null` em objective, starts_at e ends_at apaga o valor."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: ProjectName | None = None
+    objective: ProjectObjective | None = None
+    status: ProjectStatus | None = None
+    owner_agent_id: AgentId | None = None
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+
+
+class ProjectParticipantsSet(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    participants: list[ProjectParticipantIn] = Field(
+        max_length=7, description="A equipe inteira; quem conduz continua nela."
+    )
+
+
+class MilestoneCreate(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
+            "examples": [
+                {
+                    "title": "Revisão das peças",
+                    "summary": "você aprova cada uma",
+                    "agent_id": "kaia",
+                    "due_at": "2026-10-22T09:00:00-03:00",
+                    "needs_you": True,
+                }
+            ]
+        },
+    )
+
+    title: MilestoneTitle
+    summary: MilestoneSummary | None = None
+    agent_id: AgentId | None = None
+    due_at: datetime | None = None
+    kind: Literal["milestone", "goal"] = "milestone"
+    needs_you: bool = False
+    planned: bool = False
+
+
+class MilestoneUpdate(BaseModel):
+    """Só os campos enviados mudam; `done: true` conclui agora, `false` reabre."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: MilestoneTitle | None = None
+    summary: MilestoneSummary | None = None
+    agent_id: AgentId | None = None
+    due_at: datetime | None = None
+    kind: Literal["milestone", "goal"] | None = None
+    needs_you: bool | None = None
+    planned: bool | None = None
+    done: bool | None = None
+
+
+class MilestonePage(BaseModel):
+    items: list[ProjectMilestone] = Field(description="Por data, o mais próximo primeiro.")
 
 
 class ProjectPage(BaseModel):
@@ -83,6 +229,28 @@ class WorkItemCreate(BaseModel):
         return value
 
 
+class WorkItemOrigin(BaseModel):
+    """De onde o trabalho nasceu, com o que o web precisa para escrever a origem."""
+
+    type: WorkItemOriginType
+    ref: str = Field(description="Id da mensagem, da sugestão ou do projeto; código da execução.")
+    conversation_id: UUID | None = Field(description="Conversa do pedido (origem mensagem).")
+    conversation_kind: ConversationKind | None
+    agent_id: AgentId | None = Field(
+        description="Especialista da conversa direta ou quem percebeu o insight."
+    )
+    title: str | None = Field(description="Título do insight ou nome do projeto.")
+
+
+class PendingApprovalSummary(BaseModel):
+    id: UUID
+    kind: ApprovalKind
+    requested_by_agent_id: AgentId
+    delivery_version_no: int | None
+    due_at: datetime | None
+    deferred: bool = Field(description='"Agora não": fora de "Precisa de você" até decidir.')
+
+
 class WorkItem(BaseModel):
     id: UUID
     workspace_id: UUID
@@ -97,6 +265,42 @@ class WorkItem(BaseModel):
     created_by: UUID | None
     created_at: datetime
     updated_at: datetime
+    due_at: datetime | None = Field(default=None, description="Prazo do trabalho.")
+    status_label: str | None = Field(
+        default=None,
+        description=(
+            'Frase viva: a do agente ("Otto criando a primeira versão") ou a do estado '
+            '("v1 aguarda sua aprovação"), no idioma do workspace.'
+        ),
+        examples=["v1 aguarda sua aprovação"],
+    )
+    next_step: str | None = Field(
+        default=None, description="Próximo passo.", examples=["Aprovar a v1"]
+    )
+    origin: WorkItemOrigin | None = None
+    awaiting_you: bool = Field(
+        default=False, description="Tem pendência que depende da pessoa agora (não adiada)."
+    )
+    pending_approval: PendingApprovalSummary | None = Field(
+        default=None, description="A pendência aberta (a que depende de você primeiro)."
+    )
+
+
+class WorkItemHistoryEntry(BaseModel):
+    id: UUID
+    actor_type: MessageAuthorType
+    actor_user_id: UUID | None
+    agent_id: AgentId | None
+    kind: Literal["requested", "delivered", "decided"]
+    text: str = Field(examples=["Você aprovou a v2"])
+    mark: Literal["automatic", "approved_by_you"] | None = Field(
+        description='"automático" ou "aprovado por você".'
+    )
+    mark_label: str | None = Field(examples=["aprovado por você"])
+    params: dict[str, Any]
+    approval_id: UUID | None
+    delivery_version_id: UUID | None
+    created_at: datetime
 
 
 class WorkItemPage(BaseModel):
@@ -159,3 +363,6 @@ class WorkItemDetail(WorkItem):
     deliveries: list[Delivery]
     approvals: list[Approval]
     runs: list[RunSummary]
+    history: list[WorkItemHistoryEntry] = Field(
+        default_factory=list, description="Do mais antigo ao mais recente."
+    )

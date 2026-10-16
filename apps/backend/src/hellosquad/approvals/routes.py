@@ -13,6 +13,7 @@ from hellosquad.api.pagination import CursorQuery, decode_cursor, limit_query, s
 from hellosquad.approvals.schemas import (
     Approval,
     ApprovalDecisionCreate,
+    ApprovalDefer,
     ApprovalPage,
     ApprovalWorkItem,
 )
@@ -24,6 +25,7 @@ APPROVAL_SELECT = """
 select a.id, a.workspace_id, a.kind::text, a.status::text, a.decision::text, a.follow_up,
        a.requested_by_agent_id::text, a.delivery_version_id, v.version_no as delivery_version_no,
        a.run_id, a.decided_by, a.decided_at, a.note, a.due_at, a.created_at, a.updated_at,
+       app.approval_is_deferred(a) as deferred, a.deferred_at, a.deferred_until,
        w.id as work_item_id, w.title as work_item_title, w.status::text as work_item_status,
        w.delivery_type as work_item_delivery_type,
        w.primary_agent_id::text as work_item_primary_agent_id
@@ -36,6 +38,7 @@ LIST_APPROVALS = f"""
 {APPROVAL_SELECT}
 where a.workspace_id = %(workspace_id)s
   and (%(status)s::public.approval_status is null or a.status = %(status)s::public.approval_status)
+  and (%(include_deferred)s or not app.approval_is_deferred(a))
   and (%(cursor_at)s::timestamptz is null
        or (a.created_at, a.id) > (%(cursor_at)s, %(cursor_id)s::uuid))
 order by a.created_at, a.id
@@ -48,6 +51,8 @@ where a.id = %s and a.workspace_id in (select app.current_user_workspace_ids())
 """
 
 DECIDE_APPROVAL = "select id from app.decide_approval(%s, %s::public.approval_decision, %s, %s)"
+DEFER_APPROVAL = "select id from app.defer_approval(%s, %s)"
+RESUME_APPROVAL = "select id from app.resume_approval(%s)"
 
 
 def approval_from_row(row: dict) -> Approval:
@@ -82,6 +87,10 @@ async def list_approvals(
     status: Annotated[
         ApprovalStatus | None, Query(description="Filtra pelo estado da decisão.")
     ] = None,
+    include_deferred: Annotated[
+        bool,
+        Query(description='Inclui as autorizações adiadas ("Agora não"); por padrão ficam fora.'),
+    ] = False,
     cursor: CursorQuery = None,
     limit: Annotated[int, limit_query(100)] = 50,
 ) -> ApprovalPage:
@@ -91,6 +100,7 @@ async def list_approvals(
         params = {
             "workspace_id": workspace_id,
             "status": status,
+            "include_deferred": include_deferred,
             "cursor_at": cursor_at,
             "cursor_id": cursor_id,
             "limit": limit + 1,
@@ -122,4 +132,39 @@ async def decide_approval(
         await conn.execute(
             DECIDE_APPROVAL, (approval_id, payload.decision, payload.note, payload.follow_up)
         )
+        return await load_approval(conn, approval_id)
+
+
+@router.post(
+    "/approvals/{approval_id}/defer",
+    summary='"Agora não": adia a autorização sem decidir nem rejeitar (só o owner)',
+    description=(
+        'A autorização continua pendente, sem decisão, e sai de "Precisa de você"; o trabalho não '
+        "muda de estado, nenhum run nasce e nada é cobrado. Repetir devolve o mesmo estado. Só "
+        "para `authorize`; decidida responde 409."
+    ),
+    responses=error_responses(401, 403, 404, 409, 422, 503),
+)
+async def defer_approval(
+    approval_id: UUID,
+    payload: ApprovalDefer,
+    principal: CurrentPrincipal,
+    db: DatabaseDep,
+) -> Approval:
+    async with db.transaction_as(principal) as conn:
+        await conn.execute(DEFER_APPROVAL, (approval_id, payload.until))
+        return await load_approval(conn, approval_id)
+
+
+@router.post(
+    "/approvals/{approval_id}/resume",
+    summary='"Decidir agora": a autorização adiada volta a pedir a decisão (só o owner)',
+    description='Volta para "Precisa de você". Sem adiamento, devolve o estado atual.',
+    responses=error_responses(401, 403, 404, 409, 503),
+)
+async def resume_approval(
+    approval_id: UUID, principal: CurrentPrincipal, db: DatabaseDep
+) -> Approval:
+    async with db.transaction_as(principal) as conn:
+        await conn.execute(RESUME_APPROVAL, (approval_id,))
         return await load_approval(conn, approval_id)

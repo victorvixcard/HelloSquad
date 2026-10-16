@@ -27,7 +27,8 @@ class Approval(BaseModel):
     kind: ApprovalKind = Field(
         description=(
             "`review` revisar, `approve` aprovar, `authorize` autorizar ação externa, "
-            "`confirm` confirmar, `reconnect` reconectar, `respond` responder. Só o owner decide."
+            "`confirm` confirmar, `reconnect` reconectar, `respond` responder, `decide` decidir "
+            "(escolher entre opções). Só o owner decide."
         )
     )
     status: ApprovalStatus
@@ -43,6 +44,14 @@ class Approval(BaseModel):
     decided_at: datetime | None
     note: str | None
     due_at: datetime | None
+    deferred: bool = Field(
+        default=False,
+        description='"Agora não": pendente, mas fora de "Precisa de você" até decidir de novo.',
+    )
+    deferred_at: datetime | None = None
+    deferred_until: datetime | None = Field(
+        default=None, description="Até quando fica adiada; nulo = até a pessoa decidir."
+    )
     created_at: datetime
     updated_at: datetime
     work_item: ApprovalWorkItem
@@ -69,7 +78,8 @@ class ApprovalDecisionCreate(BaseModel):
     decision: ApprovalDecision = Field(
         description=(
             "`review`/`approve`: approved, changes_requested ou rejected. `authorize`/`confirm`/"
-            "`reconnect`: approved ou rejected. `respond`: answered."
+            "`reconnect`: approved ou rejected. `respond` e `decide`: answered (a escolha vai em "
+            "`note`)."
         )
     )
     note: Annotated[str, StringConstraints(strip_whitespace=True, max_length=2000)] | None = Field(
@@ -82,4 +92,13 @@ class ApprovalDecisionCreate(BaseModel):
             "trabalho; `revise` devolve ao agente para uma nova proposta. Não vale para outras "
             "decisões."
         ),
+    )
+
+
+class ApprovalDefer(BaseModel):
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"examples": [{}]})
+
+    until: datetime | None = Field(
+        default=None,
+        description="Quando voltar a pedir; sem data, fica para quando a pessoa quiser.",
     )
