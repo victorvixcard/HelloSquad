@@ -1,0 +1,56 @@
+== A. campanha sem tema na Vitta: o Nexo pergunta; a resposta destrava o plano?
+  worker: exit=0 concluídos=1 falhas=0
+   ('needs_you', [])
+  responde: respond->answered: 200
+  worker: exit=0 concluídos=2 falhas=0
+   ('needs_you', []) | pendente: respond
+   runs=[['succeeded', '1', '0.00'], ['succeeded', '1', '0.00']] reservas=[['released', '10.00', '-'], ['released', '10.00', '-']] extrato=[['hold', '0.00', '2'], ['release', '0.00', '2']]
+== B. campanha de Natal na Vitta: Bia -> Kaia(stub) -> Otto
+  worker: exit=0 concluídos=4 falhas=0
+   ('needs_you', [(1, 'bia', '02.04', 'needs_you', None), (2, 'kaia', '03.01', 'pending', None), (3, 'otto', '04.03', 'pending', None)])
+  Carla tenta decidir a etapa: review->approved: 403 {"error": {"code": "forbidden", "message": "Só o dono da conta toma esta decisão.", "details": []}}
+   review->approved: 200
+  worker: exit=0 concluídos=6 falhas=0
+   ('needs_you', [(1, 'bia', '02.04', 'done', None), (2, 'kaia', '03.01', 'waiting_engine', 'image_engine_pending'), (3, 'otto', '04.03', 'needs_you', None)])
+   review->approved: 200
+  worker: exit=0 concluídos=6 falhas=0
+   ('done', [(1, 'bia', '02.04', 'done', None), (2, 'kaia', '03.01', 'waiting_engine', 'image_engine_pending'), (3, 'otto', '04.03', 'done', None)])
+  trabalho: done | projeto: 200 done | dono: {"user_id": "2ea4c6eb-3cf6-40ac-83cc-1e0ed843a14c", "role": "owner", "responsibility": "decide cada entrega"}
+  participantes: [('bia', 'estratégia e conceito'), ('kaia', 'peças da campanha'), ('otto', 'legendas e roteiros')]
+  marcos: [('Estratégia', 'bia', True), ('Peças', 'kaia', False), ('Textos', 'otto', True)]
+  runs: [['-', 'nexo', 'succeeded', '0.00'], ['1', 'bia', 'succeeded', '10.00'], ['2', 'kaia', 'succeeded', '0.00'], ['3', 'otto', 'succeeded', '10.00']]
+  reservas: [['01.02', 'released', '10.00', '-'], ['02.04', 'captured', '10.00', '10.00'], ['03.01', 'released', '10.00', '-'], ['04.03', 'captured', '10.00', '10.00']]
+  handoff: [['kaia', 'handoff', '1', '1'], ['otto', 'handoff', '1', '1']]
+  Kaia na conversa: ['A etapa Peças fica aguardando o motor de imagem, que ainda não está ligado. Nada é gerado nem cobrado até ele chegar; as etapas que não dependem da peça seguem.']
+  Juliana (Trilha) lê o projeto: 404
+== C. reflexão ao aprovar deliveries sem fixture de reflexão (02.01, 05.01, 07.02)
+  reflexões da Vitta: [['02.04', 'approved', 'succeeded', '1', ''], ['04.03', 'approved', 'succeeded', '1', ''], ['02.01', 'approved', 'failed', '1', '{"code": "llm_config", "details": {"step": "bia.reflect", "delivery_type": "02.01"}, "atte'], ['05.01', 'approved', 'failed', '1', '{"code": "llm_config", "details": {"step": "kiwi.reflect", "delivery_type": "05.01"}, "att'], ['07.02', 'approved', 'failed', '1', '{"code": "llm_config", "details": {"step": "iris.reflect", "delivery_type": "07.02"}, "att']]
+== D. correção da Marina na Miolo (04.01), aplicada na entrega seguinte do Otto
+  W1 v1 Promoção imperdível: pão de abóbora saindo do forno. / Vocês vão adorar a casca dourada e o miolo macio. / Passem na Miolo e garantam o de vocês.
+   review->changes_requested: 200
+  W1 v2 Pão de abóbora saindo do forno, com casca dourada e miolo macio. / Você sente o perfume da fermentação natural já na porta. / Passe na Miolo e leve o seu.
+   review->approved: 200
+  worker: exit=0 concluídos=11 falhas=3
+  reflexão: [['approved_with_edits', 'succeeded', '3']]
+  aprendizados: 200 [('Tratamento', 'promoted', 'explicit_correction'), ('Abertura', 'candidate', None), ('Vocabulário', 'promoted', 'explicit_correction')]
+  W2 (04.01 seguinte) v1 Sexta tem pão de abóbora quentinho saindo do forno. / Você vai sentir a casca dourada e o miolo macio. / Passe na Miolo e leve o seu.
+  W2 contexto: [['1', 'learning', 'delivery', 'Tratamento'], ['1', 'learning', 'delivery', 'Vocabulário']]
+  W3 (04.03 seguinte) contexto: []
+  W3 texto contém 'imperdível'? False
+  W4 (04.01, outro pão) v1 Sábado tem pão de fermentação longa saindo do forno. / Casca crocante, miolo macio e o tempo que a massa pede. / Passe na Miolo de manhã e leve o seu ainda morno.
+  W4 contexto: [['1', 'learning', 'delivery', 'Tratamento'], ['1', 'learning', 'delivery', 'Vocabulário']]
+== E. isolamento e decisão dos aprendizados
+  Rafael lista os da Miolo: 404
+  Rafael descarta um da Miolo: 404
+  Pedro (sem conta) lista: 404
+  Vitta 04.01 contexto (aprendizados da Miolo não entram): [] | v1 Promoção imperdível: pão de abóbora saindo do forno. / Vocês vão adorar a casca dourada e o miolo macio. / Passem na 
+  Marina descarta todos os promovidos:
+     Tratamento 200
+     Vocabulário 200
+  W5 depois do descarte v1 Promoção imperdível: pão de abóbora saindo do forno. / Vocês vão adorar a casca dourada e o miolo macio. / Passem na Miolo e garantam o de vocês.
+  W5 contexto: []
+  Marina promove a candidata: 200
+  W6 contexto (promovida entra): [['1', 'learning', 'delivery', 'Abertura']]
+== F. validade: aprendizado sem reafirmação há LEARNING_REVIEW_DAYS
+  config: LEARNING_REVIEW_DAYS=90
+  falhas no log do worker: 3
