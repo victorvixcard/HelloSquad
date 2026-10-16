@@ -1,0 +1,21 @@
+# make e2e (16/10 12:21–12:22, exit 0; next dev da 3100 parado antes e subido de novo depois)
+ ✓ Compiled successfully in 1980ms
+ ✓ Generating static pages (9/9)
+  ✓   1 [chromium] › e2e/a1b.spec.ts:18:7 › Projetos e Memória da Marca (A1b) › o Quadro de Projetos mostra o trabalho do seed na coluna Precisa de você (559ms)
+  ✓   2 [chromium] › e2e/a1b.spec.ts:32:7 › Projetos e Memória da Marca (A1b) › dossiê da Miolo: o que o squad sabe, de onde vem, principais conhecimentos e o que espera o seu ok (441ms)
+  ✓   3 [chromium] › e2e/a1b.spec.ts:51:7 › Projetos e Memória da Marca (A1b) › Marina confirma o que o Otto percebeu, o conhecimento aparece e a outra aba recebe ao vivo (3.1s)
+  ✓   4 [chromium] › e2e/auth-shell.spec.ts:5:7 › área logada › sem sessão, /app manda para o login e volta para onde a pessoa ia (396ms)
+  ✓   5 [chromium] › e2e/auth-shell.spec.ts:14:7 › área logada › senha errada mostra o erro em português e mantém o e-mail (275ms)
+  ✓   6 [chromium] › e2e/auth-shell.spec.ts:23:7 › área logada › Marina entra e vê a barra lateral com o workspace Miolo (1.1s)
+  ✓   7 [chromium] › e2e/auth-shell.spec.ts:77:7 › área logada › Pedro entra sem workspace, cria pedro-teste-<timestamp> e cai no shell dele (979ms)
+  ✓   8 [chromium] › e2e/auth-shell.spec.ts:105:7 › site público › página inicial em pt-BR com SEO e crawlers de IA liberados (167ms)
+  ✓   9 [chromium] › e2e/live.spec.ts:63:7 › Ao vivo (A1a), com o worker do squad em modo simulado › Marina pede uma legenda, vê o Otto escrevendo, recebe a v1 sem recarregar, revisa e aprova (3.1s)
+  ✓  10 [chromium] › e2e/live.spec.ts:120:7 › Ao vivo (A1a), com o worker do squad em modo simulado › Marina pede ajuste pela conversa, vê o Otto ajustando e aprova a v2 que chega ao vivo (4.9s)
+  10 passed (17.3s)
+
+# worker do e2e (/tmp/hellosquad-e2e-worker.log)
+12:21:54,198 INFO hellosquad.worker: worker no ar: fila runs_interactive, concorrência 4, teto por workspace 3, LLM simulated
+12:22:03,319 INFO hellosquad.worker: run 07d60e42-d6e0-4f39-b102-01f19a6041e4 concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 3470 tokens de entrada, 880 de saída, 2900 lidos e 2900 gravados no cache, US$ 0.037860
+12:22:06,310 INFO hellosquad.worker: run 85249cb9-afa2-45f2-a06e-b047a0f2b64b concluído: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 3470 tokens de entrada, 880 de saída, 2900 lidos e 2900 gravados no cache, US$ 0.037860
+12:22:08,306 INFO hellosquad.worker: run 160393a5-a46c-4659-b2d6-25c0d1753a94 concluído: entrega v2; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 4150 tokens de entrada, 890 de saída, 5800 lidos e 0 gravados no cache, US$ 0.026860
+12:22:09,742 INFO hellosquad.worker: worker encerrado
