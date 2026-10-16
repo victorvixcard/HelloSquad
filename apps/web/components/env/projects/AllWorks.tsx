@@ -111,7 +111,9 @@ export function AllWorks({ works, narrow }: { works: BoardWork[]; narrow: boolea
       lead: leadName,
       co: coL ? t("card.ariaCo", { names: coL }) : "",
     });
-    return { lead, co, working, sit, nextA, foot, dateL, stL, teamL, aria, need, kindL: w.project ? t("kinds.work") : t("kinds.delivery") };
+    const kindL = w.coordinated ? t("kinds.project") : w.project ? t("kinds.work") : t("kinds.delivery");
+    const sitL = w.coordinated && w.step && !need ? t("sitStep", { sit, step: w.step }) : sit;
+    return { lead, co, working, sit: sitL, nextA, foot, dateL, stL, teamL, aria, need, kindL };
   };
 
   const team = (w: Item, d: ReturnType<typeof describe>, size: number) => {
@@ -167,7 +169,7 @@ export function AllWorks({ works, narrow }: { works: BoardWork[]; narrow: boolea
               <path d={kindIcon(w)} />
             </svg>
             <span>{d.kindL}</span>
-            {w.project ? <span className="wk-k-p">{w.project}</span> : null}
+            {w.project && !w.coordinated ? <span className="wk-k-p">{w.project}</span> : null}
           </div>
           <h3 className="wk-t">{w.title}</h3>
           <p className="wk-s">{d.sit}</p>
@@ -196,7 +198,7 @@ export function AllWorks({ works, narrow }: { works: BoardWork[]; narrow: boolea
             {w.title}
           </button>
           <small>
-            {w.project ? t("kinds.workOf", { project: w.project }) : t("kinds.delivery")} · {d.sit}
+            {w.coordinated ? t("kinds.project") : w.project ? t("kinds.workOf", { project: w.project }) : t("kinds.delivery")} · {d.sit}
           </small>
         </span>
         <span className={`wk-st is-${w.family}`}>

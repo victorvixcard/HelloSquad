@@ -54,12 +54,14 @@
   "channelsCard": {
     "title": "Desempenho por canal",
     "talk": "Analisar os canais com Íris",
+    "talkTip": "Analisar com Íris",
     "foot": "{period} · {sources}",
     "rowAria": "{label}: {value}, {delta}. Analisar com Íris"
   },
   "analyses": {
     "title": "Análises recentes",
     "talk": "Conversar com Íris sobre as análises",
+    "talkTip": "Conversar com Íris",
     "empty": "A Íris ainda não entregou análises para {business}.",
     "meta": "{type} · v{version} · {state}",
     "metaNoVersion": "{type} · {state}"

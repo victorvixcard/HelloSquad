@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { type KeyboardEvent, type MouseEvent, useState } from "react";
 import { type ConversationContextRef, useShell } from "@/components/product/shell-context";
-import { EnvIdentity } from "../EnvIdentity";
+import { EnvIdentity, useEnvConversation } from "../EnvIdentity";
 import { NeedsStrip, type StripNeed } from "../NeedsStrip";
 import {
   KPI_KEYS,
@@ -126,6 +126,8 @@ function ResultsView({ business, series, last, analyses }: { business: string; s
   const allSources = [...new Set(series.flatMap((s) => s.sources))];
   const href = `/app/${shell.workspace.slug}/squad/iris`;
   const periodText = t("contextPeriod", { label: t(`lastDays.${period}`), range: L.range(current.start, current.end) });
+  const env = useEnvConversation("iris", business);
+  const channels = [...series].sort((a, b) => order(seriesKey(a)) - order(seriesKey(b)));
 
   const talk = (s: MetricSeries) => {
     const title = L.label(s);
@@ -202,6 +204,10 @@ function ResultsView({ business, series, last, analyses }: { business: string; s
         <section className="v41-cd" aria-labelledby="rs-a-t">
           <header className="v41-cd-h">
             <h3 id="rs-a-t">{t("analyses.title")}</h3>
+            {/* H2-10 (P-05): V4.6 L5354, `rs.an.talk` = `_openCtx('env', 'res')`, a conversa do ambiente de Resultados. */}
+            <button type="button" className="v4-ask is-s" aria-label={t("analyses.talk")} data-tip={t("analyses.talkTip")} onClick={env.open}>
+              <Ic d={PRODUCT_ICONS.ask} />
+            </button>
           </header>
           {analyses.length ? (
             <div className="v41-rows">
@@ -216,31 +222,35 @@ function ResultsView({ business, series, last, analyses }: { business: string; s
         <section className="v41-cd" aria-labelledby="rs-b-t">
           <header className="v41-cd-h">
             <h3 id="rs-b-t">{t("channelsCard.title")}</h3>
+            {/* H2-10 (P-05): V4.6 L5358, `rs.chans.talk` = a conversa do primeiro canal da lista, o mesmo caminho das linhas. */}
+            {channels[0] ? (
+              <button type="button" className="v4-ask is-s" aria-label={t("channelsCard.talk")} data-tip={t("channelsCard.talkTip")} onClick={() => talk(channels[0]!)}>
+                <Ic d={PRODUCT_ICONS.ask} />
+              </button>
+            ) : null}
           </header>
           <div className="rs-crs">
-            {[...series]
-              .sort((a, b) => order(seriesKey(a)) - order(seriesKey(b)))
-              .map((s) => {
-                const sum = summaries.get(seriesKey(s))!;
-                const value = sum.now === null ? t("kpi.noData") : L.num(sum.now);
-                const delta = sum.variation === null ? t("kpi.noCompare") : L.signed(sum.variation);
-                return (
-                  <button
-                    key={seriesKey(s)}
-                    type="button"
-                    className="rs-cr is-nobar"
-                    aria-label={t("channelsCard.rowAria", { label: L.label(s), value, delta })}
-                    onClick={() => talk(s)}
-                  >
-                    <span className="rs-cr-l">{L.label(s)}</span>
-                    <span className="rs-cr-m">{delta}</span>
-                    <span className="rs-cr-v">
-                      <b>{value}</b>
-                      <small>{sum.stock ? t("kpi.lastValue") : L.unit(s)}</small>
-                    </span>
-                  </button>
-                );
-              })}
+            {channels.map((s) => {
+              const sum = summaries.get(seriesKey(s))!;
+              const value = sum.now === null ? t("kpi.noData") : L.num(sum.now);
+              const delta = sum.variation === null ? t("kpi.noCompare") : L.signed(sum.variation);
+              return (
+                <button
+                  key={seriesKey(s)}
+                  type="button"
+                  className="rs-cr is-nobar"
+                  aria-label={t("channelsCard.rowAria", { label: L.label(s), value, delta })}
+                  onClick={() => talk(s)}
+                >
+                  <span className="rs-cr-l">{L.label(s)}</span>
+                  <span className="rs-cr-m">{delta}</span>
+                  <span className="rs-cr-v">
+                    <b>{value}</b>
+                    <small>{sum.stock ? t("kpi.lastValue") : L.unit(s)}</small>
+                  </span>
+                </button>
+              );
+            })}
           </div>
           <footer className="v41-cd-f">
             <small>{t("channelsCard.foot", { period: L.range(current.start, current.end), sources: t("sources", { sources: L.sources(allSources) }) })}</small>
@@ -491,6 +501,18 @@ function WeeklyChart({ s, last, current, previous }: { s: MetricSeries; last: nu
                     {L.format.number(v, { notation: "compact", maximumFractionDigits: 1 })}
                   </span>
                 ))}
+                {/* H2-10 (P-04): o nome de cada faixa no alto, à esquerda (V4.6 `bLp`/`pLp`, `bTp`), com o mesmo período da
+                    legenda: as janelas aqui são de 7, 30 e 90 dias com as datas (A2b §4 item 27), não meses do calendário. */}
+                {cur ? (
+                  <span className="rs-cl is-band" style={{ left: `${((cur.x / W) * 100 + 0.6).toFixed(2)}%`, top: `${(((PT - 18) / H) * 100).toFixed(2)}%` }}>
+                    {L.range(current.start, current.end)}
+                  </span>
+                ) : null}
+                {prev && previous ? (
+                  <span className="rs-cl is-band is-prev" style={{ left: `${((prev.x / W) * 100 + 0.6).toFixed(2)}%`, top: `${(((PT - 18) / H) * 100).toFixed(2)}%` }}>
+                    {L.range(previous.start, previous.end)}
+                  </span>
+                ) : null}
                 {weeks.map((w, i) =>
                   i % 2 === 1 || i === n - 1 ? (
                     <span key={w.start} className="rs-cl is-x" style={{ left: `${((X(i) / W) * 100).toFixed(2)}%`, top: `${(((H - PB + 8) / H) * 100).toFixed(2)}%` }}>

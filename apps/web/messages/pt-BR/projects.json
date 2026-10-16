@@ -238,5 +238,6 @@
       "publish": "Peça aprovada não é publicada sozinha.",
       "budget": "Nenhuma verba de anúncio sem a sua autorização."
     }
-  }
+  },
+  "sitStep": "{sit} · {step}"
 }

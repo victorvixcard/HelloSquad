@@ -23,6 +23,10 @@ export type BoardWork = {
   co: AgentId[];
   /** Nome do projeto, quando o trabalho é de um projeto (V4.3: "Trabalho de <projeto>"). */
   project: string | null;
+  /** Projeto coordenado do Nexo (01.02, S2d): no Quadro é "Projeto", não entrega nem trabalho de projeto (A2d). */
+  coordinated?: boolean;
+  /** Etapa em curso do projeto coordenado ("etapa 1 de 3", da API), como o "Em andamento · etapa 2 de 5" da V4.6. */
+  step?: string | null;
   href: string;
   /** Pendência aberta deste trabalho ("Precisa de você"): a ação, a versão e o prazo, quando há. */
   need: { cta: string; title: string; href: string; version: number | null; due: string | null } | null;

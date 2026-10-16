@@ -197,7 +197,35 @@ export async function siteJsonLd(locale: Locale, key: SitePageKey): Promise<Node
     });
   }
 
+  // Cada @id citado resolve na própria página (H2-26): o que só a inicial descreve por inteiro entra aqui num nó
+  // mínimo (tipo, nome e endereço), para o validador de uma página só não ver um `provider` ou `about` sem nome.
+  const home = abs(sitePath("inicio", locale));
+  const minimal: Record<string, Node> = {
+    [ids.organization]: { "@type": "Organization", "@id": ids.organization, name: "HelloSquad", url: `${url}/` },
+    [ids.website]: { "@type": "WebSite", "@id": ids.website, name: "HelloSquad", url: `${url}/` },
+    [ids.app]: { "@type": "SoftwareApplication", "@id": ids.app, name: "HelloSquad", url: home },
+  };
+  const defined = new Set(graph.map((node) => node["@id"]).filter((id): id is string => typeof id === "string"));
+  for (const id of referencedIds(graph)) {
+    if (!defined.has(id) && minimal[id]) {
+      graph.push(minimal[id]);
+      defined.add(id);
+    }
+  }
+
   return { "@context": "https://schema.org", "@graph": graph };
+}
+
+/** `@id` citados como referência (`{ "@id": … }` sem `@type`) em qualquer nível do grafo. */
+export function referencedIds(value: unknown, out: string[] = []): string[] {
+  if (Array.isArray(value)) {
+    for (const item of value) referencedIds(item, out);
+  } else if (value && typeof value === "object") {
+    const node = value as Record<string, unknown>;
+    if (typeof node["@id"] === "string" && !("@type" in node) && !out.includes(node["@id"])) out.push(node["@id"]);
+    for (const [key, child] of Object.entries(node)) if (key !== "@id") referencedIds(child, out);
+  }
+  return out;
 }
 
 /** Serializa para o `<script type="application/ld+json">` sem abrir brecha para `</script>`. */

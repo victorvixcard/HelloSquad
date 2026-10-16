@@ -238,5 +238,6 @@
       "publish": "An approved piece is never published on its own.",
       "budget": "No ad budget without your authorization."
     }
-  }
+  },
+  "sitStep": "{sit} · {step}"
 }

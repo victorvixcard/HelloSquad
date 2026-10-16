@@ -8,6 +8,7 @@ import { workItemHref } from "@/lib/needs";
 import type { EnvPageProps } from "../env-page";
 import type { BoardWork } from "./board";
 import { ProjectsView, type ProjectRow } from "./ProjectsView";
+import { isCoordinated } from "@/lib/delivery-types";
 
 type Project = components["schemas"]["Project"];
 
@@ -40,13 +41,18 @@ export async function ProjectsPage({ workspace, needs }: EnvPageProps) {
     const href = workItemHref(workspace.slug, "nexo", w.id);
     const need = strip.find((n) => n.href.endsWith(`/trabalho/${w.id}`));
     const approval = need ? approvals.get(need.approvalId) : undefined;
+    // Projeto coordenado: o cartão leva o nome do projeto que o Nexo montou ("Campanha de Natal", V4.6 `w-camp`).
+    const coordinated = isCoordinated(w.delivery_type);
+    const project = w.project_id ? (projectName.get(w.project_id) ?? null) : null;
     return {
       id: w.id,
-      title: w.title,
+      title: coordinated && project ? project : w.title,
       status: w.status,
       lead: agentOf(w.primary_agent_id),
       co: w.collaborator_agent_ids.filter(isAgentId),
-      project: w.project_id ? (projectName.get(w.project_id) ?? null) : null,
+      project,
+      coordinated,
+      step: w.step_label ?? null,
       href,
       need: need
         ? {

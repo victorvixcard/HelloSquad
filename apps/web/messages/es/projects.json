@@ -238,5 +238,6 @@
       "publish": "Una pieza aprobada no se publica sola.",
       "budget": "Ningún presupuesto de anuncios sin tu autorización."
     }
-  }
+  },
+  "sitStep": "{sit} · {step}"
 }
