@@ -575,3 +575,72 @@ begin
   where not (p.slug = 'miolo' and p.metric = 'sessions' and g.n between 43 and 45);
 end;
 $seed_s2b$;
+
+-- ---------------------------------------------------------------------------------------------------
+-- Cobrança (S2e): preço do Squad e uma recarga, fictícios e marcados como provisórios (produção não tem preço
+-- até o dono definir, e sem preço nenhuma cobrança abre). A Miolo assina o Squad pelo provedor simulado: o
+-- ciclo do mês pago é o grant do ciclo do bloco de créditos, e há uma recarga Pix pendente que o roteiro de
+-- docs/SETUP_LOCAL.md confirma com um webhook simulado.
+--
+-- Estado garantido:
+--   Miolo: assinatura simulada ativa (Pix), período = mês corrente, ciclo pago (100 créditos, grant ...0921);
+--     recarga-50 por Pix pendente
+--   Vitta e Trilha: sem cobrança
+--   payment_events dos workspaces do seed e os sem workspace (ignorados): vazios
+
+do $seed_cobranca$
+declare
+  v_miolo uuid := (select id from public.workspaces where slug = 'miolo');
+  v_cycle_start timestamptz :=
+    date_trunc('month', now() at time zone 'America/Sao_Paulo') at time zone 'America/Sao_Paulo';
+  v_start constant timestamptz := '2026-10-01 00:00:00-03';
+  v_squad constant uuid := '5eed0000-0000-4000-8000-000000000902';
+  v_grant constant uuid := '5eed0000-0000-4000-8000-000000000921';
+  v_price constant uuid := '5eed0000-0000-4000-8000-0000000009a1';
+  v_pack constant uuid := '5eed0000-0000-4000-8000-0000000009a2';
+  v_customer constant uuid := '5eed0000-0000-4000-8000-0000000009b1';
+  v_subscription constant uuid := '5eed0000-0000-4000-8000-0000000009c1';
+begin
+  if v_miolo is null or not exists (select 1 from public.credit_grants where id = v_grant) then
+    raise exception 'Seed da cobrança depende da Miolo e do bloco de créditos.';
+  end if;
+
+  insert into public.plan_prices (id, plan_id, amount, currency, valid_from, provisional, approved_commercially, created_at)
+  select v_price, p.id, 99.00, 'BRL', v_start, true, false, v_start
+  from public.plans p where p.slug = 'squad'
+  on conflict (id) do nothing;
+  insert into public.topup_packs (
+    id, slug, credits, validity_days, amount, currency, valid_from, provisional, approved_commercially, created_at
+  ) values (v_pack, 'recarga-50', 50, null, 49.00, 'BRL', v_start, true, false, v_start)
+  on conflict (id) do nothing;
+
+  delete from public.payment_events e
+  where e.workspace_id is null
+     or e.workspace_id in (select w.id from public.workspaces w where w.slug in ('miolo', 'vitta', 'trilha'));
+  delete from public.billing_customers c using public.workspaces w
+  where w.id = c.workspace_id and w.slug in ('miolo', 'vitta', 'trilha');
+
+  insert into public.billing_customers (id, workspace_id, provider, provider_customer_id, created_at, updated_at)
+  values (v_customer, v_miolo, 'mock', 'mock_cus_miolo', v_start, v_start);
+  insert into public.subscriptions (
+    id, workspace_id, customer_id, provider, provider_subscription_id, plan_version_id, plan_price_id, method,
+    status, started_at, current_period_start, current_period_end, created_at, updated_at
+  ) values (
+    v_subscription, v_miolo, v_customer, 'mock', 'mock_sub_miolo', v_squad, v_price, 'pix',
+    'active', v_start, v_cycle_start, v_cycle_start + interval '1 month', v_start, v_cycle_start
+  );
+  insert into public.payments (
+    id, workspace_id, customer_id, provider, provider_payment_id, kind, method, status, status_detail,
+    subscription_id, plan_version_id, topup_pack_id, amount, currency, credits, period_start, period_end,
+    pix_payload, grant_id, confirmed_at, created_at, updated_at
+  ) values
+    ('5eed0000-0000-4000-8000-0000000009d1', v_miolo, v_customer, 'mock', 'mock_pay_miolo_ciclo',
+     'subscription_cycle', 'pix', 'confirmed', 'mock_confirmed', v_subscription, v_squad, null, 99.00, 'BRL',
+     100, v_cycle_start, v_cycle_start + interval '1 month', null, v_grant, v_cycle_start, v_cycle_start,
+     v_cycle_start),
+    ('5eed0000-0000-4000-8000-0000000009d2', v_miolo, v_customer, 'mock', 'mock_pay_miolo_recarga',
+     'topup', 'pix', 'pending', 'mock_pending', null, null, v_pack, 49.00, 'BRL', 50, null, null,
+     'PIX-SIMULADO-mock_pay_miolo_recarga', null, null, least(v_cycle_start + interval '10 minutes', now()),
+     least(v_cycle_start + interval '10 minutes', now()));
+end;
+$seed_cobranca$;
