@@ -1,0 +1,21 @@
+# 1. Assinatura da Miolo (simulada) e histórico: créditos e estado, sem valor em dinheiro
+{"status":"active","plan":"Squad","provisional":true,"provider":"mock","method":"pix","current_period_start":"2026-10-01T03:00:00Z","current_period_end":"2026-11-01T03:00:00Z","next_cycle_at":"2026-11-01T03:00:00Z","past_due_since":null,"cancelled_at":null}
+{"items":[{"id":"5eed0000-0000-4000-8000-0000000009d2","kind":"topup","method":"pix","status":"pending","provider":"mock","credits":50.0,"credits_revoked":0.0,"period_start":null,"period_end":null,"confirmed_at":null,"created_at":"2026-10-01T03:10:00Z"},{"id":"5eed0000-0000-4000-8000-0000000009d1","kind":"subscription_cycle","method":"pix","status":"confirmed","provider":"mock","credits":100.0,"credits_revoked":0.0,"period_start":"2026-10-01T03:00:00Z","period_end":"2026-11-01T03:00:00Z","confirmed_at":"2026-10-01T03:00:00Z","created_at":"2026-10-01T03:00:00Z"}],"next_cursor":null}
+# 2. Saldo antes
+{'plan': 'Squad', 'balance': 36.0, 'available': 36.0, 'cycle_credits': 100.0, 'cycle_used': 64.0}
+# 3. Webhook simulado: a recarga Pix pendente do seed foi paga
+{"received":true,"result":"SUCCESS","duplicate":false,"outcome":"applied"}
+# 4. O mesmo evento de novo: repetido, sem efeito
+{"received":true,"result":"SUCCESS","duplicate":true,"outcome":"applied"}
+# 5. Assinatura errada: recusado, nada gravado
+{"error":{"code":"invalid_signature","message":"Assinatura do webhook inválida.","details":[]}} HTTP 401
+# 6. Cobrança que não é desta plataforma: 200 e ignorada (o provedor não reenvia)
+{"received":true,"result":"SUCCESS","duplicate":false,"outcome":"ignored"}
+# 7. Saldo depois (+50 da recarga) e histórico
+{'plan': 'Squad', 'balance': 86.0, 'available': 86.0, 'cycle_credits': 100.0, 'cycle_used': 64.0}
+{"items":[{"id":"5eed0000-0000-4000-8000-0000000009d2","kind":"topup","method":"pix","status":"confirmed","provider":"mock","credits":50.0,"credits_revoked":0.0,"period_start":null,"period_end":null,"confirmed_at":"2026-10-16T21:06:42.658775Z","created_at":"2026-10-01T03:10:00Z"}],"next_cursor":"MjAyNi0xMC0wMVQwMzoxMDowMCswMDowMHw1ZWVkMDAwMC0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDA5ZDI"}
+
+# 8. Scheduler, um tick (cd apps/backend && uv run hellosquad-scheduler --once): o ciclo da Miolo vence em 01/11
+2026-10-16 18:06:47,424 INFO hellosquad.scheduler: scheduler iniciado, intervalo de 60.0s; provedores de pagamento: mock
+2026-10-16 18:06:47,426 INFO hellosquad.scheduler: renovação: 0 vencidas, 0 renovadas, 0 em atraso, 0 falhas de conciliação
+2026-10-16 18:06:47,432 INFO hellosquad.scheduler: scheduler encerrado
