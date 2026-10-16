@@ -18,8 +18,8 @@ const TRANSLATIONS = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
 /** Argumento gramatical do pt-BR (artigo do agente: "a Kaia", "o Otto"); en e es podem não usar. */
 const OPTIONAL_ARGS = new Set(["article"]);
 
-/** Campo técnico dentro do catálogo (ids de agente): igual em todos os idiomas. */
-const TECHNICAL_KEYS = new Set(["ags"]);
+/** Campo técnico dentro do catálogo (ids de agente; nome de cada idioma no próprio idioma): igual em todos os idiomas. */
+const TECHNICAL_KEYS = new Set(["ags", "localeNames"]);
 
 type Leaf = { path: string; value: unknown; inArray: boolean; technical: boolean };
 
