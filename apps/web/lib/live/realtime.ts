@@ -1,7 +1,7 @@
 "use client";
 
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { getSupabaseBrowserClient, realtimeToken } from "@/lib/supabase/client";
 import type { ApprovalPayload, Connection, RunEventPayload } from "./live-state";
 
 export type LiveHandlers = {
@@ -19,8 +19,8 @@ const BACKOFF_MS = [1000, 2000, 5000, 10000, 30000];
 
 /**
  * Canal privado `workspace:<id>` do Realtime (S1a): só membros do workspace entram (política em
- * `realtime.messages`), e só o banco publica. O token é o da sessão do browser (cookie da Auth, legível pelo JS:
- * decisão da A1a, ver relatório §5); o cliente renova o token sozinho e repassa ao Realtime.
+ * `realtime.messages`), e só o banco publica. O cookie da sessão é httpOnly (H0-03, decisão da A1a, relatório §4):
+ * o token de acesso vem do servidor (`realtimeToken`) e é pedido de novo perto de vencer, nos batimentos do Realtime.
  */
 export const subscribeWorkspace: Subscribe = (workspaceId, handlers) => {
   const supabase = getSupabaseBrowserClient();
@@ -48,8 +48,7 @@ export const subscribeWorkspace: Subscribe = (workspaceId, handlers) => {
   async function open() {
     if (stopped) return;
     handlers.onStatus("connecting");
-    const { data } = await supabase.auth.getSession();
-    const token = data.session?.access_token;
+    const token = await realtimeToken.get();
     if (stopped) return;
     if (!token) {
       handlers.onStatus("lost");
@@ -70,6 +69,8 @@ export const subscribeWorkspace: Subscribe = (workspaceId, handlers) => {
         attempt = 0;
         handlers.onStatus("live");
       } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+        // Token recusado ou vencido: a próxima tentativa pede outro ao servidor.
+        if (status === "CHANNEL_ERROR") realtimeToken.clear();
         handlers.onStatus("lost");
         later();
       }

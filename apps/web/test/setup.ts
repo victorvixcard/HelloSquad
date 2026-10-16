@@ -27,6 +27,7 @@ vi.mock("@/app/app/[workspace]/actions", () => ({
   runInfoAction: vi.fn(),
   runEventsAction: vi.fn(),
   deliveryCardAction: vi.fn(),
+  realtimeTokenAction: vi.fn(),
 }));
 vi.mock("@/lib/auth-actions", () => ({ signOut: vi.fn() }));
 

@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { supabasePublicEnv } from "../env";
+import { SESSION_COOKIE_OPTIONS } from "./session-cookie";
 
 /**
  * Cliente da Auth no servidor (Server Components, Server Actions, Route Handlers), com a sessão
@@ -11,6 +12,7 @@ export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
   const { url, publishableKey } = supabasePublicEnv();
   return createServerClient(url, publishableKey, {
+    cookieOptions: SESSION_COOKIE_OPTIONS,
     cookies: {
       getAll() {
         return cookieStore.getAll();

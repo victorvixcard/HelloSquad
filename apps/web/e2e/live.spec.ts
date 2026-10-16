@@ -48,6 +48,11 @@ async function openOttoConversation(page: Page) {
   await page.goto("/entrar");
   await signIn(page, "marina@miolo.example");
   await expect(page).toHaveURL(/\/app\/miolo$/);
+  // H0-03 (decisão da A1a): cookie da sessão httpOnly; o Realtime recebe só o token de acesso, pelo servidor.
+  const session = (await page.context().cookies()).filter((c) => /^sb-.+-auth-token/.test(c.name));
+  expect(session.length).toBeGreaterThan(0);
+  expect(session.every((c) => c.httpOnly)).toBe(true);
+  expect(await page.evaluate(() => document.cookie)).not.toContain("auth-token");
   const nav = page.getByRole("navigation", { name: "HelloSquad" });
   await nav.getByRole("link", { name: "Conteúdo, com Otto" }).click();
   await expect(page).toHaveURL(/\/app\/miolo\/squad\/otto$/);

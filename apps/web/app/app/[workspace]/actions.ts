@@ -2,6 +2,7 @@
 
 import { isApiError, unwrap, type components } from "@hellosquad/contracts";
 import { serverApi } from "@/lib/api";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type Message = components["schemas"]["Message"];
 type ConversationDetail = components["schemas"]["ConversationDetail"];
@@ -232,4 +233,17 @@ export async function deliveryCardAction(runId: string, versionId: string): Prom
   } catch (error) {
     return fail(error);
   }
+}
+
+/**
+ * Token de acesso para o Realtime no browser (H0-03, decisão da A1a): o cookie da sessão é httpOnly, então o browser
+ * pede ao servidor só o access token (vale cerca de 1 h) e a hora em que vence; o refresh token nunca sai do servidor.
+ * Se a sessão venceu, o cliente do servidor renova e grava os cookies (Server Action pode gravar cookie).
+ */
+export async function realtimeTokenAction(): Promise<ActionResult<{ token: string; expiresAt: number }>> {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.auth.getSession();
+  const session = data.session;
+  if (!session?.access_token) return { ok: false, code: "unauthenticated", message: "" };
+  return { ok: true, data: { token: session.access_token, expiresAt: session.expires_at ?? 0 } };
 }

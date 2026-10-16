@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { supabasePublicEnv } from "../env";
+import { SESSION_COOKIE_OPTIONS } from "./session-cookie";
 
 const AUTH_PAGES = ["/entrar", "/criar-conta"];
 
@@ -13,6 +14,7 @@ export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
   const { url, publishableKey } = supabasePublicEnv();
   const supabase = createServerClient(url, publishableKey, {
+    cookieOptions: SESSION_COOKIE_OPTIONS,
     cookies: {
       getAll() {
         return request.cookies.getAll();
