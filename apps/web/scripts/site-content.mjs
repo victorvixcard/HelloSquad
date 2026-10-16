@@ -160,6 +160,18 @@ function main() {
       writeFileSync(file, next);
     }
   }
+  // llms.txt da N2a, servido em /llms.txt (app/llms.txt/route.ts).
+  const llmsFile = path.join(TARGET, "llms.json");
+  const llms = serialize({ source: "docs/conteudo/site/llms.txt", text: readFileSync(path.join(SOURCE, "llms.txt"), "utf8") });
+  if (check) {
+    let current = "";
+    try {
+      current = readFileSync(llmsFile, "utf8");
+    } catch {}
+    if (current !== llms) stale.push(llmsFile);
+  } else {
+    writeFileSync(llmsFile, llms);
+  }
   if (stale.length) {
     console.error(`Conteúdo do site desatualizado; rode node apps/web/scripts/site-content.mjs:\n  ${stale.join("\n  ")}`);
     process.exit(1);

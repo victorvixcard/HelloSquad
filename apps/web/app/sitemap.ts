@@ -1,19 +1,25 @@
 import type { MetadataRoute } from "next";
-import { PUBLIC_LOCALE_PATHS } from "@/i18n/resolve";
+import { LOCALES } from "@/i18n/config";
 import { siteUrl } from "@/lib/env";
+import { SITE_PAGE_KEYS, siteLanguages, sitePath } from "@/lib/site-routes";
 
-// Só páginas públicas e indexáveis. A área logada (/app) fica fora. A página inicial existe em pt-BR (/), en e es,
-// com as alternativas de idioma (hreflang) em cada uma.
+// Só páginas públicas e indexáveis: as doze do site (N2a) em pt-BR, en e es, cada uma com as alternativas de idioma
+// (hreflang, x-default no pt-BR), e o cadastro. A área logada (/app), o Super Admin (/admin) e /entrar ficam fora.
 export default function sitemap(): MetadataRoute.Sitemap {
   const url = siteUrl();
-  const languages = Object.fromEntries(Object.entries(PUBLIC_LOCALE_PATHS).map(([locale, path]) => [locale, `${url}${path}`]));
+  const absolute = (path: string) => (path === "/" ? `${url}/` : `${url}${path}`);
   return [
-    ...Object.values(PUBLIC_LOCALE_PATHS).map((path) => ({
-      url: `${url}${path}`,
-      changeFrequency: "weekly" as const,
-      priority: path === "/" ? 1 : 0.9,
-      alternates: { languages },
-    })),
+    ...SITE_PAGE_KEYS.flatMap((key) => {
+      const languages = Object.fromEntries(
+        Object.entries(siteLanguages(key)).map(([locale, path]) => [locale, absolute(path)]),
+      );
+      return LOCALES.map((locale) => ({
+        url: absolute(sitePath(key, locale)),
+        changeFrequency: "weekly" as const,
+        priority: key === "inicio" ? 1 : key.startsWith("squad") ? 0.8 : 0.7,
+        alternates: { languages },
+      }));
+    }),
     { url: `${url}/criar-conta`, changeFrequency: "monthly", priority: 0.6 },
   ];
 }

@@ -39,8 +39,9 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: [...SECURITY_HEADERS, { key: "Content-Security-Policy", value: staticCsp }],
       },
-      // A área logada nunca entra em buscador (além do robots da Metadata API).
+      // A área logada e o Super Admin nunca entram em buscador (além do robots.txt e do robots da Metadata API).
       { source: "/app/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+      { source: "/admin/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
     ];
   },
 };
