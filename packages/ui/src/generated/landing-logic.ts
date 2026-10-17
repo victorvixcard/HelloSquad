@@ -3,7 +3,8 @@
 // Gerado por packages/ui/scripts/extract-landing.ts a partir de landing/LandingPageV1.dc.html (<script data-dc-script>).
 // Não edite à mão: rode pnpm --filter @hellosquad/ui extract:landing.
 // O código é o do protótipo; o invólucro dá a ele o que o runtime (support.js) dava: DCLogic, React, window e document.
-// Única troca: a fonte da medição de texto em canvas usa a Gabarito local (__hsCanvasFont), não o nome do Google Fonts.
+// Trocas: a fonte da medição de texto em canvas usa a Gabarito local (__hsCanvasFont), não o nome do Google Fonts;
+// e os nomes de fornecedor dos roteiros viram termos neutros (tabela NEUTRAL do script).
 export function createLandingComponent(DCLogic, React, window, document, __hsCanvasFont) {
 // ---------------------------------------------------------------- data
 const ORDER = ['coord', 'arch', 'leaf', 'pill', 'hex', 'funnel', 'square'];
@@ -218,9 +219,9 @@ const HERO_DEFAULT = 'Quero criar uma campanha para minha marca.';
 // ---------------------------------------------------------------- demo conversations
 const SQ_PROMPT = 'Quero uma campanha de fim de ano para o nosso panetone.';
 const APPROVALS = {
-  main: { ag: 'coord', text: 'Publicar as 3 peças e iniciar os anúncios da campanha de fim de ano.', facts: [['Onde', 'Instagram, Facebook e Google Ads'], ['Quando', 'sex, 18h'], ['Verba', 'até R$ 40/dia']], approveLabel: 'Aprovar e publicar', yes: 'yes', adj: 'adj', no: 'no' },
-  main2: { ag: 'coord', text: 'Publicar as 3 peças e iniciar os anúncios da campanha de fim de ano.', facts: [['Onde', 'Instagram, Facebook e Google Ads'], ['Quando', 'sex, 18h'], ['Verba', 'até R$ 40/dia']], approveLabel: 'Aprovar e publicar', yes: 'yes', adj: null, no: 'no' },
-  hex: { ag: 'hex', text: 'Usar R$ 105 de verba em 3 dias na campanha de banho e tosa.', facts: [['Onde', 'Google Ads e Instagram'], ['Quando', 'sex a dom'], ['Verba', 'R$ 35/dia']], approveLabel: 'Aprovar verba', yes: 'yes', adj: null, no: 'no' }
+  main: { ag: 'coord', text: 'Publicar as 3 peças e iniciar os anúncios da campanha de fim de ano.', facts: [['Onde', 'Redes sociais e anúncios de busca'], ['Quando', 'sex, 18h'], ['Verba', 'até R$ 40/dia']], approveLabel: 'Aprovar e publicar', yes: 'yes', adj: 'adj', no: 'no' },
+  main2: { ag: 'coord', text: 'Publicar as 3 peças e iniciar os anúncios da campanha de fim de ano.', facts: [['Onde', 'Redes sociais e anúncios de busca'], ['Quando', 'sex, 18h'], ['Verba', 'até R$ 40/dia']], approveLabel: 'Aprovar e publicar', yes: 'yes', adj: null, no: 'no' },
+  hex: { ag: 'hex', text: 'Usar R$ 105 de verba em 3 dias na campanha de banho e tosa.', facts: [['Onde', 'Anúncios de busca e redes sociais'], ['Quando', 'sex a dom'], ['Verba', 'R$ 35/dia']], approveLabel: 'Aprovar verba', yes: 'yes', adj: null, no: 'no' }
 };
 const ST = function (kind, lead, message, detail, extra) { return Object.assign({ kind: kind, lead: lead || null, message: message || '', detail: detail || '' }, extra || {}); };
 
@@ -242,9 +243,9 @@ const CONVS = {
         { t: 900, typing: 'arch', step: [0, 'work'], status: ST('work', 'arch', 'Bia', 'desenvolvendo o conceito') },
         { t: 2100, typing: null, msg: { ag: 'arch', text: 'Conceito pronto. A fermentação natural vira a prova de cuidado.', card: { type: 'concept' } }, step: [0, 'done'] },
         { t: 600, step: [1, 'work'], typing: 'leaf', status: ST('work', 'leaf', 'Kaia', 'preparando as peças', { collaborators: ['pill'] }) },
-        { t: 2400, typing: null, msg: { ag: 'leaf', co: 'Otto', text: 'Três peças para Instagram e Facebook, com textos do Otto.', card: { type: 'pieces', v: 1 } }, step: [1, 'done'] },
+        { t: 2400, typing: null, msg: { ag: 'leaf', co: 'Otto', text: 'Três peças para as redes sociais, com textos do Otto.', card: { type: 'pieces', v: 1 } }, step: [1, 'done'] },
         { t: 600, step: [2, 'work'], typing: 'hex', status: ST('work', 'hex', 'Kiwi', 'planejando a divulgação') },
-        { t: 1900, typing: null, msg: { ag: 'hex', text: 'Divulgação proposta: posts de sexta a domingo e anúncios no Google Ads e no Instagram, com até R$ 40 por dia.' }, step: [2, 'done'] },
+        { t: 1900, typing: null, msg: { ag: 'hex', text: 'Divulgação proposta: posts de sexta a domingo e anúncios de busca e nas redes sociais, com até R$ 40 por dia.' }, step: [2, 'done'] },
         { t: 700, step: [3, 'work'], status: ST('wait', 'coord', 'Nexo', 'aguarda sua aprovação', { actionLabel: 'Revisar' }), approval: 'main' }
       ],
       yes: [
@@ -278,7 +279,7 @@ const CONVS = {
   arch: {
     kind: 'agent', ag: 'arch', title: NR('arch'), sub: 'Exemplo · estúdio de pilates (fictício)', prompt: 'Quero atrair mais alunos para o meu estúdio de pilates.',
     intro: [{ ag: 'arch', text: 'Oi, eu sou a Bia. Me conte o objetivo e eu procuro onde está a oportunidade.' }],
-    ctx: [{ k: 'Negócio', v: 'Estúdio com duas salas, turmas de até 6 alunos', tag: 'ok', tl: 'confirmado' }, { k: 'Público atual', v: 'Mulheres de 35 a 60 anos, do bairro', tag: 'ok', tl: 'confirmado' }, { k: 'Canais', v: 'Instagram e indicação de alunos', tag: 'auto', tl: 'aprendido' }],
+    ctx: [{ k: 'Negócio', v: 'Estúdio com duas salas, turmas de até 6 alunos', tag: 'ok', tl: 'confirmado' }, { k: 'Público atual', v: 'Mulheres de 35 a 60 anos, do bairro', tag: 'ok', tl: 'confirmado' }, { k: 'Canais', v: 'Redes sociais e indicação de alunos', tag: 'auto', tl: 'aprendido' }],
     seqs: {
       send: [
         { t: 0, user: 'Quero atrair mais alunos para o meu estúdio de pilates.', status: ST('work', 'arch', 'Bia', 'analisando o estúdio'), typing: 'arch' },
@@ -302,7 +303,7 @@ const CONVS = {
       ],
       ok: [
         { t: 200, status: ST('work', 'leaf', 'Kaia', 'desenvolvendo a identidade'), typing: 'leaf' },
-        { t: 1500, typing: null, msg: { ag: 'leaf', text: 'Ótima escolha. A primeira versão de logo, paleta e tipografia chega com aplicações em rótulo e Instagram, para você revisar.' } }
+        { t: 1500, typing: null, msg: { ag: 'leaf', text: 'Ótima escolha. A primeira versão de logo, paleta e tipografia chega com aplicações em rótulo e redes sociais, para você revisar.' } }
       ]
     }
   },
@@ -366,7 +367,7 @@ const CONVS = {
         { t: 2000, typing: null, msg: { ag: 'square', text: 'Mês positivo, com uma ressalva.', card: { type: 'kpis' } }, status: ST('done', 'square', 'Íris', 'leitura do mês', { time: '08:30' }), actions: [{ label: 'Criar teste', variant: 'primary', next: 'ok' }, { label: 'Ver por canal', variant: 'soft', next: 'adj' }] }
       ],
       ok: [{ t: 200, typing: 'square' }, { t: 1300, typing: null, msg: { ag: 'square', text: 'Teste criado: dois posts do chef por semana até o fim do mês. Eu comparo com as semanas anteriores e aviso você.' }, status: ST('live', 'square', 'Teste em acompanhamento', '· até dia 30') }],
-      adj: [{ t: 200, typing: 'square' }, { t: 1200, typing: null, msg: { ag: 'square', text: 'Das reservas atribuídas, 61% vieram do Instagram, 27% do Google e 12% de acesso direto. O crescimento veio principalmente do Instagram.' } }]
+      adj: [{ t: 200, typing: 'square' }, { t: 1200, typing: null, msg: { ag: 'square', text: 'Das reservas atribuídas, 61% vieram das redes sociais, 27% da busca e 12% de acesso direto. O crescimento veio principalmente das redes sociais.' } }]
     }
   }
 };
@@ -379,7 +380,7 @@ const CARD = {
   },
   opps: [
     { n: '01', t: 'Programa de indicação com aula experimental', why: 'Seus alunos atuais já são o canal mais confiável.', imp: 3, eff: 1 },
-    { n: '02', t: 'Perfil no Google com avaliações recentes', why: 'Quem procura pilates por perto decide por ali.', imp: 2, eff: 1 },
+    { n: '02', t: 'Perfil na busca com avaliações recentes', why: 'Quem procura pilates por perto decide por ali.', imp: 2, eff: 1 },
     { n: '03', t: 'Parceria com clínicas de fisioterapia', why: 'Público com indicação de exercício e alta permanência.', imp: 3, eff: 2 }
   ],
   dirs: [
@@ -388,10 +389,10 @@ const CARD = {
     { name: 'Noturno', words: 'íntimo · elegante · sereno', bg: '#1D2238', fg: '#E8DCC8', pal: ['#1D2238', '#4B4F7A', '#E8DCC8', '#C8A35A'] }
   ],
   cal: [
-    { d: 'Seg', f: 'Reels', t: '3 ajustes antes de pedalar', c: 'Instagram' }, { d: 'Qua', f: 'Carrossel', t: 'Como escolher o tamanho do quadro', c: 'Instagram' },
-    { d: 'Sex', f: 'Post', t: 'Passeio de domingo: inscrições abertas', c: 'Instagram e Facebook' }, { d: 'Dom', f: 'Stories', t: 'Enquete: qual trilha na próxima?', c: 'Instagram' }
+    { d: 'Seg', f: 'Reels', t: '3 ajustes antes de pedalar', c: 'Redes sociais' }, { d: 'Qua', f: 'Carrossel', t: 'Como escolher o tamanho do quadro', c: 'Redes sociais' },
+    { d: 'Sex', f: 'Post', t: 'Passeio de domingo: inscrições abertas', c: 'Redes sociais' }, { d: 'Dom', f: 'Stories', t: 'Enquete: qual trilha na próxima?', c: 'Redes sociais' }
   ],
-  plan: [['Canais', 'Google Ads e Instagram'], ['Público', 'Tutores de cães num raio de 5 km'], ['Período', 'sex a dom'], ['Teste', 'Foto do pet × antes e depois']],
+  plan: [['Canais', 'Anúncios de busca e redes sociais'], ['Público', 'Tutores de cães num raio de 5 km'], ['Período', 'sex a dom'], ['Teste', 'Foto do pet × antes e depois']],
   journey: [
     { d: 'Dia 1', t: 'Sentimos sua falta', s: 'Novidades da coleção e 10% na próxima compra' },
     { d: 'Dia 4', t: 'Lembrete gentil', s: 'Peças mais vistas por famílias com filhos da mesma idade' },
@@ -415,7 +416,7 @@ const M3_ITEMS = {
   conc: ['Concorrência', 'Foco em desconto'], posi: ['Posicionamento', 'Artesanal e próximo'],
   idv: ['Marca', 'Identidade visual'], cor: ['Cores', 'Paleta da Miolo'], ref: ['Preferências criativas', 'Fotos com luz natural'],
   prod: ['Produtos', 'Pães e panetones'], pauta: ['Pauta', 'Bastidores do forno'],
-  camp: ['Campanha', 'Fim de ano'], can: ['Canais', 'Instagram e Google'], meta: ['Meta', '300 encomendas'],
+  camp: ['Campanha', 'Fim de ano'], can: ['Canais', 'Redes sociais e busca'], meta: ['Meta', '300 encomendas'],
   cli: ['Base', 'Clientes de encomendas'], ina: ['Segmento', 'Sem comprar há 60 dias'], vol: ['Recorrência', 'Voltam todo Natal'],
   ind: ['Indicador', 'Encomendas pelo site'], hist: ['Histórico', 'Resultados de 2025'], vid: ['Aprendizado', 'Vídeo curto custa menos']
 };
@@ -537,7 +538,7 @@ const RES_TYPING = { square: 'Íris está analisando…', coord: 'Nexo está org
 // presents the delivery. Everything is fictional and illustrative: nothing is published, sent or invested.
 const SX_T = ['Você delega uma rotina.', 'Seu Squad entra em ação.', '', 'Você acompanha e decide.'];
 const SX_R = [
-  { id: 'ig', req: 'Publicar 3x por semana no Instagram.', sp: ['arch', 'pill', 'leaf'], k: true,
+  { id: 'ig', req: 'Publicar 3x por semana nas redes sociais.', sp: ['arch', 'pill', 'leaf'], k: true,
     t3: 'Toda semana, um novo ciclo.',
     p: ['Diga o que publicar e em quais dias. O Nexo recebe e organiza a semana.',
       'Bia define os temas, Otto escreve as legendas e Kaia cria as artes, juntos.',
@@ -549,7 +550,7 @@ const SX_R = [
     beat: [null, [['arch', 'happy', 0], ['leaf', 'wink', 300], ['pill', 'happy', 700]], [['arch', 'happy', 0], ['leaf', 'wink', 300], ['pill', 'happy', 700]],
       [['arch', 'happy', 0], ['leaf', 'wink', 300], ['pill', 'happy', 700]], [['coord', 'happy', 0]], [['coord', null, 0], ['arch', 'happy', 380], ['pill', 'happy', 560], ['leaf', 'happy', 740]]],
     s4: ['pill', 'leaf'],
-    alt: ['Você pede: publicar 3x por semana no Instagram, segunda, quarta e sexta. O Nexo recebe o pedido.',
+    alt: ['Você pede: publicar 3x por semana nas redes sociais, segunda, quarta e sexta. O Nexo recebe o pedido.',
       'O Nexo organiza o trabalho: a Bia define os temas, o Otto escreve as legendas e a Kaia cria as artes.',
       'Semana 1: os posts de segunda, quarta e sexta ficam prontos, um de cada vez. A semana 2 já fica agendada.',
       'Os três posts estão prontos para a sua revisão. Você pode aprovar ou pedir ajuste. Nada é publicado sem aprovação.'] },
@@ -3455,7 +3456,7 @@ class Component extends DCLogic {
       typing: s.resTyping ? { ag: s.resTyping, text: RES_TYPING[s.resTyping] } : null,
       appr: s.resAppr, done: s.resDone, replay: () => this._resRun(true),
       onYes: () => this._resDecide('yes'), onAdj: () => this._resDecide('adj'), onLater: () => this._resDecide('later'),
-      facts: [['Verba total', 'sem aumento'], ['Onde', 'Instagram']]
+      facts: [['Verba total', 'sem aumento'], ['Onde', 'Redes sociais']]
     };
 
     // modal

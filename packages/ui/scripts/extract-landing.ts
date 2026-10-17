@@ -23,6 +23,45 @@ export const OUT_LANDING_TEMPLATE = path.join(OUT, "landing-template.ts");
 export const OUT_LANDING_LOGIC = path.join(OUT, "landing-logic.ts");
 export const OUT_DS_RUNTIME = path.join(OUT, "ds-bundle-runtime.ts");
 
+// Nenhum fornecedor citado no texto público (briefing da L1; mesma regra do teste da A2c, site-seo.test.ts). A R32 cita
+// redes, buscador e duas marcas no comparativo; cada troca abaixo é exata, conta as ocorrências e falha se o protótipo
+// mudar. Os logotipos do comparativo saem, mas a caixa de 56 px fica (o desenho da tabela não muda). Lista no L1-relatorio.
+type Neutral = [where: "tpl" | "logic", from: string, to: string, count: number];
+export const NEUTRAL: Neutral[] = [
+  ["tpl", "Peças · Instagram e Facebook", "Peças · redes sociais", 1],
+  ["tpl", "Publicar 3x por semana no Instagram.", "Publicar 3x por semana nas redes sociais.", 2],
+  ["tpl", "Posts no Instagram", "Posts nas redes sociais", 1],
+  ["tpl", ' data-brand="canva" role="img" aria-label="Canva"', ' aria-hidden="true"', 1],
+  ["tpl", ' data-brand="chatgpt" role="img" aria-label="ChatGPT"', ' aria-hidden="true"', 1],
+  ["logic", "'Instagram, Facebook e Google Ads'", "'Redes sociais e anúncios de busca'", 2],
+  ["logic", "'Google Ads e Instagram'", "'Anúncios de busca e redes sociais'", 2],
+  ["logic", "Três peças para Instagram e Facebook, com textos do Otto.", "Três peças para as redes sociais, com textos do Otto.", 1],
+  ["logic", "anúncios no Google Ads e no Instagram", "anúncios de busca e nas redes sociais", 1],
+  ["logic", "'Instagram e indicação de alunos'", "'Redes sociais e indicação de alunos'", 1],
+  ["logic", "aplicações em rótulo e Instagram", "aplicações em rótulo e redes sociais", 1],
+  ["logic", "61% vieram do Instagram, 27% do Google e 12% de acesso direto. O crescimento veio principalmente do Instagram.", "61% vieram das redes sociais, 27% da busca e 12% de acesso direto. O crescimento veio principalmente das redes sociais.", 1],
+  ["logic", "'Perfil no Google com avaliações recentes'", "'Perfil na busca com avaliações recentes'", 1],
+  ["logic", "c: 'Instagram e Facebook' }", "c: 'Redes sociais' }", 1],
+  ["logic", "c: 'Instagram' }", "c: 'Redes sociais' }", 3],
+  ["logic", "'Instagram e Google'", "'Redes sociais e busca'", 1],
+  ["logic", "'Publicar 3x por semana no Instagram.'", "'Publicar 3x por semana nas redes sociais.'", 1],
+  ["logic", "publicar 3x por semana no Instagram, segunda", "publicar 3x por semana nas redes sociais, segunda", 1],
+  ["logic", "['Onde', 'Instagram']", "['Onde', 'Redes sociais']", 1],
+];
+// As duas regras com os logotipos (PNG em base64) também saem do CSS: a marca não vai para o navegador.
+const BRAND_CSS = /\.lp-c2-logo\[data-brand="(?:chatgpt|canva)"\] \.lp-c2-lm\{[^}]*\}\n?/g;
+
+function neutral(src: string, where: Neutral[0]): string {
+  let out = src;
+  for (const [w, from, to, count] of NEUTRAL) {
+    if (w !== where) continue;
+    const n = out.split(from).length - 1;
+    if (n !== count) throw new Error(`troca neutra "${from}": esperava ${count}, achei ${n}`);
+    out = out.replaceAll(from, to);
+  }
+  return out;
+}
+
 const DISPLAY = "var(--hs-font-display)";
 const MONO = "var(--hs-font-mono)";
 
@@ -62,7 +101,10 @@ export function buildLandingCss(html: string): string {
     "html,body{height:100%;margin:0}#dc-root,#dc-root>.sc-host{height:100%}",
     ":root{--e-saida:var(--hs-e-saida);--e-mola:var(--hs-e-mola);--e-precisa:var(--hs-e-precisa)}",
   ].join("\n");
-  return `${header}\n${localFontsCss(section(html).css)}\n`;
+  const css = section(html).css;
+  const brands = css.match(BRAND_CSS)?.length ?? 0;
+  if (brands !== 2) throw new Error(`regras de logotipo do comparativo: esperava 2, achei ${brands}`);
+  return `${header}\n${localFontsCss(css.replace(BRAND_CSS, ""))}\n`;
 }
 
 // ---------------------------------------------------------------- template (mesmas regras do support.js)
@@ -154,7 +196,7 @@ function walk(nodes: NodeListOf<ChildNode> | ChildNode[]): TplNode[] {
 export function parseLandingTemplate(html: string): TplNode[] {
   const { window } = new JSDOM("<!doctype html><html><body></body></html>");
   const tpl = window.document.createElement("template");
-  tpl.innerHTML = preprocessTemplate(section(html).template);
+  tpl.innerHTML = preprocessTemplate(neutral(section(html).template, "tpl"));
   return walk(tpl.content.childNodes);
 }
 
@@ -176,14 +218,15 @@ export function buildLandingLogic(html: string): string {
   const { script } = section(html);
   if (!script.includes("class Component extends DCLogic")) throw new Error("classe Component não encontrada");
   if (!script.includes(CANVAS_FONT)) throw new Error("fonte da medição em canvas mudou no protótipo");
-  const body = script.replace(CANVAS_FONT, `" 15px " + __hsCanvasFont()`);
+  const body = neutral(script, "logic").replace(CANVAS_FONT, `" 15px " + __hsCanvasFont()`);
   return [
     "// @ts-nocheck",
     "/* eslint-disable */",
     "// Gerado por packages/ui/scripts/extract-landing.ts a partir de landing/LandingPageV1.dc.html (<script data-dc-script>).",
     "// Não edite à mão: rode pnpm --filter @hellosquad/ui extract:landing.",
     "// O código é o do protótipo; o invólucro dá a ele o que o runtime (support.js) dava: DCLogic, React, window e document.",
-    "// Única troca: a fonte da medição de texto em canvas usa a Gabarito local (__hsCanvasFont), não o nome do Google Fonts.",
+    "// Trocas: a fonte da medição de texto em canvas usa a Gabarito local (__hsCanvasFont), não o nome do Google Fonts;",
+    "// e os nomes de fornecedor dos roteiros viram termos neutros (tabela NEUTRAL do script).",
     "export function createLandingComponent(DCLogic, React, window, document, __hsCanvasFont) {",
     body.trim(),
     "  return Component;",
