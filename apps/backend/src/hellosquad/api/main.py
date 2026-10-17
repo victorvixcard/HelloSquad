@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from hellosquad import __version__
 from hellosquad.admin.routes import router as admin_router
 from hellosquad.admin.squad import router as admin_squad_router
+from hellosquad.admin.writes import router as admin_writes_router
 from hellosquad.api.errors import register_error_handlers
 from hellosquad.approvals.routes import router as approvals_router
 from hellosquad.auth import TokenVerifier
@@ -92,6 +93,7 @@ app.include_router(email_router)
 app.include_router(billing_router)
 app.include_router(admin_router)
 app.include_router(admin_squad_router)
+app.include_router(admin_writes_router)
 
 
 class Health(BaseModel):
