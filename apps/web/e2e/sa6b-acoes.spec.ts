@@ -77,6 +77,7 @@ test("o Vic abre e encerra a sessão de suporte, ajusta crédito, suspende e rea
   await expect(enterDialog.getByRole("radio", { name: "30 min" })).toBeChecked();
   await enterDialog.getByText("15 min").click();
   await enterDialog.getByLabel("Motivo do acesso").fill(REASON);
+  await snap(page, "sa6b-dialogo-entrar");
   await enterDialog.getByRole("button", { name: "Entrar com o motivo registrado" }).click();
   await expect(page.locator(".sa-toast")).toContainText("Sessão de suporte na Miolo aberta até");
   const band = page.getByRole("region", { name: "Suporte" });
@@ -104,6 +105,7 @@ test("o Vic abre e encerra a sessão de suporte, ajusta crédito, suspende e rea
   await creditDialog.getByLabel("Créditos").fill("5");
   await expect(creditDialog).toContainText(`Saldo: ${br(before)} → ${br(before + 5)}`);
   await creditDialog.getByLabel("Motivo").fill("Devolver crédito da falha do run (e2e SA6b)");
+  await snap(page, "sa6b-dialogo-credito");
   await creditDialog.getByRole("button", { name: "Lançar ajuste" }).click();
   await expect(page.locator(".sa-toast")).toContainText(`saldo ${br(before)} → ${br(before + 5)}`);
   await expect(balance).toContainText(br(before + 5));
