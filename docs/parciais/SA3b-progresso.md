@@ -14,8 +14,8 @@ Aranha (Frontend & Design), 16/10/2026, início 22:26. Área: `apps/web` (rotas 
 
 | # | Item | Estado | Commit |
 |---|---|---|---|
-| 1 | Squad (lista dos 7) + item Squad ativo na barra, os sete como subnavegação | feito | (este) |
-| 2 | Agente › Alma (seções, rascunho, publicar, comparar, voltar, descartar) | em andamento | |
+| 1 | Squad (lista dos 7) + item Squad ativo na barra, os sete como subnavegação | feito | `6bcc515` |
+| 2 | Agente › Alma (seções, rascunho, publicar, comparar lado a lado, voltar, descartar; confirmação e motivo) | feito | (este) |
 | 3 | Agente › Skills e Ferramentas e limites | pendente | |
 | 4 | Agente › O que ele lê | pendente | |
 | 5 | Regras de negócio | pendente | |

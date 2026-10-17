@@ -287,7 +287,7 @@ export function DraftCard(props: {
   return (
     <section className="sa-card sq-draft" aria-label={props.title}>
       <div className="sq-draft-h">
-        {props.agent ? <Agent agent={props.agent} size={34} expression="work" /> : null}
+        {props.agent ? <Agent agent={props.agent} size={34} /> : null}
         <div>
           <Status kind="draft" small>
             {t("draftTag")}
