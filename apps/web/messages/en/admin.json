@@ -614,9 +614,9 @@
     "tabReads": "What it reads",
     "modelChip": "{model} · effort {effort}",
     "unit": {
-      "soul": "of {name}'s soul",
-      "config": "of {name}'s agent.yaml",
-      "skill": "of {name}'s skill {key}"
+      "soul": "of {name}’s soul",
+      "config": "of {name}’s agent.yaml",
+      "skill": "of {name}’s skill {key}"
     }
   },
   "alma": {
@@ -686,7 +686,7 @@
   },
   "skills": {
     "none": "This agent has no delivery in the catalog.",
-    "tabsLabel": "{name}'s deliveries",
+    "tabsLabel": "{name}’s deliveries",
     "noSkillTab": "(no skill)",
     "missingFile": "{path} does not exist yet",
     "emptyTitle": "Skill not written yet",
@@ -788,7 +788,7 @@
     "metDocsSub": "{prompt} go into the prompt · {internal} internal reference",
     "metParagraphs": "Paragraphs",
     "metPending": "Pending",
-    "metPendingSome": "waiting for the owner's decision; the panel does not apply them",
+    "metPendingSome": "waiting for the owner’s decision; the panel does not apply them",
     "metPendingNone": "no decision waiting",
     "metProposals": "Proposals",
     "metProposalsSub": "suggestions not approved yet",
@@ -803,7 +803,7 @@
     "legend": {
       "decided": "A recorded decision by the owner.",
       "current_base": "How the system works today.",
-      "pending": "Waiting for the owner's decision. The panel does not apply it.",
+      "pending": "Waiting for the owner’s decision. The panel does not apply it.",
       "proposal": "A suggestion not approved yet."
     },
     "docs": "Documents",
@@ -815,7 +815,7 @@
     "sharedUnit": "of the shared rules",
     "flagInternal": "The team reads this document here; no agent reads it. Prices, plans and catalog never go into the prompt: they come from the database on every conversation.",
     "flagDoc": "Decided and current-base paragraphs go to the shared rules (squad/README.md), which reach the prompt of the seven once published. Pending and proposals do not.",
-    "flagFile": "This is {file}: it goes into the prompt of the seven, together with each one's soul. Prices, plans and catalog never go into the prompt: they come from the database on every conversation.",
+    "flagFile": "This is {file}: it goes into the prompt of the seven, together with each one’s soul. Prices, plans and catalog never go into the prompt: they come from the database on every conversation.",
     "sevenRead": "The seven agents read it",
     "versionLine": "Version {v} · {date} · {author}",
     "paragraphs": "Paragraphs",

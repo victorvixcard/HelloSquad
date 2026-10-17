@@ -239,7 +239,7 @@ describe("Agente › Alma", () => {
   });
 
   it("fala inglês e espanhol pelo catálogo", () => {
-    const { unmount } = renderAdmin(<SoulPanel agent={otto} unit="of Otto's soul" soul={soul} soulDraft={null} versions={[soul.ref]} />, en, "en");
+    const { unmount } = renderAdmin(<SoulPanel agent={otto} unit="of Otto’s soul" soul={soul} soulDraft={null} versions={[soul.ref]} />, en, "en");
     expect(screen.getByText("6 of 6 sections go into the prompt")).toBeVisible();
     unmount();
     renderAdmin(<SoulPanel agent={otto} unit="del alma de Otto" soul={soul} soulDraft={null} versions={[soul.ref]} />, es, "es");
