@@ -15,10 +15,13 @@ from uuid import UUID, uuid4
 import psycopg
 import pytest
 from psycopg.rows import dict_row
+from psycopg_pool import AsyncConnectionPool
 
 from hellosquad.billing.mock import MockProvider, mock_signature
 from hellosquad.billing.provider import ProviderPayment
 from hellosquad.config import get_settings
+from hellosquad.email.mock import MockEmailProvider
+from hellosquad.email.outbox import EmailOutbox
 from hellosquad.email.templates import EmailRenderer
 
 pytestmark = pytest.mark.integration
@@ -602,3 +605,54 @@ async def test_reprocessing_a_webhook_never_grants_twice_and_reconcile_is_once(
     assert len(await audits(admin_db, "payment.webhook_reprocessed", since)) == 2
     [audit] = await audits(admin_db, "payment.reconciled", since)
     assert audit["email"] == VIC and audit["payload"]["reason"] == REASON
+
+
+async def test_support_session_email_reaches_the_owner_through_the_email_provider(
+    api, access_token, admin_db
+) -> None:
+    vic = bearer(access_token(VIC))
+    miolo = await workspace(admin_db, "miolo")
+    url = f"/admin/accounts/{miolo}/support-session"
+    started = await api.post(url, headers=vic, json={"reason": REASON, "duration_minutes": 60})
+    assert started.status_code == 201, started.text
+    session = started.json()["id"]
+    pool = AsyncConnectionPool(
+        get_settings().database_url.get_secret_value(),
+        min_size=1,
+        max_size=2,
+        open=False,
+        kwargs={"autocommit": True, "prepare_threshold": None, "row_factory": dict_row},
+    )
+    await pool.open(wait=True, timeout=10)
+    provider = MockEmailProvider(
+        sender="nao-responda@hellosquad.example",
+        renderer=EmailRenderer(app_url="http://127.0.0.1:3100"),
+    )
+    try:
+        outcomes = await EmailOutbox(
+            pool,
+            provider,
+            app_env="test",
+            max_attempts=1,
+            retry_base_seconds=0,
+            visibility_timeout_seconds=30,
+        ).drain()
+    finally:
+        await pool.close()
+        await api.delete(url, headers=vic)
+    assert "sent" in outcomes
+    email_id = await scalar(
+        admin_db,
+        "select id from public.email_messages where idempotency_key like %s",
+        f"support:{session}:%",
+    )
+    [(request, rendered)] = [(r, e) for r, e in provider.sent if r.message_id == email_id]
+    assert request.to == MARINA and request.locale == "pt-BR"
+    assert rendered.subject == "O suporte do HelloSquad entrou em Miolo"
+    assert "por 60 minutos, só para leitura" in rendered.text and REASON in rendered.text
+    status = await scalar(
+        admin_db,
+        "select status::text from public.email_messages where idempotency_key like %s",
+        f"support:{session}:%",
+    )
+    assert status == "sent"

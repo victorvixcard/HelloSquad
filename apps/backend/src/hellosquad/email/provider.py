@@ -22,13 +22,15 @@ class EmailTemplate(StrEnum):
     payment_confirmed = "payment_confirmed"
     payment_problem = "payment_problem"
     password_changed = "password_changed"
+    support_session_started = "support_session_started"
 
 
-# Convite e aviso de senha não respeitam preferência (quem é convidado ainda não tem conta; aviso de
-# segurança). Espelho da constraint email_preferences_optional_template.
+# Convite e avisos de segurança (senha, sessão de suporte) não respeitam preferência (quem é
+# convidado ainda não tem conta). Espelho da constraint email_preferences_optional_template.
 OPTIONAL_TEMPLATES = frozenset(EmailTemplate) - {
     EmailTemplate.invitation,
     EmailTemplate.password_changed,
+    EmailTemplate.support_session_started,
 }
 
 
