@@ -506,6 +506,219 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workspaces/{workspace_id}/autonomy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Modo Autônomo: interruptor, resumo, responsabilidades, próximas e histórico */
+        get: operations["get_autonomy_workspaces__workspace_id__autonomy_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Modelos de responsabilidade com as perguntas e opções da conversa (V4.6 TPL e Q5) */
+        get: operations["list_templates_workspaces__workspace_id__autonomy_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/responsibilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Responsabilidades do workspace (encerradas incluídas, com `status`) */
+        get: operations["list_responsibilities_workspaces__workspace_id__autonomy_responsibilities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Detalhe: o combinado, limites, memória usada, próximas, histórico e alterações */
+        get: operations["get_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/upcoming": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Próximas execuções (pausadas e encerradas não aparecem; bloqueadas, com o motivo) */
+        get: operations["list_upcoming_workspaces__workspace_id__autonomy_upcoming_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Histórico de execuções (código, estado, mensagem, trabalho, memória usada) */
+        get: operations["list_runs_workspaces__workspace_id__autonomy_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** "Pausar": nada novo é preparado até retomar (só o owner; ativa) */
+        post: operations["pause_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__pause_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** "Retomar": volta a Ativa com a próxima execução no ritmo (só o owner; pausada) */
+        post: operations["resume_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__resume_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * "Encerrar": nada mais é programado; o histórico fica (só o owner)
+         * @description Com falha ou bloqueio, não pausa nem encerra até ser resolvida.
+         */
+        post: operations["end_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__end_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/switch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Interruptor "Ligado"/"Pausado": pausa todas as ativas ou retoma as pausadas
+         * @description Não alcança as com falha ou bloqueio nem as encerradas. O que mais o interruptor interrompe é pergunta ao dono (FLUXOS §11 item 4). Só o owner.
+         */
+        post: operations["switch_autonomy_workspaces__workspace_id__autonomy_switch_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * O Nexo apresenta "o combinado" na conversa; só ativa com o ok do dono
+         * @description Monta o combinado do modelo com as opções ditas na conversa (o que faltar fica no padrão), grava a mensagem do Nexo com o cartão `responsibility_proposal` e a pendência `confirm` (no trabalho 01.04). O owner confirma em `POST /approvals/{id}/decision` (`approved` ativa; `rejected` é "Ajustar"). Com `responsibility_id`, é a mudança no combinado (Editar), que vale a partir da próxima execução. Editor ou acima pede.
+         */
+        post: operations["create_proposal_workspaces__workspace_id__autonomy_proposals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/redelegate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** "Delegar de novo": recomeça a delegação de uma encerrada com o mesmo combinado */
+        post: operations["redelegate_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__redelegate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workspaces/{workspace_id}/memory": {
         parameters: {
             query?: never;
@@ -2199,6 +2412,17 @@ export interface components {
             messages: number;
             agent_id: components["schemas"]["AgentId"];
         };
+        /** Alert */
+        Alert: {
+            /** Metric */
+            metric: string;
+            /** Text */
+            text: string;
+            /** Change */
+            change?: number | null;
+            /** Last Day */
+            last_day: string;
+        };
         /** AlertRule */
         AlertRule: {
             /**
@@ -2460,6 +2684,53 @@ export interface components {
             items: components["schemas"]["AuditItem"][];
             /** Next Cursor */
             next_cursor: string | null;
+        };
+        /** AutonomyCounts */
+        AutonomyCounts: {
+            /** Active */
+            active: number;
+            /** Paused */
+            paused: number;
+            /** Failed */
+            failed: number;
+            /** Blocked */
+            blocked: number;
+            /** Ended */
+            ended: number;
+        };
+        /** AutonomyOverview */
+        AutonomyOverview: {
+            switch: components["schemas"]["AutonomySwitch"];
+            counts: components["schemas"]["AutonomyCounts"];
+            next: components["schemas"]["Upcoming"] | null;
+            last_7_days: components["schemas"]["LastDays"];
+            /** Responsibilities */
+            responsibilities: components["schemas"]["ResponsibilitySummary"][];
+            /** Ended */
+            ended: components["schemas"]["ResponsibilitySummary"][];
+            /** Offers */
+            offers: components["schemas"]["TemplateInfo"][];
+            /** Upcoming */
+            upcoming: components["schemas"]["Upcoming"][];
+            /** History */
+            history: components["schemas"]["RunItem"][];
+            /** History Total */
+            history_total: number;
+        };
+        /** AutonomySwitch */
+        AutonomySwitch: {
+            /**
+             * Visible
+             * @description Só aparece com responsabilidade ativa ou pausada.
+             */
+            visible: boolean;
+            /**
+             * On
+             * @description "Ligado" com ao menos uma ativa; senão "Pausado".
+             */
+            on: boolean;
+            /** Label */
+            label: string;
         };
         /** BalanceReport */
         BalanceReport: {
@@ -3926,6 +4197,28 @@ export interface components {
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
         };
+        /** EventItem */
+        EventItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Action */
+            action: string;
+            /** Text */
+            text: string;
+            /**
+             * Actor Type
+             * @enum {string}
+             */
+            actor_type: "user" | "agent" | "system";
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** ExchangeRate */
         ExchangeRate: {
             /** Usd Brl */
@@ -3937,6 +4230,32 @@ export interface components {
             fx_date: string;
             /** Fx Source */
             fx_source: string;
+        };
+        /** ExecuteAction */
+        ExecuteAction: {
+            /** Action */
+            action: string;
+            /** Label */
+            label: string;
+            /** Requirement */
+            requirement: string;
+            /** Requirement Label */
+            requirement_label: string;
+            /**
+             * State
+             * @description ok = autorizado; you = pede a sua aprovação; no = autorização não concedida.
+             * @enum {string}
+             */
+            state: "ok" | "you" | "no";
+        };
+        /** Fact */
+        Fact: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Value */
+            value: string;
         };
         /** FactSource */
         FactSource: {
@@ -4038,6 +4357,13 @@ export interface components {
             /** Text */
             text: string;
         };
+        /** LastDays */
+        LastDays: {
+            /** Runs */
+            runs: number;
+            /** Not Concluded */
+            not_concluded: number;
+        };
         /** LedgerEntry */
         LedgerEntry: {
             /**
@@ -4058,6 +4384,22 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /** Levels */
+        Levels: {
+            /** Analyze */
+            analyze: string[];
+            /** Prepare */
+            prepare: string[];
+            /** Execute */
+            execute: components["schemas"]["ExecuteAction"][];
+            /** Never */
+            never: string[];
+            /**
+             * No External Action
+             * @description "Nenhuma ação externa nesta responsabilidade." quando não há o que executar.
+             */
+            no_external_action: boolean;
         };
         /**
          * MarginBasis
@@ -4530,6 +4872,18 @@ export interface components {
             /** Facts */
             facts: components["schemas"]["BrandFact"][];
         };
+        /** MemoryUsed */
+        MemoryUsed: {
+            /**
+             * Fact Id
+             * Format: uuid
+             */
+            fact_id: string;
+            /** Key */
+            key: string;
+            /** State */
+            state: string;
+        };
         /** Message */
         Message: {
             /**
@@ -4580,10 +4934,10 @@ export interface components {
         MessageCard: {
             /**
              * Type
-             * @description `work_created` (Trabalho criado), `material` (Material · vN), `approval` (pedido de aprovação ou autorização), `question` (pergunta), `options` (escolher uma opção), `team` (equipe montada), `budget` (orçamento em créditos).
+             * @description `work_created` (Trabalho criado), `material` (Material · vN), `approval` (pedido de aprovação ou autorização), `question` (pergunta), `options` (escolher uma opção), `team` (equipe montada), `budget` (orçamento em créditos), `responsibility_proposal` (o combinado de uma responsabilidade do Modo Autônomo).
              * @enum {string}
              */
-            type: "work_created" | "material" | "approval" | "question" | "options" | "team" | "budget";
+            type: "work_created" | "material" | "approval" | "question" | "options" | "team" | "budget" | "responsibility_proposal";
             /** Actions */
             actions?: components["schemas"]["CardAction"][];
             /** Work Item Id */
@@ -4619,6 +4973,45 @@ export interface components {
              * @description Resposta escrita ou opção escolhida.
              */
             answer?: string | null;
+            /**
+             * Kicker
+             * @description `responsibility_proposal`: "Responsabilidade" ou "Mudança no combinado".
+             */
+            kicker?: string | null;
+            /**
+             * Template
+             * @description `responsibility_proposal`: o modelo.
+             */
+            template?: string | null;
+            /** Title */
+            title?: string | null;
+            /**
+             * Agreement
+             * @description "O combinado" em uma frase.
+             */
+            agreement?: string | null;
+            /**
+             * Facts
+             * @description Responsável, Colaboração, Coordenação, Frequência, Entrega…
+             */
+            facts?: {
+                [key: string]: string;
+            }[] | null;
+            /**
+             * Does
+             * @description "Faz sozinho".
+             */
+            does?: string[] | null;
+            /**
+             * Asks
+             * @description "Só com a sua autorização".
+             */
+            asks?: string[] | null;
+            /**
+             * Never
+             * @description "Nunca".
+             */
+            never?: string[] | null;
             version_status?: components["schemas"]["DeliveryVersionStatus"] | null;
             work_item_status?: components["schemas"]["WorkItemStatus"] | null;
         };
@@ -4880,6 +5273,13 @@ export interface components {
              * @description O que é agora (mais antigo primeiro), depois `next`.
              */
             items: components["schemas"]["NeedItem"][];
+        };
+        /** OptionChoice */
+        OptionChoice: {
+            /** Value */
+            value: string;
+            /** Label */
+            label: string;
         };
         /** Participant */
         Participant: {
@@ -5475,6 +5875,91 @@ export interface components {
             /** Version */
             version?: number | null;
         };
+        /** Proposal */
+        Proposal: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Template
+             * @enum {string}
+             */
+            template: "plan" | "posts" | "res" | "opp" | "reat" | "reviews" | "seo" | "crm";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "confirmed" | "discarded";
+            /** Responsibility Id */
+            responsibility_id: string | null;
+            /**
+             * Approval Id
+             * Format: uuid
+             */
+            approval_id: string;
+            /**
+             * Work Item Id
+             * Format: uuid
+             */
+            work_item_id: string;
+            /** Message Id */
+            message_id: string | null;
+            /** Conversation Id */
+            conversation_id: string | null;
+            /** Title */
+            title: string;
+            /** Agreement */
+            agreement: string;
+            /** Facts */
+            facts: components["schemas"]["Fact"][];
+            /** First Run At */
+            first_run_at: string | null;
+            /** First Run Label */
+            first_run_label: string | null;
+            /** Does */
+            does: string[];
+            /** Asks */
+            asks: string[];
+            /** Never */
+            never: string[];
+            /** Card */
+            card: {
+                [key: string]: unknown;
+            };
+        };
+        /** ProposalCreate */
+        ProposalCreate: {
+            /**
+             * Template
+             * @enum {string}
+             */
+            template: "plan" | "posts" | "res" | "opp" | "reat" | "reviews" | "seo" | "crm";
+            /**
+             * Options
+             * @description As respostas da conversa; o que faltar fica no padrão.
+             */
+            options?: {
+                [key: string]: string;
+            };
+            /**
+             * Auto Publish
+             * @description "Publicar sozinho o que eu aprovar no plano" (só plan e posts).
+             * @default false
+             */
+            auto_publish: boolean;
+            /**
+             * Conversation Id
+             * @description A conversa com o Nexo onde o combinado é apresentado.
+             */
+            conversation_id?: string | null;
+            /**
+             * Responsibility Id
+             * @description "Editar": mudança no combinado de uma responsabilidade aberta.
+             */
+            responsibility_id?: string | null;
+        };
         /** ProviderBalanceAlert */
         ProviderBalanceAlert: {
             /** Provider */
@@ -5842,6 +6327,170 @@ export interface components {
              */
             status: string;
         };
+        /** ResponsibilityDetail */
+        ResponsibilityDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Template
+             * @enum {string}
+             */
+            template: "plan" | "posts" | "res" | "opp" | "reat" | "reviews" | "seo" | "crm";
+            /** Title */
+            title: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "proposed" | "active" | "paused" | "blocked" | "failed" | "ended";
+            /** Status Label */
+            status_label: string;
+            lead_agent_id: components["schemas"]["AgentId"];
+            /** Collaborator Agent Ids */
+            collaborator_agent_ids: components["schemas"]["AgentId"][];
+            coordinator_agent_id: components["schemas"]["AgentId"];
+            /** Frequency Label */
+            frequency_label: string;
+            /**
+             * Since
+             * Format: date-time
+             */
+            since: string;
+            /** Next Run At */
+            next_run_at: string | null;
+            /** Next Run Label */
+            next_run_label: string | null;
+            /** Next Run Title */
+            next_run_title: string | null;
+            /**
+             * Say
+             * @description Texto que acompanha o estado (V4.6 L13488).
+             */
+            say: string;
+            /**
+             * Notice
+             * @description Aviso de falha ou bloqueio na lista.
+             */
+            notice?: string | null;
+            /**
+             * Idle
+             * @description Sem execução à frente: "Nenhuma execução até você retomar."
+             */
+            idle?: string | null;
+            /** Blocked By Connection */
+            blocked_by_connection?: string | null;
+            /** Can Pause */
+            can_pause: boolean;
+            /** Can Resume */
+            can_resume: boolean;
+            /** Can End */
+            can_end: boolean;
+            /** Can Edit */
+            can_edit: boolean;
+            /** Can Redelegate */
+            can_redelegate: boolean;
+            /** Agreement */
+            agreement: string;
+            /** Options */
+            options: {
+                [key: string]: string;
+            };
+            /** Option Labels */
+            option_labels: {
+                [key: string]: string;
+            };
+            /** Auto Publish */
+            auto_publish: boolean;
+            /**
+             * Facts
+             * @description "O combinado": Responsável, Colaboração, Coordenação…
+             */
+            facts: components["schemas"]["Fact"][];
+            levels: components["schemas"]["Levels"];
+            /** Detail Notice */
+            detail_notice?: string | null;
+            /** Memory Used */
+            memory_used: components["schemas"]["MemoryUsed"][];
+            /** Upcoming */
+            upcoming: components["schemas"]["Upcoming"][];
+            /** History */
+            history: components["schemas"]["RunItem"][];
+            /** History Total */
+            history_total: number;
+            /** Events */
+            events: components["schemas"]["EventItem"][];
+            /** Conversation Id */
+            conversation_id: string | null;
+        };
+        /** ResponsibilitySummary */
+        ResponsibilitySummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Template
+             * @enum {string}
+             */
+            template: "plan" | "posts" | "res" | "opp" | "reat" | "reviews" | "seo" | "crm";
+            /** Title */
+            title: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "proposed" | "active" | "paused" | "blocked" | "failed" | "ended";
+            /** Status Label */
+            status_label: string;
+            lead_agent_id: components["schemas"]["AgentId"];
+            /** Collaborator Agent Ids */
+            collaborator_agent_ids: components["schemas"]["AgentId"][];
+            coordinator_agent_id: components["schemas"]["AgentId"];
+            /** Frequency Label */
+            frequency_label: string;
+            /**
+             * Since
+             * Format: date-time
+             */
+            since: string;
+            /** Next Run At */
+            next_run_at: string | null;
+            /** Next Run Label */
+            next_run_label: string | null;
+            /** Next Run Title */
+            next_run_title: string | null;
+            /**
+             * Say
+             * @description Texto que acompanha o estado (V4.6 L13488).
+             */
+            say: string;
+            /**
+             * Notice
+             * @description Aviso de falha ou bloqueio na lista.
+             */
+            notice?: string | null;
+            /**
+             * Idle
+             * @description Sem execução à frente: "Nenhuma execução até você retomar."
+             */
+            idle?: string | null;
+            /** Blocked By Connection */
+            blocked_by_connection?: string | null;
+            /** Can Pause */
+            can_pause: boolean;
+            /** Can Resume */
+            can_resume: boolean;
+            /** Can End */
+            can_end: boolean;
+            /** Can Edit */
+            can_edit: boolean;
+            /** Can Redelegate */
+            can_redelegate: boolean;
+        };
         /** RestoreRequest */
         RestoreRequest: {
             /** Note */
@@ -6073,11 +6722,88 @@ export interface components {
              */
             next_after: number | null;
         };
+        /** RunItem */
+        RunItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Code
+             * @description PL-43, RS-42, BL-42b, RC-10…
+             */
+            code: string;
+            /**
+             * Responsibility Id
+             * Format: uuid
+             */
+            responsibility_id: string;
+            /** Responsibility Title */
+            responsibility_title: string;
+            /**
+             * Template
+             * @enum {string}
+             */
+            template: "plan" | "posts" | "res" | "opp" | "reat" | "reviews" | "seo" | "crm";
+            /** Title */
+            title: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "scheduled" | "running" | "awaiting_approval" | "approved" | "done" | "failed" | "skipped";
+            /** Status Label */
+            status_label: string;
+            /** Message */
+            message: string | null;
+            /**
+             * Scheduled For
+             * Format: date-time
+             */
+            scheduled_for: string;
+            /** Scheduled Label */
+            scheduled_label: string;
+            /** Started At */
+            started_at: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /** Attempts */
+            attempts: number;
+            /** Work Item Id */
+            work_item_id: string | null;
+            /** Approved At */
+            approved_at: string | null;
+            /**
+             * Memory Used
+             * @description O que a execução usou da Memória da Marca (fatos postos no contexto).
+             */
+            memory_used: components["schemas"]["MemoryUsed"][];
+            /**
+             * Alerts
+             * @description 07.06: alertas só com dado atualizado.
+             */
+            alerts?: components["schemas"]["Alert"][];
+            /**
+             * Stale
+             * @description 07.06: séries atrasadas (sem alerta, com a data).
+             */
+            stale?: components["schemas"]["Alert"][];
+        };
         /**
          * RunKind
          * @enum {string}
          */
         RunKind: "interactive" | "scheduled" | "reflection";
+        /** RunPage */
+        RunPage: {
+            /** Items */
+            items: components["schemas"]["RunItem"][];
+            /** Total */
+            total: number;
+            /** Next Cursor */
+            next_cursor?: string | null;
+        };
         /**
          * RunStatus
          * @enum {string}
@@ -6457,6 +7183,18 @@ export interface components {
              */
             duration_minutes: 15 | 30 | 60;
         };
+        /** SwitchChange */
+        SwitchChange: {
+            /** On */
+            on: boolean;
+        };
+        /** SwitchResult */
+        SwitchResult: {
+            /** On */
+            on: boolean;
+            /** Changed */
+            changed: number;
+        };
         /** TaskRule */
         TaskRule: {
             /** Agent Id */
@@ -6480,6 +7218,55 @@ export interface components {
              * Format: date-time
              */
             valid_from: string;
+        };
+        /** TemplateInfo */
+        TemplateInfo: {
+            /**
+             * Id
+             * @enum {string}
+             */
+            id: "plan" | "posts" | "res" | "opp" | "reat" | "reviews" | "seo" | "crm";
+            /** Title */
+            title: string;
+            lead_agent_id: components["schemas"]["AgentId"];
+            /** Collaborator Agent Ids */
+            collaborator_agent_ids: components["schemas"]["AgentId"][];
+            /** Questions */
+            questions: components["schemas"]["TemplateQuestion"][];
+            /**
+             * Publish Option
+             * @description Só `plan` e `posts`: "Aprovar cada publicação" ou "Publicar sozinho".
+             */
+            publish_option: boolean;
+            /**
+             * Offered
+             * @description Aparece em "O que mais pode ficar com o squad" (plan, posts, opp e reviews, só se ainda não existe).
+             */
+            offered: boolean;
+            /**
+             * Existing Id
+             * @description Responsabilidade aberta do mesmo modelo ("O Otto já cuida disso").
+             */
+            existing_id?: string | null;
+            /** Existing Status */
+            existing_status?: ("proposed" | "active" | "paused" | "blocked" | "failed" | "ended") | null;
+        };
+        /** TemplateQuestion */
+        TemplateQuestion: {
+            /**
+             * Key
+             * @description Chave da opção no combinado (`obj`, `day`, `vol`, `freq`…).
+             */
+            key: string;
+            /**
+             * Question
+             * @description A pergunta do responsável na conversa (V4.6 `Q5`).
+             */
+            question: string;
+            /** Options */
+            options: components["schemas"]["OptionChoice"][];
+            /** Default */
+            default: string;
         };
         /** TopupItem */
         TopupItem: {
@@ -6599,6 +7386,46 @@ export interface components {
              * @description Pelo especialista à frente da conversa (o ambiente dele), fora a Sala do Squad; só os que têm não lida.
              */
             by_agent: components["schemas"]["AgentUnread"][];
+        };
+        /** Upcoming */
+        Upcoming: {
+            /**
+             * Responsibility Id
+             * Format: uuid
+             */
+            responsibility_id: string;
+            /**
+             * Template
+             * @enum {string}
+             */
+            template: "plan" | "posts" | "res" | "opp" | "reat" | "reviews" | "seo" | "crm";
+            /**
+             * Title
+             * @description Título do ciclo ("Plano da semana 44").
+             */
+            title: string;
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            /**
+             * At Label
+             * @description "qui, 22/10, 9h" no fuso do negócio.
+             */
+            at_label: string;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "scheduled" | "blocked";
+            /** State Label */
+            state_label: string;
+            /**
+             * Reason
+             * @description Por que não acontece (bloqueada).
+             */
+            reason?: string | null;
         };
         /** UsageTotals */
         UsageTotals: {
@@ -9481,6 +10308,828 @@ export interface operations {
             };
             /** @description Recurso não encontrado (ou fora do seu acesso). */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_autonomy_workspaces__workspace_id__autonomy_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutonomyOverview"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_templates_workspaces__workspace_id__autonomy_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateInfo"][];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_responsibilities_workspaces__workspace_id__autonomy_responsibilities_get: {
+        parameters: {
+            query?: {
+                /** @description Filtra por estado (active, ended…). */
+                status?: string | null;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponsibilitySummary"][];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                responsibility_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponsibilityDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_upcoming_workspaces__workspace_id__autonomy_upcoming_get: {
+        parameters: {
+            query?: {
+                /** @description Itens por página (1 a 20). */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Upcoming"][];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_runs_workspaces__workspace_id__autonomy_runs_get: {
+        parameters: {
+            query?: {
+                responsibility_id?: string | null;
+                /** @description Execuções programadas antes deste instante. */
+                before?: string | null;
+                /** @description Itens por página (1 a 100). */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunPage"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    pause_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__pause_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                responsibility_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponsibilityDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    resume_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__resume_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                responsibility_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponsibilityDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    end_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__end_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                responsibility_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponsibilityDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    switch_autonomy_workspaces__workspace_id__autonomy_switch_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SwitchChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SwitchResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_proposal_workspaces__workspace_id__autonomy_proposals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProposalCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proposal"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    redelegate_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__redelegate_post: {
+        parameters: {
+            query?: {
+                conversation_id?: string | null;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+                responsibility_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proposal"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

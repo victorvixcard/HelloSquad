@@ -3204,6 +3204,1236 @@
         }
       }
     },
+    "/workspaces/{workspace_id}/autonomy": {
+      "get": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "Modo Autônomo: interruptor, resumo, responsabilidades, próximas e histórico",
+        "operationId": "get_autonomy_workspaces__workspace_id__autonomy_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutonomyOverview"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/templates": {
+      "get": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "Modelos de responsabilidade com as perguntas e opções da conversa (V4.6 TPL e Q5)",
+        "operationId": "list_templates_workspaces__workspace_id__autonomy_templates_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplateInfo"
+                  },
+                  "title": "Response List Templates Workspaces  Workspace Id  Autonomy Templates Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/responsibilities": {
+      "get": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "Responsabilidades do workspace (encerradas incluídas, com `status`)",
+        "operationId": "list_responsibilities_workspaces__workspace_id__autonomy_responsibilities_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtra por estado (active, ended…).",
+              "title": "Status"
+            },
+            "description": "Filtra por estado (active, ended…)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResponsibilitySummary"
+                  },
+                  "title": "Response List Responsibilities Workspaces  Workspace Id  Autonomy Responsibilities Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}": {
+      "get": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "Detalhe: o combinado, limites, memória usada, próximas, histórico e alterações",
+        "operationId": "get_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "responsibility_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Responsibility Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponsibilityDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/upcoming": {
+      "get": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "Próximas execuções (pausadas e encerradas não aparecem; bloqueadas, com o motivo)",
+        "operationId": "list_upcoming_workspaces__workspace_id__autonomy_upcoming_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1,
+              "description": "Itens por página (1 a 20).",
+              "default": 5,
+              "title": "Limit"
+            },
+            "description": "Itens por página (1 a 20)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Upcoming"
+                  },
+                  "title": "Response List Upcoming Workspaces  Workspace Id  Autonomy Upcoming Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/runs": {
+      "get": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "Histórico de execuções (código, estado, mensagem, trabalho, memória usada)",
+        "operationId": "list_runs_workspaces__workspace_id__autonomy_runs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "responsibility_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Responsibility Id"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Execuções programadas antes deste instante.",
+              "title": "Before"
+            },
+            "description": "Execuções programadas antes deste instante."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Itens por página (1 a 100).",
+              "default": 20,
+              "title": "Limit"
+            },
+            "description": "Itens por página (1 a 100)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/pause": {
+      "post": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "\"Pausar\": nada novo é preparado até retomar (só o owner; ativa)",
+        "operationId": "pause_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__pause_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "responsibility_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Responsibility Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponsibilityDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/resume": {
+      "post": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "\"Retomar\": volta a Ativa com a próxima execução no ritmo (só o owner; pausada)",
+        "operationId": "resume_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__resume_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "responsibility_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Responsibility Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponsibilityDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/end": {
+      "post": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "\"Encerrar\": nada mais é programado; o histórico fica (só o owner)",
+        "description": "Com falha ou bloqueio, não pausa nem encerra até ser resolvida.",
+        "operationId": "end_responsibility_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__end_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "responsibility_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Responsibility Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponsibilityDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/switch": {
+      "post": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "Interruptor \"Ligado\"/\"Pausado\": pausa todas as ativas ou retoma as pausadas",
+        "description": "Não alcança as com falha ou bloqueio nem as encerradas. O que mais o interruptor interrompe é pergunta ao dono (FLUXOS §11 item 4). Só o owner.",
+        "operationId": "switch_autonomy_workspaces__workspace_id__autonomy_switch_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SwitchChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SwitchResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/proposals": {
+      "post": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "O Nexo apresenta \"o combinado\" na conversa; só ativa com o ok do dono",
+        "description": "Monta o combinado do modelo com as opções ditas na conversa (o que faltar fica no padrão), grava a mensagem do Nexo com o cartão `responsibility_proposal` e a pendência `confirm` (no trabalho 01.04). O owner confirma em `POST /approvals/{id}/decision` (`approved` ativa; `rejected` é \"Ajustar\"). Com `responsibility_id`, é a mudança no combinado (Editar), que vale a partir da próxima execução. Editor ou acima pede.",
+        "operationId": "create_proposal_workspaces__workspace_id__autonomy_proposals_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposalCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Proposal"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/redelegate": {
+      "post": {
+        "tags": [
+          "autonomy"
+        ],
+        "summary": "\"Delegar de novo\": recomeça a delegação de uma encerrada com o mesmo combinado",
+        "operationId": "redelegate_workspaces__workspace_id__autonomy_responsibilities__responsibility_id__redelegate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "responsibility_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Responsibility Id"
+            }
+          },
+          {
+            "name": "conversation_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Proposal"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual do registro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/workspaces/{workspace_id}/memory": {
       "get": {
         "tags": [
@@ -11920,6 +13150,40 @@
         ],
         "title": "AgentUnread"
       },
+      "Alert": {
+        "properties": {
+          "metric": {
+            "type": "string",
+            "title": "Metric"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change"
+          },
+          "last_day": {
+            "type": "string",
+            "title": "Last Day"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric",
+          "text",
+          "last_day"
+        ],
+        "title": "Alert"
+      },
       "AlertRule": {
         "properties": {
           "metric": {
@@ -12592,6 +13856,140 @@
           "next_cursor"
         ],
         "title": "AuditPage"
+      },
+      "AutonomyCounts": {
+        "properties": {
+          "active": {
+            "type": "integer",
+            "title": "Active"
+          },
+          "paused": {
+            "type": "integer",
+            "title": "Paused"
+          },
+          "failed": {
+            "type": "integer",
+            "title": "Failed"
+          },
+          "blocked": {
+            "type": "integer",
+            "title": "Blocked"
+          },
+          "ended": {
+            "type": "integer",
+            "title": "Ended"
+          }
+        },
+        "type": "object",
+        "required": [
+          "active",
+          "paused",
+          "failed",
+          "blocked",
+          "ended"
+        ],
+        "title": "AutonomyCounts"
+      },
+      "AutonomyOverview": {
+        "properties": {
+          "switch": {
+            "$ref": "#/components/schemas/AutonomySwitch"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/AutonomyCounts"
+          },
+          "next": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Upcoming"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_7_days": {
+            "$ref": "#/components/schemas/LastDays"
+          },
+          "responsibilities": {
+            "items": {
+              "$ref": "#/components/schemas/ResponsibilitySummary"
+            },
+            "type": "array",
+            "title": "Responsibilities"
+          },
+          "ended": {
+            "items": {
+              "$ref": "#/components/schemas/ResponsibilitySummary"
+            },
+            "type": "array",
+            "title": "Ended"
+          },
+          "offers": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateInfo"
+            },
+            "type": "array",
+            "title": "Offers"
+          },
+          "upcoming": {
+            "items": {
+              "$ref": "#/components/schemas/Upcoming"
+            },
+            "type": "array",
+            "title": "Upcoming"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/RunItem"
+            },
+            "type": "array",
+            "title": "History"
+          },
+          "history_total": {
+            "type": "integer",
+            "title": "History Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "switch",
+          "counts",
+          "next",
+          "last_7_days",
+          "responsibilities",
+          "ended",
+          "offers",
+          "upcoming",
+          "history",
+          "history_total"
+        ],
+        "title": "AutonomyOverview"
+      },
+      "AutonomySwitch": {
+        "properties": {
+          "visible": {
+            "type": "boolean",
+            "title": "Visible",
+            "description": "Só aparece com responsabilidade ativa ou pausada."
+          },
+          "on": {
+            "type": "boolean",
+            "title": "On",
+            "description": "\"Ligado\" com ao menos uma ativa; senão \"Pausado\"."
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "visible",
+          "on",
+          "label"
+        ],
+        "title": "AutonomySwitch"
       },
       "BalanceReport": {
         "properties": {
@@ -16139,6 +17537,46 @@
         ],
         "title": "ErrorResponse"
       },
+      "EventItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "actor_type": {
+            "type": "string",
+            "enum": [
+              "user",
+              "agent",
+              "system"
+            ],
+            "title": "Actor Type"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "action",
+          "text",
+          "actor_type",
+          "created_at"
+        ],
+        "title": "EventItem"
+      },
       "ExchangeRate": {
         "properties": {
           "usd_brl": {
@@ -16162,6 +17600,68 @@
           "fx_source"
         ],
         "title": "ExchangeRate"
+      },
+      "ExecuteAction": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "requirement": {
+            "type": "string",
+            "title": "Requirement"
+          },
+          "requirement_label": {
+            "type": "string",
+            "title": "Requirement Label"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "you",
+              "no"
+            ],
+            "title": "State",
+            "description": "ok = autorizado; you = pede a sua aprovação; no = autorização não concedida."
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "label",
+          "requirement",
+          "requirement_label",
+          "state"
+        ],
+        "title": "ExecuteAction"
+      },
+      "Fact": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "value"
+        ],
+        "title": "Fact"
       },
       "FactSource": {
         "properties": {
@@ -16375,6 +17875,24 @@
         ],
         "title": "HowToRead"
       },
+      "LastDays": {
+        "properties": {
+          "runs": {
+            "type": "integer",
+            "title": "Runs"
+          },
+          "not_concluded": {
+            "type": "integer",
+            "title": "Not Concluded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runs",
+          "not_concluded"
+        ],
+        "title": "LastDays"
+      },
       "LedgerEntry": {
         "properties": {
           "id": {
@@ -16429,6 +17947,52 @@
           "created_at"
         ],
         "title": "LedgerEntry"
+      },
+      "Levels": {
+        "properties": {
+          "analyze": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Analyze"
+          },
+          "prepare": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Prepare"
+          },
+          "execute": {
+            "items": {
+              "$ref": "#/components/schemas/ExecuteAction"
+            },
+            "type": "array",
+            "title": "Execute"
+          },
+          "never": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Never"
+          },
+          "no_external_action": {
+            "type": "boolean",
+            "title": "No External Action",
+            "description": "\"Nenhuma ação externa nesta responsabilidade.\" quando não há o que executar."
+          }
+        },
+        "type": "object",
+        "required": [
+          "analyze",
+          "prepare",
+          "execute",
+          "never",
+          "no_external_action"
+        ],
+        "title": "Levels"
       },
       "MarginBasis": {
         "properties": {
@@ -17571,6 +19135,30 @@
         ],
         "title": "MemoryTopic"
       },
+      "MemoryUsed": {
+        "properties": {
+          "fact_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Fact Id"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fact_id",
+          "key",
+          "state"
+        ],
+        "title": "MemoryUsed"
+      },
       "Message": {
         "properties": {
           "id": {
@@ -17691,10 +19279,11 @@
               "question",
               "options",
               "team",
-              "budget"
+              "budget",
+              "responsibility_proposal"
             ],
             "title": "Type",
-            "description": "`work_created` (Trabalho criado), `material` (Material · vN), `approval` (pedido de aprovação ou autorização), `question` (pergunta), `options` (escolher uma opção), `team` (equipe montada), `budget` (orçamento em créditos)."
+            "description": "`work_created` (Trabalho criado), `material` (Material · vN), `approval` (pedido de aprovação ou autorização), `question` (pergunta), `options` (escolher uma opção), `team` (equipe montada), `budget` (orçamento em créditos), `responsibility_proposal` (o combinado de uma responsabilidade do Modo Autônomo)."
           },
           "actions": {
             "items": {
@@ -17850,6 +19439,116 @@
             ],
             "title": "Answer",
             "description": "Resposta escrita ou opção escolhida."
+          },
+          "kicker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kicker",
+            "description": "`responsibility_proposal`: \"Responsabilidade\" ou \"Mudança no combinado\"."
+          },
+          "template": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template",
+            "description": "`responsibility_proposal`: o modelo."
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "agreement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agreement",
+            "description": "\"O combinado\" em uma frase."
+          },
+          "facts": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facts",
+            "description": "Responsável, Colaboração, Coordenação, Frequência, Entrega…"
+          },
+          "does": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Does",
+            "description": "\"Faz sozinho\"."
+          },
+          "asks": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asks",
+            "description": "\"Só com a sua autorização\"."
+          },
+          "never": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Never",
+            "description": "\"Nunca\"."
           },
           "version_status": {
             "anyOf": [
@@ -18517,6 +20216,24 @@
           "items"
         ],
         "title": "NeedsYou"
+      },
+      "OptionChoice": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "label"
+        ],
+        "title": "OptionChoice"
       },
       "Participant": {
         "properties": {
@@ -20004,6 +21721,233 @@
         "type": "object",
         "title": "PromptVersionSource"
       },
+      "Proposal": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "plan",
+              "posts",
+              "res",
+              "opp",
+              "reat",
+              "reviews",
+              "seo",
+              "crm"
+            ],
+            "title": "Template"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "confirmed",
+              "discarded"
+            ],
+            "title": "Status"
+          },
+          "responsibility_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsibility Id"
+          },
+          "approval_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Approval Id"
+          },
+          "work_item_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Work Item Id"
+          },
+          "message_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message Id"
+          },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "agreement": {
+            "type": "string",
+            "title": "Agreement"
+          },
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/Fact"
+            },
+            "type": "array",
+            "title": "Facts"
+          },
+          "first_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Run At"
+          },
+          "first_run_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Run Label"
+          },
+          "does": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Does"
+          },
+          "asks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Asks"
+          },
+          "never": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Never"
+          },
+          "card": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Card"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "template",
+          "status",
+          "responsibility_id",
+          "approval_id",
+          "work_item_id",
+          "message_id",
+          "conversation_id",
+          "title",
+          "agreement",
+          "facts",
+          "first_run_at",
+          "first_run_label",
+          "does",
+          "asks",
+          "never",
+          "card"
+        ],
+        "title": "Proposal"
+      },
+      "ProposalCreate": {
+        "properties": {
+          "template": {
+            "type": "string",
+            "enum": [
+              "plan",
+              "posts",
+              "res",
+              "opp",
+              "reat",
+              "reviews",
+              "seo",
+              "crm"
+            ],
+            "title": "Template"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Options",
+            "description": "As respostas da conversa; o que faltar fica no padrão."
+          },
+          "auto_publish": {
+            "type": "boolean",
+            "title": "Auto Publish",
+            "description": "\"Publicar sozinho o que eu aprovar no plano\" (só plan e posts).",
+            "default": false
+          },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation Id",
+            "description": "A conversa com o Nexo onde o combinado é apresentado."
+          },
+          "responsibility_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsibility Id",
+            "description": "\"Editar\": mudança no combinado de uma responsabilidade aberta."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "template"
+        ],
+        "title": "ProposalCreate"
+      },
       "ProviderBalanceAlert": {
         "properties": {
           "provider": {
@@ -21096,6 +23040,470 @@
         ],
         "title": "ReplyRequest"
       },
+      "ResponsibilityDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "plan",
+              "posts",
+              "res",
+              "opp",
+              "reat",
+              "reviews",
+              "seo",
+              "crm"
+            ],
+            "title": "Template"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "active",
+              "paused",
+              "blocked",
+              "failed",
+              "ended"
+            ],
+            "title": "Status"
+          },
+          "status_label": {
+            "type": "string",
+            "title": "Status Label"
+          },
+          "lead_agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "collaborator_agent_ids": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Collaborator Agent Ids"
+          },
+          "coordinator_agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "frequency_label": {
+            "type": "string",
+            "title": "Frequency Label"
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Since"
+          },
+          "next_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run At"
+          },
+          "next_run_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run Label"
+          },
+          "next_run_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run Title"
+          },
+          "say": {
+            "type": "string",
+            "title": "Say",
+            "description": "Texto que acompanha o estado (V4.6 L13488)."
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice",
+            "description": "Aviso de falha ou bloqueio na lista."
+          },
+          "idle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idle",
+            "description": "Sem execução à frente: \"Nenhuma execução até você retomar.\""
+          },
+          "blocked_by_connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blocked By Connection"
+          },
+          "can_pause": {
+            "type": "boolean",
+            "title": "Can Pause"
+          },
+          "can_resume": {
+            "type": "boolean",
+            "title": "Can Resume"
+          },
+          "can_end": {
+            "type": "boolean",
+            "title": "Can End"
+          },
+          "can_edit": {
+            "type": "boolean",
+            "title": "Can Edit"
+          },
+          "can_redelegate": {
+            "type": "boolean",
+            "title": "Can Redelegate"
+          },
+          "agreement": {
+            "type": "string",
+            "title": "Agreement"
+          },
+          "options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Options"
+          },
+          "option_labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Option Labels"
+          },
+          "auto_publish": {
+            "type": "boolean",
+            "title": "Auto Publish"
+          },
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/Fact"
+            },
+            "type": "array",
+            "title": "Facts",
+            "description": "\"O combinado\": Responsável, Colaboração, Coordenação…"
+          },
+          "levels": {
+            "$ref": "#/components/schemas/Levels"
+          },
+          "detail_notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail Notice"
+          },
+          "memory_used": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryUsed"
+            },
+            "type": "array",
+            "title": "Memory Used"
+          },
+          "upcoming": {
+            "items": {
+              "$ref": "#/components/schemas/Upcoming"
+            },
+            "type": "array",
+            "title": "Upcoming"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/RunItem"
+            },
+            "type": "array",
+            "title": "History"
+          },
+          "history_total": {
+            "type": "integer",
+            "title": "History Total"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventItem"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "template",
+          "title",
+          "status",
+          "status_label",
+          "lead_agent_id",
+          "collaborator_agent_ids",
+          "coordinator_agent_id",
+          "frequency_label",
+          "since",
+          "next_run_at",
+          "next_run_label",
+          "next_run_title",
+          "say",
+          "can_pause",
+          "can_resume",
+          "can_end",
+          "can_edit",
+          "can_redelegate",
+          "agreement",
+          "options",
+          "option_labels",
+          "auto_publish",
+          "facts",
+          "levels",
+          "memory_used",
+          "upcoming",
+          "history",
+          "history_total",
+          "events",
+          "conversation_id"
+        ],
+        "title": "ResponsibilityDetail"
+      },
+      "ResponsibilitySummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "plan",
+              "posts",
+              "res",
+              "opp",
+              "reat",
+              "reviews",
+              "seo",
+              "crm"
+            ],
+            "title": "Template"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "active",
+              "paused",
+              "blocked",
+              "failed",
+              "ended"
+            ],
+            "title": "Status"
+          },
+          "status_label": {
+            "type": "string",
+            "title": "Status Label"
+          },
+          "lead_agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "collaborator_agent_ids": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Collaborator Agent Ids"
+          },
+          "coordinator_agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "frequency_label": {
+            "type": "string",
+            "title": "Frequency Label"
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Since"
+          },
+          "next_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run At"
+          },
+          "next_run_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run Label"
+          },
+          "next_run_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run Title"
+          },
+          "say": {
+            "type": "string",
+            "title": "Say",
+            "description": "Texto que acompanha o estado (V4.6 L13488)."
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice",
+            "description": "Aviso de falha ou bloqueio na lista."
+          },
+          "idle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idle",
+            "description": "Sem execução à frente: \"Nenhuma execução até você retomar.\""
+          },
+          "blocked_by_connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blocked By Connection"
+          },
+          "can_pause": {
+            "type": "boolean",
+            "title": "Can Pause"
+          },
+          "can_resume": {
+            "type": "boolean",
+            "title": "Can Resume"
+          },
+          "can_end": {
+            "type": "boolean",
+            "title": "Can End"
+          },
+          "can_edit": {
+            "type": "boolean",
+            "title": "Can Edit"
+          },
+          "can_redelegate": {
+            "type": "boolean",
+            "title": "Can Redelegate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "template",
+          "title",
+          "status",
+          "status_label",
+          "lead_agent_id",
+          "collaborator_agent_ids",
+          "coordinator_agent_id",
+          "frequency_label",
+          "since",
+          "next_run_at",
+          "next_run_label",
+          "next_run_title",
+          "say",
+          "can_pause",
+          "can_resume",
+          "can_end",
+          "can_edit",
+          "can_redelegate"
+        ],
+        "title": "ResponsibilitySummary"
+      },
       "RestoreRequest": {
         "properties": {
           "note": {
@@ -21712,6 +24120,181 @@
         ],
         "title": "RunEventPage"
       },
+      "RunItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "PL-43, RS-42, BL-42b, RC-10…"
+          },
+          "responsibility_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Responsibility Id"
+          },
+          "responsibility_title": {
+            "type": "string",
+            "title": "Responsibility Title"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "plan",
+              "posts",
+              "res",
+              "opp",
+              "reat",
+              "reviews",
+              "seo",
+              "crm"
+            ],
+            "title": "Template"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "running",
+              "awaiting_approval",
+              "approved",
+              "done",
+              "failed",
+              "skipped"
+            ],
+            "title": "Status"
+          },
+          "status_label": {
+            "type": "string",
+            "title": "Status Label"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "scheduled_for": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Scheduled For"
+          },
+          "scheduled_label": {
+            "type": "string",
+            "title": "Scheduled Label"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "work_item_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Id"
+          },
+          "approved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "memory_used": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryUsed"
+            },
+            "type": "array",
+            "title": "Memory Used",
+            "description": "O que a execução usou da Memória da Marca (fatos postos no contexto)."
+          },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/Alert"
+            },
+            "type": "array",
+            "title": "Alerts",
+            "description": "07.06: alertas só com dado atualizado."
+          },
+          "stale": {
+            "items": {
+              "$ref": "#/components/schemas/Alert"
+            },
+            "type": "array",
+            "title": "Stale",
+            "description": "07.06: séries atrasadas (sem alerta, com a data)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "responsibility_id",
+          "responsibility_title",
+          "template",
+          "title",
+          "status",
+          "status_label",
+          "message",
+          "scheduled_for",
+          "scheduled_label",
+          "started_at",
+          "finished_at",
+          "attempts",
+          "work_item_id",
+          "approved_at",
+          "memory_used"
+        ],
+        "title": "RunItem"
+      },
       "RunKind": {
         "type": "string",
         "enum": [
@@ -21720,6 +24303,38 @@
           "reflection"
         ],
         "title": "RunKind"
+      },
+      "RunPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "RunPage"
       },
       "RunStatus": {
         "type": "string",
@@ -22887,6 +25502,37 @@
         ],
         "title": "SupportSessionStart"
       },
+      "SwitchChange": {
+        "properties": {
+          "on": {
+            "type": "boolean",
+            "title": "On"
+          }
+        },
+        "type": "object",
+        "required": [
+          "on"
+        ],
+        "title": "SwitchChange"
+      },
+      "SwitchResult": {
+        "properties": {
+          "on": {
+            "type": "boolean",
+            "title": "On"
+          },
+          "changed": {
+            "type": "integer",
+            "title": "Changed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "on",
+          "changed"
+        ],
+        "title": "SwitchResult"
+      },
       "TaskRule": {
         "properties": {
           "agent_id": {
@@ -22957,6 +25603,131 @@
           "valid_from"
         ],
         "title": "TaskRule"
+      },
+      "TemplateInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "plan",
+              "posts",
+              "res",
+              "opp",
+              "reat",
+              "reviews",
+              "seo",
+              "crm"
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "lead_agent_id": {
+            "$ref": "#/components/schemas/AgentId"
+          },
+          "collaborator_agent_ids": {
+            "items": {
+              "$ref": "#/components/schemas/AgentId"
+            },
+            "type": "array",
+            "title": "Collaborator Agent Ids"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateQuestion"
+            },
+            "type": "array",
+            "title": "Questions"
+          },
+          "publish_option": {
+            "type": "boolean",
+            "title": "Publish Option",
+            "description": "Só `plan` e `posts`: \"Aprovar cada publicação\" ou \"Publicar sozinho\"."
+          },
+          "offered": {
+            "type": "boolean",
+            "title": "Offered",
+            "description": "Aparece em \"O que mais pode ficar com o squad\" (plan, posts, opp e reviews, só se ainda não existe)."
+          },
+          "existing_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Existing Id",
+            "description": "Responsabilidade aberta do mesmo modelo (\"O Otto já cuida disso\")."
+          },
+          "existing_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "proposed",
+                  "active",
+                  "paused",
+                  "blocked",
+                  "failed",
+                  "ended"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Existing Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "lead_agent_id",
+          "collaborator_agent_ids",
+          "questions",
+          "publish_option",
+          "offered"
+        ],
+        "title": "TemplateInfo"
+      },
+      "TemplateQuestion": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "description": "Chave da opção no combinado (`obj`, `day`, `vol`, `freq`…)."
+          },
+          "question": {
+            "type": "string",
+            "title": "Question",
+            "description": "A pergunta do responsável na conversa (V4.6 `Q5`)."
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/OptionChoice"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "default": {
+            "type": "string",
+            "title": "Default"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "question",
+          "options",
+          "default"
+        ],
+        "title": "TemplateQuestion"
       },
       "TopupItem": {
         "properties": {
@@ -23223,6 +25994,79 @@
           "by_agent"
         ],
         "title": "UnreadSummary"
+      },
+      "Upcoming": {
+        "properties": {
+          "responsibility_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Responsibility Id"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "plan",
+              "posts",
+              "res",
+              "opp",
+              "reat",
+              "reviews",
+              "seo",
+              "crm"
+            ],
+            "title": "Template"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Título do ciclo (\"Plano da semana 44\")."
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "at_label": {
+            "type": "string",
+            "title": "At Label",
+            "description": "\"qui, 22/10, 9h\" no fuso do negócio."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "blocked"
+            ],
+            "title": "State"
+          },
+          "state_label": {
+            "type": "string",
+            "title": "State Label"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "Por que não acontece (bloqueada)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "responsibility_id",
+          "template",
+          "title",
+          "at",
+          "at_label",
+          "state",
+          "state_label"
+        ],
+        "title": "Upcoming"
       },
       "UsageTotals": {
         "properties": {
