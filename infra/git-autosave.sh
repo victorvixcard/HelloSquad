@@ -34,7 +34,10 @@ fi
 # conta), Access Token do Mercado Pago (`APP_USR-`/`TEST-` + números + 32 hex + id do usuário) e as variáveis
 # ASAAS_*, MERCADOPAGO_*, MP_* e PAYMENT_* terminadas em KEY, TOKEN ou SECRET com valor (16+). Vazia, como no
 # .env.example, não conta; nem as URLs (ASAAS_BASE_URL, MERCADOPAGO_BASE_URL) nem uma referência a variável.
-SECRET_RE='sk-ant-[A-Za-z0-9_-]{20,}|sb_secret_[A-Za-z0-9_-]{10,}|sb_publishable_[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.|sb-[a-z0-9-]+-auth-token(\.[0-9]+)?=[A-Za-z0-9%_+/=-]{20,}|base64-eyJ[A-Za-z0-9_+/=-]{20,}|ANTHROPIC_API_KEY=["'"'"']?[A-Za-z0-9_-]{16,}|\$?aact_[A-Za-z0-9_+/=-]{40,}|\b(APP_USR|TEST)-[0-9]{8,}-[0-9]{4,}-[0-9a-fA-F]{32}-[0-9]{4,}|\b(ASAAS|MERCADOPAGO|MP|PAYMENT)_[A-Z_]*(KEY|TOKEN|SECRET)=["'"'"']?[A-Za-z0-9_+/=.-]{16,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY'
+# Integrações da Fase 3 (J3): META_* e GOOGLE_* terminadas em KEY, TOKEN ou SECRET com valor (16+), segredo de
+# cliente OAuth do Google (`GOCSPX-…`) e tokens reais longos da Meta (`EAA…`, 100+) e do Google (`ya29.…`, `1//0…`).
+# Os tokens dos mocks locais são curtos (`EAAMock…`, `ya29.mock-…`, `1//mock-…`) e não contam.
+SECRET_RE='sk-ant-[A-Za-z0-9_-]{20,}|sb_secret_[A-Za-z0-9_-]{10,}|sb_publishable_[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.|sb-[a-z0-9-]+-auth-token(\.[0-9]+)?=[A-Za-z0-9%_+/=-]{20,}|base64-eyJ[A-Za-z0-9_+/=-]{20,}|ANTHROPIC_API_KEY=["'"'"']?[A-Za-z0-9_-]{16,}|\$?aact_[A-Za-z0-9_+/=-]{40,}|\b(APP_USR|TEST)-[0-9]{8,}-[0-9]{4,}-[0-9a-fA-F]{32}-[0-9]{4,}|\b(ASAAS|MERCADOPAGO|MP|PAYMENT|META|GOOGLE)_[A-Z_]*(KEY|TOKEN|SECRET)=["'"'"']?[A-Za-z0-9_+/=.-]{16,}|GOCSPX-[A-Za-z0-9_-]{20,}|\bEAA[A-Za-z0-9]{100,}|\bya29\.[A-Za-z0-9_-]{60,}|\b1//0[A-Za-z0-9_-]{40,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY'
 suspects() {
   git diff HEAD --name-only -z -- . ':!*.png' ':!*.jpg' 2>/dev/null | while IFS= read -r -d '' f; do
     git diff HEAD --unified=0 -- "$f" 2>/dev/null | grep -E '^\+' | grep -qE "$SECRET_RE" && printf '%s\n' "$f"

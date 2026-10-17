@@ -84,8 +84,20 @@ mp_test="TEST-$(digits 16)-$(digits 6)-$(hex 32)-$(digits 9)"
 printf '{"access_token": "%s"}\n' "$mp_test" > mp.json
 check_refused "Access Token de teste do Mercado Pago (TEST-) em JSON" mp.json "$mp_test"; rm mp.json
 
+google_secret="GOCSPX-$(hex 28)"
+printf '{"web": {"client_secret": "%s"}}\n' "$google_secret" > client_secret.json
+check_refused "segredo de cliente OAuth do Google (GOCSPX-) em JSON" client_secret.json "$google_secret"; rm client_secret.json
+
+meta_token="EAA$(hex 160)"
+printf 'curl "https://graph.facebook.com/v26.0/me?access_token=%s"\n' "$meta_token" > roteiro-meta.sh
+check_refused "token de acesso da Meta (EAA…) em roteiro" roteiro-meta.sh "$meta_token"; rm roteiro-meta.sh
+
+google_access="ya29.$(hex 120)"; google_refresh="1//0$(hex 90)"
+printf 'Authorization: Bearer %s\nrefresh_token=%s\n' "$google_access" "$google_refresh" > notas-google.md
+check_refused "tokens do Google (ya29. e 1//0) em notas" notas-google.md "$google_access"; rm notas-google.md
+
 for var in ASAAS_API_KEY ASAAS_WEBHOOK_TOKEN MERCADOPAGO_ACCESS_TOKEN MERCADOPAGO_WEBHOOK_SECRET MP_ACCESS_TOKEN \
-  PAYMENT_MOCK_WEBHOOK_SECRET; do
+  PAYMENT_MOCK_WEBHOOK_SECRET META_APP_SECRET GOOGLE_CLIENT_SECRET; do
   value="$(hex 48)"
   printf 'export %s="%s"\n' "$var" "$value" > .env.local
   check_refused "$var preenchida em arquivo novo" .env.local "$value"; rm .env.local
@@ -93,11 +105,11 @@ done
 
 total=$((total + 1))
 code=0; head_before="$(git rev-parse HEAD)"
-printf 'cookie sb-127-auth-token: httpOnly=true\nANTHROPIC_API_KEY=\nNEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_ci_ficticia\n' > notas.md
+printf 'cookie sb-127-auth-token: httpOnly=true\nANTHROPIC_API_KEY=\nNEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_ci_ficticia\nMETA_APP_SECRET=\nGOOGLE_CLIENT_SECRET=\naccess_token=EAAMockAbc123 ya29.mock-abc 1//mock-abc\n' > notas.md
 "$AUTOSAVE" "$TMP/repo" "wip: teste" 2>"$TMP/stderr" || code=$?
 if [ "$code" -eq 0 ] && [ "$(git rev-parse HEAD)" != "$head_before" ] && git log -1 --format=%s | grep -q '^wip: teste' \
   && [ "$(git rev-parse HEAD)" = "$(git --git-dir="$TMP/remote.git" rev-parse HEAD)" ]; then
-  echo "ok   commitou e enviou: nome do cookie sem valor, ANTHROPIC_API_KEY vazia, chave fictícia curta"
+  echo "ok   commitou e enviou: nome do cookie sem valor, ANTHROPIC_API_KEY vazia, chave fictícia curta, segredos Meta/Google vazios e tokens dos mocks"
 else
   echo "FALHA texto sem segredo não foi commitado/enviado (saída $code)"; fails=$((fails + 1))
 fi
