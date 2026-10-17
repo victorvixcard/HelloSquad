@@ -72,13 +72,22 @@ DETAIL_UPCOMING = 3
 HISTORY_PREVIEW = 3
 
 WORKSPACE = "select id, name, locale, timezone from public.workspaces where id = %s"
-RESPONSIBILITIES = """
-select r.* from public.responsibilities r
+RESPONSIBILITY_COLUMNS = """
+r.id, r.workspace_id, r.template::text as template, r.title, r.lead_agent_id::text as lead_agent_id,
+       r.collaborator_agent_ids::text[] as collaborator_agent_ids,
+       r.coordinator_agent_id::text as coordinator_agent_id, r.cadence::text as cadence, r.weekdays,
+       r.month_day, r.run_time, r.options, r.agreement, r.actions, r.limits, r.auto_publish,
+       r.approval_required, r.required_connections, r.status::text as status, r.status_reason,
+       r.status_params, r.blocked_by_connection, r.since, r.next_run_at, r.last_run_at,
+       r.paused_at, r.ended_at, r.conversation_id
+"""
+RESPONSIBILITIES = f"""
+select {RESPONSIBILITY_COLUMNS} from public.responsibilities r
 where r.workspace_id = %s
 order by r.since, r.id
 """
-RESPONSIBILITY = """
-select r.* from public.responsibilities r
+RESPONSIBILITY = f"""
+select {RESPONSIBILITY_COLUMNS} from public.responsibilities r
 where r.id = %s and r.workspace_id = %s
 """
 RUNS = """

@@ -55,7 +55,9 @@ order by rr.retry_at, rr.id
 limit %s
 """
 RESPONSIBILITY = """
-select r.*, w.timezone, w.locale, w.name as brand
+select r.*, r.collaborator_agent_ids::text[] as collaborator_agent_ids,
+       r.lead_agent_id::text as lead_agent_id, r.template::text as template,
+       r.status::text as status, w.timezone, w.locale, w.name as brand
 from public.responsibilities r
 join public.workspaces w on w.id = r.workspace_id
 where r.id = %s
