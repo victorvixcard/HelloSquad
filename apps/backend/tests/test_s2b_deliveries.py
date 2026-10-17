@@ -12,7 +12,7 @@ Cada teste termina reaplicando o seed.
 import json
 import re
 from collections.abc import AsyncIterator
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
@@ -26,7 +26,14 @@ from hellosquad.contacts.routes import parse_rows
 from hellosquad.llm.simulated import FIXTURES_DIR, SimulatedLLM
 from hellosquad.squad.data import ground_reading, ground_recommendation, metrics_evidence
 from hellosquad.squad.deliveries import DELIVERIES, Reading, Recommendation
+from hellosquad.work.live import DISPLAY_TZ
 from hellosquad.worker.main import Worker
+
+
+def today() -> date:
+    """Dia de referência das métricas e dos contatos fictícios: o de Brasília, como seed e API."""
+    return datetime.now(DISPLAY_TZ).date()
+
 
 pytestmark = pytest.mark.integration
 
@@ -440,7 +447,7 @@ async def test_iris_evidence_is_computed_from_metrics_daily(api, access_token, a
     assert await drain() == ["delivered"]
     content = (await delivered(admin_db, work["work_item_id"]))["content"]
 
-    yesterday = date.today() - timedelta(days=1)
+    yesterday = today() - timedelta(days=1)
     assert content["dados"]["atualizado_ate"] == yesterday.isoformat()
     assert content["dados"]["periodo_atual"] == {
         "inicio": (yesterday - timedelta(days=29)).isoformat(),
@@ -467,8 +474,8 @@ async def test_iris_evidence_is_computed_from_metrics_daily(api, access_token, a
         {
             "canal": "site",
             "metrica": "sessions",
-            "de": (date.today() - timedelta(days=45)).isoformat(),
-            "ate": (date.today() - timedelta(days=43)).isoformat(),
+            "de": (today() - timedelta(days=45)).isoformat(),
+            "ate": (today() - timedelta(days=43)).isoformat(),
         }
     ]
     for reading in content["destaques"] + content["por_canal"]:
@@ -563,8 +570,8 @@ async def test_metric_conversation_points_to_the_series(api, access_token, admin
         "select primary_agent_id::text, context_meta from public.conversations where id = %s",
         opened.json()["id"],
     )
-    first = (date.today() - timedelta(days=90)).isoformat()
-    last = (date.today() - timedelta(days=1)).isoformat()
+    first = (today() - timedelta(days=90)).isoformat()
+    last = (today() - timedelta(days=1)).isoformat()
     assert conversation["primary_agent_id"] == "iris"
     assert conversation["context_meta"]["period"] == f"{first}/{last}"
     assert conversation["context_meta"]["origin"] == "fonte_de_teste"
@@ -583,7 +590,7 @@ async def test_metric_conversation_points_to_the_series(api, access_token, admin
     )
     assert len(sessions["points"]) == 87
     assert sessions["missing_days"] == [
-        (date.today() - timedelta(days=n)).isoformat() for n in (45, 44, 43)
+        (today() - timedelta(days=n)).isoformat() for n in (45, 44, 43)
     ]
     rafael = await api.get(
         f"/workspaces/{miolo}/metrics",

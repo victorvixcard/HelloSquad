@@ -5,7 +5,7 @@ suporte" em audit_events. Chave de provedor nunca sai daqui: só "configured" ou
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Annotated, Literal
 from uuid import UUID
@@ -68,6 +68,7 @@ from hellosquad.api.pagination import CursorQuery, decode_cursor, limit_query, s
 from hellosquad.auth import Principal
 from hellosquad.config import get_settings
 from hellosquad.db import IS_PLATFORM_ADMIN, NotPlatformAdminError
+from hellosquad.work.live import DISPLAY_TZ
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -115,7 +116,7 @@ async def fetchone(conn: AsyncConnection[DictRow], sql: str, params=None) -> dic
 
 
 def period(since: date | None, until: date | None) -> tuple[date, date]:
-    until = until or datetime.now(UTC).date()
+    until = until or datetime.now(DISPLAY_TZ).date()
     since = since or until - timedelta(days=29)
     if since > until or (until - since).days + 1 > MAX_PERIOD_DAYS:
         raise ApiError(422, "invalid_period", "error.invalid_period", max_days=MAX_PERIOD_DAYS)
@@ -335,7 +336,7 @@ AUDIT_SUPPORT_READ = "select app.admin_audit(%s, %s, 'workspace', %s, %s) as id"
     responses=error_responses(401, 403, 404, 422, 503),
 )
 async def get_account(workspace_id: UUID, tx: AdminTx) -> AccountDetail:
-    today = datetime.now(UTC).date()
+    today = datetime.now(DISPLAY_TZ).date()
     async with tx() as conn:
         row = await fetchone(
             conn,

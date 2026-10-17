@@ -536,6 +536,8 @@ $seed_creditos$;
 do $seed_s2b$
 declare
   v_miolo uuid := (select id from public.workspaces where slug = 'miolo');
+  -- Dia de referência dos fictícios: o de Brasília (sem fuso por negócio ainda), igual ao da API e dos testes.
+  v_today constant date := (now() at time zone 'America/Sao_Paulo')::date;
 begin
   delete from public.audit_events a using public.workspaces s
   where s.id = a.workspace_id and s.slug in ('miolo', 'vitta', 'trilha')
@@ -549,7 +551,7 @@ begin
          'cliente' || lpad(c.n::text, 2, '0') || '@contatos.example',
          '+55119999900' || lpad(c.n::text, 2, '0'),
          'importação CSV de teste',
-         case when c.days_ago is not null then current_date - c.days_ago end, c.purchases
+         case when c.days_ago is not null then v_today - c.days_ago end, c.purchases
   from (values
     (1, 'Ana Souza', 5, 12), (2, 'Bruno Lima', 12, 4), (3, 'Camila Rocha', 25, 2), (4, 'Diego Alves', 40, 6),
     (5, 'Elisa Martins', 55, 1), (6, 'Fábio Ribeiro', 75, 3), (7, 'Gabriela Castro', 100, 5),
@@ -570,7 +572,7 @@ begin
   ) as c;
 
   insert into public.metrics_daily (workspace_id, channel, metric, day, value, unit, source, collected_at)
-  select w.id, p.channel, p.metric, current_date - g.n,
+  select w.id, p.channel, p.metric, v_today - g.n,
          case when p.kind = 'stock' then
            p.base + p.step_old * least(90 - g.n, 60) + p.step_new * greatest(30 - g.n, 0)
            + (('x' || substr(md5(p.slug || p.metric || g.n), 1, 8))::bit(32)::int % 3)
@@ -579,7 +581,7 @@ begin
                  * case g.n % 7 when 0 then 1.2 when 1 then 1.05 when 4 then 0.9 else 1 end
                  * (1 + 0.08 * ((('x' || substr(md5(p.slug || p.metric || g.n), 1, 8))::bit(32)::int % 1000) / 1000.0)))
          end,
-         p.unit, 'fonte_de_teste', (current_date - g.n + 1)::timestamptz + interval '6 hours'
+         p.unit, 'fonte_de_teste', ((v_today - g.n + 1) + time '06:00') at time zone 'America/Sao_Paulo'
   from (values
     ('miolo', 'site', 'sessions', 'sessões', 'flow', 140, 0.87, 0, 0),
     ('miolo', 'instagram', 'followers', 'seguidores', 'stock', 3850, 1, 3, 4),

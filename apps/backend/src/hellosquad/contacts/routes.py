@@ -28,6 +28,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from hellosquad.api.deps import CurrentPrincipal, DatabaseDep, ensure_workspace
 from hellosquad.api.errors import ApiError, error_responses
 from hellosquad.config import get_settings
+from hellosquad.work.live import DISPLAY_TZ
 
 router = APIRouter(tags=["contacts"])
 
@@ -352,7 +353,9 @@ async def import_contacts(
     db: DatabaseDep,
 ) -> ContactImport:
     local = get_settings().app_env in LOCAL_ENVS
-    total, accepted, refused = parse_rows(payload.csv, today=date.today(), local=local)
+    total, accepted, refused = parse_rows(
+        payload.csv, today=datetime.now(DISPLAY_TZ).date(), local=local
+    )
     if total == 0:
         raise ApiError(422, "invalid_csv", "error.csv.no_rows")
     async with db.transaction_as(principal) as conn:
