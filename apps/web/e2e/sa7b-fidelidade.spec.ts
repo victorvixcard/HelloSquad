@@ -29,7 +29,8 @@ test("o Vic entra pelo /entrar e cai no painel; Catálogo, Pagamentos, Auditoria
   await chips.getByRole("link", { name: /^Otto \d+$/ }).click();
   await expect(page).toHaveURL(/\/admin\/catalogo\?agente=otto$/);
   await expect(chips.getByRole("link", { name: /^Otto \d+$/ })).toHaveAttribute("aria-current", "page");
-  await expect(page.locator("section.sa-card[id^='cat-']")).toHaveCount(1);
+  await expect(page.locator("#cat-otto")).toBeVisible();
+  await expect(page.locator("#cat-nexo")).toHaveCount(0);
   await snap(page, "sa7b-catalogo-otto");
 
   // Pagamentos: texto sem a promessa da SA6, cartão do provedor com as linhas do SA0, abas com a de Assinaturas aberta.
