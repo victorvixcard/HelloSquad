@@ -450,6 +450,18 @@ class ConsumptionBucket(BaseModel):
     cost_per_turn_usd: Decimal | None
 
 
+class MarginBasis(BaseModel):
+    """Com que preços a margem foi estimada; tudo provisório até o Vic decidir preço e créditos."""
+
+    credit_reference_brl: Decimal | None = Field(
+        description="Valor do crédito em R$ na faixa da margem (exemplo do protótipo)."
+    )
+    exchange_rate: ExchangeRate | None = Field(description="Câmbio de Modelos e custos.")
+    provisional: bool = Field(
+        description="Verdadeiro enquanto a faixa for proposta ou o preço/câmbio for provisório."
+    )
+
+
 class ConsumptionResponse(BaseModel):
     since: date
     until: date
@@ -462,6 +474,7 @@ class ConsumptionResponse(BaseModel):
     )
     economics: EconomicReadings = Field(description="Leituras do conjunto filtrado.")
     alert_rules: list[AlertRule]
+    margin_basis: MarginBasis
 
 
 class AccountAlerts(BaseModel):

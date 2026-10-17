@@ -48,6 +48,7 @@ from hellosquad.admin.schemas import (
     HowToRead,
     KeyState,
     LedgerEntry,
+    MarginBasis,
     ModelCostRow,
     ModelPrice,
     ModelsOverview,
@@ -906,14 +907,23 @@ group by 1
 order by 1
 """
 
+FX_BASIS = """
+select m.usd_brl, m.fx_date, m.fx_source, m.provisional
+from public.model_pricing m
+where m.valid_from <= now()
+order by m.valid_from desc, m.fx_date desc
+limit 1
+"""
+
 TREND_FIELDS = ("recent_turns", "recent_turn_cost_usd", "previous_turns", "previous_turn_cost_usd")
 
 
 class Consumption:
     """Linhas por conta com as leituras econômicas; a mesma conta serve Consumo e Alertas."""
 
-    def __init__(self, rows, trend, usd_brl, rules) -> None:
-        self.usd_brl = usd_brl
+    def __init__(self, rows, trend, fx, rules) -> None:
+        self.fx = fx
+        self.usd_brl = fx["usd_brl"] if fx else None
         self.rules = rules
         self.trend = {t["workspace_id"]: t for t in trend}
         self.items = [self.row(r) for r in rows]
@@ -943,6 +953,17 @@ class Consumption:
         fields = UsageTotals.model_fields
         return UsageTotals(**{f: sum((getattr(i, f) for i in self.items), start=0) for f in fields})
 
+    def margin_basis(self) -> MarginBasis:
+        rule = next((r for r in self.rules if r.metric == "gross_margin"), None)
+        fx = self.fx
+        return MarginBasis(
+            credit_reference_brl=rule.credit_reference_brl if rule else None,
+            exchange_rate=ExchangeRate(**{k: fx[k] for k in ExchangeRate.model_fields})
+            if fx
+            else None,
+            provisional=(rule is None or rule.proposal) or (fx is None or fx["provisional"]),
+        )
+
     def total_readings(self) -> EconomicReadings:
         totals = self.totals().model_dump()
         trend = {f: sum((t[f] for t in self.trend.values()), start=0) for f in TREND_FIELDS}
@@ -963,8 +984,8 @@ async def load_consumption(
     }
     rows = await fetchall(conn, CONSUMPTION, params)
     trend = await fetchall(conn, TURN_TREND, params)
-    fx = await fetchone(conn, FX)
-    return Consumption(rows, trend, fx["usd_brl"] if fx else None, rules)
+    fx = await fetchone(conn, FX_BASIS)
+    return Consumption(rows, trend, fx, rules)
 
 
 @router.get(
@@ -1023,6 +1044,7 @@ async def get_consumption(
         series=buckets,
         economics=data.total_readings(),
         alert_rules=data.rules,
+        margin_basis=data.margin_basis(),
     )
 
 

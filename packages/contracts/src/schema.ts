@@ -2782,6 +2782,7 @@ export interface components {
             economics: components["schemas"]["EconomicReadings"];
             /** Alert Rules */
             alert_rules: components["schemas"]["AlertRule"][];
+            margin_basis: components["schemas"]["MarginBasis"];
         };
         /** ConsumptionRow */
         ConsumptionRow: {
@@ -3670,6 +3671,24 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /**
+         * MarginBasis
+         * @description Com que preços a margem foi estimada; tudo provisório até o Vic decidir preço e créditos.
+         */
+        MarginBasis: {
+            /**
+             * Credit Reference Brl
+             * @description Valor do crédito em R$ na faixa da margem (exemplo do protótipo).
+             */
+            credit_reference_brl: string | null;
+            /** @description Câmbio de Modelos e custos. */
+            exchange_rate: components["schemas"]["ExchangeRate"] | null;
+            /**
+             * Provisional
+             * @description Verdadeiro enquanto a faixa for proposta ou o preço/câmbio for provisório.
+             */
+            provisional: boolean;
         };
         /** Me */
         Me: {

@@ -12456,6 +12456,9 @@
             },
             "type": "array",
             "title": "Alert Rules"
+          },
+          "margin_basis": {
+            "$ref": "#/components/schemas/MarginBasis"
           }
         },
         "type": "object",
@@ -12468,7 +12471,8 @@
           "granularity",
           "series",
           "economics",
-          "alert_rules"
+          "alert_rules",
+          "margin_basis"
         ],
         "title": "ConsumptionResponse"
       },
@@ -14546,6 +14550,46 @@
           "created_at"
         ],
         "title": "LedgerEntry"
+      },
+      "MarginBasis": {
+        "properties": {
+          "credit_reference_brl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credit Reference Brl",
+            "description": "Valor do crédito em R$ na faixa da margem (exemplo do protótipo)."
+          },
+          "exchange_rate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExchangeRate"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Câmbio de Modelos e custos."
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional",
+            "description": "Verdadeiro enquanto a faixa for proposta ou o preço/câmbio for provisório."
+          }
+        },
+        "type": "object",
+        "required": [
+          "credit_reference_brl",
+          "exchange_rate",
+          "provisional"
+        ],
+        "title": "MarginBasis",
+        "description": "Com que preços a margem foi estimada; tudo provisório até o Vic decidir preço e créditos."
       },
       "Me": {
         "properties": {

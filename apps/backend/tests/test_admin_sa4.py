@@ -245,6 +245,11 @@ async def test_consumption_matches_the_known_numbers_and_stays_inside_the_bands(
     assert all(r["proposal"] for r in body["alert_rules"])
     margin_rule = body["alert_rules"][1]
     assert Decimal(margin_rule["credit_reference_brl"]) == Decimal("0.50")
+    basis = body["margin_basis"]
+    assert basis["provisional"] is True
+    assert Decimal(basis["credit_reference_brl"]) == Decimal("0.50")
+    assert Decimal(basis["exchange_rate"]["usd_brl"]) == Decimal("5.40")
+    assert "exemplo" in basis["exchange_rate"]["fx_source"]
     assert body["granularity"] == "month"
     assert sum(Decimal(b["ai_cost_usd"]) for b in body["series"]) == Decimal("0.08")
     assert sum(b["turns"] for b in body["series"]) == 4
