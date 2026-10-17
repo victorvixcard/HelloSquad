@@ -407,10 +407,10 @@ function RuleDocView({ detail, sharedRulesDraft, onNotice }: { detail: RuleDocDe
                   <Button
                     variant="ghost"
                     size="s"
+                    aria-label={`${t("regras.edit")} ${t("regras.paragraphN", { n: i + 1 })}`}
                     onClick={() => (setError(null), setEdit({ i, draft: { mark: p.mark, text: p.text, source: p.source ?? "", note: "" } }))}
                   >
                     {t("regras.edit")}
-                    <span className="sa-sr"> {t("regras.paragraphN", { n: i + 1 })}</span>
                   </Button>
                 </span>
               </li>
@@ -582,9 +582,13 @@ function SharedDocView({ title, shared, onNotice }: { title: string; shared: Sha
                     <span className="sa-mono rg-p-f">{`§${i + 1} · squad/README.md`}</span>
                   </div>
                   <span className="rg-p-a">
-                    <Button variant="ghost" size="s" onClick={() => (setError(null), setEdit({ i, text: p.text, note: "" }))}>
+                    <Button
+                      variant="ghost"
+                      size="s"
+                      aria-label={`${t("regras.edit")} ${t("regras.paragraphN", { n: i + 1 })}`}
+                      onClick={() => (setError(null), setEdit({ i, text: p.text, note: "" }))}
+                    >
                       {t("regras.edit")}
-                      <span className="sa-sr"> {t("regras.paragraphN", { n: i + 1 })}</span>
                     </Button>
                   </span>
                 </>

@@ -88,18 +88,18 @@ describe("casca do Super Admin", () => {
     expect(within(sidebar).getByRole("link", { name: "Catálogo" })).not.toHaveAttribute("aria-current");
   });
 
-  it("no Squad IA só Modelos e custos e Fila de trabalhos abrem; o resto aparece desabilitado, em breve", () => {
+  it("no Squad IA abrem Squad e Regras de negócio (SA3b), Modelos e custos e Fila de trabalhos; o resto aparece desabilitado, em breve", () => {
     renderAdmin(<AdminSidebar person={vic} />);
     const ia = screen.getByRole("group", { name: "Squad IA" });
     const links = within(ia).getAllByRole("link").map((a) => a.getAttribute("href"));
-    expect(links).toEqual(["/admin/modelos", "/admin/fila"]);
-    for (const label of ["Squad", "Regras de negócio", "Referências", "Motor de imagem", "Consumo por cliente", "Saúde das APIs", "Qualidade das entregas"]) {
+    expect(links).toEqual(["/admin/squad", "/admin/regras", "/admin/modelos", "/admin/fila"]);
+    for (const label of ["Referências", "Motor de imagem", "Consumo por cliente", "Saúde das APIs", "Qualidade das entregas"]) {
       const item = within(ia).getByText(label).closest(".sa-ni")!;
       expect(item).toHaveAttribute("aria-disabled", "true");
       expect(item.tagName).toBe("SPAN");
       expect(item).toHaveTextContent("em breve");
     }
-    expect(ADMIN_NAV.flatMap((g) => g.items).filter((it) => it.href)).toHaveLength(7);
+    expect(ADMIN_NAV.flatMap((g) => g.items).filter((it) => it.href)).toHaveLength(9);
   });
 
   it("o menu da pessoa abre com teclado, leva ao produto e a Sair, e Esc devolve o foco", async () => {

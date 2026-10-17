@@ -372,9 +372,13 @@ export function VersionsCard(props: {
                 ) : v.status === "superseded" || v.status === "draft" ? (
                   <span className="sa-tags">
                     {active ? (
-                      <Button variant="ghost" size="s" onClick={() => props.onCompare(v.status === "draft" ? active : v, v.status === "draft" ? v : active)}>
+                      <Button
+                        variant="ghost"
+                        size="s"
+                        aria-label={`${t("versions.compareActive")} (${t("versions.line", { v: v.version })})`}
+                        onClick={() => props.onCompare(v.status === "draft" ? active : v, v.status === "draft" ? v : active)}
+                      >
                         {t("versions.compareActive")}
-                        <span className="sa-sr"> ({t("versions.line", { v: v.version })})</span>
                       </Button>
                     ) : null}
                     {v.status === "superseded" ? (
@@ -384,9 +388,9 @@ export function VersionsCard(props: {
                         onClick={() => props.onRestore(v)}
                         disabled={props.hasDraft}
                         title={props.hasDraft ? t("versions.restoreBlocked") : undefined}
+                        aria-label={`${t("versions.restore")} (${t("versions.line", { v: v.version })})`}
                       >
                         {t("versions.restore")}
-                        <span className="sa-sr"> ({t("versions.line", { v: v.version })})</span>
                       </Button>
                     ) : null}
                   </span>

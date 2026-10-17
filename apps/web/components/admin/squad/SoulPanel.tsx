@@ -199,13 +199,13 @@ export function SoulPanel(props: {
                   <Button
                     variant="soft"
                     size="s"
+                    aria-label={`${t("alma.edit")} ${s.heading}`}
                     onClick={() => {
                       setError(null);
                       setEdit({ section: s.section, heading: s.heading, body: s.body, inPrompt: s.in_prompt, note: "" });
                     }}
                   >
                     {t("alma.edit")}
-                    <span className="sa-sr"> {s.heading}</span>
                   </Button>
                 )}
               </div>
