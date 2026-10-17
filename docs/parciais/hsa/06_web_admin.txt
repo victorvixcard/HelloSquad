@@ -1,0 +1,12 @@
+marina@miolo.example: 16 telas; 403 honesto em 16; status 200; vazamentos []
+carla@vitta.example: 16 telas; 403 honesto em 16; status 200; vazamentos []
+pedro@semconta.example: 16 telas; 403 honesto em 16; status 200; vazamentos []
+sem sessão: destinos ["/entrar"]; dado de conta visível em 0
+Vic: status [200]; noindex meta 16/16; X-Robots-Tag 16/16 (noindex, nofollow); faixa 2FA 16/16; segredo no HTML 16; 403 0
+  sem faixa 2FA: []; sem noindex: []
+erros de console: 0 []
+Vic em en: faixa traduzida em 16/16; telas com palavra pt-BR: [["/admin/catalogo",["Auditoria"]]]
+erros de console: 1 ["vic@hellosquad.example: A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client"]
+Vic em es: faixa traduzida em 16/16; telas com palavra pt-BR: [["/admin",["Catálogo"]],["/admin/contas",["Catálogo"]],["/admin/contas/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2",["Catálogo"]],["/admin/catalogo",["Catálogo","Auditoria"]],["/admin/planos",["Catálogo"]],["/admin/pagamentos",["Catálogo"]],["/admin/auditoria",["Catálogo"]],["/admin/fila",["Catálogo"]],["/admin/fila/5eed0000-0000-4000-8000-000000000401",["Catálogo"]],["/admin/modelos",["Catálogo"]],["/admin/squad",["Catálogo"]],["/admin/squad/otto",["Catálogo"]],["/admin/regras",["Catálogo"]],["/admin/consumo",["Catálogo"]],["/admin/saude",["Catálogo"]],["/admin/qualidade",["Catálogo"]]]
+erros de console: 1 ["vic@hellosquad.example: A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client"]
+user_metadata do Vic restaurado: sim

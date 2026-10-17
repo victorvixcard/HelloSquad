@@ -1,0 +1,87 @@
+Vic depois do login cai em: /app
+
+## contas.html × /admin/contas
+  h1 SA0: ["Contas"] | nosso: ["Contas"]
+  abas só no SA0: [] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: []
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar"]
+  barra SA0: ["HelloSquad","Contas","Catálogo","Planos e recargas","Pagamentos","Auditoria","Squad","Regras de negócio 4","Referências","Motor de imagem","Modelos e custos","Consumo por cliente","Saúde das APIs 1","Fila de trabalhos 3","Qualidade das entregas"] 
+  barra nossa: ["HelloSquad","Contas","Catálogo","Planos e recargas","Pagamentos","Auditoria","Squad","Regras de negócio","Modelos e custos","Consumo por cliente","Saúde das APIs 1","Fila de trabalhos","Qualidade das entregas","V Vic vic@hellosquad.example"]
+
+## conta.html × /admin/contas/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2
+  h1 SA0: ["Miolo"] | nosso: ["Miolo"]
+  abas só no SA0: [] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: ["Assinatura","Auditoria desta conta"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Suspender conta","Entrar no ambiente do cliente Carregando Pronto"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar","Suspender","Entrar no ambiente Carregando Pronto"]
+
+## catalogo.html × /admin/catalogo
+  h1 SA0: ["Catálogo"] | nosso: ["Catálogo"]
+  abas só no SA0: ["Deliveries 46","Integrações 23","Todos 46","Nexo 4","Bia 7","Kaia 7","Otto 7","Kiwi 9","Max 6","Íris 6"] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: ["Auditoria do catálogo"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Deliveries 46","Integrações 23","Todos 46","Nexo 4","Bia 7","Kaia 7","Otto 7","Kiwi 9","Max 6","Íris 6","Qualificar pedido e organizar briefing"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar","Todos os agentes","Editar","Editar","Editar","Editar","Editar","Editar","Editar","Editar","Editar","Editar"]
+
+## planos.html × /admin/planos
+  h1 SA0: ["Planos e recargas"] | nosso: ["Planos e recargas"]
+  abas só no SA0: [] | só no nosso: []
+  h2 só no SA0: ["Assinaturas","Pro mensal","Pro anual","Recarga 100","Recarga 300","Recarga 1.000"] | só no nosso: ["Planos","Squad","Recarga 50","Versões gravadas pelo painel"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Preço aprovado comercialmente","À venda (travado até o preço ser aprovado)","Salvar como versão nova Carregando Pronto","Preço aprovado comercialmente","À venda (travado até o preço ser aprovado)","Salvar como versão nova Carregando Pronto","Preço aprovado comercialmente","À venda (travado até o preço ser aprovado)","Salvar como versão nova Carregando Pronto","Preço aprovado comercialmente","À venda (travado até o preço ser aprovado)"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar","Editar como versão nova","Editar como versão nova","Editar como versão nova"]
+
+## pagamentos.html × /admin/pagamentos
+  h1 SA0: ["Pagamentos"] | nosso: ["Pagamentos"]
+  abas só no SA0: ["Assinaturas","Recargas","Webhooks","Conciliação"] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: ["Simulado (local)","Cobranças e recargas","Webhooks recebidos","Falhas","Auditoria de pagamentos"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Assinaturas","Recargas","Webhooks","Conciliação","Estado atual","Demonstração","Ver a demonstração"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar"]
+
+## auditoria.html × /admin/auditoria
+  h1 SA0: ["Auditoria"] | nosso: ["Auditoria"]
+  abas só no SA0: [] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: []
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Exportar CSV","Tudo","Super Admin","Clientes","Sistema","Período: 30 dias"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar"]
+
+## fila.html × /admin/fila
+  h1 SA0: ["Fila de trabalhos"] | nosso: ["Fila de trabalhos"]
+  abas só no SA0: ["Tudo 15","Na fila 4","Rodando 3","Aguardando aprovação 2","Falharam 3","Concluídos/cancelados 3"] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: ["Filas","Auditoria da fila"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Tudo 15","Na fila 4","Rodando 3","Aguardando aprovação 2","Falharam 3","Concluídos/cancelados 3","Reenfileirar","Reenfileirar","Reenfileirar"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar"]
+
+## modelos.html × /admin/modelos
+  h1 SA0: ["Modelos e custos"] | nosso: ["Modelos e custos"]
+  abas só no SA0: [] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: ["Custo por modelo","Modelo e esforço por etapa","Preço por modelo","Câmbio"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar","Editar como versão nova","Editar como versão nova"]
+
+## squad.html × /admin/squad
+  h1 SA0: ["Squad"] | nosso: ["Squad"]
+  abas só no SA0: [] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: []
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar"]
+
+## agente.html × /admin/squad/otto
+  h1 SA0: ["Nexo"] | nosso: ["Otto"]
+  abas só no SA0: ["Skills 1/4"] | só no nosso: ["Skills (3/7)","04.01 · Textos e legendas","04.02 · Calendário editorial e","04.03 · Posts e roteiros","04.04 · (sem skill)","04.05 · (sem skill)","04.06 · (sem skill)","04.07 · (sem skill)"]
+  h2 só no SA0: [] | só no nosso: ["04.01 · Textos e legendas de marketing","04.02 · Calendário editorial e pauta semanal","04.03 · Posts e roteiros multicanal","04.04 ·","04.05 ·","04.06 ·","04.07 ·","Ferramentas permitidas"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Skills 1/4","Entra no prompt","Entra no prompt","Entra no prompt","Entra no prompt","Entra no prompt","Entra no prompt"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar","Skills (3/7)","04.01 · Textos e legendas","04.02 · Calendário editorial e","04.03 · Posts e roteiros","04.04 · (sem skill)","04.05 · (sem skill)","04.06 · (sem skill)","04.07 · (sem skill)","Editar skill","Editar skill","Editar skill"]
+
+## regras.html × /admin/regras
+  h1 SA0: ["Regras de negócio"] | nosso: ["Regras de negócio"]
+  abas só no SA0: ["Aprovações e autorizações Entra no prompt · versão 4 1 pendente 3 decididos · 1 de base atual · 1 proposta","Limites de autonomia Entra no prompt · versão 2 1 pendente 1 decidido · 3 de base atual","Memória da Marca Entra no prompt · versão 1 2 decididos · 2 de base atual","Créditos e cobrança Referência interna · versão 3 2 pendentes 3 decididos · 1 de base atual · 1 proposta","Prompts e versões Referência interna · versão 1 1 decidido · 2 de base atual · 1 proposta"] | só no nosso: ["Diretrizes do dono Referência interna · versão 1 26 decididos"]
+  h2 só no SA0: ["Aprovações e autorizações"] | só no nosso: ["Diretrizes do dono","Versões"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Aprovações e autorizações Entra no prompt · versão 4 1 pendente 3 decididos · 1 de base atual · 1 proposta","Limites de autonomia Entra no prompt · versão 2 1 pendente 1 decidido · 3 de base atual","Memória da Marca Entra no prompt · versão 1 2 decididos · 2 de base atual","Créditos e cobrança Referência interna · versão 3 2 pendentes 3 decididos · 1 de base atual · 1 proposta","Prompts e versões Referência interna · versão 1 1 decidido · 2 de base atual · 1 proposta","Editar o parágrafo 1","Editar o parágrafo 2","Editar o parágrafo 3","Editar o parágrafo 4","Editar o parágrafo 5","Editar o parágrafo 6"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar","Diretrizes do dono Referência interna · versão 1 26 decididos","Levar para o prompt","Editar","Editar","Editar","Editar","Editar","Editar","Editar","Editar","Editar"]
+
+## consumo.html × /admin/consumo
+  h1 SA0: ["Consumo por cliente"] | nosso: ["Consumo por cliente"]
+  abas só no SA0: [] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: ["Por período"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Plano: Todos"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar"]
+
+## saude-apis.html × /admin/saude
+  h1 SA0: ["Saúde das APIs"] | nosso: ["Saúde das APIs"]
+  abas só no SA0: [] | só no nosso: []
+  h2 só no SA0: [] | só no nosso: []
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora","Registrar saldo Carregando Pronto"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar","Informar saldo","Informar saldo"]
+
+## qualidade.html × /admin/qualidade
+  h1 SA0: ["Qualidade das entregas"] | nosso: ["Qualidade das entregas"]
+  abas só no SA0: [] | só no nosso: ["Por versão de prompt"]
+  h2 só no SA0: ["out/2026, até 16"] | só no nosso: ["outubro de 2026, até 17/10/2026","Por mês","Por versão de prompt","Comparar dois meses"]
+  botões só no SA0: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Ativar agora"] | só no nosso: ["SEGURANÇA Verificação em duas etapas desligada Obrigatória para o Super Admin antes de abrir ao público. Cada ação aqui fica na auditoria. Como vai funcionar","Período: Últimos 90 dias","Por versão de prompt","Antes: set. de 2026","Depois: out. de 2026"]

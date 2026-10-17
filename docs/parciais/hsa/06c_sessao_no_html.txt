@@ -1,0 +1,7 @@
+# 06c — sessão do Supabase no payload RSC do HTML (17/10 00:40-00:42)
+## next dev (web do dono, 3100)
+vic: /admin/contas e /admin/catalogo: sessão no HTML? true | chaves: access_token,token_type,expires_in,expires_at,refresh_token,user,weak_password | legível por JS (self.__next_f)? true
+marina: /app/miolo: sessão no HTML? true (mesmas chaves) | /admin/contas (403): false
+origem: chunk de depuração do React em modo dev: 9d:J{"name":"cookies","env":"Server","value":"$@9f"} → 9f:["$a5"] → a5:["sb-127-auth-token",{"name":"sb-127-auth-token","value":"$a6"}] → a6:T9db,base64-<sessão>
+## next build + next start (worktree /tmp/hsa_web, 3198)
+vic: /admin/contas, /admin/catalogo: sessão no HTML? false; marina: /app/miolo, /admin/contas: false
