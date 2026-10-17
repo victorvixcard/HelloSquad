@@ -5617,6 +5617,1379 @@
         }
       }
     },
+    "/admin/me": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Super Admin conectado (nome, e-mail e se a verificação em duas etapas é exigida)",
+        "operationId": "admin_me_admin_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminMe"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/accounts": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Contas: lista com plano, saldo e membros, e os totais dos cartões",
+        "operationId": "list_accounts_admin_accounts_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Busca no nome ou no slug.",
+              "title": "Q"
+            },
+            "description": "Busca no nome ou no slug."
+          },
+          {
+            "name": "plan",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Slug do plano.",
+              "title": "Plan"
+            },
+            "description": "Slug do plano."
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "active",
+                    "deleted"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Valor de `next_cursor` da página anterior. Vazio = primeira página.",
+              "title": "Cursor"
+            },
+            "description": "Valor de `next_cursor` da página anterior. Vazio = primeira página."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Itens por página (1 a 100).",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Itens por página (1 a 100)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/accounts/{workspace_id}": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Conta: membros, créditos, extrato, acessos do suporte, uso em 30 dias e assinatura",
+        "description": "Cada leitura fica em audit_events como acesso do suporte (`support.account_viewed`).",
+        "operationId": "get_account_admin_accounts__workspace_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/catalog": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Catálogo das 46 deliveries com o preço provisório em vigor e a homologação",
+        "operationId": "get_catalog_admin_catalog_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "nexo",
+                    "bia",
+                    "kaia",
+                    "otto",
+                    "kiwi",
+                    "max",
+                    "iris"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Agent Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/plans": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Planos e recargas na versão em vigor (valores provisórios, nada à venda)",
+        "operationId": "get_plans_admin_plans_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlansResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/payments": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Pagamentos: provedores, assinaturas, cobranças e eventos de webhook",
+        "operationId": "get_payments_admin_payments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsOverview"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/audit": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Auditoria: tudo o que aconteceu, com filtros por autor, conta, tipo e período",
+        "operationId": "get_audit_admin_audit_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "actor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "platform_admin",
+                    "customer",
+                    "system"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Actor"
+            }
+          },
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Until"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Valor de `next_cursor` da página anterior. Vazio = primeira página.",
+              "title": "Cursor"
+            },
+            "description": "Valor de `next_cursor` da página anterior. Vazio = primeira página."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Itens por página (1 a 200).",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Itens por página (1 a 200)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/queue": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Fila de trabalhos: filas pgmq, contagem por estado e runs (tentativas, posse, erro)",
+        "operationId": "get_queue_admin_queue_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Estado do run.",
+              "title": "Status"
+            },
+            "description": "Estado do run."
+          },
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Valor de `next_cursor` da página anterior. Vazio = primeira página.",
+              "title": "Cursor"
+            },
+            "description": "Valor de `next_cursor` da página anterior. Vazio = primeira página."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Itens por página (1 a 200).",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Itens por página (1 a 200)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueOverview"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/queue/runs/{run_id}": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Run com passos (modelo, tokens, custo) e eventos",
+        "operationId": "get_queue_run_admin_queue_runs__run_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/models": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Modelos e custos: preços e câmbio (provisórios), regras por tarefa e custo por modelo",
+        "operationId": "get_models_admin_models_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Primeiro dia (padrão: 30 dias até `until`).",
+              "title": "Since"
+            },
+            "description": "Primeiro dia (padrão: 30 dias até `until`)."
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Último dia, inclusive (padrão: hoje).",
+              "title": "Until"
+            },
+            "description": "Último dia, inclusive (padrão: hoje)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelsOverview"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/consumption": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Consumo por cliente e período: solicitações, créditos cobrados, tokens e custo de IA",
+        "description": "Conversa não cobra crédito, mas custa: aparece em `ai_cost_conversation_usd`. Reais pelo câmbio informado em Modelos e custos (provisório). Alertas econômicos ficam para a SA4.",
+        "operationId": "get_consumption_admin_consumption_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Primeiro dia (padrão: 30 dias até `until`).",
+              "title": "Since"
+            },
+            "description": "Primeiro dia (padrão: 30 dias até `until`)."
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Último dia, inclusive (padrão: hoje).",
+              "title": "Until"
+            },
+            "description": "Último dia, inclusive (padrão: hoje)."
+          },
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsumptionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/quality": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Qualidade das entregas por tipo e por mês (aprovadas de primeira, ajustes, custo)",
+        "operationId": "get_quality_admin_quality_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Primeiro dia (padrão: 30 dias até `until`).",
+              "title": "Since"
+            },
+            "description": "Primeiro dia (padrão: 30 dias até `until`)."
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Último dia, inclusive (padrão: hoje).",
+              "title": "Until"
+            },
+            "description": "Último dia, inclusive (padrão: hoje)."
+          },
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QualityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/providers": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Saúde das APIs: estado, chave configurada ou ausente, chamadas, falhas e gasto",
+        "operationId": "get_providers_admin_providers_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProvidersResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -5642,6 +7015,674 @@
   },
   "components": {
     "schemas": {
+      "AccountCredits": {
+        "properties": {
+          "balance": {
+            "type": "string",
+            "title": "Balance"
+          },
+          "reserved": {
+            "type": "string",
+            "title": "Reserved"
+          },
+          "available": {
+            "type": "string",
+            "title": "Available"
+          }
+        },
+        "type": "object",
+        "required": [
+          "balance",
+          "reserved",
+          "available"
+        ],
+        "title": "AccountCredits"
+      },
+      "AccountDetail": {
+        "properties": {
+          "account": {
+            "$ref": "#/components/schemas/AccountSummary"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/AccountMember"
+            },
+            "type": "array",
+            "title": "Members"
+          },
+          "credits": {
+            "$ref": "#/components/schemas/AccountCredits"
+          },
+          "ledger": {
+            "items": {
+              "$ref": "#/components/schemas/LedgerEntry"
+            },
+            "type": "array",
+            "title": "Ledger",
+            "description": "Últimos 20 lançamentos do extrato."
+          },
+          "support_accesses": {
+            "items": {
+              "$ref": "#/components/schemas/SupportAccess"
+            },
+            "type": "array",
+            "title": "Support Accesses"
+          },
+          "usage_30d": {
+            "$ref": "#/components/schemas/UsageTotals"
+          },
+          "subscription": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccountSubscription"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "audit_event_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Audit Event Id",
+            "description": "Registro desta leitura em audit_events (acesso do suporte)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "account",
+          "members",
+          "credits",
+          "ledger",
+          "support_accesses",
+          "usage_30d",
+          "subscription",
+          "audit_event_id"
+        ],
+        "title": "AccountDetail"
+      },
+      "AccountMember": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "member_since": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Member Since"
+          },
+          "last_sign_in_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Sign In At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "email",
+          "full_name",
+          "role",
+          "member_since",
+          "last_sign_in_at"
+        ],
+        "title": "AccountMember"
+      },
+      "AccountPage": {
+        "properties": {
+          "totals": {
+            "$ref": "#/components/schemas/AccountTotals"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AccountSummary"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "totals",
+          "items",
+          "next_cursor"
+        ],
+        "title": "AccountPage"
+      },
+      "AccountPlan": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "name",
+          "provisional"
+        ],
+        "title": "AccountPlan"
+      },
+      "AccountSubscription": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "plan": {
+            "type": "string",
+            "title": "Plan"
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "current_period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Period End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "plan",
+          "provisional",
+          "provider",
+          "method",
+          "current_period_end"
+        ],
+        "title": "AccountSubscription"
+      },
+      "AccountSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "locale": {
+            "type": "string",
+            "title": "Locale"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "deleted"
+            ],
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccountPlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "credits_balance": {
+            "type": "string",
+            "title": "Credits Balance"
+          },
+          "member_count": {
+            "type": "integer",
+            "title": "Member Count"
+          },
+          "owner_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "locale",
+          "status",
+          "created_at",
+          "plan",
+          "credits_balance",
+          "member_count",
+          "owner_email"
+        ],
+        "title": "AccountSummary"
+      },
+      "AccountTotals": {
+        "properties": {
+          "accounts": {
+            "type": "integer",
+            "title": "Accounts"
+          },
+          "paid_plans": {
+            "type": "integer",
+            "title": "Paid Plans"
+          },
+          "free_plans": {
+            "type": "integer",
+            "title": "Free Plans"
+          },
+          "credits_balance": {
+            "type": "string",
+            "title": "Credits Balance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "accounts",
+          "paid_plans",
+          "free_plans",
+          "credits_balance"
+        ],
+        "title": "AccountTotals"
+      },
+      "AdminMe": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "mfa_enforced": {
+            "type": "boolean",
+            "title": "Mfa Enforced",
+            "description": "Verificação em duas etapas exigida. false até a Fase 5: o painel avisa."
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "email",
+          "full_name",
+          "mfa_enforced"
+        ],
+        "title": "AdminMe"
+      },
+      "AdminPayment": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "workspace_name": {
+            "type": "string",
+            "title": "Workspace Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "credits": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credits"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "workspace_name",
+          "kind",
+          "provider",
+          "method",
+          "status",
+          "amount",
+          "currency",
+          "credits",
+          "created_at",
+          "confirmed_at"
+        ],
+        "title": "AdminPayment"
+      },
+      "AdminSubscription": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "workspace_name": {
+            "type": "string",
+            "title": "Workspace Name"
+          },
+          "plan": {
+            "type": "string",
+            "title": "Plan"
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "current_period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Period End"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "workspace_name",
+          "plan",
+          "provisional",
+          "provider",
+          "method",
+          "status",
+          "current_period_end",
+          "amount",
+          "currency"
+        ],
+        "title": "AdminSubscription"
+      },
+      "AdminWebhookEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type"
+          },
+          "workspace_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workspace Id"
+          },
+          "workspace_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workspace Name"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Received At"
+          },
+          "processed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Processed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "provider",
+          "event_id",
+          "event_type",
+          "workspace_id",
+          "workspace_name",
+          "outcome",
+          "note",
+          "received_at",
+          "processed_at"
+        ],
+        "title": "AdminWebhookEvent"
+      },
       "AgentId": {
         "type": "string",
         "enum": [
@@ -6361,6 +8402,170 @@
         ],
         "title": "ApprovalWorkItem"
       },
+      "AuditItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "actor": {
+            "type": "string",
+            "enum": [
+              "platform_admin",
+              "customer",
+              "system"
+            ],
+            "title": "Actor"
+          },
+          "actor_type": {
+            "type": "string",
+            "title": "Actor Type"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "actor_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Email"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "workspace_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workspace Id"
+          },
+          "workspace_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workspace Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "entity_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Type"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "actor",
+          "actor_type",
+          "actor_id",
+          "actor_email",
+          "actor_name",
+          "workspace_id",
+          "workspace_name",
+          "category",
+          "action",
+          "entity_type",
+          "entity_id",
+          "payload"
+        ],
+        "title": "AuditItem"
+      },
+      "AuditPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AuditItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "AuditPage"
+      },
       "BrandFact": {
         "properties": {
           "id": {
@@ -7078,6 +9283,160 @@
         ],
         "title": "CardOption"
       },
+      "CatalogItem": {
+        "properties": {
+          "delivery_type": {
+            "type": "string",
+            "title": "Delivery Type"
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "result": {
+            "type": "string",
+            "title": "Result"
+          },
+          "depth": {
+            "type": "string",
+            "title": "Depth"
+          },
+          "depth_source": {
+            "type": "string",
+            "enum": [
+              "inferred",
+              "confirmed"
+            ],
+            "title": "Depth Source"
+          },
+          "integrations": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Integrations"
+          },
+          "prerequisites": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prerequisites"
+          },
+          "catalog_status": {
+            "type": "string",
+            "title": "Catalog Status"
+          },
+          "homologation_status": {
+            "type": "string",
+            "title": "Homologation Status"
+          },
+          "for_sale": {
+            "type": "boolean",
+            "title": "For Sale"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CatalogPrice"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "delivery_type",
+          "agent_id",
+          "name",
+          "result",
+          "depth",
+          "depth_source",
+          "integrations",
+          "prerequisites",
+          "catalog_status",
+          "homologation_status",
+          "for_sale",
+          "price"
+        ],
+        "title": "CatalogItem"
+      },
+      "CatalogPrice": {
+        "properties": {
+          "credits": {
+            "type": "string",
+            "title": "Credits"
+          },
+          "revision_credits": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision Credits"
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional"
+          },
+          "approved_commercially": {
+            "type": "boolean",
+            "title": "Approved Commercially"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Valid From"
+          },
+          "versions": {
+            "type": "integer",
+            "title": "Versions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credits",
+          "revision_credits",
+          "provisional",
+          "approved_commercially",
+          "valid_from",
+          "versions"
+        ],
+        "title": "CatalogPrice"
+      },
+      "CatalogResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "CatalogResponse"
+      },
       "ConsentCounts": {
         "properties": {
           "email": {
@@ -7232,6 +9591,148 @@
           "given_at"
         ],
         "title": "ConsentState"
+      },
+      "ConsumptionResponse": {
+        "properties": {
+          "since": {
+            "type": "string",
+            "format": "date",
+            "title": "Since"
+          },
+          "until": {
+            "type": "string",
+            "format": "date",
+            "title": "Until"
+          },
+          "usd_brl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usd Brl"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ConsumptionRow"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/UsageTotals"
+          }
+        },
+        "type": "object",
+        "required": [
+          "since",
+          "until",
+          "usd_brl",
+          "items",
+          "totals"
+        ],
+        "title": "ConsumptionResponse"
+      },
+      "ConsumptionRow": {
+        "properties": {
+          "requests": {
+            "type": "integer",
+            "title": "Requests"
+          },
+          "credits_charged": {
+            "type": "string",
+            "title": "Credits Charged"
+          },
+          "llm_calls": {
+            "type": "integer",
+            "title": "Llm Calls"
+          },
+          "conversation_calls": {
+            "type": "integer",
+            "title": "Conversation Calls"
+          },
+          "input_tokens": {
+            "type": "integer",
+            "title": "Input Tokens"
+          },
+          "cache_read_tokens": {
+            "type": "integer",
+            "title": "Cache Read Tokens"
+          },
+          "cache_write_tokens": {
+            "type": "integer",
+            "title": "Cache Write Tokens"
+          },
+          "output_tokens": {
+            "type": "integer",
+            "title": "Output Tokens"
+          },
+          "ai_cost_deliveries_usd": {
+            "type": "string",
+            "title": "Ai Cost Deliveries Usd"
+          },
+          "ai_cost_conversation_usd": {
+            "type": "string",
+            "title": "Ai Cost Conversation Usd"
+          },
+          "ai_cost_usd": {
+            "type": "string",
+            "title": "Ai Cost Usd"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "workspace_name": {
+            "type": "string",
+            "title": "Workspace Name"
+          },
+          "ai_cost_brl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cost Brl"
+          },
+          "ai_cost_per_credit_brl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cost Per Credit Brl"
+          }
+        },
+        "type": "object",
+        "required": [
+          "requests",
+          "credits_charged",
+          "llm_calls",
+          "conversation_calls",
+          "input_tokens",
+          "cache_read_tokens",
+          "cache_write_tokens",
+          "output_tokens",
+          "ai_cost_deliveries_usd",
+          "ai_cost_conversation_usd",
+          "ai_cost_usd",
+          "workspace_id",
+          "workspace_name",
+          "ai_cost_brl",
+          "ai_cost_per_credit_brl"
+        ],
+        "title": "ConsumptionRow"
       },
       "ContactImport": {
         "properties": {
@@ -8787,6 +11288,30 @@
         ],
         "title": "ErrorResponse"
       },
+      "ExchangeRate": {
+        "properties": {
+          "usd_brl": {
+            "type": "string",
+            "title": "Usd Brl"
+          },
+          "fx_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Fx Date"
+          },
+          "fx_source": {
+            "type": "string",
+            "title": "Fx Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "usd_brl",
+          "fx_date",
+          "fx_source"
+        ],
+        "title": "ExchangeRate"
+      },
       "FactSource": {
         "properties": {
           "id": {
@@ -8926,6 +11451,61 @@
           "environment"
         ],
         "title": "Health"
+      },
+      "LedgerEntry": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "entry_type": {
+            "type": "string",
+            "title": "Entry Type"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "entry_type",
+          "amount",
+          "note",
+          "run_id",
+          "created_at"
+        ],
+        "title": "LedgerEntry"
       },
       "Me": {
         "properties": {
@@ -10682,6 +13262,164 @@
         "title": "MilestoneUpdate",
         "description": "Só os campos enviados mudam; `done: true` conclui agora, `false` reabre."
       },
+      "ModelCostRow": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "calls": {
+            "type": "integer",
+            "title": "Calls"
+          },
+          "input_tokens": {
+            "type": "integer",
+            "title": "Input Tokens"
+          },
+          "cache_read_tokens": {
+            "type": "integer",
+            "title": "Cache Read Tokens"
+          },
+          "cache_write_tokens": {
+            "type": "integer",
+            "title": "Cache Write Tokens"
+          },
+          "output_tokens": {
+            "type": "integer",
+            "title": "Output Tokens"
+          },
+          "cost_usd": {
+            "type": "string",
+            "title": "Cost Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model",
+          "calls",
+          "input_tokens",
+          "cache_read_tokens",
+          "cache_write_tokens",
+          "output_tokens",
+          "cost_usd"
+        ],
+        "title": "ModelCostRow"
+      },
+      "ModelPrice": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "input_usd_per_mtok": {
+            "type": "string",
+            "title": "Input Usd Per Mtok"
+          },
+          "output_usd_per_mtok": {
+            "type": "string",
+            "title": "Output Usd Per Mtok"
+          },
+          "cache_read_usd_per_mtok": {
+            "type": "string",
+            "title": "Cache Read Usd Per Mtok"
+          },
+          "cache_write_usd_per_mtok": {
+            "type": "string",
+            "title": "Cache Write Usd Per Mtok"
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional"
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date",
+            "title": "Checked At"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Valid From"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model",
+          "display_name",
+          "input_usd_per_mtok",
+          "output_usd_per_mtok",
+          "cache_read_usd_per_mtok",
+          "cache_write_usd_per_mtok",
+          "provisional",
+          "checked_at",
+          "source",
+          "valid_from"
+        ],
+        "title": "ModelPrice"
+      },
+      "ModelsOverview": {
+        "properties": {
+          "since": {
+            "type": "string",
+            "format": "date",
+            "title": "Since"
+          },
+          "until": {
+            "type": "string",
+            "format": "date",
+            "title": "Until"
+          },
+          "prices": {
+            "items": {
+              "$ref": "#/components/schemas/ModelPrice"
+            },
+            "type": "array",
+            "title": "Prices"
+          },
+          "exchange_rate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExchangeRate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/TaskRule"
+            },
+            "type": "array",
+            "title": "Rules"
+          },
+          "costs_by_model": {
+            "items": {
+              "$ref": "#/components/schemas/ModelCostRow"
+            },
+            "type": "array",
+            "title": "Costs By Model"
+          }
+        },
+        "type": "object",
+        "required": [
+          "since",
+          "until",
+          "prices",
+          "exchange_rate",
+          "rules",
+          "costs_by_model"
+        ],
+        "title": "ModelsOverview"
+      },
       "NeedItem": {
         "properties": {
           "type": {
@@ -10980,6 +13718,87 @@
         ],
         "title": "PaymentPage"
       },
+      "PaymentProviderState": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "selected": {
+            "type": "boolean",
+            "title": "Selected",
+            "description": "É o PAYMENT_PROVIDER das cobranças novas."
+          },
+          "api_key": {
+            "type": "string",
+            "enum": [
+              "configured",
+              "missing",
+              "not_applicable"
+            ],
+            "title": "Api Key"
+          },
+          "webhook_secret": {
+            "type": "string",
+            "enum": [
+              "configured",
+              "missing",
+              "not_applicable"
+            ],
+            "title": "Webhook Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider",
+          "selected",
+          "api_key",
+          "webhook_secret"
+        ],
+        "title": "PaymentProviderState"
+      },
+      "PaymentsOverview": {
+        "properties": {
+          "providers": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentProviderState"
+            },
+            "type": "array",
+            "title": "Providers"
+          },
+          "subscriptions": {
+            "items": {
+              "$ref": "#/components/schemas/AdminSubscription"
+            },
+            "type": "array",
+            "title": "Subscriptions"
+          },
+          "payments": {
+            "items": {
+              "$ref": "#/components/schemas/AdminPayment"
+            },
+            "type": "array",
+            "title": "Payments",
+            "description": "Últimas 50 cobranças."
+          },
+          "webhooks": {
+            "items": {
+              "$ref": "#/components/schemas/AdminWebhookEvent"
+            },
+            "type": "array",
+            "title": "Webhooks",
+            "description": "Últimos 50 eventos recebidos."
+          }
+        },
+        "type": "object",
+        "required": [
+          "providers",
+          "subscriptions",
+          "payments",
+          "webhooks"
+        ],
+        "title": "PaymentsOverview"
+      },
       "PendingApprovalSummary": {
         "properties": {
           "id": {
@@ -11032,6 +13851,144 @@
           "deferred"
         ],
         "title": "PendingApprovalSummary"
+      },
+      "PlanItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "for_sale": {
+            "type": "boolean",
+            "title": "For Sale"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "cycle": {
+            "type": "string",
+            "title": "Cycle"
+          },
+          "credits": {
+            "type": "string",
+            "title": "Credits"
+          },
+          "validity_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validity Days"
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional"
+          },
+          "approved_commercially": {
+            "type": "boolean",
+            "title": "Approved Commercially"
+          },
+          "price_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Amount"
+          },
+          "price_currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Currency"
+          },
+          "price_provisional": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Provisional"
+          },
+          "price_approved_commercially": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Approved Commercially"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "for_sale",
+          "version",
+          "cycle",
+          "credits",
+          "validity_days",
+          "provisional",
+          "approved_commercially",
+          "price_amount",
+          "price_currency",
+          "price_provisional",
+          "price_approved_commercially"
+        ],
+        "title": "PlanItem"
+      },
+      "PlansResponse": {
+        "properties": {
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanItem"
+            },
+            "type": "array",
+            "title": "Plans"
+          },
+          "topups": {
+            "items": {
+              "$ref": "#/components/schemas/TopupItem"
+            },
+            "type": "array",
+            "title": "Topups"
+          }
+        },
+        "type": "object",
+        "required": [
+          "plans",
+          "topups"
+        ],
+        "title": "PlansResponse"
       },
       "PrincipalType": {
         "type": "string",
@@ -11762,6 +14719,604 @@
         "title": "ProjectUpdate",
         "description": "Só os campos enviados mudam; `null` em objective, starts_at e ends_at apaga o valor."
       },
+      "ProviderHealthItem": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "key": {
+            "type": "string",
+            "enum": [
+              "configured",
+              "missing",
+              "not_applicable"
+            ],
+            "title": "Key"
+          },
+          "calls_24h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calls 24H"
+          },
+          "failures_24h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failures 24H"
+          },
+          "spend_usd": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProviderSpend"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_success_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Success At"
+          },
+          "last_failure_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Failure At"
+          },
+          "last_failure_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Failure Text"
+          },
+          "last_balance_refusal_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Balance Refusal At"
+          },
+          "reported_balance": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported Balance"
+          },
+          "reported_balance_currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported Balance Currency"
+          },
+          "reported_balance_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported Balance At"
+          },
+          "alert_below": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Below"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider",
+          "display_name",
+          "purpose",
+          "status",
+          "key",
+          "calls_24h",
+          "failures_24h",
+          "spend_usd",
+          "last_success_at",
+          "last_failure_at",
+          "last_failure_text",
+          "last_balance_refusal_at",
+          "reported_balance",
+          "reported_balance_currency",
+          "reported_balance_at",
+          "alert_below",
+          "note"
+        ],
+        "title": "ProviderHealthItem"
+      },
+      "ProviderSpend": {
+        "properties": {
+          "h24": {
+            "type": "string",
+            "title": "H24"
+          },
+          "d7": {
+            "type": "string",
+            "title": "D7"
+          },
+          "d30": {
+            "type": "string",
+            "title": "D30"
+          },
+          "total": {
+            "type": "string",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "h24",
+          "d7",
+          "d30",
+          "total"
+        ],
+        "title": "ProviderSpend"
+      },
+      "ProvidersResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderHealthItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "ProvidersResponse"
+      },
+      "QualityResponse": {
+        "properties": {
+          "since": {
+            "type": "string",
+            "format": "date",
+            "title": "Since"
+          },
+          "until": {
+            "type": "string",
+            "format": "date",
+            "title": "Until"
+          },
+          "by_type": {
+            "items": {
+              "$ref": "#/components/schemas/QualityRow"
+            },
+            "type": "array",
+            "title": "By Type"
+          },
+          "by_month": {
+            "items": {
+              "$ref": "#/components/schemas/QualityRow"
+            },
+            "type": "array",
+            "title": "By Month"
+          }
+        },
+        "type": "object",
+        "required": [
+          "since",
+          "until",
+          "by_type",
+          "by_month"
+        ],
+        "title": "QualityResponse"
+      },
+      "QualityRow": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "description": "delivery_type em by_type; AAAA-MM em by_month."
+          },
+          "deliveries": {
+            "type": "integer",
+            "title": "Deliveries"
+          },
+          "approved_first_time": {
+            "type": "integer",
+            "title": "Approved First Time"
+          },
+          "approved": {
+            "type": "integer",
+            "title": "Approved"
+          },
+          "adjustments": {
+            "type": "integer",
+            "title": "Adjustments"
+          },
+          "not_approved": {
+            "type": "integer",
+            "title": "Not Approved"
+          },
+          "ai_cost_usd": {
+            "type": "string",
+            "title": "Ai Cost Usd"
+          },
+          "ai_cost_per_approved_usd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cost Per Approved Usd"
+          },
+          "failed_runs": {
+            "type": "integer",
+            "title": "Failed Runs"
+          },
+          "failed_steps": {
+            "type": "integer",
+            "title": "Failed Steps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "deliveries",
+          "approved_first_time",
+          "approved",
+          "adjustments",
+          "not_approved",
+          "ai_cost_usd",
+          "ai_cost_per_approved_usd",
+          "failed_runs",
+          "failed_steps"
+        ],
+        "title": "QualityRow"
+      },
+      "QueueOverview": {
+        "properties": {
+          "queues": {
+            "items": {
+              "$ref": "#/components/schemas/QueueSize"
+            },
+            "type": "array",
+            "title": "Queues"
+          },
+          "status_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Status Counts"
+          },
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/QueueRun"
+            },
+            "type": "array",
+            "title": "Runs"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "queues",
+          "status_counts",
+          "runs",
+          "next_cursor"
+        ],
+        "title": "QueueOverview"
+      },
+      "QueueRun": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "workspace_name": {
+            "type": "string",
+            "title": "Workspace Name"
+          },
+          "work_item_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Item Id"
+          },
+          "work_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Title"
+          },
+          "delivery_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Type"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "max_attempts": {
+            "type": "integer",
+            "title": "Max Attempts"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "queue_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Queue Name"
+          },
+          "lease_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lease Until"
+          },
+          "current_step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Step"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workspace_id",
+          "workspace_name",
+          "work_item_id",
+          "work_title",
+          "delivery_type",
+          "agent_id",
+          "kind",
+          "status",
+          "attempts",
+          "max_attempts",
+          "created_at",
+          "started_at",
+          "finished_at",
+          "queue_name",
+          "lease_until",
+          "current_step",
+          "error_code",
+          "error_message"
+        ],
+        "title": "QueueRun"
+      },
+      "QueueSize": {
+        "properties": {
+          "queue_name": {
+            "type": "string",
+            "title": "Queue Name"
+          },
+          "queued": {
+            "type": "integer",
+            "title": "Queued"
+          },
+          "in_flight": {
+            "type": "integer",
+            "title": "In Flight"
+          },
+          "oldest_enqueued_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oldest Enqueued At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "queue_name",
+          "queued",
+          "in_flight",
+          "oldest_enqueued_at"
+        ],
+        "title": "QueueSize"
+      },
       "ReadCreate": {
         "properties": {
           "read_at": {
@@ -11991,6 +15546,34 @@
         ],
         "title": "Run"
       },
+      "RunDetail": {
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/QueueRun"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/RunStepItem"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/RunEventItem"
+            },
+            "type": "array",
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run",
+          "steps",
+          "events"
+        ],
+        "title": "RunDetail"
+      },
       "RunEvent": {
         "properties": {
           "id": {
@@ -12036,6 +15619,36 @@
           "created_at"
         ],
         "title": "RunEvent"
+      },
+      "RunEventItem": {
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "title": "Seq"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "seq",
+          "type",
+          "payload",
+          "created_at"
+        ],
+        "title": "RunEventItem"
       },
       "RunEventPage": {
         "properties": {
@@ -12087,6 +15700,131 @@
           "cancelled"
         ],
         "title": "RunStatus"
+      },
+      "RunStepItem": {
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "title": "Seq"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "input_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Tokens"
+          },
+          "output_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Tokens"
+          },
+          "cache_read_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cache Read Tokens"
+          },
+          "cache_write_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cache Write Tokens"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
+          },
+          "latency_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency Ms"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "seq",
+          "kind",
+          "step",
+          "model",
+          "status",
+          "input_tokens",
+          "output_tokens",
+          "cache_read_tokens",
+          "cache_write_tokens",
+          "cost_usd",
+          "latency_ms",
+          "created_at"
+        ],
+        "title": "RunStepItem"
       },
       "RunSummary": {
         "properties": {
@@ -12312,6 +16050,209 @@
         ],
         "title": "SubscriptionState"
       },
+      "SupportAccess": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "admin_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admin Email"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "admin_email",
+          "reason",
+          "mode",
+          "started_at",
+          "expires_at",
+          "ended_at"
+        ],
+        "title": "SupportAccess"
+      },
+      "TaskRule": {
+        "properties": {
+          "agent_id": {
+            "type": "string",
+            "title": "Agent Id"
+          },
+          "task": {
+            "type": "string",
+            "title": "Task"
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
+          "thinking": {
+            "type": "string",
+            "title": "Thinking"
+          },
+          "thinking_budget": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thinking Budget"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Valid From"
+          }
+        },
+        "type": "object",
+        "required": [
+          "agent_id",
+          "task",
+          "steps",
+          "model",
+          "effort",
+          "thinking",
+          "thinking_budget",
+          "source",
+          "valid_from"
+        ],
+        "title": "TaskRule"
+      },
+      "TopupItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "for_sale": {
+            "type": "boolean",
+            "title": "For Sale"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "credits": {
+            "type": "string",
+            "title": "Credits"
+          },
+          "validity_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validity Days"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "provisional": {
+            "type": "boolean",
+            "title": "Provisional"
+          },
+          "approved_commercially": {
+            "type": "boolean",
+            "title": "Approved Commercially"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "for_sale",
+          "version",
+          "credits",
+          "validity_days",
+          "amount",
+          "currency",
+          "provisional",
+          "approved_commercially"
+        ],
+        "title": "TopupItem"
+      },
       "UnreadCount": {
         "properties": {
           "conversations": {
@@ -12363,6 +16304,69 @@
           "by_agent"
         ],
         "title": "UnreadSummary"
+      },
+      "UsageTotals": {
+        "properties": {
+          "requests": {
+            "type": "integer",
+            "title": "Requests"
+          },
+          "credits_charged": {
+            "type": "string",
+            "title": "Credits Charged"
+          },
+          "llm_calls": {
+            "type": "integer",
+            "title": "Llm Calls"
+          },
+          "conversation_calls": {
+            "type": "integer",
+            "title": "Conversation Calls"
+          },
+          "input_tokens": {
+            "type": "integer",
+            "title": "Input Tokens"
+          },
+          "cache_read_tokens": {
+            "type": "integer",
+            "title": "Cache Read Tokens"
+          },
+          "cache_write_tokens": {
+            "type": "integer",
+            "title": "Cache Write Tokens"
+          },
+          "output_tokens": {
+            "type": "integer",
+            "title": "Output Tokens"
+          },
+          "ai_cost_deliveries_usd": {
+            "type": "string",
+            "title": "Ai Cost Deliveries Usd"
+          },
+          "ai_cost_conversation_usd": {
+            "type": "string",
+            "title": "Ai Cost Conversation Usd"
+          },
+          "ai_cost_usd": {
+            "type": "string",
+            "title": "Ai Cost Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "requests",
+          "credits_charged",
+          "llm_calls",
+          "conversation_calls",
+          "input_tokens",
+          "cache_read_tokens",
+          "cache_write_tokens",
+          "output_tokens",
+          "ai_cost_deliveries_usd",
+          "ai_cost_conversation_usd",
+          "ai_cost_usd"
+        ],
+        "title": "UsageTotals"
       },
       "User": {
         "properties": {

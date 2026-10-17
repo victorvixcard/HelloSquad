@@ -955,6 +955,233 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Super Admin conectado (nome, e-mail e se a verificação em duas etapas é exigida) */
+        get: operations["admin_me_admin_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Contas: lista com plano, saldo e membros, e os totais dos cartões */
+        get: operations["list_accounts_admin_accounts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/accounts/{workspace_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Conta: membros, créditos, extrato, acessos do suporte, uso em 30 dias e assinatura
+         * @description Cada leitura fica em audit_events como acesso do suporte (`support.account_viewed`).
+         */
+        get: operations["get_account_admin_accounts__workspace_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Catálogo das 46 deliveries com o preço provisório em vigor e a homologação */
+        get: operations["get_catalog_admin_catalog_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Planos e recargas na versão em vigor (valores provisórios, nada à venda) */
+        get: operations["get_plans_admin_plans_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pagamentos: provedores, assinaturas, cobranças e eventos de webhook */
+        get: operations["get_payments_admin_payments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Auditoria: tudo o que aconteceu, com filtros por autor, conta, tipo e período */
+        get: operations["get_audit_admin_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/queue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fila de trabalhos: filas pgmq, contagem por estado e runs (tentativas, posse, erro) */
+        get: operations["get_queue_admin_queue_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/queue/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Run com passos (modelo, tokens, custo) e eventos */
+        get: operations["get_queue_run_admin_queue_runs__run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Modelos e custos: preços e câmbio (provisórios), regras por tarefa e custo por modelo */
+        get: operations["get_models_admin_models_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/consumption": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Consumo por cliente e período: solicitações, créditos cobrados, tokens e custo de IA
+         * @description Conversa não cobra crédito, mas custa: aparece em `ai_cost_conversation_usd`. Reais pelo câmbio informado em Modelos e custos (provisório). Alertas econômicos ficam para a SA4.
+         */
+        get: operations["get_consumption_admin_consumption_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/quality": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Qualidade das entregas por tipo e por mês (aprovadas de primeira, ajustes, custo) */
+        get: operations["get_quality_admin_quality_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Saúde das APIs: estado, chave configurada ou ausente, chamadas, falhas e gasto */
+        get: operations["get_providers_admin_providers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -979,6 +1206,245 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AccountCredits */
+        AccountCredits: {
+            /** Balance */
+            balance: string;
+            /** Reserved */
+            reserved: string;
+            /** Available */
+            available: string;
+        };
+        /** AccountDetail */
+        AccountDetail: {
+            account: components["schemas"]["AccountSummary"];
+            /** Members */
+            members: components["schemas"]["AccountMember"][];
+            credits: components["schemas"]["AccountCredits"];
+            /**
+             * Ledger
+             * @description Últimos 20 lançamentos do extrato.
+             */
+            ledger: components["schemas"]["LedgerEntry"][];
+            /** Support Accesses */
+            support_accesses: components["schemas"]["SupportAccess"][];
+            usage_30d: components["schemas"]["UsageTotals"];
+            subscription: components["schemas"]["AccountSubscription"] | null;
+            /**
+             * Audit Event Id
+             * Format: uuid
+             * @description Registro desta leitura em audit_events (acesso do suporte).
+             */
+            audit_event_id: string;
+        };
+        /** AccountMember */
+        AccountMember: {
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /** Email */
+            email: string | null;
+            /** Full Name */
+            full_name: string | null;
+            /** Role */
+            role: string;
+            /**
+             * Member Since
+             * Format: date-time
+             */
+            member_since: string;
+            /** Last Sign In At */
+            last_sign_in_at: string | null;
+        };
+        /** AccountPage */
+        AccountPage: {
+            totals: components["schemas"]["AccountTotals"];
+            /** Items */
+            items: components["schemas"]["AccountSummary"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** AccountPlan */
+        AccountPlan: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Provisional */
+            provisional: boolean;
+        };
+        /** AccountSubscription */
+        AccountSubscription: {
+            /** Status */
+            status: string;
+            /** Plan */
+            plan: string;
+            /** Provisional */
+            provisional: boolean;
+            /** Provider */
+            provider: string;
+            /** Method */
+            method: string;
+            /** Current Period End */
+            current_period_end: string | null;
+        };
+        /** AccountSummary */
+        AccountSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Locale */
+            locale: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "active" | "deleted";
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            plan: components["schemas"]["AccountPlan"] | null;
+            /** Credits Balance */
+            credits_balance: string;
+            /** Member Count */
+            member_count: number;
+            /** Owner Email */
+            owner_email: string | null;
+        };
+        /** AccountTotals */
+        AccountTotals: {
+            /** Accounts */
+            accounts: number;
+            /** Paid Plans */
+            paid_plans: number;
+            /** Free Plans */
+            free_plans: number;
+            /** Credits Balance */
+            credits_balance: string;
+        };
+        /** AdminMe */
+        AdminMe: {
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /** Email */
+            email: string | null;
+            /** Full Name */
+            full_name: string | null;
+            /**
+             * Mfa Enforced
+             * @description Verificação em duas etapas exigida. false até a Fase 5: o painel avisa.
+             */
+            mfa_enforced: boolean;
+        };
+        /** AdminPayment */
+        AdminPayment: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** Workspace Name */
+            workspace_name: string;
+            /** Kind */
+            kind: string;
+            /** Provider */
+            provider: string;
+            /** Method */
+            method: string;
+            /** Status */
+            status: string;
+            /** Amount */
+            amount: string;
+            /** Currency */
+            currency: string;
+            /** Credits */
+            credits: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Confirmed At */
+            confirmed_at: string | null;
+        };
+        /** AdminSubscription */
+        AdminSubscription: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** Workspace Name */
+            workspace_name: string;
+            /** Plan */
+            plan: string;
+            /** Provisional */
+            provisional: boolean;
+            /** Provider */
+            provider: string;
+            /** Method */
+            method: string;
+            /** Status */
+            status: string;
+            /** Current Period End */
+            current_period_end: string | null;
+            /** Amount */
+            amount: string | null;
+            /** Currency */
+            currency: string | null;
+        };
+        /** AdminWebhookEvent */
+        AdminWebhookEvent: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Provider */
+            provider: string;
+            /** Event Id */
+            event_id: string;
+            /** Event Type */
+            event_type: string;
+            /** Workspace Id */
+            workspace_id: string | null;
+            /** Workspace Name */
+            workspace_name: string | null;
+            /** Outcome */
+            outcome: string | null;
+            /** Note */
+            note: string | null;
+            /**
+             * Received At
+             * Format: date-time
+             */
+            received_at: string;
+            /** Processed At */
+            processed_at: string | null;
+        };
         /**
          * AgentId
          * @enum {string}
@@ -1259,6 +1725,55 @@ export interface components {
              */
             delivery_type: string | null;
             primary_agent_id: components["schemas"]["AgentId"];
+        };
+        /** AuditItem */
+        AuditItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Actor
+             * @enum {string}
+             */
+            actor: "platform_admin" | "customer" | "system";
+            /** Actor Type */
+            actor_type: string;
+            /** Actor Id */
+            actor_id: string | null;
+            /** Actor Email */
+            actor_email: string | null;
+            /** Actor Name */
+            actor_name: string | null;
+            /** Workspace Id */
+            workspace_id: string | null;
+            /** Workspace Name */
+            workspace_name: string | null;
+            /** Category */
+            category: string;
+            /** Action */
+            action: string;
+            /** Entity Type */
+            entity_type: string | null;
+            /** Entity Id */
+            entity_id: string | null;
+            /** Payload */
+            payload: {
+                [key: string]: unknown;
+            };
+        };
+        /** AuditPage */
+        AuditPage: {
+            /** Items */
+            items: components["schemas"]["AuditItem"][];
+            /** Next Cursor */
+            next_cursor: string | null;
         };
         /** BrandFact */
         BrandFact: {
@@ -1551,6 +2066,58 @@ export interface components {
              */
             label: string;
         };
+        /** CatalogItem */
+        CatalogItem: {
+            /** Delivery Type */
+            delivery_type: string;
+            /** Agent Id */
+            agent_id: string;
+            /** Name */
+            name: string;
+            /** Result */
+            result: string;
+            /** Depth */
+            depth: string;
+            /**
+             * Depth Source
+             * @enum {string}
+             */
+            depth_source: "inferred" | "confirmed";
+            /** Integrations */
+            integrations: string | null;
+            /** Prerequisites */
+            prerequisites: string | null;
+            /** Catalog Status */
+            catalog_status: string;
+            /** Homologation Status */
+            homologation_status: string;
+            /** For Sale */
+            for_sale: boolean;
+            price: components["schemas"]["CatalogPrice"] | null;
+        };
+        /** CatalogPrice */
+        CatalogPrice: {
+            /** Credits */
+            credits: string;
+            /** Revision Credits */
+            revision_credits: string | null;
+            /** Provisional */
+            provisional: boolean;
+            /** Approved Commercially */
+            approved_commercially: boolean;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+            /** Versions */
+            versions: number;
+        };
+        /** CatalogResponse */
+        CatalogResponse: {
+            /** Items */
+            items: components["schemas"]["CatalogItem"][];
+        };
         /** ConsentCounts */
         ConsentCounts: {
             /** Email */
@@ -1623,6 +2190,60 @@ export interface components {
              * @description Data do consentimento ou da revogação vigente.
              */
             given_at: string;
+        };
+        /** ConsumptionResponse */
+        ConsumptionResponse: {
+            /**
+             * Since
+             * Format: date
+             */
+            since: string;
+            /**
+             * Until
+             * Format: date
+             */
+            until: string;
+            /** Usd Brl */
+            usd_brl: string | null;
+            /** Items */
+            items: components["schemas"]["ConsumptionRow"][];
+            totals: components["schemas"]["UsageTotals"];
+        };
+        /** ConsumptionRow */
+        ConsumptionRow: {
+            /** Requests */
+            requests: number;
+            /** Credits Charged */
+            credits_charged: string;
+            /** Llm Calls */
+            llm_calls: number;
+            /** Conversation Calls */
+            conversation_calls: number;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Cache Read Tokens */
+            cache_read_tokens: number;
+            /** Cache Write Tokens */
+            cache_write_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Ai Cost Deliveries Usd */
+            ai_cost_deliveries_usd: string;
+            /** Ai Cost Conversation Usd */
+            ai_cost_conversation_usd: string;
+            /** Ai Cost Usd */
+            ai_cost_usd: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** Workspace Name */
+            workspace_name: string;
+            /** Ai Cost Brl */
+            ai_cost_brl: string | null;
+            /** Ai Cost Per Credit Brl */
+            ai_cost_per_credit_brl: string | null;
         };
         /** ContactImport */
         ContactImport: {
@@ -2292,6 +2913,18 @@ export interface components {
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
         };
+        /** ExchangeRate */
+        ExchangeRate: {
+            /** Usd Brl */
+            usd_brl: string;
+            /**
+             * Fx Date
+             * Format: date
+             */
+            fx_date: string;
+            /** Fx Source */
+            fx_source: string;
+        };
         /** FactSource */
         FactSource: {
             /**
@@ -2359,6 +2992,27 @@ export interface components {
             version: string;
             /** Environment */
             environment: string;
+        };
+        /** LedgerEntry */
+        LedgerEntry: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Entry Type */
+            entry_type: string;
+            /** Amount */
+            amount: string;
+            /** Note */
+            note: string | null;
+            /** Run Id */
+            run_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
         };
         /** Me */
         Me: {
@@ -3041,6 +3695,72 @@ export interface components {
             /** Done */
             done?: boolean | null;
         };
+        /** ModelCostRow */
+        ModelCostRow: {
+            /** Model */
+            model: string;
+            /** Calls */
+            calls: number;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Cache Read Tokens */
+            cache_read_tokens: number;
+            /** Cache Write Tokens */
+            cache_write_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Cost Usd */
+            cost_usd: string;
+        };
+        /** ModelPrice */
+        ModelPrice: {
+            /** Model */
+            model: string;
+            /** Display Name */
+            display_name: string;
+            /** Input Usd Per Mtok */
+            input_usd_per_mtok: string;
+            /** Output Usd Per Mtok */
+            output_usd_per_mtok: string;
+            /** Cache Read Usd Per Mtok */
+            cache_read_usd_per_mtok: string;
+            /** Cache Write Usd Per Mtok */
+            cache_write_usd_per_mtok: string;
+            /** Provisional */
+            provisional: boolean;
+            /**
+             * Checked At
+             * Format: date
+             */
+            checked_at: string;
+            /** Source */
+            source: string;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+        };
+        /** ModelsOverview */
+        ModelsOverview: {
+            /**
+             * Since
+             * Format: date
+             */
+            since: string;
+            /**
+             * Until
+             * Format: date
+             */
+            until: string;
+            /** Prices */
+            prices: components["schemas"]["ModelPrice"][];
+            exchange_rate: components["schemas"]["ExchangeRate"] | null;
+            /** Rules */
+            rules: components["schemas"]["TaskRule"][];
+            /** Costs By Model */
+            costs_by_model: components["schemas"]["ModelCostRow"][];
+        };
         /** NeedItem */
         NeedItem: {
             /**
@@ -3154,6 +3874,43 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** PaymentProviderState */
+        PaymentProviderState: {
+            /** Provider */
+            provider: string;
+            /**
+             * Selected
+             * @description É o PAYMENT_PROVIDER das cobranças novas.
+             */
+            selected: boolean;
+            /**
+             * Api Key
+             * @enum {string}
+             */
+            api_key: "configured" | "missing" | "not_applicable";
+            /**
+             * Webhook Secret
+             * @enum {string}
+             */
+            webhook_secret: "configured" | "missing" | "not_applicable";
+        };
+        /** PaymentsOverview */
+        PaymentsOverview: {
+            /** Providers */
+            providers: components["schemas"]["PaymentProviderState"][];
+            /** Subscriptions */
+            subscriptions: components["schemas"]["AdminSubscription"][];
+            /**
+             * Payments
+             * @description Últimas 50 cobranças.
+             */
+            payments: components["schemas"]["AdminPayment"][];
+            /**
+             * Webhooks
+             * @description Últimos 50 eventos recebidos.
+             */
+            webhooks: components["schemas"]["AdminWebhookEvent"][];
+        };
         /** PendingApprovalSummary */
         PendingApprovalSummary: {
             /**
@@ -3172,6 +3929,47 @@ export interface components {
              * @description "Agora não": fora de "Precisa de você" até decidir.
              */
             deferred: boolean;
+        };
+        /** PlanItem */
+        PlanItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** For Sale */
+            for_sale: boolean;
+            /** Version */
+            version: number;
+            /** Cycle */
+            cycle: string;
+            /** Credits */
+            credits: string;
+            /** Validity Days */
+            validity_days: number | null;
+            /** Provisional */
+            provisional: boolean;
+            /** Approved Commercially */
+            approved_commercially: boolean;
+            /** Price Amount */
+            price_amount: string | null;
+            /** Price Currency */
+            price_currency: string | null;
+            /** Price Provisional */
+            price_provisional: boolean | null;
+            /** Price Approved Commercially */
+            price_approved_commercially: boolean | null;
+        };
+        /** PlansResponse */
+        PlansResponse: {
+            /** Plans */
+            plans: components["schemas"]["PlanItem"][];
+            /** Topups */
+            topups: components["schemas"]["TopupItem"][];
         };
         /**
          * PrincipalType
@@ -3471,6 +4269,178 @@ export interface components {
             /** Ends At */
             ends_at?: string | null;
         };
+        /** ProviderHealthItem */
+        ProviderHealthItem: {
+            /** Provider */
+            provider: string;
+            /** Display Name */
+            display_name: string;
+            /** Purpose */
+            purpose: string;
+            /** Status */
+            status: string;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "configured" | "missing" | "not_applicable";
+            /** Calls 24H */
+            calls_24h: number | null;
+            /** Failures 24H */
+            failures_24h: number | null;
+            spend_usd: components["schemas"]["ProviderSpend"] | null;
+            /** Last Success At */
+            last_success_at: string | null;
+            /** Last Failure At */
+            last_failure_at: string | null;
+            /** Last Failure Text */
+            last_failure_text: string | null;
+            /** Last Balance Refusal At */
+            last_balance_refusal_at: string | null;
+            /** Reported Balance */
+            reported_balance: string | null;
+            /** Reported Balance Currency */
+            reported_balance_currency: string | null;
+            /** Reported Balance At */
+            reported_balance_at: string | null;
+            /** Alert Below */
+            alert_below: string | null;
+            /** Note */
+            note: string | null;
+        };
+        /** ProviderSpend */
+        ProviderSpend: {
+            /** H24 */
+            h24: string;
+            /** D7 */
+            d7: string;
+            /** D30 */
+            d30: string;
+            /** Total */
+            total: string;
+        };
+        /** ProvidersResponse */
+        ProvidersResponse: {
+            /** Items */
+            items: components["schemas"]["ProviderHealthItem"][];
+        };
+        /** QualityResponse */
+        QualityResponse: {
+            /**
+             * Since
+             * Format: date
+             */
+            since: string;
+            /**
+             * Until
+             * Format: date
+             */
+            until: string;
+            /** By Type */
+            by_type: components["schemas"]["QualityRow"][];
+            /** By Month */
+            by_month: components["schemas"]["QualityRow"][];
+        };
+        /** QualityRow */
+        QualityRow: {
+            /**
+             * Key
+             * @description delivery_type em by_type; AAAA-MM em by_month.
+             */
+            key: string;
+            /** Deliveries */
+            deliveries: number;
+            /** Approved First Time */
+            approved_first_time: number;
+            /** Approved */
+            approved: number;
+            /** Adjustments */
+            adjustments: number;
+            /** Not Approved */
+            not_approved: number;
+            /** Ai Cost Usd */
+            ai_cost_usd: string;
+            /** Ai Cost Per Approved Usd */
+            ai_cost_per_approved_usd: string | null;
+            /** Failed Runs */
+            failed_runs: number;
+            /** Failed Steps */
+            failed_steps: number;
+        };
+        /** QueueOverview */
+        QueueOverview: {
+            /** Queues */
+            queues: components["schemas"]["QueueSize"][];
+            /** Status Counts */
+            status_counts: {
+                [key: string]: number;
+            };
+            /** Runs */
+            runs: components["schemas"]["QueueRun"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** QueueRun */
+        QueueRun: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** Workspace Name */
+            workspace_name: string;
+            /** Work Item Id */
+            work_item_id: string | null;
+            /** Work Title */
+            work_title: string | null;
+            /** Delivery Type */
+            delivery_type: string | null;
+            /** Agent Id */
+            agent_id: string | null;
+            /** Kind */
+            kind: string;
+            /** Status */
+            status: string;
+            /** Attempts */
+            attempts: number;
+            /** Max Attempts */
+            max_attempts: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Started At */
+            started_at: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /** Queue Name */
+            queue_name: string | null;
+            /** Lease Until */
+            lease_until: string | null;
+            /** Current Step */
+            current_step: string | null;
+            /** Error Code */
+            error_code: string | null;
+            /** Error Message */
+            error_message: string | null;
+        };
+        /** QueueSize */
+        QueueSize: {
+            /** Queue Name */
+            queue_name: string;
+            /** Queued */
+            queued: number;
+            /** In Flight */
+            in_flight: number;
+            /** Oldest Enqueued At */
+            oldest_enqueued_at: string | null;
+        };
         /** ReadCreate */
         ReadCreate: {
             /**
@@ -3565,6 +4535,14 @@ export interface components {
              */
             updated_at: string;
         };
+        /** RunDetail */
+        RunDetail: {
+            run: components["schemas"]["QueueRun"];
+            /** Steps */
+            steps: components["schemas"]["RunStepItem"][];
+            /** Events */
+            events: components["schemas"]["RunEventItem"][];
+        };
         /** RunEvent */
         RunEvent: {
             /**
@@ -3586,6 +4564,22 @@ export interface components {
              * Type
              * @example run.progress
              */
+            type: string;
+            /** Payload */
+            payload: {
+                [key: string]: unknown;
+            };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** RunEventItem */
+        RunEventItem: {
+            /** Seq */
+            seq: number;
+            /** Type */
             type: string;
             /** Payload */
             payload: {
@@ -3620,6 +4614,36 @@ export interface components {
          * @enum {string}
          */
         RunStatus: "queued" | "running" | "waiting_approval" | "succeeded" | "failed" | "cancelled";
+        /** RunStepItem */
+        RunStepItem: {
+            /** Seq */
+            seq: number;
+            /** Kind */
+            kind: string;
+            /** Step */
+            step: string | null;
+            /** Model */
+            model: string | null;
+            /** Status */
+            status: string;
+            /** Input Tokens */
+            input_tokens: number | null;
+            /** Output Tokens */
+            output_tokens: number | null;
+            /** Cache Read Tokens */
+            cache_read_tokens: number | null;
+            /** Cache Write Tokens */
+            cache_write_tokens: number | null;
+            /** Cost Usd */
+            cost_usd: string | null;
+            /** Latency Ms */
+            latency_ms: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** RunSummary */
         RunSummary: {
             /**
@@ -3693,6 +4717,84 @@ export interface components {
             /** Cancelled At */
             cancelled_at: string | null;
         };
+        /** SupportAccess */
+        SupportAccess: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Admin Email */
+            admin_email: string | null;
+            /** Reason */
+            reason: string;
+            /** Mode */
+            mode: string;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Ended At */
+            ended_at: string | null;
+        };
+        /** TaskRule */
+        TaskRule: {
+            /** Agent Id */
+            agent_id: string;
+            /** Task */
+            task: string;
+            /** Steps */
+            steps: string[];
+            /** Model */
+            model: string;
+            /** Effort */
+            effort: string | null;
+            /** Thinking */
+            thinking: string;
+            /** Thinking Budget */
+            thinking_budget: number | null;
+            /** Source */
+            source: string;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+        };
+        /** TopupItem */
+        TopupItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** For Sale */
+            for_sale: boolean;
+            /** Version */
+            version: number;
+            /** Credits */
+            credits: string;
+            /** Validity Days */
+            validity_days: number | null;
+            /** Amount */
+            amount: string;
+            /** Currency */
+            currency: string;
+            /** Provisional */
+            provisional: boolean;
+            /** Approved Commercially */
+            approved_commercially: boolean;
+        };
         /** UnreadCount */
         UnreadCount: {
             /** Conversations */
@@ -3719,6 +4821,31 @@ export interface components {
              * @description Pelo especialista à frente da conversa (o ambiente dele), fora a Sala do Squad; só os que têm não lida.
              */
             by_agent: components["schemas"]["AgentUnread"][];
+        };
+        /** UsageTotals */
+        UsageTotals: {
+            /** Requests */
+            requests: number;
+            /** Credits Charged */
+            credits_charged: string;
+            /** Llm Calls */
+            llm_calls: number;
+            /** Conversation Calls */
+            conversation_calls: number;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Cache Read Tokens */
+            cache_read_tokens: number;
+            /** Cache Write Tokens */
+            cache_write_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Ai Cost Deliveries Usd */
+            ai_cost_deliveries_usd: string;
+            /** Ai Cost Conversation Usd */
+            ai_cost_conversation_usd: string;
+            /** Ai Cost Usd */
+            ai_cost_usd: string;
         };
         /** User */
         User: {
@@ -8103,6 +9230,803 @@ export interface operations {
             };
             /** @description Recurso não encontrado (ou fora do seu acesso). */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    admin_me_admin_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminMe"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_accounts_admin_accounts_get: {
+        parameters: {
+            query?: {
+                /** @description Busca no nome ou no slug. */
+                q?: string | null;
+                /** @description Slug do plano. */
+                plan?: string | null;
+                status?: ("active" | "deleted") | null;
+                /** @description Valor de `next_cursor` da página anterior. Vazio = primeira página. */
+                cursor?: string | null;
+                /** @description Itens por página (1 a 100). */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountPage"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_account_admin_accounts__workspace_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_catalog_admin_catalog_get: {
+        parameters: {
+            query?: {
+                agent_id?: ("nexo" | "bia" | "kaia" | "otto" | "kiwi" | "max" | "iris") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogResponse"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_plans_admin_plans_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlansResponse"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_payments_admin_payments_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentsOverview"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_audit_admin_audit_get: {
+        parameters: {
+            query?: {
+                actor?: ("platform_admin" | "customer" | "system") | null;
+                workspace_id?: string | null;
+                category?: string | null;
+                since?: string | null;
+                until?: string | null;
+                /** @description Valor de `next_cursor` da página anterior. Vazio = primeira página. */
+                cursor?: string | null;
+                /** @description Itens por página (1 a 200). */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditPage"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_queue_admin_queue_get: {
+        parameters: {
+            query?: {
+                /** @description Estado do run. */
+                status?: string | null;
+                workspace_id?: string | null;
+                /** @description Valor de `next_cursor` da página anterior. Vazio = primeira página. */
+                cursor?: string | null;
+                /** @description Itens por página (1 a 200). */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QueueOverview"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_queue_run_admin_queue_runs__run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_models_admin_models_get: {
+        parameters: {
+            query?: {
+                /** @description Primeiro dia (padrão: 30 dias até `until`). */
+                since?: string | null;
+                /** @description Último dia, inclusive (padrão: hoje). */
+                until?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelsOverview"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_consumption_admin_consumption_get: {
+        parameters: {
+            query?: {
+                /** @description Primeiro dia (padrão: 30 dias até `until`). */
+                since?: string | null;
+                /** @description Último dia, inclusive (padrão: hoje). */
+                until?: string | null;
+                workspace_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsumptionResponse"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_quality_admin_quality_get: {
+        parameters: {
+            query?: {
+                /** @description Primeiro dia (padrão: 30 dias até `until`). */
+                since?: string | null;
+                /** @description Último dia, inclusive (padrão: hoje). */
+                until?: string | null;
+                workspace_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QualityResponse"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_providers_admin_providers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProvidersResponse"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
