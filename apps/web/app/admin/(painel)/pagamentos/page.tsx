@@ -188,7 +188,7 @@ export default async function PaymentsPage() {
                         {w.reconciled_at ? (
                           <small title={w.reconciliation_reason ?? undefined}>{t("acoes.webhook.reconciledAt", { when: f.dateTime(w.reconciled_at) })}</small>
                         ) : null}
-                        <WebhookActions eventId={w.id} event={w.event_type} reconciled={Boolean(w.reconciled_at)} />
+                        <WebhookActions eventId={w.id} event={w.event_type} outcome={w.outcome} reconciled={Boolean(w.reconciled_at)} />
                       </div>
                     ),
                   },

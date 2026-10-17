@@ -48,30 +48,37 @@ export function RunActions(props: { runId: string; status: string; work: string 
   );
 }
 
+/** Webhooks que o SA0 deixa reprocessar: os que falharam (no SA0, só "Falhou"; aqui também o recusado). */
+export const REPROCESS_FROM = ["failed", "rejected"] as const;
+
 /**
  * "Reprocessar" e "Marcar conciliação" de um webhook (SA0 `pagamentos.js`; API da SA6a), com motivo. O resultado do
  * reprocessamento diz o que houve: aplicado, sem mudança, duplicado (mesmo id: nada se repete) ou provedor sem estado.
  */
-export function WebhookActions(props: { eventId: string; event: string; reconciled: boolean }) {
+export function WebhookActions(props: { eventId: string; event: string; outcome: string | null; reconciled: boolean }) {
   const t = useTranslations("admin.acoes.webhook");
+  const reprocess = (REPROCESS_FROM as readonly string[]).includes(props.outcome ?? "");
+  if (!reprocess && props.reconciled) return null;
   return (
     <div className="hl-acts">
-      <ActionDialog
-        label={t("reprocess.open")}
-        variant="soft"
-        title={t("reprocess.title", { event: props.event })}
-        desc={t("reprocess.desc")}
-        confirmLabel={t("reprocess.confirm")}
-        submit={(reason) => webhookReprocessAction(props.eventId, reason)}
-        done={(r) => {
-          const status = r.provider_status ?? "—";
-          if (r.duplicate) return t("reprocess.duplicate", { status });
-          if (r.outcome === "applied") return t("reprocess.applied", { status });
-          if (r.outcome === "no_change") return t("reprocess.noChange", { status });
-          if (r.outcome === "provider_unknown") return t("reprocess.unknown");
-          return t("reprocess.other", { outcome: r.outcome, status });
-        }}
-      />
+      {reprocess ? (
+        <ActionDialog
+          label={t("reprocess.open")}
+          variant="soft"
+          title={t("reprocess.title", { event: props.event })}
+          desc={t("reprocess.desc")}
+          confirmLabel={t("reprocess.confirm")}
+          submit={(reason) => webhookReprocessAction(props.eventId, reason)}
+          done={(r) => {
+            const status = r.provider_status ?? "—";
+            if (r.duplicate) return t("reprocess.duplicate", { status });
+            if (r.outcome === "applied") return t("reprocess.applied", { status });
+            if (r.outcome === "no_change") return t("reprocess.noChange", { status });
+            if (r.outcome === "provider_unknown") return t("reprocess.unknown");
+            return t("reprocess.other", { outcome: r.outcome, status });
+          }}
+        />
+      ) : null}
       {props.reconciled ? null : (
         <ActionDialog
           label={t("reconcile.open")}

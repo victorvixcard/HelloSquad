@@ -372,6 +372,7 @@ describe("detalhe da conta", () => {
     await renderAccount(detail({ status: "suspended", suspension_reason: "Teste de suspensão pedido pelo dono" }), []);
     expect(screen.getByRole("note")).toHaveTextContent("Conta suspensa. Motivo: Teste de suspensão pedido pelo dono");
     expect(within(screen.getByTestId("actions")).getByRole("button", { name: "Reativar" })).toBeEnabled();
+    expect(within(screen.getByTestId("actions")).getByRole("button", { name: "Entrar no ambiente (Conta suspensa: reative antes de entrar.)" })).toBeDisabled();
   });
 });
 
@@ -470,12 +471,16 @@ describe("fila e pagamentos", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  it("reprocessar diz o resultado (duplicado, provedor sem estado); conciliado não oferece marcar de novo", async () => {
+  it("reprocessar só no que falhou (SA0) e diz o resultado (duplicado, provedor sem estado); conciliado não oferece marcar de novo", async () => {
     const user = userEvent.setup();
     acoes.webhookReprocessAction
       .mockResolvedValueOnce({ ok: true, data: { payment_event_id: "w1", provider: "mock", provider_status: "confirmed", applied_event_id: "e1", duplicate: true, outcome: "applied" } })
       .mockResolvedValueOnce({ ok: true, data: { payment_event_id: "w1", provider: "mock", provider_status: null, applied_event_id: null, duplicate: null, outcome: "provider_unknown" } });
-    renderAdmin(<WebhookActions eventId="w1" event="PAYMENT_CONFIRMED" reconciled />);
+    const ok = renderAdmin(<WebhookActions eventId="w0" event="PAYMENT_CONFIRMED" outcome="processed" reconciled={false} />);
+    expect(screen.queryByRole("button", { name: "Reprocessar" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Marcar conciliação" })).toBeInTheDocument();
+    ok.unmount();
+    renderAdmin(<WebhookActions eventId="w1" event="PAYMENT_CONFIRMED" outcome="failed" reconciled />);
     expect(screen.queryByRole("button", { name: "Marcar conciliação" })).toBeNull();
     for (const expected of ["Duplicado: o estado confirmed já tinha sido aplicado com este id", "O provedor não informou o estado (provedor simulado)"]) {
       await user.click(screen.getByRole("button", { name: "Reprocessar" }));
@@ -489,7 +494,7 @@ describe("fila e pagamentos", () => {
   it("marcar conciliação com motivo; 409 'já marcada' fica no diálogo", async () => {
     const user = userEvent.setup();
     acoes.webhookReconcileAction.mockResolvedValue(fail(409, "Este webhook já foi conciliado."));
-    renderAdmin(<WebhookActions eventId="w2" event="PAYMENT_RECEIVED" reconciled={false} />);
+    renderAdmin(<WebhookActions eventId="w2" event="PAYMENT_RECEIVED" outcome="processed" reconciled={false} />);
     await user.click(screen.getByRole("button", { name: "Marcar conciliação" }));
     const dialog = screen.getByRole("dialog", { name: "Marcar PAYMENT_RECEIVED como conciliado" });
     await user.type(within(dialog).getByLabelText("Motivo"), "Divergência explicada pelo extrato");

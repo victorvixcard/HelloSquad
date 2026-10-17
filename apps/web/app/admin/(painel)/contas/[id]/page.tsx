@@ -86,8 +86,10 @@ export default async function AccountPage({ params }: { params: Params }) {
           <EnterSupportDialog
             workspaceId={a.id}
             name={a.name}
-            disabled={Boolean(session) || a.status === "deleted"}
-            disabledReason={session ? t("acoes.enter.busy") : a.status === "deleted" ? t("acoes.enter.deleted") : undefined}
+            disabled={Boolean(session) || a.status !== "active"}
+            disabledReason={
+              session ? t("acoes.enter.busy") : a.status === "suspended" ? t("acoes.enter.suspended") : a.status === "deleted" ? t("acoes.enter.deleted") : undefined
+            }
           />
         </>
       }

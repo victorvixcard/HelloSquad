@@ -1163,7 +1163,8 @@
       "confirm": "Enter with the reason recorded",
       "done": "Support session in {name} open until {until}, read only. Recorded in the audit log.",
       "busy": "You already have a session open in this account.",
-      "deleted": "Deleted account."
+      "deleted": "Deleted account.",
+      "suspended": "Suspended account: reactivate it before entering."
     },
     "session": {
       "label": "Support",

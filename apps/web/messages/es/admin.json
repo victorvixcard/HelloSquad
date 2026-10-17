@@ -1163,7 +1163,8 @@
       "confirm": "Entrar con el motivo registrado",
       "done": "Sesión de soporte en {name} abierta hasta las {until}, solo lectura. Registrada en la auditoría.",
       "busy": "Ya tienes una sesión abierta en esta cuenta.",
-      "deleted": "Cuenta eliminada."
+      "deleted": "Cuenta eliminada.",
+      "suspended": "Cuenta suspendida: reactívala antes de entrar."
     },
     "session": {
       "label": "Soporte",
