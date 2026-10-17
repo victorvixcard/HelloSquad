@@ -97,33 +97,30 @@ describe("SitePage", () => {
   });
 });
 
-describe("Landing", () => {
-  it("Hero da R32 sem mudança; seções da R32 com links para as páginas novas", async () => {
+describe("Landing (R32 portada, L1)", () => {
+  const vendors = /\b(instagram|facebook|meta ads|whatsapp|tiktok|google|youtube|linkedin|chatgpt|openai|anthropic|claude|gemini|hellootto|canva)\b/i;
+
+  it("pt-BR: as seções da R32 na ordem da R32, com o texto no HTML do servidor e o JSON-LD da A2c", async () => {
     await renderServer(<Landing locale="pt-BR" />);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Você cuida do seu negócio\.\s*Seu squad de IA assume o marketing\./,
-    );
-    // Cabeçalho como a R32 no topo (wordmark e "Entrar"); a navegação do site fica no rodapé.
-    expect(screen.queryByRole("navigation", { name: "Navegação do site" })).toBeNull();
-    expect(within(screen.getByRole("contentinfo")).getByRole("link", { name: "Como funciona" })).toHaveAttribute("href", "/como-funciona");
-    // Botão do Hero como aprovado na R32 (pergunta P1 da N2a com o dono); o encerramento usa o CTA sem preço.
-    expect(screen.getByRole("link", { name: "Criar conta grátis" })).toHaveAttribute("href", "/criar-conta");
-    expect(screen.getAllByRole("link", { name: "Começar com o squad" })[0]).toHaveAttribute("href", "/criar-conta");
-    expect(screen.getByRole("link", { name: "Entenda como funciona" })).toHaveAttribute("href", "/como-funciona");
-    expect(screen.getByRole("link", { name: "Otto" })).toHaveAttribute("href", "/squad/otto");
-    const compare = screen.getByRole("table", { name: /Mais do que ferramentas/ });
-    expect(within(compare).getAllByRole("rowheader")).toHaveLength(6);
-    expect(within(compare).getAllByText("Faz").length).toBeGreaterThanOrEqual(6);
-    expect(document.querySelectorAll("details")).toHaveLength(6);
-    expect(screen.getByRole("link", { name: "Ver todas as perguntas" })).toHaveAttribute("href", "/faq");
+    expect([...document.querySelectorAll(".lp > header, .lp section, .lp > footer")].map((el) => el.id || el.className)).toEqual([
+      "lp-bar", "topo", "demo", "squad", "autonomo", "memoria", "resultados", "porque", "faq", "comecar", "lp-foot",
+    ]);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/Você cuida do seu negócio\.\s*Seu squad de IA assume o marketing\./);
+    const h2 = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent!.replace(/\s+/g, " ").trim());
+    for (const t of ["Do pedido à entrega.", "Seu marketing,", "Um Squad que conhece sua marca.", "Seus resultados revelam oportunidades.", "Mais do que ferramentas.", "Dúvidas antes"])
+      expect(h2.some((x) => x.includes(t)), t).toBe(true);
+    // Barra da R32: âncoras das seções, "Entrar" e "Criar conta grátis" (os modais viram /entrar e /criar-conta no cliente).
+    const bar = screen.getByRole("navigation", { name: "Seções" });
+    expect(within(bar).getAllByRole("link").map((a) => a.getAttribute("href"))).toEqual(["#demo", "#squad", "#autonomo", "#memoria", "#resultados"]);
+    expect(screen.getAllByRole("button", { name: /Criar conta grátis/ }).length).toBeGreaterThan(0);
     expect(ldTypes()).toEqual(["Organization", "WebSite", "SoftwareApplication"]);
   });
 
-  it("en: mesma página com o catálogo en e as rotas en", async () => {
-    await renderServer(<Landing locale="en" />);
-    expect(screen.getByRole("link", { name: "See how it works" })).toHaveAttribute("href", "/en/how-it-works");
-    expect(screen.getByRole("link", { name: "See all questions" })).toHaveAttribute("href", "/en/faq");
-    // Nem os rótulos ocultos do botão do DS ("Carregando", "Pronto") ficam em português no HTML en.
-    expect(document.body.textContent).not.toMatch(/você|não|Começar|Carregando|Pronto/);
+  it("nenhum fornecedor no texto público: comparativo sem os logotipos, rotinas e roteiros com termos neutros", async () => {
+    await renderServer(<Landing locale="pt-BR" />);
+    expect(document.body.textContent).not.toMatch(vendors);
+    expect(document.querySelectorAll("[data-brand]")).toHaveLength(0);
+    expect(document.querySelectorAll(".lp-c2-logo")).toHaveLength(2);
+    expect(document.body.textContent).toContain("Publicar 3x por semana nas redes sociais.");
   });
 });

@@ -20,7 +20,7 @@ import "@hellosquad/ui/ds-bundle.css";
 import "@hellosquad/ui/landing.css";
 
 const isServer = typeof window === "undefined";
-const HS = createHelloSquad(React) as Record<string, React.ComponentType<Record<string, unknown>>>;
+const HS = createHelloSquad(React);
 
 // No servidor só o construtor e o renderVals rodam: o renderVals lê window.HelloSquad (os componentes do DS) e mais nada
 // do navegador no estado inicial. Os motores (window, document, timers) só existem no cliente.
@@ -45,7 +45,7 @@ const Prototype = createLandingComponent(
   isServer ? { HelloSquad: HS } : window,
   isServer ? ssrDocument : document,
   canvasFont,
-) as LogicClass;
+);
 
 /**
  * Única mudança de comportamento, pedida no briefing da L1: "Criar conta grátis" e "Entrar" levam às telas reais
