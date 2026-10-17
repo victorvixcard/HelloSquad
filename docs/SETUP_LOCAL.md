@@ -646,6 +646,41 @@ curl -s -X PATCH $API/admin/providers/anthropic/balance -H "$AUTH" -H 'Content-T
 - **Saldo informado:** histórico em `provider_balance_reports` (só inserção) e o último em `provider_health`; motivo de 10 a 500 caracteres, moeda em 3 letras, leitura no futuro recusada (422), provedor desconhecido 404; `alert_below` nulo mantém o limiar; cada gravação vira `admin.provider_balance_reported` na Auditoria (categoria configuração).
 - Roteiro executado com a saída: `docs/parciais/sa4a/curl_sa4a.sh` (`curl_sa4a.txt` ao lado; cruza a faixa com uma chamada fictícia temporária na Miolo e apaga no fim o que criou).
 
+### Escrita do Super Admin e sessão de suporte (SA6a)
+
+Toda escrita é do Vic (token da seção do Super Admin), leva **motivo de 10 a 500 caracteres** e vira `audit_events` com quem, quando e o motivo (Auditoria, filtro Super Admin). A Marina e qualquer membro recebem 403 `platform_admin_only` em todas.
+
+```bash
+W=<id da conta>
+# Sessão de suporte (só leitura; 15, 30 ou 60 min; padrão 30) e fim
+curl -s -X POST $API/admin/accounts/$W/support-session -H "$AUTH" -H 'Content-Type: application/json' \
+  -d '{"reason": "Conferência pedida pela titular", "duration_minutes": 15}'
+curl -s "$API/workspaces/$W/conversations" -H "$AUTH"              # 200 durante a janela; 403 support_session_required fora
+curl -s -X DELETE $API/admin/accounts/$W/support-session -H "$AUTH"
+# Crédito (positivo concede; negativo só até o disponível), suspender e reativar
+curl -s -X POST $API/admin/accounts/$W/credit-adjustments -H "$AUTH" -H 'Content-Type: application/json' \
+  -d '{"amount": "10", "reason": "Compensação combinada com a titular"}'
+curl -s -X POST $API/admin/accounts/$W/suspend -H "$AUTH" -H 'Content-Type: application/json' -d '{"reason": "Pedido da titular por e-mail"}'
+curl -s -X POST $API/admin/accounts/$W/reactivate -H "$AUTH" -H 'Content-Type: application/json' -d '{"reason": "Titular pediu a volta"}'
+# Catálogo, planos e recargas: versão nova a cada gravação
+curl -s -X PUT $API/admin/catalog/04.01/price -H "$AUTH" -H 'Content-Type: application/json' -d '{"credits": "12", "reason": "Preço provisório revisto"}'
+curl -s -X PUT $API/admin/catalog/04.01/homologation -H "$AUTH" -H 'Content-Type: application/json' -d '{"status": "homologated", "reason": "Homologada pelo dono"}'
+curl -s -X PUT $API/admin/catalog/04.01/for-sale -H "$AUTH" -H 'Content-Type: application/json' -d '{"for_sale": true, "reason": "Liberada pelo dono"}'
+curl -s -X PUT $API/admin/plans/squad -H "$AUTH" -H 'Content-Type: application/json' -d '{"credits": "120", "cycle": "monthly", "amount": "109.00", "reason": "Plano revisto"}'
+curl -s -X PUT $API/admin/topups/recarga-50 -H "$AUTH" -H 'Content-Type: application/json' -d '{"credits": "60", "amount": "59.00", "reason": "Recarga revista"}'
+# Fila e pagamentos
+curl -s -X POST $API/admin/queue/runs/<run>/requeue -H "$AUTH" -H 'Content-Type: application/json' -d '{"reason": "Falha do provedor já resolvida"}'
+curl -s -X POST $API/admin/queue/runs/<run>/cancel -H "$AUTH" -H 'Content-Type: application/json' -d '{"reason": "Pedido duplicado da titular"}'
+curl -s -X POST $API/admin/payments/webhooks/<evento>/reprocess -H "$AUTH" -H 'Content-Type: application/json' -d '{"reason": "Webhook chegou antes da cobrança"}'
+curl -s -X POST $API/admin/payments/webhooks/<evento>/reconcile -H "$AUTH" -H 'Content-Type: application/json' -d '{"reason": "Conferido no extrato do provedor"}'
+```
+
+- **Sessão de suporte:** grava `support_access_log` (só cresce: o motivo não muda e o fim é gravado uma vez) e põe na fila o e-mail `support_session_started` ao titular, no idioma dele (veja no Mailpit com `make worker`). Durante a janela, os GET da API do produto daquele negócio respondem ao Super Admin como a um membro de leitura, numa transação **READ ONLY** (`app.support_session_enter`): qualquer escrita é recusada pelo Postgres, e a API responde 403 `support_session_read_only`. Vence sozinha no prazo; sem sessão, 403 `support_session_required`. Owner-only (cobrança, e-mails) fica fora mesmo durante a sessão.
+- **Ajuste de crédito:** sem limite de valor, sempre com motivo; positivo = grant de origem `adjustment`; negativo = lançamentos `adjustment` nos grants válidos (primeiro o que vence antes), recusado com 409 se deixaria o disponível negativo; `idempotency_key` opcional (repetir não lança de novo).
+- **Suspensa:** `workspaces.suspended_at`; a renovação do scheduler pula a conta, run agendado (rotina) recebe 423 `workspace_suspended`, a assinatura e os dados ficam; `GET /me` mostra `workspace_status: suspended` aos membros.
+- **"À venda"** só com homologação `homologated` e preço aprovado comercialmente (e não provisório); versões passadas de preço, plano e recarga não mudam (trigger). **Reprocessar** consulta a cobrança no provedor e aplica o estado como `reprocess:<cobrança>:<estado>` pela `app.billing_apply_event` (idempotente); o simulado não informa estado e responde `provider_unknown`. **Conciliação** fica em `payment_reconciliations` (uma por webhook, só inserção) e aparece em `GET /admin/payments`.
+- Roteiro executado com a saída: `docs/parciais/sa6a/curl_sa6a.sh` (`curl_sa6a.txt` ao lado; no fim tira o run fictício e roda o `make seed`).
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
