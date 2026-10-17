@@ -14,8 +14,11 @@ Jarvis, 17/10/2026, início 07:33. Escopo: `infra/mocks/`, alvo `make mocks`/`ma
 | # | Item | Estado |
 |---|---|---|
 | 0 | PASSO 0 lido; progresso aberto | ✅ 07:40 |
-| 1 | Servidor de mocks, `make mocks`/`mocks-stop`, health, reset, calls | ⏳ |
-| 2 | OAuth Meta e Google (authorize, token, refresh/troca, revogação, expiração forçável, escopos) | ⏳ |
-| 3 | Leituras (Instagram, Pages, GA4, Search Console, GBP) | ⏳ |
-| 4 | Escritas, rate limit, falhas injetáveis, timeout, guarda de rede | ⏳ |
-| 5 | Testes, `docs/MOCKS_LOCAIS.md`, `.env.example`, `make test-infra`, relatório | ⏳ |
+| 1 | Servidor de mocks, `make mocks`/`mocks-stop`, health, reset, calls | ✅ 07:52 |
+| 2 | OAuth Meta e Google (authorize, token, refresh/troca, revogação, expiração forçável, escopos) | ✅ 07:50 |
+| 3 | Leituras (Instagram, Pages, GA4, Search Console, GBP) | ✅ 07:51 |
+| 4 | Escritas, rate limit, falhas injetáveis, timeout, guarda de rede | ✅ 07:53 |
+| 5 | Testes (31), `docs/MOCKS_LOCAIS.md`, `.env.example`, `make test-infra`, relatório | ✅ 08:06 |
+| extra | Guarda do autosave recusa segredos e tokens reais da Meta e do Google (26/26) | ✅ 08:01 |
+
+Fatia fechada: relatório em `docs/parciais/J3-relatorio.md`.
