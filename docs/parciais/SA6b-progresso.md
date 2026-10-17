@@ -18,4 +18,8 @@ Aranha (Frontend & Design), 16/10/2026, início 23:46. Área: `apps/web` (detalh
 | 2 | Catálogo (preço, homologação, à venda com 409 honesto) por delivery; Planos e recargas (versão nova, trava "preço aprovado", histórico das versões gravadas pelo painel, só leitura) | feito | `7f04d82`, `8a1e0dc` |
 | 3 | Fila (reenfileirar, cancelar com motivo, na lista e no run); Pagamentos (reprocessar com o resultado, marcar conciliação) | feito | `2b63d96` |
 | 4 | Confirmação, motivo com contador, resultado na tela (aviso na casca), auditoria da tela relida sem recarregar; etiqueta "Ações com motivo e auditoria"; rótulos pt-BR/en/es | feito | `8b91c14`, `954a201` |
-| 5 | Vitest (17), e2e (2, worktree `/tmp/sa6b-wt`, web na 3200), lado a lado, relatório | em andamento | `fe5f9e0`, `b99b233` |
+| 5 | Vitest (18), e2e (2, worktree `/tmp/sa6b-wt`, web na 3200), lado a lado, relatório | feito | `fe5f9e0`, `b99b233` … `e9d22e5`, `61e5c8e`, `9711b69`, relatório |
+
+## Fechamento (00:15)
+
+Vitest da fatia 18/18; `make test-web` verde (web 473, ui 50, contracts 9) no worktree `/tmp/sa6b-wt` (`9711b69`); build de produção verde; e2e 9/9 (os 2 da SA6b e os 7 da SA2, SA3b e SA4b, web de produção na 3200); banco do dono de volta ao seed (0 sessão aberta, 0 run do e2e, Trilha ativa, saldo da Miolo 36,00, 0 evento das ações depois de 23:46); web do dono na 3100 no ar; lado a lado em `docs/parciais/sa6b/`. Relatório: `docs/parciais/SA6b-relatorio.md`.
