@@ -88,7 +88,8 @@
     "checkedAt": "Checked on {date}",
     "source": "Source",
     "of": "{n} of {total}",
-    "apiDown": "The panel API did not answer right now. Try again in a moment."
+    "apiDown": "The panel API did not answer right now. Try again in a moment.",
+    "variable": "Variable filled in at conversation time"
   },
   "codes": {
     "accountStatus": {
@@ -246,6 +247,26 @@
       "claude-sonnet-5-5": "Sonnet 5.5",
       "claude-haiku-4-5": "Haiku 4.5",
       "claude-haiku-4-5-20251001": "Haiku 4.5"
+    },
+    "section": {
+      "identidade": "Identity",
+      "o_que_faz": "What it does",
+      "como_fala": "How it speaks",
+      "limites": "Limits",
+      "memoria": "Memory",
+      "nunca_faz": "What it never does"
+    },
+    "versionStatus": {
+      "draft": "Draft",
+      "active": "Active",
+      "superseded": "Superseded",
+      "discarded": "Discarded"
+    },
+    "versionKind": {
+      "soul": "Soul",
+      "skill": "Skill",
+      "config": "agent.yaml",
+      "shared": "Shared rules"
     }
   },
   "contas": {
@@ -569,5 +590,87 @@
     "runs30": "{n, plural, one {# run in 30 days} other {# runs in 30 days}}",
     "ruleLabel": "Rule",
     "rule": "A change to the soul, a skill or agent.yaml creates a new version, never a silent edit. A draft does not reach the runtime until it is published; every run records the versions it used. Going back to a version creates a new version with the old content; nothing is deleted."
+  },
+  "agente": {
+    "title": "Agent",
+    "metaTitle": "{name} · Squad",
+    "prev": "Previous agent: {name}",
+    "next": "Next agent: {name}",
+    "tabsLabel": "Agent parts",
+    "tabSoul": "Soul",
+    "tabSkills": "Skills ({n}/{total})",
+    "tabTools": "Tools and limits",
+    "tabReads": "What it reads",
+    "modelChip": "{model} · effort {effort}",
+    "unit": {
+      "soul": "of {name}'s soul",
+      "config": "of {name}'s agent.yaml",
+      "skill": "of {name}'s skill {key}"
+    }
+  },
+  "alma": {
+    "empty": "This agent has no soul in the database yet. Run the squad seed.",
+    "inPrompt": "{n} of {total} sections go into the prompt",
+    "chars": ", about {chars} characters",
+    "activeLine": "active version v{v} · {date} · {author}",
+    "draftReady": "Version {v} {unit} is ready to publish.",
+    "draftCheck": "Check \"What it reads\" with the draft before publishing.",
+    "factChanged": "Changed sections",
+    "factOut": "Out of the prompt",
+    "factSize": "In the prompt",
+    "factChars": "{chars} characters",
+    "sectionMeta": "{section} · changed in v{v} · {words} words",
+    "outTag": "Out of the prompt",
+    "inPromptYes": "Goes into the prompt",
+    "inPromptNo": "Stays out of the prompt",
+    "edit": "Edit",
+    "fieldHeading": "Section title",
+    "fieldBody": "Section text (markdown)",
+    "fieldInPrompt": "Goes into the prompt"
+  },
+  "versions": {
+    "draftTag": "Draft",
+    "publish": "Publish version {v}",
+    "compare": "Compare versions",
+    "discard": "Discard",
+    "saveDraft": "Save draft",
+    "cancel": "Cancel",
+    "close": "Close",
+    "working": "Saving…",
+    "publishTitle": "Publish version {v} {unit}?",
+    "publishDesc": "The next runs will use this version. Version {active} stays in the history as superseded.",
+    "publishDescFirst": "The next runs will use this version.",
+    "publishCheck": "The publication goes to the audit log under your name. Nothing is deleted.",
+    "discardTitle": "Discard the draft (version {v}) {unit}?",
+    "discardDesc": "Nothing that is live changes.",
+    "discardKeep": "The draft stays in the history as discarded and in the audit log.",
+    "discardConfirm": "Discard draft",
+    "restoreTitle": "Go back to version {v} {unit}?",
+    "restoreDesc": "Creates a new version, already active, with the content of version {v}. The next runs will use it; nothing is deleted.",
+    "restoreConfirm": "Go back to this version",
+    "reason": "Reason (goes to the audit log)",
+    "reasonHint": "Optional, but it helps whoever reads the history.",
+    "done": {
+      "saved": "Draft saved as version {v}. Publish it to reach the runtime.",
+      "published": "Version {v} published. The next runs use this version.",
+      "discarded": "Draft of version {v} discarded.",
+      "restored": "Version {v} active, with the content of version {from}."
+    },
+    "title": "Versions",
+    "sub": "going back creates a new version with the old content; nothing is deleted",
+    "line": "Version {v}",
+    "inUse": "In use",
+    "restore": "Go back to this version",
+    "compareActive": "Compare with the active one",
+    "restoredFrom": "restored from version {v}",
+    "restoreBlocked": "A draft is waiting: publish or discard it before going back to a version.",
+    "diffTitle": "Compare: version {from} and version {to}",
+    "diffLegend": "Side by side: removed on the left, added on the right.",
+    "diffChanged": "Sections that changed",
+    "diffNone": "No difference between the two versions.",
+    "diffLoading": "Loading the comparison…",
+    "diffSide": "Version {v} · {status}",
+    "removed": "removed",
+    "added": "added"
   }
 }

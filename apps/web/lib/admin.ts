@@ -35,6 +35,7 @@ export type SharedDetail = S["SharedDetail"];
 export type RuleDocList = S["RuleDocList"];
 export type RuleDocDetail = S["RuleDocDetail"];
 export type RuleParagraph = S["RuleParagraph"];
+export type RuleDocEdit = S["RuleDocEdit"];
 
 /** Resposta de uma leitura do painel: o dado, ou o erro da API para a tela dizer o que houve (nunca dado inventado). */
 export type AdminResult<T> = { ok: true; data: T } | { ok: false; error: ApiError };

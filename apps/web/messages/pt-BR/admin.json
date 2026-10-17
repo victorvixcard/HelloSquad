@@ -88,7 +88,8 @@
     "checkedAt": "Conferido em {date}",
     "source": "Fonte",
     "of": "{n} de {total}",
-    "apiDown": "A API do painel não respondeu agora. Tente de novo em instantes."
+    "apiDown": "A API do painel não respondeu agora. Tente de novo em instantes.",
+    "variable": "Variável preenchida na hora da conversa"
   },
   "codes": {
     "accountStatus": {
@@ -246,6 +247,26 @@
       "claude-sonnet-5-5": "Sonnet 5.5",
       "claude-haiku-4-5": "Haiku 4.5",
       "claude-haiku-4-5-20251001": "Haiku 4.5"
+    },
+    "section": {
+      "identidade": "Identidade",
+      "o_que_faz": "O que faz",
+      "como_fala": "Como fala",
+      "limites": "Limites",
+      "memoria": "Memória",
+      "nunca_faz": "O que nunca faz"
+    },
+    "versionStatus": {
+      "draft": "Rascunho",
+      "active": "Ativa",
+      "superseded": "Substituída",
+      "discarded": "Descartada"
+    },
+    "versionKind": {
+      "soul": "Alma",
+      "skill": "Skill",
+      "config": "agent.yaml",
+      "shared": "Regras compartilhadas"
     }
   },
   "contas": {
@@ -569,5 +590,87 @@
     "runs30": "{n, plural, one {# run em 30 dias} other {# runs em 30 dias}}",
     "ruleLabel": "Regra",
     "rule": "Mudança em Alma, skill ou agent.yaml gera versão nova, nunca edição silenciosa. Rascunho não entra no runtime até ser publicado; cada run registra as versões que usou. Voltar versão cria uma versão nova com o conteúdo antigo; nada é apagado."
+  },
+  "agente": {
+    "title": "Agente",
+    "metaTitle": "{name} · Squad",
+    "prev": "Agente anterior: {name}",
+    "next": "Próximo agente: {name}",
+    "tabsLabel": "Partes do agente",
+    "tabSoul": "Alma",
+    "tabSkills": "Skills ({n}/{total})",
+    "tabTools": "Ferramentas e limites",
+    "tabReads": "O que ele lê",
+    "modelChip": "{model} · esforço {effort}",
+    "unit": {
+      "soul": "da Alma {article, select, a {da} other {do}} {name}",
+      "config": "do agent.yaml {article, select, a {da} other {do}} {name}",
+      "skill": "da skill {key} {article, select, a {da} other {do}} {name}"
+    }
+  },
+  "alma": {
+    "empty": "Este agente ainda não tem Alma no banco. Rode o seed do squad.",
+    "inPrompt": "{n} de {total} seções entram no prompt",
+    "chars": ", cerca de {chars} caracteres",
+    "activeLine": "versão ativa v{v} · {date} · {author}",
+    "draftReady": "Versão {v} {unit} pronta para publicar.",
+    "draftCheck": "Confira em \"O que ele lê\" com o rascunho antes de publicar.",
+    "factChanged": "Seções alteradas",
+    "factOut": "Fora do prompt",
+    "factSize": "No prompt",
+    "factChars": "{chars} caracteres",
+    "sectionMeta": "{section} · mudou na v{v} · {words} palavras",
+    "outTag": "Fora do prompt",
+    "inPromptYes": "Entra no prompt",
+    "inPromptNo": "Fica fora do prompt",
+    "edit": "Editar",
+    "fieldHeading": "Título da seção",
+    "fieldBody": "Texto da seção (markdown)",
+    "fieldInPrompt": "Entra no prompt"
+  },
+  "versions": {
+    "draftTag": "Rascunho",
+    "publish": "Publicar versão {v}",
+    "compare": "Comparar versões",
+    "discard": "Descartar",
+    "saveDraft": "Salvar rascunho",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "working": "Gravando…",
+    "publishTitle": "Publicar a versão {v} {unit}?",
+    "publishDesc": "Os próximos runs passam a usar esta versão. A versão {active} fica no histórico como substituída.",
+    "publishDescFirst": "Os próximos runs passam a usar esta versão.",
+    "publishCheck": "A publicação vai para a auditoria com o seu nome. Nada é apagado.",
+    "discardTitle": "Descartar o rascunho (versão {v}) {unit}?",
+    "discardDesc": "Nada do que está no ar muda.",
+    "discardKeep": "O rascunho fica no histórico como descartado e na auditoria.",
+    "discardConfirm": "Descartar rascunho",
+    "restoreTitle": "Voltar para a versão {v} {unit}?",
+    "restoreDesc": "Cria uma versão nova, já ativa, com o conteúdo da versão {v}. Os próximos runs passam a usá-la; nada é apagado.",
+    "restoreConfirm": "Voltar para esta versão",
+    "reason": "Motivo (vai para a auditoria)",
+    "reasonHint": "Opcional, mas ajuda quem lê o histórico.",
+    "done": {
+      "saved": "Rascunho salvo na versão {v}. Publique para entrar no runtime.",
+      "published": "Versão {v} publicada. Os próximos runs usam esta versão.",
+      "discarded": "Rascunho da versão {v} descartado.",
+      "restored": "Versão {v} ativa, com o conteúdo da versão {from}."
+    },
+    "title": "Versões",
+    "sub": "voltar versão cria uma versão nova com o conteúdo antigo; nada é apagado",
+    "line": "Versão {v}",
+    "inUse": "Em uso",
+    "restore": "Voltar para esta versão",
+    "compareActive": "Comparar com a ativa",
+    "restoredFrom": "voltou da versão {v}",
+    "restoreBlocked": "Há um rascunho esperando: publique ou descarte antes de voltar uma versão.",
+    "diffTitle": "Comparar: versão {from} e versão {to}",
+    "diffLegend": "Lado a lado: removido à esquerda, acrescentado à direita.",
+    "diffChanged": "Seções que mudaram",
+    "diffNone": "Nenhuma diferença entre as duas versões.",
+    "diffLoading": "Carregando a comparação…",
+    "diffSide": "Versão {v} · {status}",
+    "removed": "removido",
+    "added": "acrescentado"
   }
 }

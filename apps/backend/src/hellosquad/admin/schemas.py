@@ -100,6 +100,9 @@ class UsageTotals(BaseModel):
     ai_cost_deliveries_usd: Decimal
     ai_cost_conversation_usd: Decimal
     ai_cost_usd: Decimal
+    turns: int = Field(description="Runs com chamada de IA (cada resposta de um agente).")
+    conversation_turns: int
+    turn_cost_usd: Decimal
 
 
 class AccountSubscription(BaseModel):
@@ -380,11 +383,71 @@ class ModelsOverview(BaseModel):
     costs_by_model: list[ModelCostRow]
 
 
+AlertMetric = Literal["ai_cost_per_credit_brl", "gross_margin", "cost_per_turn_trend"]
+Granularity = Literal["day", "week", "month"]
+
+
+class AlertRule(BaseModel):
+    metric: AlertMetric
+    comparison: Literal["max", "min"] = Field(
+        description="max = OK até o limite (acima, atenção); min = OK a partir do limite."
+    )
+    threshold: Decimal = Field(description="R$ por crédito, ou fração (0,65 = 65%; 0,10 = +10%).")
+    credit_reference_brl: Decimal | None = Field(
+        description="Valor do crédito em R$ usado na margem (exemplo do protótipo, provisório)."
+    )
+    window_days: int | None
+    proposal: bool = Field(description="Faixa ainda é proposta; o Vic decide.")
+    source: str
+    valid_from: datetime
+
+
+class EconomicAlert(BaseModel):
+    metric: AlertMetric
+    value: Decimal
+    threshold: Decimal
+    comparison: Literal["max", "min"]
+    proposal: bool
+
+
+class EconomicReadings(BaseModel):
+    """As três leituras econômicas; alerta só avisa, nada muda automaticamente."""
+
+    ai_cost_per_credit_brl: Decimal | None = Field(
+        description="Custo de IA (entregas e conversa) em R$ ÷ créditos cobrados."
+    )
+    gross_margin: Decimal | None = Field(
+        description="1 − custo de IA em R$ ÷ (créditos × valor de referência do crédito)."
+    )
+    cost_per_turn_usd: Decimal | None = Field(description="Custo dos turnos ÷ turnos, no período.")
+    cost_per_turn_trend: Decimal | None = Field(
+        description="Custo por turno nos últimos N dias ÷ nos N anteriores − 1 (N da faixa)."
+    )
+    alerts: list[EconomicAlert]
+
+
 class ConsumptionRow(UsageTotals):
     workspace_id: UUID
     workspace_name: str
     ai_cost_brl: Decimal | None
     ai_cost_per_credit_brl: Decimal | None
+    economics: EconomicReadings
+
+
+class ConsumptionBucket(BaseModel):
+    period_start: date
+    requests: int
+    credits_charged: Decimal
+    llm_calls: int
+    ai_cost_deliveries_usd: Decimal
+    ai_cost_conversation_usd: Decimal
+    ai_cost_usd: Decimal
+    ai_cost_brl: Decimal | None
+    turns: int
+    turn_cost_usd: Decimal
+    ai_cost_per_credit_brl: Decimal | None
+    gross_margin: Decimal | None
+    cost_per_turn_usd: Decimal | None
 
 
 class ConsumptionResponse(BaseModel):
@@ -393,6 +456,35 @@ class ConsumptionResponse(BaseModel):
     usd_brl: Decimal | None
     items: list[ConsumptionRow]
     totals: UsageTotals
+    granularity: Granularity
+    series: list[ConsumptionBucket] = Field(
+        description="O conjunto filtrado (todas as contas ou `workspace_id`) por dia, semana ou mês."
+    )
+    economics: EconomicReadings = Field(description="Leituras do conjunto filtrado.")
+    alert_rules: list[AlertRule]
+
+
+class AccountAlerts(BaseModel):
+    workspace_id: UUID
+    workspace_name: str
+    alerts: list[EconomicAlert]
+
+
+class ProviderBalanceAlert(BaseModel):
+    provider: str
+    display_name: str
+    reported_balance: Decimal
+    reported_balance_currency: str
+    reported_balance_at: datetime
+    alert_below: Decimal
+
+
+class AlertsResponse(BaseModel):
+    since: date
+    until: date
+    accounts: list[AccountAlerts] = Field(description="Só as contas com alguma leitura fora da faixa.")
+    providers: list[ProviderBalanceAlert] = Field(description="Saldo informado abaixo do limiar.")
+    alert_rules: list[AlertRule]
 
 
 class QualityRow(BaseModel):
@@ -406,6 +498,27 @@ class QualityRow(BaseModel):
     ai_cost_per_approved_usd: Decimal | None
     failed_runs: int
     failed_steps: int
+    agent_errors: int
+
+
+class PromptVersionSource(BaseModel):
+    kind: str | None = None
+    key: str | None = None
+    version: int | None = None
+
+
+class QualityPromptVersionRow(QualityRow):
+    agent_id: str
+    prompt_version: str = Field(description="Hash do prompt montado (runs.prompt_version).")
+    origin: str | None = Field(description="database = versões do painel (SA3a); files = squad/.")
+    sources: list[PromptVersionSource]
+    first_used_at: datetime | None
+
+
+class HowToRead(BaseModel):
+    key: str
+    title: str
+    text: str
 
 
 class QualityResponse(BaseModel):
@@ -413,6 +526,32 @@ class QualityResponse(BaseModel):
     until: date
     by_type: list[QualityRow]
     by_month: list[QualityRow]
+    by_prompt_version: list[QualityPromptVersionRow]
+    locale: str
+    how_to_read: list[HowToRead]
+
+
+class QualityRates(BaseModel):
+    approved_first_rate: Decimal | None
+    adjustments_per_delivery: Decimal | None
+    not_approved_rate: Decimal | None
+    ai_cost_per_approved_usd: Decimal | None
+    agent_errors_per_100: Decimal | None
+    failed_calls_per_100: Decimal | None
+
+
+class QualityPeriod(BaseModel):
+    since: date
+    until: date
+    totals: QualityRow
+    rates: QualityRates
+    prompt_versions: list[QualityPromptVersionRow]
+
+
+class QualityComparison(BaseModel):
+    a: QualityPeriod
+    b: QualityPeriod
+    delta: QualityRates = Field(description="b − a, nas mesmas unidades das taxas.")
 
 
 class ProviderSpend(BaseModel):
@@ -420,6 +559,18 @@ class ProviderSpend(BaseModel):
     d7: Decimal
     d30: Decimal
     total: Decimal
+
+
+class BalanceReport(BaseModel):
+    id: UUID
+    amount: Decimal
+    currency: str
+    read_at: datetime
+    alert_below: Decimal | None
+    reason: str
+    reported_by: UUID
+    reported_by_email: str | None
+    created_at: datetime
 
 
 class ProviderHealthItem(BaseModel):
@@ -440,7 +591,23 @@ class ProviderHealthItem(BaseModel):
     reported_balance_at: datetime | None
     alert_below: Decimal | None
     note: str | None
+    calls_7d: int | None = None
+    failures_7d: int | None = None
+    balance_alert: bool = Field(
+        default=False, description="Saldo informado abaixo do limiar (na moeda do saldo)."
+    )
+    balance_history: list[BalanceReport] = Field(default_factory=list)
 
 
 class ProvidersResponse(BaseModel):
     items: list[ProviderHealthItem]
+
+
+class BalanceUpdate(BaseModel):
+    amount: Decimal = Field(ge=0, max_digits=12, decimal_places=2)
+    currency: str = Field(pattern=r"^[A-Z]{3}$")
+    read_at: datetime = Field(description="Quando o saldo foi lido no painel do provedor.")
+    reason: str = Field(min_length=10, max_length=500)
+    alert_below: Decimal | None = Field(
+        default=None, ge=0, max_digits=12, decimal_places=2, description="Nulo mantém o limiar atual."
+    )

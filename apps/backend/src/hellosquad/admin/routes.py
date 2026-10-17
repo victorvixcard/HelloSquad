@@ -308,7 +308,10 @@ select coalesce(sum(requests), 0)::integer as requests,
        coalesce(sum(ai_cost_deliveries_usd), 0)::numeric(14, 6) as ai_cost_deliveries_usd,
        coalesce(sum(ai_cost_conversation_usd), 0)::numeric(14, 6) as ai_cost_conversation_usd,
        coalesce(sum(ai_cost_deliveries_usd + ai_cost_conversation_usd), 0)::numeric(14, 6)
-         as ai_cost_usd
+         as ai_cost_usd,
+       coalesce(sum(turns), 0)::integer as turns,
+       coalesce(sum(conversation_turns), 0)::integer as conversation_turns,
+       coalesce(sum(turn_cost_usd), 0)::numeric(14, 6) as turn_cost_usd
 from public.v_consumo_por_cliente
 where workspace_id = %s and day between %s and %s
 """

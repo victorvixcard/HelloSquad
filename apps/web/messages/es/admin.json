@@ -88,7 +88,8 @@
     "checkedAt": "Verificado el {date}",
     "source": "Fuente",
     "of": "{n} de {total}",
-    "apiDown": "La API del panel no respondió ahora. Inténtalo de nuevo en unos instantes."
+    "apiDown": "La API del panel no respondió ahora. Inténtalo de nuevo en unos instantes.",
+    "variable": "Variable completada en el momento de la conversación"
   },
   "codes": {
     "accountStatus": {
@@ -246,6 +247,26 @@
       "claude-sonnet-5-5": "Sonnet 5.5",
       "claude-haiku-4-5": "Haiku 4.5",
       "claude-haiku-4-5-20251001": "Haiku 4.5"
+    },
+    "section": {
+      "identidade": "Identidad",
+      "o_que_faz": "Qué hace",
+      "como_fala": "Cómo habla",
+      "limites": "Límites",
+      "memoria": "Memoria",
+      "nunca_faz": "Lo que nunca hace"
+    },
+    "versionStatus": {
+      "draft": "Borrador",
+      "active": "Activa",
+      "superseded": "Reemplazada",
+      "discarded": "Descartada"
+    },
+    "versionKind": {
+      "soul": "Alma",
+      "skill": "Skill",
+      "config": "agent.yaml",
+      "shared": "Reglas compartidas"
     }
   },
   "contas": {
@@ -569,5 +590,87 @@
     "runs30": "{n, plural, one {# run en 30 días} other {# runs en 30 días}}",
     "ruleLabel": "Regla",
     "rule": "Un cambio en el alma, una skill o el agent.yaml crea una versión nueva, nunca una edición silenciosa. Un borrador no llega al runtime hasta publicarse; cada run registra las versiones que usó. Volver a una versión crea una versión nueva con el contenido anterior; nada se borra."
+  },
+  "agente": {
+    "title": "Agente",
+    "metaTitle": "{name} · Squad",
+    "prev": "Agente anterior: {name}",
+    "next": "Agente siguiente: {name}",
+    "tabsLabel": "Partes del agente",
+    "tabSoul": "Alma",
+    "tabSkills": "Skills ({n}/{total})",
+    "tabTools": "Herramientas y límites",
+    "tabReads": "Lo que lee",
+    "modelChip": "{model} · esfuerzo {effort}",
+    "unit": {
+      "soul": "del alma de {name}",
+      "config": "del agent.yaml de {name}",
+      "skill": "de la skill {key} de {name}"
+    }
+  },
+  "alma": {
+    "empty": "Este agente todavía no tiene alma en la base de datos. Ejecuta el seed del squad.",
+    "inPrompt": "{n} de {total} secciones entran en el prompt",
+    "chars": ", unos {chars} caracteres",
+    "activeLine": "versión activa v{v} · {date} · {author}",
+    "draftReady": "Versión {v} {unit} lista para publicar.",
+    "draftCheck": "Revisa \"Lo que lee\" con el borrador antes de publicar.",
+    "factChanged": "Secciones cambiadas",
+    "factOut": "Fuera del prompt",
+    "factSize": "En el prompt",
+    "factChars": "{chars} caracteres",
+    "sectionMeta": "{section} · cambió en la v{v} · {words} palabras",
+    "outTag": "Fuera del prompt",
+    "inPromptYes": "Entra en el prompt",
+    "inPromptNo": "Queda fuera del prompt",
+    "edit": "Editar",
+    "fieldHeading": "Título de la sección",
+    "fieldBody": "Texto de la sección (markdown)",
+    "fieldInPrompt": "Entra en el prompt"
+  },
+  "versions": {
+    "draftTag": "Borrador",
+    "publish": "Publicar versión {v}",
+    "compare": "Comparar versiones",
+    "discard": "Descartar",
+    "saveDraft": "Guardar borrador",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "working": "Guardando…",
+    "publishTitle": "¿Publicar la versión {v} {unit}?",
+    "publishDesc": "Los próximos runs usarán esta versión. La versión {active} queda en el historial como reemplazada.",
+    "publishDescFirst": "Los próximos runs usarán esta versión.",
+    "publishCheck": "La publicación va a la auditoría con tu nombre. Nada se borra.",
+    "discardTitle": "¿Descartar el borrador (versión {v}) {unit}?",
+    "discardDesc": "Nada de lo que está en uso cambia.",
+    "discardKeep": "El borrador queda en el historial como descartado y en la auditoría.",
+    "discardConfirm": "Descartar borrador",
+    "restoreTitle": "¿Volver a la versión {v} {unit}?",
+    "restoreDesc": "Crea una versión nueva, ya activa, con el contenido de la versión {v}. Los próximos runs la usarán; nada se borra.",
+    "restoreConfirm": "Volver a esta versión",
+    "reason": "Motivo (va a la auditoría)",
+    "reasonHint": "Opcional, pero ayuda a quien lee el historial.",
+    "done": {
+      "saved": "Borrador guardado como versión {v}. Publícalo para que llegue al runtime.",
+      "published": "Versión {v} publicada. Los próximos runs usan esta versión.",
+      "discarded": "Borrador de la versión {v} descartado.",
+      "restored": "Versión {v} activa, con el contenido de la versión {from}."
+    },
+    "title": "Versiones",
+    "sub": "volver a una versión crea una versión nueva con el contenido anterior; nada se borra",
+    "line": "Versión {v}",
+    "inUse": "En uso",
+    "restore": "Volver a esta versión",
+    "compareActive": "Comparar con la activa",
+    "restoredFrom": "volvió de la versión {v}",
+    "restoreBlocked": "Hay un borrador en espera: publícalo o descártalo antes de volver a una versión.",
+    "diffTitle": "Comparar: versión {from} y versión {to}",
+    "diffLegend": "Lado a lado: lo eliminado a la izquierda, lo añadido a la derecha.",
+    "diffChanged": "Secciones que cambiaron",
+    "diffNone": "No hay diferencias entre las dos versiones.",
+    "diffLoading": "Cargando la comparación…",
+    "diffSide": "Versión {v} · {status}",
+    "removed": "eliminado",
+    "added": "añadido"
   }
 }
