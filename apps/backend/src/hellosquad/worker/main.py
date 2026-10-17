@@ -14,6 +14,7 @@ import contextlib
 import logging
 import math
 import signal
+from dataclasses import replace
 from typing import Any
 from uuid import UUID
 
@@ -36,6 +37,7 @@ from hellosquad.squad.flow import FlowError, Squad, run_flow, run_reply
 from hellosquad.squad.loader import SquadLoader
 from hellosquad.squad.reflect import PromotionRules, ReflectionStore, run_reflection
 from hellosquad.squad.store import Claim, RunLost, RunStore, redact
+from hellosquad.squad.versions import SquadCatalog
 
 log = logging.getLogger("hellosquad.worker")
 
@@ -102,8 +104,11 @@ class Worker:
     ) -> None:
         self.settings = settings
         api_key = settings.web_search_api_key
+        # Sem loader explícito, cada run lê as versões ativas do banco (squad/ só com banco vazio).
+        fallback = SquadLoader(settings.squad_dir)
+        self.catalog = None if loader is not None else SquadCatalog(fallback)
         self.squad = Squad(
-            loader=loader or SquadLoader(settings.squad_dir),
+            loader=loader or fallback,
             llm=llm or build_llm_client(settings),
             prices=settings.llm_prices,
             history_limit=settings.worker_history_messages,
@@ -172,6 +177,13 @@ class Worker:
     # Um run
     # ------------------------------------------------------------------------------------------
 
+    async def current_squad(self) -> Squad:
+        """O squad do run: versões ativas no começo do run, para um run não misturar versões."""
+        if self.catalog is None:
+            return self.squad
+        async with self.pool.connection() as conn:
+            return replace(self.squad, loader=await self.catalog.loader(conn))
+
     async def handle(self, msg: dict[str, Any]) -> str:
         msg_id, message = msg["msg_id"], msg["message"] or {}
         try:
@@ -230,7 +242,7 @@ class Worker:
         heartbeat = asyncio.create_task(self.heartbeat(store, msg_id))
         try:
             flow = run_reply if claim.work_item_id is None else run_flow
-            result = await flow(self.squad, store)
+            result = await flow(await self.current_squad(), store)
         except asyncio.CancelledError:
             await asyncio.shield(self.release(store, msg_id))
             raise
@@ -272,7 +284,7 @@ class Worker:
             repeats=self.settings.learning_promotion_repeats,
         )
         try:
-            result = await run_reflection(self.squad, store, claim, rules)
+            result = await run_reflection(await self.current_squad(), store, claim, rules)
         except Exception as exc:
             transient, code, details = classify(exc)
             if code == "internal":

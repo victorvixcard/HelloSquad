@@ -711,16 +711,20 @@ class RunStore:
             await conn.execute(
                 """
                 insert into public.agent_prompt_versions (
-                  agent_id, content_hash, delivery_type, files
+                  agent_id, content_hash, delivery_type, files, origin, sources
                 )
-                values (%s, %s, %s, %s)
-                on conflict (agent_id, content_hash) do nothing
+                values (%s, %s, %s, %s, %s, %s)
+                on conflict (agent_id, content_hash) do update
+                  set origin = excluded.origin, sources = excluded.sources
+                  where agent_prompt_versions.origin = 'files' and excluded.origin = 'database'
                 """,
                 (
                     prompt.agent.id,
                     prompt.content_hash,
                     prompt.skill.delivery_type,
                     Jsonb(prompt.files),
+                    prompt.origin,
+                    Jsonb(prompt.sources),
                 ),
             )
         return prompt.content_hash

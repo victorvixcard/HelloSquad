@@ -61,7 +61,7 @@ def active_files(conn: psycopg.Connection) -> dict[str, bytes]:
 def insert_active_version(
     conn: psycopg.Connection, unit: Unit, text: str, author: str, note: str
 ) -> None:
-    """Rascunho → seções (SOUL) → ativa, como o painel publica (a ativa anterior vira superseded)."""
+    """Rascunho → seções (SOUL) → ativa, como o painel publica (a ativa vira superseded)."""
     row = conn.execute(
         """
         insert into public.squad_versions (kind, agent_id, key, version, status, body, author, note)
@@ -133,7 +133,7 @@ def seed(conn: psycopg.Connection, squad_dir: Path, import_changes: bool = False
 
 
 def export(conn: psycopg.Connection, squad_dir: Path) -> tuple[list[str], list[str]]:
-    """Regrava os arquivos das versões ativas; devolve (alterados, arquivos sem unidade no banco)."""
+    """Regrava os arquivos das versões ativas; devolve (alterados, arquivos sem unidade)."""
     changed = []
     active = active_files(conn)
     for relative, data in sorted(active.items()):
