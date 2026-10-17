@@ -1,8 +1,9 @@
 "use client";
 
+import { Agent, AGENT_IDS, getAgent } from "@hellosquad/ui";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { Fragment, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { ADMIN_NAV, adminNavOf } from "./nav";
 import { Icon } from "./ui";
@@ -15,7 +16,9 @@ export type AdminPerson = { name: string; email: string };
  */
 export function AdminSidebar({ person }: { person: AdminPerson }) {
   const t = useTranslations("admin.shell");
-  const current = adminNavOf(usePathname() ?? "");
+  const pathname = usePathname() ?? "";
+  const current = adminNavOf(pathname);
+  const agentOpen = /^\/admin\/squad\/([^/?#]+)/.exec(pathname)?.[1] ?? null;
   return (
     <nav className="sa-sb" aria-label={t("navLabel")}>
       <div className="sa-sb-top">
@@ -32,15 +35,32 @@ export function AdminSidebar({ person }: { person: AdminPerson }) {
             </div>
             {group.items.map((item) =>
               item.href ? (
-                <a
-                  key={item.id}
-                  className={`sa-ni${current === item.id ? " is-on" : ""}`}
-                  href={item.href}
-                  aria-current={current === item.id ? "page" : undefined}
-                >
-                  <Icon name={item.icon} />
-                  <span className="sa-ni-l">{t(`nav.${item.id}`)}</span>
-                </a>
+                <Fragment key={item.id}>
+                  <a
+                    className={`sa-ni${current === item.id ? " is-on" : ""}`}
+                    href={item.href}
+                    aria-current={current === item.id && !agentOpen ? "page" : undefined}
+                  >
+                    <Icon name={item.icon} />
+                    <span className="sa-ni-l">{t(`nav.${item.id}`)}</span>
+                  </a>
+                  {/* Nas páginas do squad, os sete aparecem como subnavegação com o agente mini do DS (SA0). */}
+                  {item.id === "squad" && current === "squad" ? (
+                    <div className="sa-ags">
+                      {AGENT_IDS.map((id) => (
+                        <a
+                          key={id}
+                          className={`sa-ag${agentOpen === id ? " is-on" : ""}`}
+                          href={`/admin/squad/${id}`}
+                          aria-current={agentOpen === id ? "page" : undefined}
+                        >
+                          <Agent agent={id} size={18} />
+                          <span>{getAgent(id).name}</span>
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
+                </Fragment>
               ) : (
                 <span
                   key={item.id}

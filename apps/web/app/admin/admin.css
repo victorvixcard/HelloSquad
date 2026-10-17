@@ -46,3 +46,13 @@
 .sa-tags{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
 .sa-tabp:focus-visible{outline-offset:6px}
 .sa-tabp+.sa-card,.sa-tabs-w+.sa-tabp{margin-top:16px}
+
+/* SA3b — Squad IA: palco dos sete, amostra de cor, célula à direita */
+.sq-stage{display:flex;justify-content:center;padding:22px 20px 18px;margin-bottom:16px}
+.sq-stage-l{display:grid;grid-template-columns:repeat(7,minmax(0,96px));column-gap:26px;margin:0;padding:0;list-style:none;text-align:center}
+.sq-stage-l li{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.sq-stage-l a{font-size:15px}
+.sq-stage-l small{font-size:12px;line-height:1.3;color:var(--hs-tinta-suave)}
+.sq-swatch-w{display:inline-flex;align-items:center;gap:8px}
+.sq-swatch{flex:none;width:14px;height:14px;border-radius:5px;box-shadow:inset 0 0 0 1px var(--hs-l1)}
+.sa-cell-m.is-r{align-items:flex-end}

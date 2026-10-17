@@ -36,7 +36,8 @@
       "open": "{name} menu",
       "product": "Go to HelloSquad",
       "signOut": "Sign out"
-    }
+    },
+    "versioned": "Versioned editing"
   },
   "twofa": {
     "kicker": "Security",
@@ -239,6 +240,12 @@
     "task": {
       "default": "Default",
       "triage": "Triage"
+    },
+    "model": {
+      "claude-opus-5-5": "Opus 5.5",
+      "claude-sonnet-5-5": "Sonnet 5.5",
+      "claude-haiku-4-5": "Haiku 4.5",
+      "claude-haiku-4-5-20251001": "Haiku 4.5"
     }
   },
   "contas": {
@@ -528,5 +535,39 @@
     "edit": "Edit as a new version",
     "howTitle": "How the cost is calculated",
     "how": "Cost of a call = input tokens × input price + cache read × cache price + output × output price, at the price in force when the call happened. In reais, at the informed exchange rate."
+  },
+  "squad": {
+    "title": "Squad",
+    "desc": "The seven HelloSquad agents. Open an agent to see its soul, skills, tools and what it reads before each job. Every change becomes a new version.",
+    "stageLabel": "The squad",
+    "metAgents": "Agents",
+    "metAgentsSub": "Nexo coordinates; the other six execute",
+    "metDeliveries": "Deliveries",
+    "metDeliveriesSub": "{n} with a written skill",
+    "metRuns": "Runs in 30 days",
+    "metRunsSub": "jobs that ran with the squad",
+    "metDrafts": "Drafts",
+    "metDraftsSome": "waiting to be published; the runtime uses the active version",
+    "metDraftsNone": "no draft waiting",
+    "tableTitle": "The seven",
+    "tableSub": "color, shape and name are official (DS); model, effort and deliveries come from the active agent.yaml version",
+    "colAgent": "Agent",
+    "colColor": "Color and shape",
+    "colModel": "Model and effort",
+    "colDeliveries": "Deliveries",
+    "colPrompt": "Versions",
+    "colCost": "Average cost",
+    "shape": "shape {shape}",
+    "effort": "effort {effort}",
+    "withSkill": "{n, plural, one {# with skill} other {# with skill}}",
+    "noSkill": "no skill",
+    "versions": "Soul v{soul} · agent.yaml v{config}",
+    "drafts": "{n, plural, one {# draft} other {# drafts}}",
+    "lastHash": "last prompt {hash}",
+    "noRun": "no run yet",
+    "noCost": "no run in 30 days",
+    "runs30": "{n, plural, one {# run in 30 days} other {# runs in 30 days}}",
+    "ruleLabel": "Rule",
+    "rule": "A change to the soul, a skill or agent.yaml creates a new version, never a silent edit. A draft does not reach the runtime until it is published; every run records the versions it used. Going back to a version creates a new version with the old content; nothing is deleted."
   }
 }

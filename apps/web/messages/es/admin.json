@@ -36,7 +36,8 @@
       "open": "Menú de {name}",
       "product": "Ir a HelloSquad",
       "signOut": "Salir"
-    }
+    },
+    "versioned": "Edición con versión"
   },
   "twofa": {
     "kicker": "Seguridad",
@@ -239,6 +240,12 @@
     "task": {
       "default": "Por defecto",
       "triage": "Triaje"
+    },
+    "model": {
+      "claude-opus-5-5": "Opus 5.5",
+      "claude-sonnet-5-5": "Sonnet 5.5",
+      "claude-haiku-4-5": "Haiku 4.5",
+      "claude-haiku-4-5-20251001": "Haiku 4.5"
     }
   },
   "contas": {
@@ -528,5 +535,39 @@
     "edit": "Editar como versión nueva",
     "howTitle": "Cómo se calcula el costo",
     "how": "Costo de una llamada = tokens de entrada × precio de entrada + caché leído × precio del caché + salida × precio de salida, al precio vigente en el momento de la llamada. En reales, al tipo de cambio informado."
+  },
+  "squad": {
+    "title": "Squad",
+    "desc": "Los siete agentes de HelloSquad. Abre un agente para ver el alma, las skills, las herramientas y lo que lee antes de cada trabajo. Todo cambio se convierte en una versión nueva.",
+    "stageLabel": "El squad",
+    "metAgents": "Agentes",
+    "metAgentsSub": "Nexo coordina; los otros seis ejecutan",
+    "metDeliveries": "Deliveries",
+    "metDeliveriesSub": "{n} con skill escrita",
+    "metRuns": "Runs en 30 días",
+    "metRunsSub": "trabajos que se ejecutaron con el squad",
+    "metDrafts": "Borradores",
+    "metDraftsSome": "esperan publicación; el runtime usa la versión activa",
+    "metDraftsNone": "ningún borrador en espera",
+    "tableTitle": "Los siete",
+    "tableSub": "color, forma y nombre son oficiales (DS); modelo, esfuerzo y deliveries vienen de la versión activa del agent.yaml",
+    "colAgent": "Agente",
+    "colColor": "Color y forma",
+    "colModel": "Modelo y esfuerzo",
+    "colDeliveries": "Deliveries",
+    "colPrompt": "Versiones",
+    "colCost": "Costo medio",
+    "shape": "forma {shape}",
+    "effort": "esfuerzo {effort}",
+    "withSkill": "{n, plural, one {# con skill} other {# con skill}}",
+    "noSkill": "sin skill",
+    "versions": "Alma v{soul} · agent.yaml v{config}",
+    "drafts": "{n, plural, one {# borrador} other {# borradores}}",
+    "lastHash": "último prompt {hash}",
+    "noRun": "sin run todavía",
+    "noCost": "sin run en 30 días",
+    "runs30": "{n, plural, one {# run en 30 días} other {# runs en 30 días}}",
+    "ruleLabel": "Regla",
+    "rule": "Un cambio en el alma, una skill o el agent.yaml crea una versión nueva, nunca una edición silenciosa. Un borrador no llega al runtime hasta publicarse; cada run registra las versiones que usó. Volver a una versión crea una versión nueva con el contenido anterior; nada se borra."
   }
 }

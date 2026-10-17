@@ -18,6 +18,8 @@ export async function AdminPage(props: {
   crumbs?: Crumb[];
   actions?: ReactNode;
   avatar?: ReactNode;
+  /** Telas do Squad IA editam com versão: a etiqueta do topo diz isso no lugar de "Só leitura". */
+  versioned?: boolean;
   children: ReactNode;
 }) {
   const t = await getTranslations("admin.shell");
@@ -37,7 +39,7 @@ export async function AdminPage(props: {
         </nav>
         <div className="sa-crumb">
           <Status kind="draft" small>
-            {t("readOnly")}
+            {props.versioned ? t("versioned") : t("readOnly")}
           </Status>
         </div>
       </div>

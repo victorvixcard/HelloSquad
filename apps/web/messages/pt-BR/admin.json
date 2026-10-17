@@ -36,7 +36,8 @@
       "open": "Menu de {name}",
       "product": "Ir para o HelloSquad",
       "signOut": "Sair"
-    }
+    },
+    "versioned": "Edição com versão"
   },
   "twofa": {
     "kicker": "Segurança",
@@ -239,6 +240,12 @@
     "task": {
       "default": "Padrão",
       "triage": "Triagem"
+    },
+    "model": {
+      "claude-opus-5-5": "Opus 5.5",
+      "claude-sonnet-5-5": "Sonnet 5.5",
+      "claude-haiku-4-5": "Haiku 4.5",
+      "claude-haiku-4-5-20251001": "Haiku 4.5"
     }
   },
   "contas": {
@@ -528,5 +535,39 @@
     "edit": "Editar como versão nova",
     "howTitle": "Como o custo é calculado",
     "how": "Custo de uma chamada = tokens de entrada × preço de entrada + cache lido × preço do cache + saída × preço de saída, pelo preço vigente na hora da chamada. Em reais, pelo câmbio informado."
+  },
+  "squad": {
+    "title": "Squad",
+    "desc": "Os sete agentes do HelloSquad. Abra um agente para ver a alma, as skills, as ferramentas e o que ele lê antes de cada trabalho. Toda mudança vira versão nova.",
+    "stageLabel": "O squad",
+    "metAgents": "Agentes",
+    "metAgentsSub": "Nexo coordena; os outros seis executam",
+    "metDeliveries": "Deliveries",
+    "metDeliveriesSub": "{n} com skill escrita",
+    "metRuns": "Runs em 30 dias",
+    "metRunsSub": "trabalhos que rodaram com o squad",
+    "metDrafts": "Rascunhos",
+    "metDraftsSome": "esperam publicação; o runtime usa a versão ativa",
+    "metDraftsNone": "nenhum rascunho esperando",
+    "tableTitle": "Os sete",
+    "tableSub": "cor, forma e nome são oficiais (DS); modelo, esforço e deliveries vêm da versão ativa do agent.yaml",
+    "colAgent": "Agente",
+    "colColor": "Cor e forma",
+    "colModel": "Modelo e esforço",
+    "colDeliveries": "Deliveries",
+    "colPrompt": "Versões",
+    "colCost": "Custo médio",
+    "shape": "forma {shape}",
+    "effort": "esforço {effort}",
+    "withSkill": "{n, plural, one {# com skill} other {# com skill}}",
+    "noSkill": "sem skill",
+    "versions": "Alma v{soul} · agent.yaml v{config}",
+    "drafts": "{n, plural, one {# rascunho} other {# rascunhos}}",
+    "lastHash": "último prompt {hash}",
+    "noRun": "sem run ainda",
+    "noCost": "sem run em 30 dias",
+    "runs30": "{n, plural, one {# run em 30 dias} other {# runs em 30 dias}}",
+    "ruleLabel": "Regra",
+    "rule": "Mudança em Alma, skill ou agent.yaml gera versão nova, nunca edição silenciosa. Rascunho não entra no runtime até ser publicado; cada run registra as versões que usou. Voltar versão cria uma versão nova com o conteúdo antigo; nada é apagado."
   }
 }

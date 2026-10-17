@@ -19,6 +19,22 @@ export type QueueRun = S["QueueRun"];
 export type RunDetail = S["RunDetail"];
 export type ModelsOverview = S["ModelsOverview"];
 export type ConsumptionResponse = S["ConsumptionResponse"];
+export type SquadOverview = S["SquadOverview"];
+export type SquadAgentSummary = S["SquadAgentSummary"];
+export type AgentDetail = S["AgentDetail"];
+export type SoulVersion = S["SoulVersion"];
+export type SoulSection = S["SoulSection"];
+export type SkillSummary = S["SkillSummary"];
+export type SkillDetail = S["SkillDetail"];
+export type SkillVersion = S["SkillVersion"];
+export type ConfigVersion = S["ConfigVersion"];
+export type VersionRef = S["VersionRef"];
+export type VersionDiff = S["VersionDiff"];
+export type PromptPreview = S["PromptPreview"];
+export type SharedDetail = S["SharedDetail"];
+export type RuleDocList = S["RuleDocList"];
+export type RuleDocDetail = S["RuleDocDetail"];
+export type RuleParagraph = S["RuleParagraph"];
 
 /** Resposta de uma leitura do painel: o dado, ou o erro da API para a tela dizer o que houve (nunca dado inventado). */
 export type AdminResult<T> = { ok: true; data: T } | { ok: false; error: ApiError };

@@ -21,7 +21,14 @@ export type CodeGroup =
   | "runKind"
   | "queue"
   | "effort"
-  | "task";
+  | "task"
+  | "model"
+  | "section"
+  | "versionStatus"
+  | "versionKind"
+  | "mark"
+  | "part"
+  | "autonomy";
 
 type Translator = { (key: never): string; has(key: never): boolean };
 
