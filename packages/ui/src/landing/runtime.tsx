@@ -215,8 +215,33 @@ export function renderNodes(nodes: TplNode[], scope: Scope, ctx: RenderCtx): Rea
   return nodes.map((node, key) => renderNode(node, scope, ctx, key));
 }
 
+// Otimização (L1, Lighthouse): cada setState do motor renderiza o template inteiro, como no runtime do protótipo. Uma
+// subárvore sem nenhuma lacuna, sc-if, sc-for nem x-import dá sempre o mesmo resultado; ela vira um elemento guardado
+// (o mesmo objeto a cada render), e o React pula a reconciliação dela. O DOM e o comportamento não mudam.
+const staticNodes = new WeakMap<object, boolean>();
+function isStatic(node: TplNode): boolean {
+  if (typeof node === "string") return !node.includes("{{");
+  const known = staticNodes.get(node);
+  if (known !== undefined) return known;
+  const ok = node.t === "el" && node.p.every(([, raw]) => raw === true || !raw.includes("{{")) && node.c.every(isStatic);
+  staticNodes.set(node, ok);
+  return ok;
+}
+const staticElements = new WeakMap<RenderCtx, WeakMap<object, ReactNode>>();
+
 function renderNode(node: TplNode, scope: Scope, ctx: RenderCtx, key: number): ReactNode {
   if (typeof node === "string") return renderText(node, scope, ctx, key);
+  if (node.t === "el" && isStatic(node)) {
+    let cache = staticElements.get(ctx);
+    if (!cache) staticElements.set(ctx, (cache = new WeakMap()));
+    let el = cache.get(node);
+    if (el === undefined) cache.set(node, (el = renderElement(node, scope, ctx, key)));
+    return el;
+  }
+  return renderElement(node, scope, ctx, key);
+}
+
+function renderElement(node: Exclude<TplNode, string>, scope: Scope, ctx: RenderCtx, key: number): ReactNode {
   if (node.t === "if") return attr(node.v, scope) ? createElement(Fragment, { key }, ...renderNodes(node.c, scope, ctx)) : null;
   if (node.t === "for") {
     const list = attr(node.list, scope);
