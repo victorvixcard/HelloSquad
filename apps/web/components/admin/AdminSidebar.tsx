@@ -5,16 +5,17 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Fragment, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { ADMIN_NAV, adminNavOf } from "./nav";
+import { ADMIN_NAV, adminNavOf, type AdminBadges } from "./nav";
 import { Icon } from "./ui";
 
 export type AdminPerson = { name: string; email: string };
 
 /**
  * Barra lateral do Super Admin (SA0): wordmark com a etiqueta "Super Admin" no lugar da DEMO, os grupos Operação e
- * Squad IA e a pessoa no pé. Item que chega numa fatia futura aparece desabilitado com "em breve".
+ * Squad IA e a pessoa no pé. Item que chega numa fatia futura aparece desabilitado com "em breve". Contadores do SA0
+ * (`sa-nb`, Tinta = precisa de você) em Consumo e Saúde, vindos de `GET /admin/alerts`; zero não aparece.
  */
-export function AdminSidebar({ person }: { person: AdminPerson }) {
+export function AdminSidebar({ person, badges = {} }: { person: AdminPerson; badges?: AdminBadges }) {
   const t = useTranslations("admin.shell");
   const pathname = usePathname() ?? "";
   const current = adminNavOf(pathname);
@@ -43,6 +44,7 @@ export function AdminSidebar({ person }: { person: AdminPerson }) {
                   >
                     <Icon name={item.icon} />
                     <span className="sa-ni-l">{t(`nav.${item.id}`)}</span>
+                    {item.id === "consumo" || item.id === "saude" ? <NavBadge id={item.id} n={badges[item.id] ?? 0} /> : null}
                   </a>
                   {/* Nas páginas do squad, os sete aparecem como subnavegação com o agente mini do DS (SA0). */}
                   {item.id === "squad" && current === "squad" ? (
@@ -79,6 +81,19 @@ export function AdminSidebar({ person }: { person: AdminPerson }) {
       </div>
       <PersonMenu person={person} />
     </nav>
+  );
+}
+
+/** Contador do item: o número à vista e, para o leitor de tela, o que ele conta. */
+function NavBadge({ id, n }: { id: "consumo" | "saude"; n: number }) {
+  const t = useTranslations("admin.shell.badge");
+  if (!n) return null;
+  const label = t(id, { n });
+  return (
+    <span className="sa-nb is-hot" title={label}>
+      <span aria-hidden="true">{n}</span>
+      <span className="sa-sr">{`, ${label}`}</span>
+    </span>
   );
 }
 

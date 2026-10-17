@@ -39,7 +39,7 @@ export const ADMIN_NAV: { id: "op" | "ia"; items: AdminNavItem[] }[] = [
       { id: "referencias", icon: "folder", slice: "SA5" },
       { id: "motor", icon: "image", slice: "SA5" },
       { id: "modelos", icon: "spark", href: "/admin/modelos" },
-      { id: "consumo", icon: "chart", slice: "SA4" },
+      { id: "consumo", icon: "chart", href: "/admin/consumo" },
       { id: "saude", icon: "pulse", slice: "SA4" },
       { id: "fila", icon: "works", href: "/admin/fila" },
       { id: "qualidade", icon: "checkc", slice: "SA4" },
@@ -61,3 +61,6 @@ export function adminNavOf(pathname: string): AdminNavId | null {
   }
   return null;
 }
+
+/** Contadores da barra (SA0 `badges`): contas com leitura fora da faixa e saldos abaixo do limiar (`GET /admin/alerts`). */
+export type AdminBadges = Partial<Record<"consumo" | "saude", number>>;

@@ -37,7 +37,11 @@
       "product": "Go to HelloSquad",
       "signOut": "Sign out"
     },
-    "versioned": "Versioned editing"
+    "versioned": "Versioned editing",
+    "badge": {
+      "consumo": "{n, plural, one {# account needs attention} other {# accounts need attention}}",
+      "saude": "{n, plural, one {# balance below the alert} other {# balances below the alert}}"
+    }
   },
   "twofa": {
     "kicker": "Security",
@@ -278,6 +282,20 @@
       "current_base": "Current base",
       "pending": "Pending",
       "proposal": "Proposal"
+    },
+    "metric": {
+      "ai_cost_per_credit_brl": "AI per credit",
+      "gross_margin": "Estimated gross margin",
+      "cost_per_turn_trend": "Cost per turn trend"
+    },
+    "metricShort": {
+      "ai_cost_per_credit_brl": "AI per credit",
+      "gross_margin": "margin",
+      "cost_per_turn_trend": "trend"
+    },
+    "comparison": {
+      "max": "OK up to",
+      "min": "OK from"
     }
   },
   "contas": {
@@ -838,5 +856,99 @@
     "sharedDraft": "Draft of the shared rules (version {v}) waiting to be published.",
     "sharedDraftCheck": "The seven agents start reading the new text when you publish it. Check \"What it reads\" with the drafts.",
     "sharedLineMissing": "I could not find this paragraph exactly once in the file; nothing was saved."
+  },
+  "consumo": {
+    "title": "Usage by customer",
+    "desc": "By account and period: requests, credits charged and AI cost in deliveries and in conversation. <b>Conversation charges no credit, but it costs:</b> it shows up here. Alerts only warn; nothing changes automatically.",
+    "period": "Period",
+    "periods": {
+      "30": "Last 30 days",
+      "7": "Last 7 days"
+    },
+    "account": "Account",
+    "range": "From {since} to {until}",
+    "fx": "Exchange rate of {date}: US$ 1 = {brl}, {source}",
+    "fxNone": "No exchange rate in Models and costs: values in R$ stay empty.",
+    "metRequests": "Requests",
+    "metRequestsSub": "{n, plural, one {jobs asked of the squad in # account} other {jobs asked of the squad in # accounts}}",
+    "metCredits": "Credits charged",
+    "metCreditsSub": "worth {brl} with the credit at {ref} (example)",
+    "metDeliveries": "AI in deliveries",
+    "metDeliveriesSub": "{brl} at the day’s exchange rate",
+    "metConversation": "AI in conversation",
+    "metConversationSub": "Conversation charges no credit, but it costs: {share} of the AI cost.",
+    "metConversationSubNone": "Conversation charges no credit, but it costs.",
+    "metPerCredit": "AI per credit",
+    "metPerCreditSub": "AI cost in R$ per credit charged",
+    "metPerCreditNone": "no credit charged",
+    "alertsTitle": "Economic alerts",
+    "alertsSub": "Reference ranges proposed by the prototype, to be defined with Vic. Nothing changes automatically: the alert only warns.",
+    "ok": "OK",
+    "attention": "Attention",
+    "noData": "No data",
+    "noRule": "No range in force for this reading.",
+    "provisionalF": "Provisional",
+    "how": {
+      "ai_cost_per_credit_brl": "{brl} of AI (deliveries and conversation) ÷ {credits} credits charged.",
+      "gross_margin": "1 − {brl} of AI ÷ {revenue} in credits ({credits} at {ref}, example).",
+      "trend": "Last {days} days against the previous {days}.",
+      "trendMany": "Last {days} days against the previous {days}; average of {n} accounts, weighted by cost.",
+      "turn": "Average cost per turn in the period: {usd}."
+    },
+    "none": {
+      "ai_cost_per_credit_brl": "No credit charged in the filter.",
+      "gross_margin": "No credit charged in the filter.",
+      "cost_per_turn_trend": "No account in the filter has two weeks of usage to compare."
+    },
+    "rule": {
+      "ai_cost_per_credit_brl": "{cmp} {value} per credit charged.",
+      "gross_margin": "{cmp} {value} with the credit at {ref} (example).",
+      "cost_per_turn_trend": "{cmp} {value} of the cost per turn in the last {days} days against the previous {days}."
+    },
+    "inAttention": "{n, plural, =0 {Accounts needing attention} one {# account needs attention} other {# accounts need attention}}",
+    "noneOut": "No account outside the range.",
+    "noneEval": "No account in the filter with data to assess.",
+    "marginNote": "The margin uses the credit at {ref} (the prototype’s example value) and the exchange rate of {date} (US$ 1 = {brl}). Price and credits come last: both stay provisional until Vic decides.",
+    "marginNoteNoFx": "The margin uses the credit at {ref} (the prototype’s example value). Price and credits come last: it stays provisional until Vic decides.",
+    "byClient": "By customer",
+    "byClientSub": "{period} · {n, plural, one {# account with usage} other {# accounts with usage}}",
+    "byClientCaption": "Usage by customer, {period}",
+    "colAccount": "Account",
+    "colRequests": "Requests",
+    "colCredits1": "Credits",
+    "colCredits2": "charged",
+    "colAi": "AI in",
+    "colDeliveries": "deliveries",
+    "colConversation": "conversation",
+    "colPerCredit1": "AI per",
+    "colPerCredit2": "credit",
+    "colMargin1": "Estimated",
+    "colMargin2": "margin",
+    "colTrend1": "Trend",
+    "colTrend2": "{days} days",
+    "colTurn1": "Cost",
+    "colTurn2": "per turn",
+    "colAlert": "Alert",
+    "colStart": "Start",
+    "total": "Total",
+    "accounts": "{n, plural, one {# account} other {# accounts}}",
+    "inAttentionFoot": "{n, plural, =0 {none needs attention} one {# needs attention} other {# need attention}}",
+    "rowNoCredit": "no credit charged",
+    "rowNoData": "no data to assess",
+    "empty": "No account with usage in the period.",
+    "emptyAccount": "This account had no usage in the period.",
+    "series": "By period",
+    "seriesSub": "{period} · the filtered set",
+    "seriesCaption": "Usage of the set, {period}, by {group}",
+    "seriesEmpty": "No usage in the period.",
+    "group": "Group by",
+    "groups": {
+      "dia": "Day",
+      "semana": "Week",
+      "mes": "Month"
+    },
+    "weekOf": "week of {date}",
+    "howTitle": "How to read",
+    "howText": "AI cost from the price table per model (<models>Models and costs</models>), in US$. <b>AI per credit</b> = AI cost in R$, deliveries and conversation, ÷ credits charged. <b>Estimated margin</b> = 1 − AI cost in R$ ÷ (credits × {ref}, example credit value). <b>Trend</b> = change in the cost per turn in the last {days} days against the previous {days}; in the total, average weighted by cost. <b>—</b> = no credit charged or no two weeks of usage to compare."
   }
 }

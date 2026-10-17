@@ -37,7 +37,11 @@
       "product": "Ir a HelloSquad",
       "signOut": "Salir"
     },
-    "versioned": "Edición con versión"
+    "versioned": "Edición con versión",
+    "badge": {
+      "consumo": "{n, plural, one {# cuenta requiere atención} other {# cuentas requieren atención}}",
+      "saude": "{n, plural, one {# saldo por debajo de la alerta} other {# saldos por debajo de la alerta}}"
+    }
   },
   "twofa": {
     "kicker": "Seguridad",
@@ -278,6 +282,20 @@
       "current_base": "Base actual",
       "pending": "Pendiente",
       "proposal": "Propuesta"
+    },
+    "metric": {
+      "ai_cost_per_credit_brl": "IA por crédito",
+      "gross_margin": "Margen bruto estimado",
+      "cost_per_turn_trend": "Tendencia del costo por turno"
+    },
+    "metricShort": {
+      "ai_cost_per_credit_brl": "IA por crédito",
+      "gross_margin": "margen",
+      "cost_per_turn_trend": "tendencia"
+    },
+    "comparison": {
+      "max": "OK hasta",
+      "min": "OK desde"
     }
   },
   "contas": {
@@ -838,5 +856,99 @@
     "sharedDraft": "Borrador de las reglas compartidas (versión {v}) esperando publicación.",
     "sharedDraftCheck": "Los siete agentes empiezan a leer el texto nuevo cuando lo publiques. Revisa \"Lo que lee\" con los borradores.",
     "sharedLineMissing": "No encontré este párrafo una sola vez en el archivo; no se guardó nada."
+  },
+  "consumo": {
+    "title": "Consumo por cliente",
+    "desc": "Por cuenta y período: solicitudes, créditos cobrados y costo de IA en entregas y en conversación. <b>La conversación no cobra crédito, pero cuesta:</b> aparece aquí. Las alertas solo avisan; nada cambia automáticamente.",
+    "period": "Período",
+    "periods": {
+      "30": "Últimos 30 días",
+      "7": "Últimos 7 días"
+    },
+    "account": "Cuenta",
+    "range": "Del {since} al {until}",
+    "fx": "Tipo de cambio del {date}: US$ 1 = {brl}, {source}",
+    "fxNone": "Sin tipo de cambio en Modelos y costos: los valores en R$ quedan vacíos.",
+    "metRequests": "Solicitudes",
+    "metRequestsSub": "{n, plural, one {trabajos pedidos al squad en # cuenta} other {trabajos pedidos al squad en # cuentas}}",
+    "metCredits": "Créditos cobrados",
+    "metCreditsSub": "equivalen a {brl} con el crédito a {ref} (ejemplo)",
+    "metDeliveries": "IA en entregas",
+    "metDeliveriesSub": "{brl} al tipo de cambio del día",
+    "metConversation": "IA en conversación",
+    "metConversationSub": "La conversación no cobra crédito, pero cuesta: {share} del costo de IA.",
+    "metConversationSubNone": "La conversación no cobra crédito, pero cuesta.",
+    "metPerCredit": "IA por crédito",
+    "metPerCreditSub": "costo de IA en R$ por crédito cobrado",
+    "metPerCreditNone": "ningún crédito cobrado",
+    "alertsTitle": "Alertas económicas",
+    "alertsSub": "Rangos de referencia propuestos por el prototipo, a definir con Vic. Nada cambia automáticamente: la alerta solo avisa.",
+    "ok": "OK",
+    "attention": "Atención",
+    "noData": "Sin datos",
+    "noRule": "Sin rango vigente para esta lectura.",
+    "provisionalF": "Provisional",
+    "how": {
+      "ai_cost_per_credit_brl": "{brl} de IA (entregas y conversación) ÷ {credits} créditos cobrados.",
+      "gross_margin": "1 − {brl} de IA ÷ {revenue} en créditos ({credits} a {ref}, ejemplo).",
+      "trend": "Últimos {days} días contra los {days} anteriores.",
+      "trendMany": "Últimos {days} días contra los {days} anteriores; promedio de {n} cuentas, ponderado por el costo.",
+      "turn": "Costo medio por turno en el período: {usd}."
+    },
+    "none": {
+      "ai_cost_per_credit_brl": "Ningún crédito cobrado en el filtro.",
+      "gross_margin": "Ningún crédito cobrado en el filtro.",
+      "cost_per_turn_trend": "Ninguna cuenta del filtro tiene dos semanas de uso para comparar."
+    },
+    "rule": {
+      "ai_cost_per_credit_brl": "{cmp} {value} por crédito cobrado.",
+      "gross_margin": "{cmp} {value} con el crédito a {ref} (ejemplo).",
+      "cost_per_turn_trend": "{cmp} {value} del costo por turno en los últimos {days} días contra los {days} anteriores."
+    },
+    "inAttention": "{n, plural, =0 {Cuentas que requieren atención} one {# cuenta requiere atención} other {# cuentas requieren atención}}",
+    "noneOut": "Ninguna cuenta fuera del rango.",
+    "noneEval": "Ninguna cuenta del filtro con datos para evaluar.",
+    "marginNote": "El margen usa el crédito a {ref} (valor de ejemplo del prototipo) y el tipo de cambio del {date} (US$ 1 = {brl}). Precio y créditos van al final: los dos siguen provisionales hasta que Vic decida.",
+    "marginNoteNoFx": "El margen usa el crédito a {ref} (valor de ejemplo del prototipo). Precio y créditos van al final: sigue provisional hasta que Vic decida.",
+    "byClient": "Por cliente",
+    "byClientSub": "{period} · {n, plural, one {# cuenta con uso} other {# cuentas con uso}}",
+    "byClientCaption": "Consumo por cliente, {period}",
+    "colAccount": "Cuenta",
+    "colRequests": "Solicitudes",
+    "colCredits1": "Créditos",
+    "colCredits2": "cobrados",
+    "colAi": "IA en",
+    "colDeliveries": "entregas",
+    "colConversation": "conversación",
+    "colPerCredit1": "IA por",
+    "colPerCredit2": "crédito",
+    "colMargin1": "Margen",
+    "colMargin2": "estimado",
+    "colTrend1": "Tendencia",
+    "colTrend2": "{days} días",
+    "colTurn1": "Costo",
+    "colTurn2": "por turno",
+    "colAlert": "Alerta",
+    "colStart": "Inicio",
+    "total": "Total",
+    "accounts": "{n, plural, one {# cuenta} other {# cuentas}}",
+    "inAttentionFoot": "{n, plural, =0 {ninguna requiere atención} one {# requiere atención} other {# requieren atención}}",
+    "rowNoCredit": "sin crédito cobrado",
+    "rowNoData": "sin datos para evaluar",
+    "empty": "Ninguna cuenta con uso en el período.",
+    "emptyAccount": "Esta cuenta no tuvo uso en el período.",
+    "series": "Por período",
+    "seriesSub": "{period} · el conjunto del filtro",
+    "seriesCaption": "Consumo del conjunto, {period}, por {group}",
+    "seriesEmpty": "Ningún uso en el período.",
+    "group": "Agrupar",
+    "groups": {
+      "dia": "Día",
+      "semana": "Semana",
+      "mes": "Mes"
+    },
+    "weekOf": "semana del {date}",
+    "howTitle": "Cómo leer",
+    "howText": "Costo de IA según la tabla de precios por modelo (<models>Modelos y costos</models>), en US$. <b>IA por crédito</b> = costo de IA en R$, entregas y conversación, ÷ créditos cobrados. <b>Margen estimado</b> = 1 − costo de IA en R$ ÷ (créditos × {ref}, valor de ejemplo del crédito). <b>Tendencia</b> = variación del costo por turno en los últimos {days} días contra los {days} anteriores; en el total, promedio ponderado por el costo. <b>—</b> = sin crédito cobrado o sin dos semanas de uso para comparar."
   }
 }

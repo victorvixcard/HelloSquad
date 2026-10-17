@@ -124,3 +124,17 @@
 .rg-stack{display:inline-flex;gap:2px}
 .rg-p-b{min-width:0}
 .sq-diff tr.is-skip td{padding:6px 12px;text-align:center;font-family:var(--hs-font-sans,inherit);font-size:11.5px;color:var(--hs-tinta-suave);background:var(--hs-papel)}
+
+/* SA4b — Consumo por cliente, Qualidade das entregas e Saúde das APIs: as medidas que o SA0 escrevia em linha
+   (consumo.js, qualidade.js, saude-apis.js), em classe. Só tokens do DS e os alfas de Tinta da V4.6. */
+.sa-alert{height:100%}
+.sa-alert-v{margin-bottom:6px}
+.sa-alert-how{margin:0 0 12px;min-height:36px;font-size:12.5px;line-height:1.45;color:var(--hs-tinta-suave)}
+.sa-alert-rule{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.45}
+.sa-alert-rule>span:last-child{padding-top:2px}
+.sa-alert-out{margin-top:14px;padding-top:12px;border-top:1px solid var(--hs-l1)}
+.sa-alert-out .sa-list{margin-top:4px}
+.sa-alert-out .sa-li{padding:7px 0}
+.sa-alert-out p{margin:6px 0 0;font-size:13px}
+.sa-cell-m.sa-cell-top{align-items:flex-start;gap:4px}
+.sa-fx{font-size:12.5px}
