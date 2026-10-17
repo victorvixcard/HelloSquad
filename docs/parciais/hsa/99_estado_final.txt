@@ -1,0 +1,10 @@
+workspaces: [['miolo', '36.00', 'ativa'], ['trilha', '19.20', 'ativa'], ['vitta', '20.00', 'ativa']]
+memberships do Vic: 0 | platform_admins: 1
+sessões de suporte abertas: 0
+saldo informado: [] | relatórios: 0
+squad_versions acima da v1: 0 | planos: [['free', '1'], ['squad', '1']] | diretrizes: [['1']]
+04.01: [['1', 't']] | à venda: 0 | homologadas: 0
+filas: [['runs_interactive', '0'], ['email_outbox', '0'], ['memory_reflect', '0']]
+user_metadata (locale, platform_admin): [['carla@vitta.example', '-', 'f'], ['juliana@trilha.example', '-', 'f'], ['marina@miolo.example', '-', 'f'], ['pedro@semconta.example', '-', 'f'], ['rafael@vitta.example', '-', 'f'], ['vic@hellosquad.example', '-', 'f']]
+resíduos H-SA: payment_events 0 | runs 0 | workspace suporte-hsa 0
+audit_events total: 1526

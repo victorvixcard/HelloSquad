@@ -1,0 +1,13 @@
+import { createRequire } from "node:module";
+const require = createRequire("/home/vitao/projetos/hellosquad/apps/web/package.json");
+const { chromium } = require("@playwright/test");
+const browser = await chromium.launch();
+const page = await (await browser.newContext()).newPage();
+await page.goto("http://127.0.0.1:3100/entrar");
+await page.getByLabel("Seu e-mail").fill("vic@hellosquad.example");
+await page.getByLabel("Sua senha").fill("Senha!Teste123");
+await page.getByRole("button", { name: "Entrar" }).click();
+await page.waitForURL((u) => !u.pathname.startsWith("/entrar"), { timeout: 30000 });
+await page.waitForLoadState("networkidle").catch(() => {});
+console.log("Vic depois do login:", new URL(page.url()).pathname, "|", (await page.locator("h1").first().innerText().catch(() => "")).slice(0, 80));
+await browser.close();
