@@ -1256,6 +1256,41 @@
       "recent": "Auditoria do catálogo",
       "recentEmpty": "Nenhuma mudança no catálogo pelo painel ainda.",
       "noteLive": "Preços provisórios ficam marcados. Só vai à venda o que tem homologação concluída e preço aprovado e não provisório."
+    },
+    "offer": {
+      "open": "Editar como versão nova",
+      "title": "{name}: versão {next}",
+      "desc": "Grava a versão nova com o motivo. A versão {version} fica como está, para sempre, e aparece no histórico.",
+      "confirm": "Gravar versão {next}",
+      "done": "{name} gravado como versão {next}. Registrado na Auditoria.",
+      "credits": "Créditos por ciclo",
+      "topupCredits": "Créditos",
+      "creditsHint": "Maior que zero, até 2 casas.",
+      "cycle": "Ciclo",
+      "cycleHint": "Mensal renova; avulso vale uma vez.",
+      "validity": "Validade (dias)",
+      "validityHint": "Vazio = sem prazo.",
+      "amount": "Preço",
+      "amountHintPlan": "Vazio ou igual = mantém o preço vigente; diferente = preço novo.",
+      "amountHintTopup": "Obrigatório na recarga.",
+      "currency": "Moeda",
+      "currencyHint": "Código de 3 letras (BRL).",
+      "provisional": "Provisório",
+      "approved": "Preço aprovado comercialmente",
+      "forSale": "À venda",
+      "lockHint": "À venda fica travado até o preço ser aprovado comercialmente e deixar de ser provisório.",
+      "invalid": {
+        "credits": "Informe créditos maiores que zero, com até 2 casas.",
+        "validity_days": "Dias inteiros, de 1 a 3650, ou vazio.",
+        "amount": "Informe o preço com até 2 casas (ex.: 49,90).",
+        "currency": "Use o código de 3 letras da moeda.",
+        "approved_commercially": "Desmarque \"Provisório\" para marcar o preço como aprovado."
+      },
+      "current": "Atual",
+      "history": "Versões gravadas pelo painel",
+      "historySub": "Da Auditoria; só leitura, nunca editáveis. A versão 1 de cada oferta veio do seed e não passa por aqui.",
+      "historyEmpty": "Nenhuma versão gravada pelo painel ainda.",
+      "colOffer": "Oferta"
     }
   }
 }

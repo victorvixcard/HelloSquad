@@ -1256,6 +1256,41 @@
       "recent": "Auditoría del catálogo",
       "recentEmpty": "Ningún cambio en el catálogo por el panel todavía.",
       "noteLive": "Los precios provisionales quedan marcados. Solo sale a la venta lo que tiene homologación concluida y precio aprobado y no provisional."
+    },
+    "offer": {
+      "open": "Editar como versión nueva",
+      "title": "{name}: versión {next}",
+      "desc": "Guarda la versión nueva con el motivo. La versión {version} queda como está, para siempre, y aparece en el historial.",
+      "confirm": "Guardar versión {next}",
+      "done": "{name} guardado como versión {next}. Registrado en la auditoría.",
+      "credits": "Créditos por ciclo",
+      "topupCredits": "Créditos",
+      "creditsHint": "Mayor que cero, hasta 2 decimales.",
+      "cycle": "Ciclo",
+      "cycleHint": "Mensual se renueva; único vale una vez.",
+      "validity": "Validez (días)",
+      "validityHint": "Vacío = sin plazo.",
+      "amount": "Precio",
+      "amountHintPlan": "Vacío o igual = mantiene el precio vigente; distinto = precio nuevo.",
+      "amountHintTopup": "Obligatorio en la recarga.",
+      "currency": "Moneda",
+      "currencyHint": "Código de 3 letras (BRL).",
+      "provisional": "Provisional",
+      "approved": "Precio aprobado comercialmente",
+      "forSale": "En venta",
+      "lockHint": "En venta queda bloqueado hasta que el precio esté aprobado comercialmente y deje de ser provisional.",
+      "invalid": {
+        "credits": "Indica créditos mayores que cero, con hasta 2 decimales.",
+        "validity_days": "Días enteros, de 1 a 3650, o vacío.",
+        "amount": "Indica el precio con hasta 2 decimales (ej.: 49,90).",
+        "currency": "Usa el código de 3 letras de la moneda.",
+        "approved_commercially": "Desmarca \"Provisional\" para marcar el precio como aprobado."
+      },
+      "current": "Actual",
+      "history": "Versiones guardadas por el panel",
+      "historySub": "De la auditoría; solo lectura, nunca editables. La versión 1 de cada oferta vino del seed y no aparece aquí.",
+      "historyEmpty": "Ninguna versión guardada por el panel todavía.",
+      "colOffer": "Oferta"
     }
   }
 }

@@ -1256,6 +1256,41 @@
       "recent": "Catalog audit log",
       "recentEmpty": "No catalog change through the panel yet.",
       "noteLive": "Provisional prices stay marked. Only what has testing done and an approved, non-provisional price goes on sale."
+    },
+    "offer": {
+      "open": "Edit as a new version",
+      "title": "{name}: version {next}",
+      "desc": "Saves the new version with the reason. Version {version} stays as it is, forever, and shows in the history.",
+      "confirm": "Save version {next}",
+      "done": "{name} saved as version {next}. Recorded in the audit log.",
+      "credits": "Credits per cycle",
+      "topupCredits": "Credits",
+      "creditsHint": "Above zero, up to 2 decimals.",
+      "cycle": "Cycle",
+      "cycleHint": "Monthly renews; one-time applies once.",
+      "validity": "Validity (days)",
+      "validityHint": "Empty = no expiry.",
+      "amount": "Price",
+      "amountHintPlan": "Empty or unchanged = keeps the current price; different = new price.",
+      "amountHintTopup": "Required for a top-up.",
+      "currency": "Currency",
+      "currencyHint": "3-letter code (BRL).",
+      "provisional": "Provisional",
+      "approved": "Price commercially approved",
+      "forSale": "For sale",
+      "lockHint": "For sale stays locked until the price is commercially approved and no longer provisional.",
+      "invalid": {
+        "credits": "Enter credits above zero, with up to 2 decimals.",
+        "validity_days": "Whole days, 1 to 3650, or empty.",
+        "amount": "Enter the price with up to 2 decimals (e.g. 49.90).",
+        "currency": "Use the 3-letter currency code.",
+        "approved_commercially": "Uncheck \"Provisional\" to mark the price as approved."
+      },
+      "current": "Current",
+      "history": "Versions saved through the panel",
+      "historySub": "From the audit log; read only, never editable. Version 1 of each offer came from the seed and doesn't show here.",
+      "historyEmpty": "No version saved through the panel yet.",
+      "colOffer": "Offer"
     }
   }
 }
