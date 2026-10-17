@@ -80,7 +80,7 @@ test("o Vic abre e encerra a sessão de suporte, ajusta crédito, suspende e rea
   await snap(page, "sa6b-dialogo-entrar");
   await enterDialog.getByRole("button", { name: "Entrar com o motivo registrado" }).click();
   await expect(page.locator(".sa-toast")).toContainText("Sessão de suporte na Miolo aberta até");
-  const band = page.getByRole("region", { name: "Suporte" });
+  const band = page.getByRole("region", { name: "Suporte", exact: true });
   await expect(band).toContainText(/Faltam 1[45] min\./);
   await expect(band).toContainText(REASON);
   await expect(head.getByRole("button", { name: /Entrar no ambiente/ })).toBeDisabled();
@@ -162,6 +162,7 @@ test("o Vic abre e encerra a sessão de suporte, ajusta crédito, suspende e rea
 test("a Marina (owner, sem papel de plataforma) recebe o 403 honesto nas telas de escrita", async ({ page }) => {
   const miolo = sql("select id from public.workspaces where slug = 'miolo'");
   await enter(page, `/admin/contas/${miolo}`, "marina@miolo.example");
+  await expect(page.getByRole("heading", { level: 1, name: "Este painel é só do Super Admin da plataforma" })).toBeVisible();
   for (const path of [`/admin/contas/${miolo}`, "/admin/catalogo", "/admin/planos", "/admin/fila", "/admin/pagamentos"]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1, name: "Este painel é só do Super Admin da plataforma" })).toBeVisible();
