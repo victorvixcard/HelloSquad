@@ -690,5 +690,11 @@
   "autonomy.metric.site.sessions": "Website sessions",
   "autonomy.metric.store.orders": "Orders",
   "autonomy.run_message.not_retried": "Not run: the responsibility was not active at the time of the new attempt.",
-  "work_item_step.produce.07.05": "Build the week's reading"
+  "work_item_step.produce.07.05": "Build the week's reading",
+  "error.responsibility_not_found": "Responsibility not found.",
+  "error.responsibility_option": "Invalid option for this responsibility template: {option}.",
+  "autonomy.switch.on": "On",
+  "autonomy.switch.paused": "Paused",
+  "autonomy.upcoming.scheduled": "scheduled",
+  "autonomy.upcoming.blocked": "blocked"
 }

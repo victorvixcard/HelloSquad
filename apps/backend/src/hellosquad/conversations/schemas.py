@@ -280,7 +280,16 @@ class MessageCreate(BaseModel):
     ] = Field(description="Texto da mensagem (markdown), de 1 a 20.000 caracteres.")
 
 
-CardType = Literal["work_created", "material", "approval", "question", "options", "team", "budget"]
+CardType = Literal[
+    "work_created",
+    "material",
+    "approval",
+    "question",
+    "options",
+    "team",
+    "budget",
+    "responsibility_proposal",
+]
 
 
 class CardAction(BaseModel):
@@ -315,7 +324,8 @@ class MessageCard(BaseModel):
         description=(
             "`work_created` (Trabalho criado), `material` (Material · vN), `approval` (pedido de "
             "aprovação ou autorização), `question` (pergunta), `options` (escolher uma opção), "
-            "`team` (equipe montada), `budget` (orçamento em créditos)."
+            "`team` (equipe montada), `budget` (orçamento em créditos), "
+            "`responsibility_proposal` (o combinado de uma responsabilidade do Modo Autônomo)."
         )
     )
     actions: list[CardAction] = Field(default_factory=list)
@@ -337,6 +347,19 @@ class MessageCard(BaseModel):
         default=None, description="Decisão já tomada (o web marca a escolhida e desabilita)."
     )
     answer: str | None = Field(default=None, description="Resposta escrita ou opção escolhida.")
+    kicker: str | None = Field(
+        default=None,
+        description='`responsibility_proposal`: "Responsabilidade" ou "Mudança no combinado".',
+    )
+    template: str | None = Field(default=None, description="`responsibility_proposal`: o modelo.")
+    title: str | None = None
+    agreement: str | None = Field(default=None, description='"O combinado" em uma frase.')
+    facts: list[dict[str, str]] | None = Field(
+        default=None, description="Responsável, Colaboração, Coordenação, Frequência, Entrega…"
+    )
+    does: list[str] | None = Field(default=None, description='"Faz sozinho".')
+    asks: list[str] | None = Field(default=None, description='"Só com a sua autorização".')
+    never: list[str] | None = Field(default=None, description='"Nunca".')
     version_status: DeliveryVersionStatus | None = None
     work_item_status: WorkItemStatus | None = None
 

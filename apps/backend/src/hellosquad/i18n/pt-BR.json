@@ -690,5 +690,11 @@
   "autonomy.metric.site.sessions": "Sessões no site",
   "autonomy.metric.store.orders": "Pedidos",
   "autonomy.run_message.not_retried": "Não executada: a responsabilidade não estava ativa na hora da nova tentativa.",
-  "work_item_step.produce.07.05": "Montar a leitura da semana"
+  "work_item_step.produce.07.05": "Montar a leitura da semana",
+  "error.responsibility_not_found": "Responsabilidade não encontrada.",
+  "error.responsibility_option": "Opção inválida para este modelo de responsabilidade: {option}.",
+  "autonomy.switch.on": "Ligado",
+  "autonomy.switch.paused": "Pausado",
+  "autonomy.upcoming.scheduled": "programada",
+  "autonomy.upcoming.blocked": "bloqueada"
 }

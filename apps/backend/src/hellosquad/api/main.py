@@ -17,6 +17,7 @@ from hellosquad.admin.writes import router as admin_writes_router
 from hellosquad.api.errors import register_error_handlers
 from hellosquad.approvals.routes import router as approvals_router
 from hellosquad.auth import TokenVerifier
+from hellosquad.autonomy.responsibilities import router as autonomy_router
 from hellosquad.autonomy.routes import router as runs_router
 from hellosquad.billing.routes import router as billing_router
 from hellosquad.config import get_settings
@@ -84,6 +85,7 @@ app.include_router(needs_router)
 app.include_router(calendar_router)
 app.include_router(approvals_router)
 app.include_router(runs_router)
+app.include_router(autonomy_router)
 app.include_router(memory_router)
 app.include_router(learnings_router)
 app.include_router(credits_router)

@@ -17,6 +17,7 @@ from hellosquad.approvals.schemas import (
     ApprovalPage,
     ApprovalWorkItem,
 )
+from hellosquad.autonomy.responsibilities import after_decision
 from hellosquad.domain import ApprovalStatus
 
 router = APIRouter(tags=["approvals"])
@@ -132,6 +133,7 @@ async def decide_approval(
         await conn.execute(
             DECIDE_APPROVAL, (approval_id, payload.decision, payload.note, payload.follow_up)
         )
+        await after_decision(conn, approval_id)
         return await load_approval(conn, approval_id)
 
 

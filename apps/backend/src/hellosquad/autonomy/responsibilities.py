@@ -1,7 +1,8 @@
 """Modo Autônomo (S3b): responsabilidades, execuções e a delegação pela conversa.
 
-Leitura para todo membro (RLS); pausar, retomar, encerrar e o interruptor são do owner, e o combinado
-só vale com o ok dele (approvals `confirm`). Os textos saem do catálogo no idioma de quem pede.
+Leitura para todo membro (RLS); pausar, retomar, encerrar e o interruptor são do owner, e o
+combinado só vale com o ok dele (approvals `confirm`). Os textos saem do catálogo no idioma de quem
+pede.
 """
 
 from datetime import datetime
@@ -106,7 +107,9 @@ with recursive occ as (
     and (%(responsibility_id)s::uuid is null or r.id = %(responsibility_id)s)
   union all
   select o.id, o.template, o.status, o.n + 1,
-         app.responsibility_next_run(o.cadence, o.weekdays, o.month_day, o.run_time, o.timezone, o.at),
+         app.responsibility_next_run(
+           o.cadence, o.weekdays, o.month_day, o.run_time, o.timezone, o.at
+         ),
          o.cadence, o.weekdays, o.month_day, o.run_time, o.timezone
   from occ o
   where o.n < %(per)s and o.at is not null
@@ -724,7 +727,7 @@ async def resume_responsibility(
 @router.post(
     "/workspaces/{workspace_id}/autonomy/responsibilities/{responsibility_id}/end",
     summary='"Encerrar": nada mais é programado; o histórico fica (só o owner)',
-    description="Com falha ou bloqueio, a responsabilidade não pausa nem encerra até ser resolvida.",
+    description="Com falha ou bloqueio, não pausa nem encerra até ser resolvida.",
     responses=error_responses(401, 403, 404, 409, 422, 503),
 )
 async def end_responsibility(
@@ -760,19 +763,17 @@ async def switch_autonomy(
 # ------------------------------------------------------------------------------------------------
 
 
-async def propose(
-    conn: AsyncConnection[DictRow], ws: DictRow, payload: ProposalCreate
-) -> Proposal:
+async def propose(conn: AsyncConnection[DictRow], ws: DictRow, payload: ProposalCreate) -> Proposal:
     tpl = TEMPLATES[payload.template]
     locale, brand = ws["locale"], ws["name"]
     try:
         options = resolve_options(tpl, payload.options)
     except OptionError as exc:
         raise ApiError(
-            422, "invalid_option", "error.responsibility_option", key=exc.key
+            422, "invalid_option", "error.responsibility_option", option=exc.key
         ) from exc
     if payload.auto_publish and not tpl.publish_option:
-        raise ApiError(422, "invalid_option", "error.responsibility_option", key="auto_publish")
+        raise ApiError(422, "invalid_option", "error.responsibility_option", option="auto_publish")
     rh = rhythm(tpl, options)
     title = t(locale, f"autonomy.template.{tpl.id}.title")
     sentence = agreement(locale, tpl.id, options, payload.auto_publish, brand)
@@ -842,7 +843,9 @@ async def propose(
         ],
     }
     texts = {
-        "work_title": t(locale, f"autonomy.work_title.{'change' if change else 'new'}", title=title),
+        "work_title": t(
+            locale, f"autonomy.work_title.{'change' if change else 'new'}", title=title
+        ),
         "message": t(locale, f"autonomy.nexo.{'summary_change' if change else 'summary'}"),
         "card": card,
     }
@@ -888,7 +891,7 @@ async def propose(
         "Monta o combinado do modelo com as opções ditas na conversa (o que faltar fica no "
         "padrão), grava a mensagem do Nexo com o cartão `responsibility_proposal` e a pendência "
         "`confirm` (no trabalho 01.04). O owner confirma em `POST /approvals/{id}/decision` "
-        "(`approved` ativa; `rejected` é \"Ajustar\"). Com `responsibility_id`, é a mudança no "
+        '(`approved` ativa; `rejected` é "Ajustar"). Com `responsibility_id`, é a mudança no '
         "combinado (Editar), que vale a partir da próxima execução. Editor ou acima pede."
     ),
     responses=error_responses(401, 403, 404, 409, 422, 503),
@@ -919,7 +922,9 @@ async def redelegate(
 ) -> Proposal:
     async with db.transaction_as(principal) as conn:
         ws = await load_workspace(conn, workspace_id)
-        row = await (await conn.execute(RESPONSIBILITY, (responsibility_id, workspace_id))).fetchone()
+        row = await (
+            await conn.execute(RESPONSIBILITY, (responsibility_id, workspace_id))
+        ).fetchone()
         if row is None:
             raise ApiError(404, "not_found", "error.responsibility_not_found")
         if row["status"] != "ended":
@@ -971,6 +976,4 @@ async def after_decision(conn: AsyncConnection[DictRow], approval_id: UUID) -> N
             or t(locale, "autonomy.frequency.continuous"),
             brand=row["name"],
         )
-    await conn.execute(
-        "select app.post_responsibility_confirmation(%s, %s)", (approval_id, body)
-    )
+    await conn.execute("select app.post_responsibility_confirmation(%s, %s)", (approval_id, body))
