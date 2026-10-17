@@ -2,6 +2,13 @@
 
 Handoff versionado. Quem retoma (Thor ou humano) lê este arquivo primeiro, depois `git log --oneline -20`, depois `docs/parciais/`.
 
+## Onde estamos (17/10/2026 01:40 — Fases 0, 1 e 2 e trilha SA FECHADAS; aguardando o Vic)
+
+- **Fechado:** Fase 0 (fundação), Fase 1 (núcleo vertical), Fase 2 (squad completo em modo simulado, memória que aprende, projeto coordenado, i18n, site público, cobrança e e-mail contra mocks) e **trilha SA** (Super Admin: banco e API privilegiada, telas de operação, squad versionado com edição/publicação/rollback, consumo/qualidade/saúde, ações de escrita com motivo e auditoria, sessão de suporte só leitura). Cada fase/trilha com QA adversária do Hulk e correções fechadas: ver `docs/PLANO_DE_ACAO_FASE0..2.md` e `PLANO_DE_ACAO_SA.md`.
+- **Nada em execução.** Automações de vigilância desligadas. Localhost: web 3100 (`/`, `/entrar`, `/admin`), API 8100, Supabase 5632x, Mailpit 56324.
+- **Aguarda o Vic:** (1) OK para a **Fase 3** (integrações onda 1 contra mocks + Modo Autônomo e agendamento); (2) motor de imagem → SA5 + Kaia 03.01–03.03; (3) contas sandbox Asaas/Mercado Pago + endereço HTTPS público para webhook; (4) chave da Anthropic (modo real); (5) escopo `workflow` no token do GitHub (CI); (6) perguntas por fatia nos relatórios (`docs/parciais/*-relatorio.md`, seções "Perguntas ao dono"), inclusive P1 "Criar conta grátis", as 8 do SA0, "Ver como o cliente" (SA6b).
+- Orquestração: sessão main do Thor; handoff vivo em `memory/caixinhas/hellosquad.md` (workspace do OpenClaw) e aqui. Lições do dia: cota da conta cai a cada ~5 h (10:44, 15:48, 21:04) e derruba sub-agentes → retomar do disco em modo continue; sessão que espera sub-agentes próprios é abortada pelo gateway → briefings "sem sub-agentes"; `next build` em `apps/web` derruba o `next dev` do dono → e2e só em worktree `/tmp`.
+
 ## Onde estamos (16/10/2026 20:55 — Fase 2 FECHADA, trilha SA aberta)
 
 - **Fase 2 fechada às 20:55.** Bia, Otto, Kiwi, Max e Íris completos em modo simulado (16 deliveries); Kaia atrás de `ImageEngine` com stub honesto (motor é do Vic); memória camada 3 (a correção da Marina entra na entrega seguinte); projeto coordenado Bia → Kaia → Otto com responsável por etapa, na API e no web; onboarding progressivo; pt-BR/en/es no app, na API, nos e-mails e no site; site público com SEO/GEO (Lighthouse 98–100); cobrança atrás de `PaymentProvider` (Asaas, Mercado Pago) contra mocks; e-mail transacional via Mailpit. QA H2 e correções S2g/A2d: ver `docs/PLANO_DE_ACAO_FASE2.md`.
