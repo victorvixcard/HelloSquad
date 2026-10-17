@@ -468,7 +468,6 @@
     "providers": "Providers",
     "selected": "In use",
     "apiKey": "API key",
-    "webhookSecret": "Webhook secret",
     "secretsNote": "Secrets never show in the panel: only configured or missing.",
     "subscriptions": "Subscriptions",
     "subscriptionsEmpty": "No subscription yet.",
@@ -491,7 +490,36 @@
     "colConfirmed": "Confirmed on",
     "colEvent": "Event and event id",
     "colOutcome": "Outcome",
-    "colNote": "Note"
+    "colNote": "Note",
+    "providerSub": "Subscriptions and top-ups",
+    "account": "Provider account",
+    "accountState": {
+      "not_created": "Not created yet",
+      "created": "Created",
+      "not_applicable": "Not applicable"
+    },
+    "webhook": "Webhook",
+    "webhookState": {
+      "configured": "Secret configured",
+      "missing": "Not configured",
+      "not_applicable": "Not applicable"
+    },
+    "environment": "Environment",
+    "environmentState": {
+      "sandbox": "Sandbox, once the account is created",
+      "local": "Local, simulated"
+    },
+    "integration": "Integration",
+    "integrationValue": "Single <code>PaymentProvider</code> adapter (ADR-0008)",
+    "toValidate": "To validate",
+    "toValidateValue": "Recurring Pix and recurring card",
+    "tabSubscriptions": "Subscriptions",
+    "tabTopups": "Top-ups",
+    "tabWebhooks": "Webhooks",
+    "tabReconciliation": "Reconciliation",
+    "idempotency": "Idempotency",
+    "idempotencyNote": "Each event is applied only once, by the <b>event id</b> key. If the same id arrives again, it is recorded as an ignored duplicate and neither credits nor charges again. Reprocessing uses the same id: what was already applied does not repeat.",
+    "reconciliationNote": "Reconciliation is marked on each webhook, in the Webhooks tab (\"Mark reconciled\", with a reason). Failed charges are listed here."
   },
   "auditoria": {
     "title": "Audit log",
@@ -515,7 +543,11 @@
     "invalidPeriod": "Invalid period: the end date comes after the start date, within 366 days.",
     "today": "Today",
     "days7": "7 days",
-    "days30": "30 days"
+    "days30": "30 days",
+    "export": "Export CSV",
+    "exportTitle": "Exports the current filter: the events loaded on this page.",
+    "exported": "{n, plural, =0 {No events on this page with the current filters; nothing exported.} one {# event from this page exported as CSV, with the current filters.} other {# events from this page exported as CSV, with the current filters.}}",
+    "csvFile": "audit"
   },
   "fila": {
     "title": "Job queue",

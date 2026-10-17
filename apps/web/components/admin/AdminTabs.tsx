@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-export type AdminTab = { id: string; label: string; panel: ReactNode };
+/** `badge`: contador da aba (o `sa-nb is-hot` do SA0), só quando há o que ver. */
+export type AdminTab = { id: string; label: string; panel: ReactNode; badge?: number | null };
 
 /**
  * Abas do SA0 (segmentado da V4.6 com papel de aba): setas, Home e End; a aba aberta fica no endereço (#custos), para
@@ -79,6 +80,7 @@ export function AdminTabs({
                 }}
               >
                 {tab.label}
+                {tab.badge ? <span className="sa-nb is-hot">{tab.badge}</span> : null}
               </button>
             );
           })}

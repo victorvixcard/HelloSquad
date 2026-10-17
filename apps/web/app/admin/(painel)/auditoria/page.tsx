@@ -2,6 +2,7 @@ import { unwrap } from "@hellosquad/contracts";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { AdminPage } from "@/components/admin/AdminPage";
+import { AuditCsvButton } from "@/components/admin/AuditCsvButton";
 import { FilterSelect } from "@/components/admin/Filters";
 import { ApiProblem, Card, DataTable, Note, Pager } from "@/components/admin/ui";
 import { adminRead, type AuditItem } from "@/lib/admin";
@@ -50,7 +51,8 @@ type Search = Promise<Record<string, string | string[] | undefined>>;
 
 /**
  * Auditoria (SA0 `auditoria.html` → `GET /admin/audit`): filtros quem / conta / tipo / período e cursor. Nada é
- * apagado; o painel só lê (a API lê `audit_events` por função, como a S0 garante).
+ * apagado; o painel só lê (a API lê `audit_events` por função, como a S0 garante). "Exportar CSV" (SA7b) gera no
+ * navegador o arquivo da página carregada, com as mesmas colunas da tabela e os filtros de agora.
  */
 export default async function AuditPage({ searchParams }: { searchParams: Search }) {
   const sp = await searchParams;
@@ -88,9 +90,35 @@ export default async function AuditPage({ searchParams }: { searchParams: Search
     ...(accounts.ok ? accounts.data.items.map((a) => ({ value: a.id, label: a.name })) : []),
   ];
   const typeOptions = [{ value: "", label: t("common.all") }, ...CATEGORIES.map((c) => ({ value: c, label: codeLabel(t, "category", c) }))];
+  const csv = audit.ok
+    ? audit.data.items.map((e) => [
+        e.created_at,
+        `${codeLabel(t, "actor", e.actor)} · ${e.actor_name || e.actor_email || e.actor_type}`,
+        e.workspace_name ?? t("auditoria.platform"),
+        codeLabel(t, "category", e.category),
+        e.action,
+        summary(e.payload),
+      ])
+    : null;
 
   return (
-    <AdminPage nav="auditoria" title={t("auditoria.title")} desc={t("auditoria.desc")}>
+    <AdminPage
+      nav="auditoria"
+      title={t("auditoria.title")}
+      desc={t("auditoria.desc")}
+      actions={
+        csv ? (
+          <AuditCsvButton
+            label={t("auditoria.export")}
+            title={t("auditoria.exportTitle")}
+            filename={`${t("auditoria.csvFile")}-${brDay(0)}.csv`}
+            header={[t("auditoria.colWhen"), t("auditoria.colWho"), t("auditoria.colAccount"), t("auditoria.colType"), t("auditoria.colAction"), t("auditoria.colDetail")]}
+            rows={csv}
+            done={t("auditoria.exported", { n: csv.length })}
+          />
+        ) : undefined
+      }
+    >
       <div className="sa-tool" style={{ marginBottom: 16 }}>
         <nav className="sa-segl" aria-label={t("auditoria.who")}>
           {whoTabs.map((w) => (

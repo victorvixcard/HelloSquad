@@ -468,7 +468,6 @@
     "providers": "Proveedores",
     "selected": "En uso",
     "apiKey": "Clave de la API",
-    "webhookSecret": "Secreto del webhook",
     "secretsNote": "Los secretos nunca aparecen en el panel: solo configurada o ausente.",
     "subscriptions": "Suscripciones",
     "subscriptionsEmpty": "Ninguna suscripción todavía.",
@@ -491,7 +490,36 @@
     "colConfirmed": "Confirmado el",
     "colEvent": "Evento e id del evento",
     "colOutcome": "Resultado",
-    "colNote": "Nota"
+    "colNote": "Nota",
+    "providerSub": "Suscripciones y recargas",
+    "account": "Cuenta en el proveedor",
+    "accountState": {
+      "not_created": "Todavía no creada",
+      "created": "Creada",
+      "not_applicable": "No aplica"
+    },
+    "webhook": "Webhook",
+    "webhookState": {
+      "configured": "Secreto configurado",
+      "missing": "No configurado",
+      "not_applicable": "No aplica"
+    },
+    "environment": "Entorno",
+    "environmentState": {
+      "sandbox": "Sandbox, cuando se cree la cuenta",
+      "local": "Local, simulado"
+    },
+    "integration": "Integración",
+    "integrationValue": "Adaptador único <code>PaymentProvider</code> (ADR-0008)",
+    "toValidate": "Por validar",
+    "toValidateValue": "Pix recurrente y tarjeta recurrente",
+    "tabSubscriptions": "Suscripciones",
+    "tabTopups": "Recargas",
+    "tabWebhooks": "Webhooks",
+    "tabReconciliation": "Conciliación",
+    "idempotency": "Idempotencia",
+    "idempotencyNote": "Cada evento se aplica una sola vez, por la clave <b>id del evento</b>. Si el mismo id llega de nuevo, queda registrado como duplicado ignorado y no acredita ni cobra otra vez. Reprocesar usa el mismo id: lo que ya se aplicó no se repite.",
+    "reconciliationNote": "La conciliación se marca en cada webhook, en la pestaña Webhooks (\"Marcar conciliación\", con motivo). Aquí quedan los cobros que fallaron."
   },
   "auditoria": {
     "title": "Auditoría",
@@ -515,7 +543,11 @@
     "invalidPeriod": "Período inválido: la fecha final va después de la inicial, en hasta 366 días.",
     "today": "Hoy",
     "days7": "7 días",
-    "days30": "30 días"
+    "days30": "30 días",
+    "export": "Exportar CSV",
+    "exportTitle": "Exporta el filtro actual: los eventos cargados en esta página.",
+    "exported": "{n, plural, =0 {Ningún evento en esta página con los filtros actuales; no se exportó nada.} one {# evento de esta página exportado en CSV, con los filtros actuales.} other {# eventos de esta página exportados en CSV, con los filtros actuales.}}",
+    "csvFile": "auditoria"
   },
   "fila": {
     "title": "Cola de trabajos",
