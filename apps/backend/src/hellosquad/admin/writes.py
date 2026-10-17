@@ -72,9 +72,10 @@ def support_session(row: dict) -> SupportSession:
         "Grava `support_access_log` e `audit_events` (`support.session_started`) e põe na fila o "
         "e-mail ao titular da conta (`support_session_started`, no idioma dele). Durante a janela, "
         "os GET da API do produto deste negócio respondem ao Super Admin como a um membro de "
-        "leitura, numa transação READ ONLY; qualquer escrita é recusada. Expira sozinha."
+        "leitura, numa transação READ ONLY; qualquer escrita é recusada. Expira sozinha. Conta "
+        "suspensa: 423 `workspace_suspended` (como o SA0)."
     ),
-    responses=error_responses(*WRITE_ERRORS),
+    responses=error_responses(*WRITE_ERRORS, 423),
 )
 async def start_support_session(
     workspace_id: UUID, payload: SupportSessionStart, tx: AdminTx

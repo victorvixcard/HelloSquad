@@ -74,6 +74,7 @@ def error_responses(*status_codes: int) -> dict[int | str, dict[str, Any]]:
         404: "Recurso não encontrado (ou fora do seu acesso).",
         409: "Conflito com o estado atual do registro.",
         422: "Dados inválidos.",
+        423: "Conta suspensa pelo Super Admin.",
         503: "Dependência indisponível (banco ou Auth).",
     }
     return {

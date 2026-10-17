@@ -288,6 +288,8 @@ select throws_ok(
 -- ---------------------------------------------------------------------------------------------------
 
 select pg_temp.admin_as((select vic from fx));
+-- SA7a (H-SA-09): conta suspensa não recebe sessão de suporte; a Miolo, suspensa acima, volta antes.
+select count(*) from app.admin_set_workspace_suspended((select miolo from fx), false, 'Reativada para a leitura do suporte');
 select count(*) from app.admin_support_session_start((select miolo from fx), 'Conferir a conversa com a titular', 15);
 reset role;
 

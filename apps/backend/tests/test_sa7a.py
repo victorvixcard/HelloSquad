@@ -116,3 +116,27 @@ async def test_seed_survives_a_business_the_super_admin_created_and_a_reported_b
     me = (await api.get("/me", headers=vic)).json()
     assert me["memberships"] == []
     assert me["is_platform_admin"] is True
+
+
+async def test_support_session_is_refused_on_a_suspended_account(
+    api, access_token, admin_db
+) -> None:
+    vic = bearer(access_token(VIC))
+    miolo = await scalar(admin_db, "select id from public.workspaces where slug = 'miolo'")
+    reason = {"reason": "Conferência pedida pela titular (SA7a)"}
+    suspended = await api.post(f"/admin/accounts/{miolo}/suspend", headers=vic, json=reason)
+    assert suspended.status_code == 200, suspended.text
+    refused = await api.post(
+        f"/admin/accounts/{miolo}/support-session",
+        headers=vic,
+        json={**reason, "duration_minutes": 15},
+    )
+    assert refused.status_code == 423, refused.text
+    assert refused.json()["error"]["code"] == "workspace_suspended"
+    sessions = (
+        "select count(*) from public.support_access_log"
+        " where workspace_id = %s and ended_at is null and expires_at > now()"
+    )
+    assert await scalar(admin_db, sessions, miolo) == 0
+    reactivated = await api.post(f"/admin/accounts/{miolo}/reactivate", headers=vic, json=reason)
+    assert reactivated.status_code == 200, reactivated.text

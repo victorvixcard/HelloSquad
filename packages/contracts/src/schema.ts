@@ -1533,7 +1533,7 @@ export interface paths {
         put?: never;
         /**
          * Entrar no ambiente do cliente: sessão de suporte só leitura (motivo, 15/30/60 min)
-         * @description Grava `support_access_log` e `audit_events` (`support.session_started`) e põe na fila o e-mail ao titular da conta (`support_session_started`, no idioma dele). Durante a janela, os GET da API do produto deste negócio respondem ao Super Admin como a um membro de leitura, numa transação READ ONLY; qualquer escrita é recusada. Expira sozinha.
+         * @description Grava `support_access_log` e `audit_events` (`support.session_started`) e põe na fila o e-mail ao titular da conta (`support_session_started`, no idioma dele). Durante a janela, os GET da API do produto deste negócio respondem ao Super Admin como a um membro de leitura, numa transação READ ONLY; qualquer escrita é recusada. Expira sozinha. Conta suspensa: 423 `workspace_suspended` (como o SA0).
          */
         post: operations["start_support_session_admin_accounts__workspace_id__support_session_post"];
         /** Encerrar a sessão de suporte aberta nesta conta (auditado) */
@@ -13519,6 +13519,15 @@ export interface operations {
             };
             /** @description Dados inválidos. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conta suspensa pelo Super Admin. */
+            423: {
                 headers: {
                     [name: string]: unknown;
                 };

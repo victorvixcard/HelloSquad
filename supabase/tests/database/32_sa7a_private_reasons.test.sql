@@ -6,7 +6,7 @@ begin;
 set local client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(17);
 
 create temporary table fx as
 select
@@ -72,6 +72,10 @@ select lives_ok(
 select lives_ok(
   format($$select * from app.admin_set_workspace_suspended(%L, true, %L)$$, (select miolo from fx), (select suspension_reason from fx)),
   'o Vic suspende a Miolo com motivo'
+);
+select throws_ok(
+  format($$select app.admin_support_session_start(%L, 'Conferência pedida pela titular', 15)$$, (select miolo from fx)),
+  'HS423', null, 'H-SA-09: sessão de suporte em conta suspensa é recusada (como o SA0)'
 );
 select is(
   (select count(*)::integer from public.delivery_price_notes where note = (select price_reason from fx))
