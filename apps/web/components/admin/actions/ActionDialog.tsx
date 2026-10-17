@@ -1,8 +1,9 @@
 "use client";
 
+import { Button } from "@hellosquad/ui";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useRef, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
+import { useEffect, useId, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
 import type { ActionResult } from "@/app/admin/(painel)/acoes";
 import { Dialog } from "../TwoFactorBand";
 
@@ -86,7 +87,6 @@ export function ActionDialog<T>(props: ActionDialogProps<T>) {
   const tc = useTranslations("admin.common");
   const router = useRouter();
   const id = useId();
-  const opener = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [reason, setReason] = useState("");
@@ -100,10 +100,8 @@ export function ActionDialog<T>(props: ActionDialogProps<T>) {
     setProblem(null);
     setOpen(true);
   };
-  const close = () => {
-    setOpen(false);
-    opener.current?.focus();
-  };
+  // O diálogo devolve o foco ao botão que o abriu.
+  const close = () => setOpen(false);
 
   const send = async (e?: FormEvent) => {
     e?.preventDefault();
@@ -133,17 +131,17 @@ export function ActionDialog<T>(props: ActionDialogProps<T>) {
   const variant = props.variant ?? "ghost";
   return (
     <>
-      <button
-        ref={opener}
-        type="button"
-        className={`hs-btn hs-btn--${variant} hs-btn--s`}
+      <Button
+        variant={variant}
+        size="s"
+        icon={null}
         disabled={props.disabled}
         title={props.disabled ? props.disabledReason : undefined}
         aria-label={props.disabled && props.disabledReason ? `${props.label} (${props.disabledReason})` : undefined}
         onClick={start}
       >
-        <span className="hs-lbl">{props.label}</span>
-      </button>
+        {props.label}
+      </Button>
       <Dialog
         open={open}
         onClose={close}
@@ -154,12 +152,12 @@ export function ActionDialog<T>(props: ActionDialogProps<T>) {
         footer={
           <>
             {props.summary ? <span className="sa-grow sa-num">{props.summary}</span> : <span className="sa-grow" />}
-            <button type="button" className="hs-btn hs-btn--ghost hs-btn--s" onClick={close}>
-              <span className="hs-lbl">{t("cancel")}</span>
-            </button>
-            <button type="submit" form={`${id}-form`} className="hs-btn hs-btn--primary hs-btn--s" disabled={busy} aria-busy={busy || undefined}>
-              <span className="hs-lbl">{busy ? t("sending") : props.confirmLabel}</span>
-            </button>
+            <Button variant="ghost" size="s" onClick={close}>
+              {t("cancel")}
+            </Button>
+            <Button type="submit" form={`${id}-form`} variant="primary" size="s" icon={null} state={busy ? "loading" : "rest"} loadingLabel={t("sending")}>
+              {props.confirmLabel}
+            </Button>
           </>
         }
       >
