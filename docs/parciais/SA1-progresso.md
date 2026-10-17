@@ -7,3 +7,5 @@ fatia. Nada em `apps/web`.
 | Hora | Item | Commit | Estado |
 |---|---|---|---|
 | 20:57 | Abertura do progresso; PASSO 0 em leitura (diretrizes, plano SA, SUPER_ADMIN §1–§4, SA0 §1/§4/§5, protótipo `app/data*.js`, catálogo CSV, S1e/S2e/S1c/S0/S2c/S2f §1, `config.toml`) | este | em andamento |
+| 21:04 | Sessão de 20:56 morreu por limite de cota da conta; o autosave das 21:05 (`8bd67d9`) levou o rascunho `supabase/migrations/20261017000000_super_admin.sql` (760 linhas, não aplicado nem testado) | `8bd67d9` | herdado |
+| 21:15 | **Retomada** (Opus 5.5, sozinha na árvore, sem sub-agentes). `git status` limpo; o rascunho herdado será revisado contra o PASSO 0 antes de aplicar (fica, corrige ou sai, com justificativa aqui) | este | em andamento |
