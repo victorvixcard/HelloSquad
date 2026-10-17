@@ -11,3 +11,7 @@ Build e e2e só no worktree `/tmp/l1-wt` (3200/8200); o `next dev` do dono na 31
 |---|---|---|
 | 07:37 | PASSO 0: briefing L1, DIRETRIZES, A1f §1–§3/§6, A2c §1/§4, A0 (Hero), README do handoff §C | lido |
 | 07:39 | Progresso aberto | ok |
+| 07:42 | Item 1: inventário por script (`docs/parciais/l1/inventario.md`) | ok (`89ed08f`) |
+| 07:46 | Item 2a: `packages/ui/scripts/extract-landing.ts` → `landing.css`, `landing-template.ts`, `landing-logic.ts`, `ds-bundle-runtime.ts` | ok (`dbb115a`) |
+| 07:50 | Item 2b: interpretador `packages/ui/src/landing/runtime.tsx` (semântica do `support.js`), `/` = R32 portada, SSR testado | ok (`c247087`) |
+| 07:51 | Navegador (next dev 3100, Playwright 1440×900): Hero digita sozinho ("Criar uma campanha para o fim de s…" aos ~5 s), sequência "Nexo está montando seu squad", **0 erros de console** | ok |
