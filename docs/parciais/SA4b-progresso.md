@@ -20,6 +20,6 @@ Aranha (Frontend & Design), 16/10/2026, início 23:04. Área: `apps/web` (rotas 
 | 3 | Saúde das APIs (estado por provedor, chave configurada/ausente, gasto, chamadas e falhas, informar saldo em diálogo, alerta abaixo do limiar) | feito | `1801e65`, `4f1ca19` |
 | 4 | Vitest (15), e2e (2, worktree `/tmp/sa4b-wt`, web na 3200), lado a lado, relatório | feito | `0270c72`, `c38c9b2`, `b042ebb`, `8f4db90`, `ae66125`, relatório |
 
-## Fechamento (23:45)
+## Fechamento (23:38)
 
 Vitest da fatia 15/15; `make test-web` verde (web 455, ui 50, contracts 9); e2e 7/7 no worktree `/tmp/sa4b-wt` (os 2 da SA4b, os 2 da SA3b e os 3 da SA2, web de produção na 3200); banco do dono de volta ao seed (saldo nulo, 0 relatórios e 0 eventos de saldo, versões do squad todas ativas); lado a lado em `docs/parciais/sa4b/`. Relatório: `docs/parciais/SA4b-relatorio.md`.
