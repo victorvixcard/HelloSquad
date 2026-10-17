@@ -1182,6 +1182,280 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/squad": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Squad: os sete com versão da Alma e do agent.yaml, rascunhos e custo médio */
+        get: operations["get_squad_admin_squad_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/agents/{agent_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Agente: Alma por seção, agent.yaml e skills (ativa e rascunho) */
+        get: operations["get_agent_admin_squad_agents__agent_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/agents/{agent_id}/skills/{delivery_type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Skill de uma delivery: procedimento, formato e critérios (ativa e rascunho) */
+        get: operations["get_skill_admin_squad_agents__agent_id__skills__delivery_type__get"];
+        /** Editar a skill de uma delivery (arquivo inteiro, com front matter): grava no rascunho */
+        put: operations["edit_skill_admin_squad_agents__agent_id__skills__delivery_type__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/shared/{doc}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Regras compartilhadas (README.md), conversa.md ou reflexao.md (ativa e rascunho) */
+        get: operations["get_shared_admin_squad_shared__doc__get"];
+        /** Editar README.md (regras compartilhadas), conversa.md ou reflexao.md: grava rascunho */
+        put: operations["edit_shared_admin_squad_shared__doc__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Histórico de versões de uma unidade (SOUL, skill, agent.yaml ou regra compartilhada) */
+        get: operations["list_versions_admin_squad_versions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/versions/{version_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Conteúdo de uma versão, como o export grava o arquivo */
+        get: operations["get_version_admin_squad_versions__version_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Comparar duas versões da mesma unidade */
+        get: operations["diff_versions_admin_squad_diff_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/agents/{agent_id}/prompt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** O que ele lê: system prompt montado com contexto de exemplo e tokens estimados */
+        get: operations["get_prompt_admin_squad_agents__agent_id__prompt_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/agents/{agent_id}/soul/sections/{section}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Editar uma seção da Alma: grava no rascunho (versão nova, não ativa até publicar) */
+        put: operations["edit_soul_section_admin_squad_agents__agent_id__soul_sections__section__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/agents/{agent_id}/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Editar ferramentas e limites (agent.yaml): grava no rascunho */
+        put: operations["edit_config_admin_squad_agents__agent_id__config_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/versions/{version_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publicar o rascunho: vira a versão ativa; o próximo run usa */
+        post: operations["publish_version_admin_squad_versions__version_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/versions/{version_id}/discard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Descartar o rascunho (fica no histórico como descartado) */
+        post: operations["discard_version_admin_squad_versions__version_id__discard_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/squad/versions/{version_id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Voltar versão: cria uma versão nova, já ativa, com o conteúdo desta */
+        post: operations["restore_version_admin_squad_versions__version_id__restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Regras de negócio: documentos, versão atual, marcações e se entram no prompt */
+        get: operations["list_rules_admin_rules_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rules/{doc_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Documento de regras: parágrafos marcados, versões e o que entra no prompt */
+        get: operations["get_rule_doc_admin_rules__doc_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rules/{doc_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Gravar versão nova das regras; o que entra no prompt vira rascunho do README.md */
+        post: operations["save_rule_doc_admin_rules__doc_id__versions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1444,6 +1718,16 @@ export interface components {
             received_at: string;
             /** Processed At */
             processed_at: string | null;
+        };
+        /** AgentDetail */
+        AgentDetail: {
+            agent: components["schemas"]["SquadAgentSummary"];
+            soul: components["schemas"]["SoulVersion"] | null;
+            soul_draft: components["schemas"]["SoulVersion"] | null;
+            config: components["schemas"]["ConfigVersion"] | null;
+            config_draft: components["schemas"]["ConfigVersion"] | null;
+            /** Skills */
+            skills: components["schemas"]["SkillSummary"][];
         };
         /**
          * AgentId
@@ -2118,6 +2402,56 @@ export interface components {
             /** Items */
             items: components["schemas"]["CatalogItem"][];
         };
+        /** ConfigEdit */
+        ConfigEdit: {
+            /**
+             * Yaml
+             * @description agent.yaml inteiro.
+             */
+            yaml?: string | null;
+            /**
+             * Tools
+             * @description Ferramentas permitidas; mantém os comentários das que ficam no agent.yaml.
+             */
+            tools?: string[] | null;
+            /** Max Autonomy */
+            max_autonomy?: ("analisar" | "preparar" | "executar") | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** ConfigFields */
+        ConfigFields: {
+            /** Tools */
+            tools: string[];
+            /**
+             * Tool Notes
+             * @description Comentário de cada ferramenta no agent.yaml (condição de uso).
+             */
+            tool_notes: {
+                [key: string]: string;
+            };
+            /** Collaborators */
+            collaborators: string[];
+            /** Max Autonomy */
+            max_autonomy: string | null;
+            /** Model */
+            model: {
+                [key: string]: unknown;
+            };
+            /** Memory */
+            memory: {
+                [key: string]: unknown;
+            };
+            /** Deliveries */
+            deliveries: string[];
+        };
+        /** ConfigVersion */
+        ConfigVersion: {
+            ref: components["schemas"]["VersionRef"];
+            /** Yaml */
+            yaml: string;
+            fields: components["schemas"]["ConfigFields"];
+        };
         /** ConsentCounts */
         ConsentCounts: {
             /** Email */
@@ -2319,6 +2653,13 @@ export interface components {
             sources: components["schemas"]["ContactSource"][];
             /** Last Import At */
             last_import_at: string | null;
+        };
+        /** ContentEdit */
+        ContentEdit: {
+            /** Content */
+            content: string;
+            /** Note */
+            note?: string | null;
         };
         /** ContextRef */
         ContextRef: {
@@ -2864,6 +3205,16 @@ export interface components {
          * @enum {string}
          */
         DeliveryVersionStatus: "draft" | "approved" | "superseded";
+        /** DiffLine */
+        DiffLine: {
+            /**
+             * Op
+             * @enum {string}
+             */
+            op: " " | "+" | "-";
+            /** Text */
+            text: string;
+        };
         /** EmailPreference */
         EmailPreference: {
             /**
@@ -4269,6 +4620,60 @@ export interface components {
             /** Ends At */
             ends_at?: string | null;
         };
+        /** PromptBlock */
+        PromptBlock: {
+            /**
+             * Part
+             * @enum {string}
+             */
+            part: "rules_and_soul" | "skill" | "workspace" | "message";
+            /** Text */
+            text: string;
+            /** Cached */
+            cached: boolean;
+            /** Chars */
+            chars: number;
+            /** Tokens Estimated */
+            tokens_estimated: number;
+        };
+        /** PromptPreview */
+        PromptPreview: {
+            /** Agent Id */
+            agent_id: string;
+            /**
+             * Route
+             * @description Delivery (skill), conversa ou reflexao: o que o run lê nessa rota.
+             */
+            route: string;
+            /**
+             * Draft
+             * @description true: montado com os rascunhos no lugar das versões ativas.
+             */
+            draft: boolean;
+            /**
+             * Origin
+             * @enum {string}
+             */
+            origin: "database" | "files";
+            /** Content Hash */
+            content_hash: string;
+            /** Sources */
+            sources: {
+                [key: string]: unknown;
+            }[];
+            /** Example Context */
+            example_context: {
+                [key: string]: string;
+            };
+            /** Blocks */
+            blocks: components["schemas"]["PromptBlock"][];
+            /** Chars */
+            chars: number;
+            /** Tokens Estimated */
+            tokens_estimated: number;
+            /** Token Estimate Method */
+            token_estimate_method: string;
+        };
         /** ProviderHealthItem */
         ProviderHealthItem: {
             /** Provider */
@@ -4487,6 +4892,103 @@ export interface components {
              */
             status: string;
         };
+        /** RestoreRequest */
+        RestoreRequest: {
+            /** Note */
+            note?: string | null;
+        };
+        /** RuleDocDetail */
+        RuleDocDetail: {
+            doc: components["schemas"]["RuleDocSummary"];
+            current: components["schemas"]["RuleVersion"] | null;
+            /** Versions */
+            versions: components["schemas"]["RuleVersion"][];
+            /**
+             * Prompt Paragraphs
+             * @description O que entra no prompt: [DECIDIDO] e [BASE ATUAL] de documento no prompt.
+             */
+            prompt_paragraphs: components["schemas"]["RuleParagraph"][];
+        };
+        /** RuleDocEdit */
+        RuleDocEdit: {
+            /** Paragraphs */
+            paragraphs: components["schemas"]["RuleParagraph"][];
+            /** In Prompt */
+            in_prompt?: boolean | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** RuleDocList */
+        RuleDocList: {
+            /** Items */
+            items: components["schemas"]["RuleDocSummary"][];
+            /** @description Rascunho das regras compartilhadas esperando publicação, se houver. */
+            shared_rules_draft: components["schemas"]["VersionRef"] | null;
+        };
+        /** RuleDocSummary */
+        RuleDocSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Slug */
+            slug: string;
+            /** Title */
+            title: string;
+            /** In Prompt */
+            in_prompt: boolean;
+            /** Version */
+            version: number | null;
+            /** Updated At */
+            updated_at: string | null;
+            /** Author */
+            author: string | null;
+            /** Marks */
+            marks: {
+                [key: string]: number;
+            };
+        };
+        /** RuleParagraph */
+        RuleParagraph: {
+            /**
+             * Mark
+             * @enum {string}
+             */
+            mark: "decided" | "current_base" | "pending" | "proposal";
+            /** Text */
+            text: string;
+            /** Source */
+            source?: string | null;
+        };
+        /** RuleSaveResult */
+        RuleSaveResult: {
+            doc: components["schemas"]["RuleDocSummary"];
+            version: components["schemas"]["RuleVersion"];
+            /** @description Rascunho novo do README.md (regras compartilhadas) quando o prompt mudou. */
+            shared_rules_draft: components["schemas"]["VersionRef"] | null;
+        };
+        /** RuleVersion */
+        RuleVersion: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Version */
+            version: number;
+            /** Author */
+            author: string;
+            /** Change Note */
+            change_note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Paragraphs */
+            paragraphs: components["schemas"]["RuleParagraph"][];
+        };
         /** Run */
         Run: {
             /**
@@ -4663,6 +5165,194 @@ export interface components {
             started_at: string | null;
             /** Finished At */
             finished_at: string | null;
+        };
+        /** SectionEdit */
+        SectionEdit: {
+            /** Heading */
+            heading?: string | null;
+            /** Body */
+            body?: string | null;
+            /** In Prompt */
+            in_prompt?: boolean | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** SharedDetail */
+        SharedDetail: {
+            /**
+             * Doc
+             * @enum {string}
+             */
+            doc: "README.md" | "conversa.md" | "reflexao.md";
+            active: components["schemas"]["VersionRef"] | null;
+            /** Active Content */
+            active_content: string | null;
+            /**
+             * Shared Rules
+             * @description README.md: a seção de regras compartilhadas que entra no prompt dos sete.
+             */
+            shared_rules: string | null;
+            draft: components["schemas"]["VersionRef"] | null;
+            /** Draft Content */
+            draft_content: string | null;
+        };
+        /** SharedUnit */
+        SharedUnit: {
+            /**
+             * Doc
+             * @enum {string}
+             */
+            doc: "README.md" | "conversa.md" | "reflexao.md";
+            active: components["schemas"]["VersionRef"] | null;
+            draft: components["schemas"]["VersionRef"] | null;
+        };
+        /** SkillDetail */
+        SkillDetail: {
+            /** Agent Id */
+            agent_id: string;
+            /** Delivery Type */
+            delivery_type: string;
+            active: components["schemas"]["SkillVersion"] | null;
+            draft: components["schemas"]["SkillVersion"] | null;
+        };
+        /** SkillSection */
+        SkillSection: {
+            /** Title */
+            title: string;
+            /** Body */
+            body: string;
+        };
+        /** SkillSummary */
+        SkillSummary: {
+            /** Delivery Type */
+            delivery_type: string;
+            /** Title */
+            title: string | null;
+            /** @description Nulo: a delivery ainda não tem skill escrita. */
+            active: components["schemas"]["VersionRef"] | null;
+            draft: components["schemas"]["VersionRef"] | null;
+            /** Chars */
+            chars: number | null;
+        };
+        /** SkillVersion */
+        SkillVersion: {
+            ref: components["schemas"]["VersionRef"];
+            /**
+             * Content
+             * @description skills/<delivery>.md inteiro, com o front matter.
+             */
+            content: string;
+            /** Meta */
+            meta: {
+                [key: string]: unknown;
+            };
+            /** Title */
+            title: string | null;
+            /**
+             * Sections
+             * @description Seções ## do corpo (procedimento, formato da entrega, critérios de aceite).
+             */
+            sections: components["schemas"]["SkillSection"][];
+            /** Chars */
+            chars: number;
+        };
+        /** SoulSection */
+        SoulSection: {
+            /**
+             * Section
+             * @enum {string}
+             */
+            section: "identidade" | "o_que_faz" | "como_fala" | "limites" | "memoria" | "nunca_faz";
+            /** Position */
+            position: number;
+            /** Heading */
+            heading: string;
+            /** Body */
+            body: string;
+            /** In Prompt */
+            in_prompt: boolean;
+            /** Words */
+            words: number;
+            /** Chars */
+            chars: number;
+            /**
+             * Changed In Version
+             * @description Versão da SOUL em que texto, título ou flag desta seção mudou por último.
+             */
+            changed_in_version: number;
+        };
+        /** SoulVersion */
+        SoulVersion: {
+            ref: components["schemas"]["VersionRef"];
+            /**
+             * Title
+             * @description Título do agente (seção identidade, nível 1).
+             */
+            title: string;
+            /** Sections */
+            sections: components["schemas"]["SoulSection"][];
+            /** Sections In Prompt */
+            sections_in_prompt: number;
+            /**
+             * Chars In Prompt
+             * @description Caracteres da SOUL que entram no prompt.
+             */
+            chars_in_prompt: number;
+        };
+        /** SquadAgentSummary */
+        SquadAgentSummary: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Article */
+            article: string | null;
+            /** Role */
+            role: string | null;
+            /** Role Full */
+            role_full: string | null;
+            /** Color */
+            color: string | null;
+            /** Shape */
+            shape: string | null;
+            /** Default Model */
+            default_model: string | null;
+            /** Effort */
+            effort: string | null;
+            /** Deliveries */
+            deliveries: number;
+            /** Skills Written */
+            skills_written: number;
+            /** Soul Version */
+            soul_version: number | null;
+            /** Config Version */
+            config_version: number | null;
+            /** Pending Drafts */
+            pending_drafts: number;
+            /**
+             * Last Prompt Hash
+             * @description Hash do último prompt usado num run deste agente (agent_prompt_versions).
+             */
+            last_prompt_hash: string | null;
+            /** Runs 30D */
+            runs_30d: number;
+            /**
+             * Avg Cost Usd 30D
+             * @description Custo médio de IA por run concluído nos últimos 30 dias; nulo sem run.
+             */
+            avg_cost_usd_30d: number | null;
+        };
+        /** SquadOverview */
+        SquadOverview: {
+            /** Agents */
+            agents: components["schemas"]["SquadAgentSummary"][];
+            /** Shared */
+            shared: components["schemas"]["SharedUnit"][];
+            /**
+             * Fingerprint
+             * @description Impressão digital das versões ativas (muda quando algo é publicado).
+             */
+            fingerprint: string | null;
         };
         /** SquadStatus */
         SquadStatus: {
@@ -4863,6 +5553,84 @@ export interface components {
              * @description Idioma escolhido pela pessoa (cadastro, user_metadata.locale); null usa o do negócio.
              */
             locale?: ("pt-BR" | "en" | "es") | null;
+        };
+        /** VersionContent */
+        VersionContent: {
+            ref: components["schemas"]["VersionRef"];
+            /**
+             * Path
+             * @description Arquivo de squad/ que esta versão representa.
+             */
+            path: string;
+            /**
+             * Content
+             * @description Texto do arquivo como o export grava (a SOUL já montada).
+             */
+            content: string;
+        };
+        /** VersionDiff */
+        VersionDiff: {
+            /** Path */
+            path: string;
+            from_version: components["schemas"]["VersionRef"];
+            to_version: components["schemas"]["VersionRef"];
+            /**
+             * Unified
+             * @description Diff unificado (difflib), vazio quando o conteúdo é igual.
+             */
+            unified: string;
+            /** Lines */
+            lines: components["schemas"]["DiffLine"][];
+            /**
+             * Changed Sections
+             * @description Na SOUL: seções com título, texto ou flag diferente.
+             */
+            changed_sections: string[];
+        };
+        /** VersionList */
+        VersionList: {
+            /** Items */
+            items: components["schemas"]["VersionRef"][];
+        };
+        /** VersionRef */
+        VersionRef: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "soul" | "skill" | "config" | "shared";
+            /** Agent Id */
+            agent_id: string | null;
+            /** Key */
+            key: string;
+            /** Version */
+            version: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "active" | "superseded" | "discarded";
+            /** Author */
+            author: string;
+            /** Note */
+            note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Published At */
+            published_at: string | null;
+            /**
+             * Restored From Version
+             * @description Voltar versão: a versão cujo conteúdo esta repete.
+             */
+            restored_from_version?: number | null;
         };
         /** WebhookReceipt */
         WebhookReceipt: {
@@ -10027,6 +10795,1315 @@ export interface operations {
             };
             /** @description Sem permissão para esta ação. */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_squad_admin_squad_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SquadOverview"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_agent_admin_squad_agents__agent_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_skill_admin_squad_agents__agent_id__skills__delivery_type__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+                delivery_type: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    edit_skill_admin_squad_agents__agent_id__skills__delivery_type__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+                delivery_type: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ContentEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionRef"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_shared_admin_squad_shared__doc__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doc: "README.md" | "conversa.md" | "reflexao.md";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SharedDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    edit_shared_admin_squad_shared__doc__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doc: "README.md" | "conversa.md" | "reflexao.md";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ContentEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionRef"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_versions_admin_squad_versions_get: {
+        parameters: {
+            query: {
+                kind: string;
+                agent_id?: string | null;
+                key?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionList"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_version_admin_squad_versions__version_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionContent"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    diff_versions_admin_squad_diff_get: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionDiff"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_prompt_admin_squad_agents__agent_id__prompt_get: {
+        parameters: {
+            query: {
+                /** @description Delivery (ex.: 04.01), conversa ou reflexao. */
+                route: string;
+                /** @description Montar com os rascunhos pendentes. */
+                draft?: boolean;
+            };
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PromptPreview"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    edit_soul_section_admin_squad_agents__agent_id__soul_sections__section__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+                section: "identidade" | "o_que_faz" | "como_fala" | "limites" | "memoria" | "nunca_faz";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SectionEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionRef"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    edit_config_admin_squad_agents__agent_id__config_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfigEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionRef"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    publish_version_admin_squad_versions__version_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionRef"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    discard_version_admin_squad_versions__version_id__discard_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionRef"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    restore_version_admin_squad_versions__version_id__restore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RestoreRequest"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionRef"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_rules_admin_rules_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleDocList"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_rule_doc_admin_rules__doc_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doc_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleDocDetail"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    save_rule_doc_admin_rules__doc_id__versions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doc_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RuleDocEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleSaveResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
