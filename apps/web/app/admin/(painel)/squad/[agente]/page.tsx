@@ -156,6 +156,8 @@ export default async function AgentPage({ params }: Props) {
             label: t("agente.tabReads"),
             panel: (
               <PromptPanel
+                // Publicar, voltar ou gravar rascunho muda as versões: a aba remonta com a montagem nova do servidor.
+                key={[d.soul?.ref.id, d.soul_draft?.ref.id, d.config?.ref.id, d.config_draft?.ref.id, ...d.skills.map((s) => s.draft?.id ?? s.active?.id)].join(":")}
                 agentId={a.id}
                 routes={routes}
                 initial={firstPreview.ok ? firstPreview.data : null}
