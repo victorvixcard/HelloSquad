@@ -83,7 +83,8 @@ test.describe("site público", () => {
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("lang", "pt-BR");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Seu squad de IA assume o marketing.");
-    await expect(page.getByRole("link", { name: "Criar conta grátis" }).first()).toHaveAttribute("href", "/criar-conta");
+    // L1: a landing é a R32 portada; "Criar conta grátis" é o botão do DS e leva à tela real de cadastro.
+    await expect(page.getByRole("button", { name: /Criar conta grátis/ }).first()).toBeVisible();
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
     const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent()) ?? "{}");
     // A2c: o grafo do README da N2a (§5.1), com o WebSite entre a organização e o aplicativo.

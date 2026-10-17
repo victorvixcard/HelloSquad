@@ -72,15 +72,25 @@ test.describe("site público (A2c)", () => {
     await snap(page, "a2c-02-otto-en-celular");
   });
 
-  test("no computador: landing com o Hero da R32 e as seções; FAQ e squad", async ({ page }) => {
+  test("no computador: landing R32 portada, com o Hero que digita e envia sozinho; FAQ e squad", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Você cuida do seu negócio.");
-    await expect(page.getByRole("table", { name: /Mais do que ferramentas/ })).toBeVisible();
-    await snap(page, "a2c-03-landing");
-    // Cabeçalho da landing como a R32 (só "Entrar"); a navegação do site fica no rodapé e nas páginas novas.
-    await expect(page.getByRole("navigation", { name: "Navegação do site" })).toHaveCount(0);
-    await page.getByRole("contentinfo").getByRole("link", { name: "Perguntas" }).click();
-    await expect(page).toHaveURL(/\/faq$/);
+    // L1: o motor do protótipo digita o primeiro pedido ~3 s depois de carregar e envia (fases is-ph-* no Hero).
+    const field = page.locator(".lp-hero .hs-input");
+    await expect(field).toHaveValue(/^Criar uma campanha/, { timeout: 8_000 });
+    await expect(page.locator("#topo")).toHaveClass(/is-ph-/, { timeout: 8_000 });
+    await snap(page, "l1-01-hero");
+    await page.getByRole("button", { name: "Veja o Squad trabalhando" }).first().click();
+    await expect(page.locator("#demo")).toBeInViewport({ timeout: 5_000 });
+    await expect(page.getByRole("table", { name: /Comparação entre HelloSquad/ })).toHaveCount(1);
+    // Sem fornecedor: o comparativo não leva marca de terceiros.
+    await expect(page.locator("[data-brand]")).toHaveCount(0);
+    // "Entrar" leva à tela real (no protótipo era um modal demonstrativo).
+    await page.getByRole("banner").getByRole("link", { name: "Entrar" }).click();
+    await expect(page).toHaveURL(/\/entrar$/);
+    await page.goto("/en");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("You run your business.");
+    await page.goto("/faq");
     await expect(page.getByRole("heading", { level: 3 }).first()).toBeVisible();
     await snap(page, "a2c-04-faq");
     await page.goto("/es/squad");
