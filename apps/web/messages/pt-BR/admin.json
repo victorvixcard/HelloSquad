@@ -267,6 +267,11 @@
       "skill": "Skill",
       "config": "agent.yaml",
       "shared": "Regras compartilhadas"
+    },
+    "autonomy": {
+      "analisar": "Analisar",
+      "preparar": "Preparar",
+      "executar": "Executar"
     }
   },
   "contas": {
@@ -672,5 +677,63 @@
     "diffSide": "Versão {v} · {status}",
     "removed": "removido",
     "added": "acrescentado"
+  },
+  "skills": {
+    "none": "Este agente não tem delivery no catálogo.",
+    "tabsLabel": "Deliveries {name}",
+    "noSkillTab": "(sem skill)",
+    "missingFile": "{path} ainda não existe",
+    "emptyTitle": "Skill ainda não escrita",
+    "emptyBody": "Cada delivery do catálogo ganha uma skill: procedimento, formato da entrega e critérios de aceite. Até lá, {article, select, a {a} other {o}} {name} não executa esta delivery.",
+    "draftReady": "Versão {v} {unit} pronta para publicar.",
+    "factSize": "Tamanho",
+    "written": "Escrita",
+    "edit": "Editar skill",
+    "fieldContent": "Arquivo da skill (markdown, com o cabeçalho)",
+    "fieldContentHint": "Procedimento, formato da entrega e critérios de aceite ficam nas seções \"##\". Salvar grava um rascunho; nada muda no runtime até publicar.",
+    "kvVersion": "Versão",
+    "kvVersionValue": "v{v} · {status} · {date} · {author}",
+    "kvKind": "Tipo de entrega",
+    "kvEssentials": "Briefing essencial",
+    "kvSize": "Tamanho",
+    "words": "{n, plural, one {# palavra} other {# palavras}}"
+  },
+  "ferramentas": {
+    "empty": "Este agente ainda não tem agent.yaml no banco. Rode o seed do squad.",
+    "pathLine": "squad/{agent}/agent.yaml · v{v} · {status} · {date}",
+    "draftReady": "Versão {v} {unit} pronta para publicar.",
+    "draftCheck": "Ferramenta fora da lista é recusada pelo runtime. Confira antes de publicar.",
+    "factTools": "Ferramentas",
+    "factChange": "Mudança",
+    "factChangeValue": "+{added} −{removed}",
+    "factAutonomy": "Autonomia máxima",
+    "editNote": "Mudanças no contrato do agente. Salvar grava um rascunho do agent.yaml; o resto do arquivo, com os comentários, não muda.",
+    "tools": "Ferramentas permitidas",
+    "toolsSub": "{n} de {total} do catálogo de ferramentas",
+    "edit": "Editar ferramentas e autonomia",
+    "asksAuth": "Pede autorização",
+    "autonomy": "Autonomia máxima",
+    "autonomySub": "teto; cada ação externa ainda pede autorização",
+    "autonomyNote": "Analisar e preparar são autônomos; executar só com permissão registrada.",
+    "model": "Modelo por etapa",
+    "modelRules": "Regras por tarefa",
+    "modelKeys": {
+      "padrao": "Padrão",
+      "effort": "Esforço",
+      "thinking": "Raciocínio",
+      "triagem": "Triagem",
+      "imagem": "Imagem",
+      "relatorios_recorrentes": "Relatórios recorrentes"
+    },
+    "collaborators": "Colabora com",
+    "memory": "Memória",
+    "memorySub": "o que lê e o que pode sugerir (sugestão só vira regra com confirmação)",
+    "memoryReads": "Lê",
+    "memorySuggests": "Sugere",
+    "deliveries": "Deliveries",
+    "deliveriesSub": "o que este agente entrega, pelo código do catálogo",
+    "yaml": "agent.yaml",
+    "yamlSub": "squad/{agent}/agent.yaml como o runtime lê",
+    "readOnly": "Só leitura"
   }
 }

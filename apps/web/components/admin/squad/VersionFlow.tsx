@@ -331,12 +331,13 @@ export function VersionsCard(props: {
   extra?: ReactNode;
 }) {
   const t = useTranslations("admin");
+  const headId = useId();
   const active = props.versions.find((v) => v.status === "active") ?? null;
   return (
-    <section className="sa-card" aria-labelledby="sq-vers-t">
+    <section className="sa-card sq-vers" aria-labelledby={headId}>
       <div className="sa-card-h">
         <div className="sa-card-t">
-          <h2 id="sq-vers-t">{t("versions.title")}</h2>
+          <h2 id={headId}>{t("versions.title")}</h2>
           <small>{t("versions.sub")}</small>
         </div>
       </div>

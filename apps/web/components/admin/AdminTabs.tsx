@@ -8,12 +8,30 @@ export type AdminTab = { id: string; label: string; panel: ReactNode };
  * Abas do SA0 (segmentado da V4.6 com papel de aba): setas, Home e End; a aba aberta fica no endereço (#custos), para
  * voltar a ela e compartilhar. Os painéis chegam prontos do servidor; a troca é só de qual aparece.
  */
-export function AdminTabs({ tabs, label, idPrefix }: { tabs: AdminTab[]; label: string; idPrefix: string }) {
+export function AdminTabs({
+  tabs,
+  label,
+  idPrefix,
+  line,
+  hash = true,
+  aside,
+}: {
+  tabs: AdminTab[];
+  label: string;
+  idPrefix: string;
+  /** Abas em linha do SA0 (deliveries de um agente). */
+  line?: boolean;
+  /** Abas dentro de outra aba não usam o endereço (#), que é da aba de fora. */
+  hash?: boolean;
+  /** Ao lado das abas (o modelo e o esforço do agente, no SA0). */
+  aside?: ReactNode;
+}) {
   const ids = tabs.map((t) => t.id);
   const [value, setValue] = useState(ids[0] ?? "");
   const refs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   useEffect(() => {
+    if (!hash) return;
     const read = () => {
       const hash = decodeURIComponent(window.location.hash.slice(1));
       if (ids.includes(hash)) setValue(hash);
@@ -27,14 +45,14 @@ export function AdminTabs({ tabs, label, idPrefix }: { tabs: AdminTab[]; label: 
 
   const choose = (id: string, focus = false) => {
     setValue(id);
-    window.history.replaceState(null, "", `#${id}`);
+    if (hash) window.history.replaceState(null, "", `#${id}`);
     if (focus) refs.current[id]?.focus();
   };
 
   return (
     <>
       <div className="sa-tabs-w">
-        <div className="sa-tabs" role="tablist" aria-label={label}>
+        <div className={`sa-tabs${line ? " is-line" : ""}`} role="tablist" aria-label={label}>
           {tabs.map((tab, i) => {
             const on = tab.id === value;
             return (
@@ -65,6 +83,7 @@ export function AdminTabs({ tabs, label, idPrefix }: { tabs: AdminTab[]; label: 
             );
           })}
         </div>
+        {aside ?? null}
       </div>
       {tabs.map((tab) => (
         <div

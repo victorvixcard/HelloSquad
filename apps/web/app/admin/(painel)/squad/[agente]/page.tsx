@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { AdminTabs } from "@/components/admin/AdminTabs";
+import { ConfigPanel } from "@/components/admin/squad/ConfigPanel";
+import { SkillsPanel } from "@/components/admin/squad/SkillsPanel";
 import { SoulPanel } from "@/components/admin/squad/SoulPanel";
 import { ApiProblem } from "@/components/admin/ui";
 import { adminRead } from "@/lib/admin";
@@ -29,9 +31,16 @@ export default async function AgentPage({ params }: Props) {
   void locale;
   const back = `/admin/squad/${agente}`;
   const member = getAgent(agente);
-  const [detail, soulVersions] = await Promise.all([
+  const versionsOf = (kind: "soul" | "config" | "skill", key?: string) =>
+    adminRead(
+      (api) => unwrap(api.GET("/admin/squad/versions", { params: { query: { kind, agent_id: agente, key: key ?? null } } })),
+      back,
+    );
+  const [detail, soulVersions, configVersions, squad] = await Promise.all([
     adminRead((api) => unwrap(api.GET("/admin/squad/agents/{agent_id}", { params: { path: { agent_id: agente } } })), back),
-    adminRead((api) => unwrap(api.GET("/admin/squad/versions", { params: { query: { kind: "soul", agent_id: agente } } })), back),
+    versionsOf("soul"),
+    versionsOf("config"),
+    adminRead((api) => unwrap(api.GET("/admin/squad")), back),
   ]);
   const crumbs = [{ label: t("squad.title"), href: "/admin/squad" }, { label: member.name }];
   if (!detail.ok) {
@@ -44,6 +53,19 @@ export default async function AgentPage({ params }: Props) {
   }
   const d = detail.data;
   const a = d.agent;
+  // Skills escritas (ou com rascunho): o arquivo, as seções e as versões; as outras ficam com o estado vazio honesto.
+  const skills = await Promise.all(
+    d.skills.map(async (summary) => {
+      if (!summary.active && !summary.draft) return { summary, detail: null, versions: [] };
+      const path = { agent_id: agente, delivery_type: summary.delivery_type };
+      const [skill, versions] = await Promise.all([
+        adminRead((api) => unwrap(api.GET("/admin/squad/agents/{agent_id}/skills/{delivery_type}", { params: { path } })), back),
+        versionsOf("skill", summary.delivery_type),
+      ]);
+      return { summary, detail: skill.ok ? skill.data : null, versions: versions.ok ? versions.data.items : [] };
+    }),
+  );
+  const written = d.skills.filter((s) => s.active).length;
   const i = AGENT_IDS.indexOf(agente);
   const prev = AGENT_IDS[(i + AGENT_IDS.length - 1) % AGENT_IDS.length]!;
   const next = AGENT_IDS[(i + 1) % AGENT_IDS.length]!;
@@ -88,6 +110,25 @@ export default async function AgentPage({ params }: Props) {
                 soul={d.soul}
                 soulDraft={d.soul_draft}
                 versions={soulVersions.ok ? soulVersions.data.items : []}
+              />
+            ),
+          },
+          {
+            id: "skills",
+            label: t("agente.tabSkills", { n: written, total: d.skills.length }),
+            panel: <SkillsPanel agent={{ id: a.id, name: a.name, article: a.article ?? "o", shape: agente }} skills={skills} />,
+          },
+          {
+            id: "ferramentas",
+            label: t("agente.tabTools"),
+            panel: (
+              <ConfigPanel
+                agent={{ id: a.id, name: a.name, shape: agente }}
+                unit={unit("config")}
+                config={d.config}
+                configDraft={d.config_draft}
+                toolCatalog={squad.ok ? squad.data.tool_catalog : []}
+                versions={configVersions.ok ? configVersions.data.items : []}
               />
             ),
           },

@@ -15,8 +15,8 @@ Aranha (Frontend & Design), 16/10/2026, início 22:26. Área: `apps/web` (rotas 
 | # | Item | Estado | Commit |
 |---|---|---|---|
 | 1 | Squad (lista dos 7) + item Squad ativo na barra, os sete como subnavegação | feito | `6bcc515` |
-| 2 | Agente › Alma (seções, rascunho, publicar, comparar lado a lado, voltar, descartar; confirmação e motivo) | feito | (este) |
-| 3 | Agente › Skills e Ferramentas e limites | pendente | |
+| 2 | Agente › Alma (seções, rascunho, publicar, comparar lado a lado, voltar, descartar; confirmação e motivo) | feito | `69565b2` |
+| 3 | Agente › Skills (aba por delivery, vazio honesto, editar com versão) e Ferramentas e limites (fields, YAML só leitura, editar com versão) | feito | (este) |
 | 4 | Agente › O que ele lê | pendente | |
 | 5 | Regras de negócio | pendente | |
 | 6 | Vitest, e2e (worktree `/tmp`), lado a lado, relatório | pendente | |

@@ -267,6 +267,11 @@
       "skill": "Skill",
       "config": "agent.yaml",
       "shared": "Shared rules"
+    },
+    "autonomy": {
+      "analisar": "Analyze",
+      "preparar": "Prepare",
+      "executar": "Execute"
     }
   },
   "contas": {
@@ -672,5 +677,63 @@
     "diffSide": "Version {v} · {status}",
     "removed": "removed",
     "added": "added"
+  },
+  "skills": {
+    "none": "This agent has no delivery in the catalog.",
+    "tabsLabel": "{name}'s deliveries",
+    "noSkillTab": "(no skill)",
+    "missingFile": "{path} does not exist yet",
+    "emptyTitle": "Skill not written yet",
+    "emptyBody": "Every catalog delivery gets a skill: procedure, delivery format and acceptance criteria. Until then, {name} does not run this delivery.",
+    "draftReady": "Version {v} {unit} is ready to publish.",
+    "factSize": "Size",
+    "written": "Written",
+    "edit": "Edit skill",
+    "fieldContent": "Skill file (markdown, with the header)",
+    "fieldContentHint": "Procedure, delivery format and acceptance criteria live in the \"##\" sections. Saving creates a draft; nothing changes in the runtime until it is published.",
+    "kvVersion": "Version",
+    "kvVersionValue": "v{v} · {status} · {date} · {author}",
+    "kvKind": "Delivery type",
+    "kvEssentials": "Essential briefing",
+    "kvSize": "Size",
+    "words": "{n, plural, one {# word} other {# words}}"
+  },
+  "ferramentas": {
+    "empty": "This agent has no agent.yaml in the database yet. Run the squad seed.",
+    "pathLine": "squad/{agent}/agent.yaml · v{v} · {status} · {date}",
+    "draftReady": "Version {v} {unit} is ready to publish.",
+    "draftCheck": "A tool outside the list is refused by the runtime. Check before publishing.",
+    "factTools": "Tools",
+    "factChange": "Change",
+    "factChangeValue": "+{added} −{removed}",
+    "factAutonomy": "Maximum autonomy",
+    "editNote": "Changes to the agent contract. Saving creates an agent.yaml draft; the rest of the file, with its comments, stays the same.",
+    "tools": "Allowed tools",
+    "toolsSub": "{n} of {total} in the tool catalog",
+    "edit": "Edit tools and autonomy",
+    "asksAuth": "Asks for authorization",
+    "autonomy": "Maximum autonomy",
+    "autonomySub": "a ceiling; every external action still asks for authorization",
+    "autonomyNote": "Analyzing and preparing are autonomous; executing only with a registered permission.",
+    "model": "Model per step",
+    "modelRules": "Rules per task",
+    "modelKeys": {
+      "padrao": "Default",
+      "effort": "Effort",
+      "thinking": "Reasoning",
+      "triagem": "Triage",
+      "imagem": "Image",
+      "relatorios_recorrentes": "Recurring reports"
+    },
+    "collaborators": "Works with",
+    "memory": "Memory",
+    "memorySub": "what it reads and what it may suggest (a suggestion only becomes a rule once confirmed)",
+    "memoryReads": "Reads",
+    "memorySuggests": "Suggests",
+    "deliveries": "Deliveries",
+    "deliveriesSub": "what this agent delivers, by catalog code",
+    "yaml": "agent.yaml",
+    "yamlSub": "squad/{agent}/agent.yaml as the runtime reads it",
+    "readOnly": "Read only"
   }
 }

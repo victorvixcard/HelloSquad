@@ -267,6 +267,11 @@
       "skill": "Skill",
       "config": "agent.yaml",
       "shared": "Reglas compartidas"
+    },
+    "autonomy": {
+      "analisar": "Analizar",
+      "preparar": "Preparar",
+      "executar": "Ejecutar"
     }
   },
   "contas": {
@@ -672,5 +677,63 @@
     "diffSide": "Versión {v} · {status}",
     "removed": "eliminado",
     "added": "añadido"
+  },
+  "skills": {
+    "none": "Este agente no tiene deliveries en el catálogo.",
+    "tabsLabel": "Deliveries de {name}",
+    "noSkillTab": "(sin skill)",
+    "missingFile": "{path} todavía no existe",
+    "emptyTitle": "Skill todavía no escrita",
+    "emptyBody": "Cada delivery del catálogo recibe una skill: procedimiento, formato de la entrega y criterios de aceptación. Hasta entonces, {name} no ejecuta esta delivery.",
+    "draftReady": "Versión {v} {unit} lista para publicar.",
+    "factSize": "Tamaño",
+    "written": "Escrita",
+    "edit": "Editar skill",
+    "fieldContent": "Archivo de la skill (markdown, con el encabezado)",
+    "fieldContentHint": "Procedimiento, formato de la entrega y criterios de aceptación están en las secciones \"##\". Guardar crea un borrador; nada cambia en el runtime hasta publicarlo.",
+    "kvVersion": "Versión",
+    "kvVersionValue": "v{v} · {status} · {date} · {author}",
+    "kvKind": "Tipo de entrega",
+    "kvEssentials": "Briefing esencial",
+    "kvSize": "Tamaño",
+    "words": "{n, plural, one {# palabra} other {# palabras}}"
+  },
+  "ferramentas": {
+    "empty": "Este agente todavía no tiene agent.yaml en la base de datos. Ejecuta el seed del squad.",
+    "pathLine": "squad/{agent}/agent.yaml · v{v} · {status} · {date}",
+    "draftReady": "Versión {v} {unit} lista para publicar.",
+    "draftCheck": "El runtime rechaza una herramienta fuera de la lista. Revisa antes de publicar.",
+    "factTools": "Herramientas",
+    "factChange": "Cambio",
+    "factChangeValue": "+{added} −{removed}",
+    "factAutonomy": "Autonomía máxima",
+    "editNote": "Cambios en el contrato del agente. Guardar crea un borrador del agent.yaml; el resto del archivo, con sus comentarios, no cambia.",
+    "tools": "Herramientas permitidas",
+    "toolsSub": "{n} de {total} del catálogo de herramientas",
+    "edit": "Editar herramientas y autonomía",
+    "asksAuth": "Pide autorización",
+    "autonomy": "Autonomía máxima",
+    "autonomySub": "un techo; cada acción externa sigue pidiendo autorización",
+    "autonomyNote": "Analizar y preparar son autónomos; ejecutar solo con permiso registrado.",
+    "model": "Modelo por etapa",
+    "modelRules": "Reglas por tarea",
+    "modelKeys": {
+      "padrao": "Predeterminado",
+      "effort": "Esfuerzo",
+      "thinking": "Razonamiento",
+      "triagem": "Triaje",
+      "imagem": "Imagen",
+      "relatorios_recorrentes": "Informes recurrentes"
+    },
+    "collaborators": "Colabora con",
+    "memory": "Memoria",
+    "memorySub": "lo que lee y lo que puede sugerir (una sugerencia solo se vuelve regla con confirmación)",
+    "memoryReads": "Lee",
+    "memorySuggests": "Sugiere",
+    "deliveries": "Deliveries",
+    "deliveriesSub": "lo que entrega este agente, por código del catálogo",
+    "yaml": "agent.yaml",
+    "yamlSub": "squad/{agent}/agent.yaml como lo lee el runtime",
+    "readOnly": "Solo lectura"
   }
 }
