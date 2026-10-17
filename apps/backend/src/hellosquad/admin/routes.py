@@ -564,45 +564,10 @@ async def get_payments(tx: AdminTx) -> PaymentsOverview:
 # -------------------------------------------------------------------------------------------------
 
 AUDIT = """
-with ev as (
-  select a.*,
-         case
-           when coalesce((a.payload ->> 'platform_admin')::boolean, false) then 'platform_admin'
-           when a.actor_type = 'user' then 'customer'
-           else 'system'
-         end as actor,
-         case
-           when a.action like 'support.%%' then 'support_access'
-           when a.action like 'approval.%%' then 'approval'
-           when a.action like 'memory%%' then 'memory'
-           when a.action like 'work_item.%%' or a.action like 'project%%' or a.action like 'run.%%'
-             then 'work'
-           when a.action like 'conversation.%%' or a.action like 'message.%%' then 'conversation'
-           when a.action like 'workspace.%%' or a.action like 'membership.%%'
-             or a.action like 'invitation.%%' then 'account'
-           when a.action like 'contacts.%%' then 'contacts'
-           when a.action like 'credit%%' then 'ledger'
-           when a.action like 'billing.%%' or a.action like 'payment.%%'
-             or a.action like 'subscription.%%' then 'billing'
-           when a.action like 'admin.%%' then 'configuration'
-           else 'other'
-         end as category
-  from public.audit_events a
-  where (%(workspace_id)s::uuid is null or a.workspace_id = %(workspace_id)s)
-    and (%(since)s::date is null or a.created_at >= %(since)s::date::timestamptz)
-    and (%(until)s::date is null or a.created_at < (%(until)s::date + 1)::timestamptz)
-    and (%(cursor_at)s::timestamptz is null
-         or (a.created_at, a.id) < (%(cursor_at)s, %(cursor_id)s))
+select * from app.admin_audit_events(
+  %(actor)s, %(workspace_id)s, %(category)s, %(since)s, %(until)s, %(cursor_at)s, %(cursor_id)s,
+  %(limit)s
 )
-select ev.id, ev.created_at, ev.actor, ev.actor_type::text as actor_type, ev.actor_id,
-       ev.workspace_id,
-       w.name as workspace_name, ev.category, ev.action, ev.entity_type, ev.entity_id, ev.payload
-from ev
-left join public.workspaces w on w.id = ev.workspace_id
-where (%(actor)s::text is null or ev.actor = %(actor)s)
-  and (%(category)s::text is null or ev.category = %(category)s)
-order by ev.created_at desc, ev.id desc
-limit %(limit)s
 """
 
 USER_LABELS = "select * from app.admin_user_labels(%s::uuid[])"

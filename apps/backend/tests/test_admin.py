@@ -232,7 +232,7 @@ async def test_admin_role_reads_nothing_without_a_platform_admin_jwt(
             await conn.execute(
                 "select (select count(*) from public.workspaces) + "
                 "(select count(*) from public.delivery_catalog) + "
-                "(select count(*) from public.audit_events) as n"
+                "(select count(*) from public.platform_admins) as n"
             )
         ).fetchone()
     assert row["n"] == 0

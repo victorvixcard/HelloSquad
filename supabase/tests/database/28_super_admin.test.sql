@@ -7,7 +7,7 @@ begin;
 set local client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
-select plan(41);
+select plan(44);
 
 create temporary table fx as
 select
@@ -239,6 +239,10 @@ select throws_ok(
 
 select pg_temp.act_as((select marina from fx));
 select ok(not app.is_platform_admin(), 'Marina (owner) não é Super Admin');
+select throws_ok(
+  $$select count(*) from app.admin_audit_events()$$, '42501', null,
+  'Marina não lê a auditoria do painel'
+);
 select throws_ok($$select count(*) from public.platform_admins$$, '42501', null, 'Marina não lê platform_admins');
 select throws_ok($$select count(*) from public.delivery_catalog$$, '42501', null, 'Marina não lê o catálogo do painel');
 select throws_ok($$select count(*) from public.v_consumo_por_cliente$$, '42501', null, 'Marina não lê o consumo por cliente');
@@ -268,8 +272,7 @@ reset role;
 select pg_temp.admin_as((select marina from fx));
 select is(
   (select count(*) from public.delivery_catalog) + (select count(*) from public.workspaces)
-  + (select count(*) from public.platform_admins) + (select count(*) from public.audit_events)
-  + (select count(*) from public.v_fila),
+  + (select count(*) from public.platform_admins) + (select count(*) from public.v_fila),
   0::bigint,
   'hellosquad_admin com o JWT da Marina não lê nada'
 );
@@ -299,6 +302,14 @@ select is(
   (select email || ':' || role from app.admin_workspace_members((select miolo from fx))),
   'marina@miolo.example:owner',
   'Vic lê os membros da Miolo (só pelo papel do painel)'
+);
+select ok(
+  (select count(*) from app.admin_audit_events(p_workspace_id => (select miolo from fx))) >= 1,
+  'Vic lê a auditoria pelo app.admin_audit_events'
+);
+select throws_ok(
+  $$select count(*) from public.audit_events$$, '42501', null,
+  'Nem o papel do painel lê audit_events direto: a tabela segue sem política (S0)'
 );
 select throws_ok(
   $$insert into public.provider_health (provider, display_name, purpose, status, sort_order)
