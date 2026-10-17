@@ -523,25 +523,28 @@ async def test_connection_gate_retries_twice_then_fails(api, access_token, admin
         "values (%s, 'connection', 'Google Perfil', 'needs_reconnect')",
         (ws,),
     )
+    retry_at = due + timedelta(hours=2)
     assert (
         await scalar(
             admin_db,
-            "select app.unblock_responsibilities_for_connection(%s, 'google_business_profile')",
+            "select app.unblock_responsibilities_for_connection(%s, 'google_business_profile', %s)",
             ws,
+            retry_at,
         )
         == 1
     )
-    due = await scalar(
-        admin_db, "select next_run_at from public.responsibilities where id = %s", resp_id
-    )
-    first = await tick(due)
+    first = await tick(retry_at)
     assert first.retried == 1
     retry = (await runs_of(admin_db, resp_id))[-1]
-    assert (retry["status"], retry["attempts"]) == ("scheduled", 1)
+    assert (retry["status"], retry["attempts"], retry["code"]) == (
+        "scheduled",
+        1,
+        f"{skipped['code']}b",
+    )
     message = (await run_by_code(api, access_token(RAFAEL), ws, retry["code"]))["message"]
-    assert message == "A tentativa das 9h falhou; nova tentativa às 9h30."
+    assert message == "A tentativa das 11h falhou; nova tentativa às 11h30."
 
-    second = await tick(due + timedelta(minutes=31))
+    second = await tick(retry_at + timedelta(minutes=30))
     assert second.failed == 1
     failed = (await runs_of(admin_db, resp_id))[-1]
     assert (failed["status"], failed["attempts"]) == ("failed", 2)
@@ -553,7 +556,7 @@ async def test_connection_gate_retries_twice_then_fails(api, access_token, admin
         "Falhou nas duas tentativas: o acesso ao Google Perfil expirou e precisa ser reconectado."
     )
     assert detail["detail_notice"] == (
-        "A consulta de hoje falhou duas vezes (9h e 9h30): o acesso ao Google Perfil expirou. "
+        "A consulta de hoje falhou duas vezes (11h e 11h30): o acesso ao Google Perfil expirou. "
         "Nada foi apresentado como concluído."
     )
     with pytest.raises(psycopg.errors.InsufficientPrivilege):
