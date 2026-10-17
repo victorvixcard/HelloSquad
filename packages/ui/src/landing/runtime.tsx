@@ -161,6 +161,34 @@ function trDeep(v: unknown, tr: Translate, depth = 0): unknown {
   return out;
 }
 
+/**
+ * en/es: traduz no lugar as strings dos objetos de roteiro da classe (Component.__data), para o motor já digitar e
+ * mostrar o texto no idioma. Só troca string que está no dicionário; ids e classes não estão. `act` fica em pt-BR porque
+ * a classe compara esse campo com o literal ('Confirmar'); ele é traduzido na hora de mostrar.
+ */
+export function translateData(data: Record<string, unknown>, tr: Translate): void {
+  const seen = new WeakSet<object>();
+  const walk = (v: unknown): void => {
+    if (v == null || typeof v !== "object" || seen.has(v as object) || isValidElement(v)) return;
+    seen.add(v as object);
+    if (Array.isArray(v)) {
+      for (let i = 0; i < v.length; i++) {
+        if (typeof v[i] === "string") v[i] = tr(v[i] as string);
+        else walk(v[i]);
+      }
+      return;
+    }
+    if (Object.getPrototypeOf(v) !== Object.prototype) return;
+    const o = v as Record<string, unknown>;
+    for (const k of Object.keys(o)) {
+      if (k === "act") continue;
+      if (typeof o[k] === "string") o[k] = tr(o[k] as string);
+      else walk(o[k]);
+    }
+  };
+  for (const v of Object.values(data)) walk(v);
+}
+
 function trText(raw: string, tr: Translate): string {
   const t = raw.trim();
   if (!t) return raw;

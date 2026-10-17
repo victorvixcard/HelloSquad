@@ -3,6 +3,7 @@
 import { act, fireEvent, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LandingR32 } from "@/components/landing/LandingR32";
+import { landingDictionary } from "@/lib/landing-i18n";
 
 const FIRST_CHIP = "Criar uma campanha para o fim de semana";
 const HERO_DEFAULT = "Quero criar uma campanha para minha marca.";
@@ -62,6 +63,15 @@ describe("motores da landing R32 (L1)", () => {
     await advance(4000);
     // Depois do envio, a sequência pedido → coordenação → especialistas toma o Hero (fases is-ph-*).
     expect(document.querySelector("#topo")!.className).toMatch(/is-ph-/);
+  });
+
+  it("en: o motor digita o pedido já traduzido (roteiros traduzidos na fonte, não letra a letra em pt-BR)", async () => {
+    stubBrowser(false);
+    render(<LandingR32 dictionary={landingDictionary("en")} />);
+    await advance(4000);
+    const typed = field().value;
+    expect(typed.length).toBeGreaterThan(0);
+    expect("Create a campaign for the weekend".startsWith(typed)).toBe(true);
   });
 
   it("para quando a pessoa escreve no campo antes do motor", async () => {

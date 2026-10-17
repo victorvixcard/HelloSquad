@@ -5,7 +5,7 @@ import { createHelloSquad as dsFactory } from "../generated/ds-bundle-runtime";
 import { createLandingComponent as logicFactory } from "../generated/landing-logic";
 import type { DCLogic, LogicClass } from "./runtime";
 
-export { DCHost, DCLogic, evaluate, identity, parseStyle, renderNodes, type DCHostProps, type LogicClass, type RenderCtx, type Translate } from "./runtime";
+export { DCHost, DCLogic, evaluate, identity, parseStyle, renderNodes, translateData, type DCHostProps, type LogicClass, type RenderCtx, type Translate } from "./runtime";
 export type { TplNode, TplProp } from "./template-types";
 export { LANDING_TEMPLATE } from "../generated/landing-template";
 

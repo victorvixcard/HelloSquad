@@ -219,6 +219,9 @@ export function buildLandingLogic(html: string): string {
   if (!script.includes("class Component extends DCLogic")) throw new Error("classe Component não encontrada");
   if (!script.includes(CANVAS_FONT)) throw new Error("fonte da medição em canvas mudou no protótipo");
   const body = neutral(script, "logic").replace(CANVAS_FONT, `" 15px " + __hsCanvasFont()`);
+  // As constantes de roteiro (antes da classe) ficam visíveis em Component.__data: en/es traduzem esses objetos na
+  // fonte (o motor digita o pedido já traduzido), sem tocar no código. Cada chamada da fábrica cria cópias novas.
+  const names = [...script.slice(0, script.indexOf("class Component")).matchAll(/^(?:const|let|var)\s+([A-Za-z_$][\w$]*)/gm)].map((m) => m[1]);
   return [
     "// @ts-nocheck",
     "/* eslint-disable */",
@@ -229,6 +232,7 @@ export function buildLandingLogic(html: string): string {
     "// e os nomes de fornecedor dos roteiros viram termos neutros (tabela NEUTRAL do script).",
     "export function createLandingComponent(DCLogic, React, window, document, __hsCanvasFont) {",
     body.trim(),
+    `  Component.__data = { ${names.join(", ")} };`,
     "  return Component;",
     "}",
     "",
