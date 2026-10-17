@@ -9,7 +9,7 @@ nada mudou sozinho: saldo da Miolo 36.00, conta ativa
 GET /admin/quality?locale=es -> 200 por tipo: 0 por versão: 0 como ler: ['Aprobada a la primera', 'Ajustes por entrega', 'No aprobada', 'Costo de IA por aprobada', 'Error del agente', 'Llamada con falla', 'Comparar períodos']
 GET /admin/quality/compare?a_since=2026-09-01&a_until=2026-09-30&b_since=2026-10-01&b_until=2026-10-16 -> 200 a: 0 b: 0 delta: {'approved_first_rate': None, 'adjustments_per_delivery': None, 'not_approved_rate': None, 'ai_cost_per_approved_usd': None, 'agent_errors_per_100': None, 'failed_calls_per_100': None}
 == Saúde das APIs e saldo informado
-GET /admin/providers -> 200 [('anthropic', 'simulated', 'missing', 1, '0.500000', None), ('image_engine', 'not_integrated', 'not_applicable', 0, '0.000000', None), ('asaas', 'account_not_created', 'missing', None, None, None), ('mercadopago', 'account_not_created', 'missing', None, None, None), ('email', 'local_only', 'not_applicable', 1139, None, None)]
+GET /admin/providers -> 200 [('anthropic', 'simulated', 'missing', 1, '0.500000', None), ('image_engine', 'not_integrated', 'not_applicable', 0, '0.000000', None), ('asaas', 'account_not_created', 'missing', None, None, None), ('mercadopago', 'account_not_created', 'missing', None, None, None), ('email', 'local_only', 'not_applicable', 1153, None, None)]
 PATCH /admin/providers/anthropic/balance -> 200 ('anthropic', '38.00', 'USD', 'limiar', '50.00', 'alerta', True, 'por', 'vic@hellosquad.example')
 GET /admin/alerts -> 200 saldos em alerta: [('anthropic', '38.00', '50.00')]
 GET /admin/audit?actor=platform_admin&category=configuration -> 200 [('admin.provider_balance_reported', 'vic@hellosquad.example', 'Saldo lido no console da Anthropic (roteiro SA4a)')]
