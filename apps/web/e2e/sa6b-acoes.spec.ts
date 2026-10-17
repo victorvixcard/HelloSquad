@@ -153,7 +153,7 @@ test("o Vic abre e encerra a sessão de suporte, ajusta crédito, suspende e rea
   await expect(page.locator(".sa-head-a").getByRole("button", { name: "Reenfileirar" })).toBeVisible();
 
   // Auditoria: as sete ações com o Vic; as que pedem motivo, com o motivo.
-  const vic = "(select id from auth.users where email = 'vic@hellosquad.example')";
+  const vic = "(select id::text from auth.users where email = 'vic@hellosquad.example')";
   const recorded = `from public.audit_events where created_at >= '${started}' and actor_id = ${vic} and action in (${ACTIONS.map((a) => `'${a}'`).join(", ")})`;
   expect(sql(`select string_agg(distinct action, ',' order by action) ${recorded}`)).toBe([...ACTIONS].sort().join(","));
   expect(sql(`select count(*) ${recorded} and action <> 'support.session_ended' and coalesce(payload ->> 'reason', '') = ''`)).toBe("0");
