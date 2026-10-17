@@ -83,8 +83,8 @@ select ok(
 select is(
   (select array_agg(kind || ':' || n order by kind) from (
      select kind, count(*) as n from public.squad_versions where status = 'active' group by kind) s),
-  array['config:7', 'shared:3', 'skill:19', 'soul:7'],
-  'Seed do squad: 7 SOUL, 7 agent.yaml, 19 skills e 3 regras compartilhadas ativas'
+  array['config:7', 'shared:3', 'skill:20', 'soul:7'],
+  'Seed do squad: 7 SOUL, 7 agent.yaml, 20 skills (07.05 da S3b) e 3 regras compartilhadas ativas'
 );
 select is(
   (select count(*) from public.agent_prompt_sections s join public.squad_versions v on v.id = s.version_id
