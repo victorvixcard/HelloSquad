@@ -132,6 +132,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
 
   return (
     <AdminPage
+      audited
       nav="catalogo"
       title={t("catalogo.title")}
       desc={t("catalogo.desc")}

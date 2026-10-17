@@ -53,6 +53,7 @@ export default async function QueuePage({ searchParams }: { searchParams: Search
 
   return (
     <AdminPage
+      audited
       nav="fila"
       title={t("fila.title")}
       desc={t("fila.desc")}

@@ -38,12 +38,12 @@ test("o Vic fictício entra no /admin e vê as sete telas com os dados do seed",
   for (const name of ["Miolo", "Trilha Urbana", "Vitta Estética"]) await expect(accounts.getByRole("link", { name: `Abrir a conta ${name}` })).toBeVisible();
   await snap(page, "sa2-contas");
 
-  // Detalhe da conta: membros, extrato, assinatura; ações da SA6 desabilitadas.
+  // Detalhe da conta: membros, extrato, assinatura; ações da SA6b habilitadas (o fluxo delas está no e2e da SA6b).
   await accounts.getByRole("link", { name: "Abrir a conta Miolo" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Miolo" })).toBeVisible();
   await expect(page.getByRole("table", { name: "Membros" })).toContainText("marina@miolo.example");
   await expect(page.getByRole("table", { name: "Extrato de créditos" })).toContainText("Créditos do ciclo");
-  await expect(page.getByRole("button", { name: "Entrar no ambiente" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Entrar no ambiente" })).toBeEnabled();
   await snap(page, "sa2-conta");
 
   // Catálogo: 46 deliveries, nada à venda, preço provisório e profundidade inferida marcados.

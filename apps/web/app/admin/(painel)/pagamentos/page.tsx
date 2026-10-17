@@ -51,6 +51,7 @@ export default async function PaymentsPage() {
 
   return (
     <AdminPage
+      audited
       nav="pagamentos"
       title={t("pagamentos.title")}
       desc={t("pagamentos.desc")}

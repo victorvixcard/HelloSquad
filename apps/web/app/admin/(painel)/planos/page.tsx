@@ -130,6 +130,7 @@ export default async function PlansPage() {
 
   return (
     <AdminPage
+      audited
       nav="planos"
       title={t("planos.title")}
       desc={t("planos.desc")}

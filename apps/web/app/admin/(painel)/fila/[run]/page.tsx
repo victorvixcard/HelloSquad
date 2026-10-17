@@ -64,6 +64,7 @@ export default async function RunPage({ params }: { params: Promise<{ run: strin
 
   return (
     <AdminPage
+      audited
       nav="fila"
       title={t("run.title", { id: short })}
       desc={run.work_title ?? undefined}

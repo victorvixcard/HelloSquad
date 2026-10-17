@@ -41,7 +41,8 @@
     "badge": {
       "consumo": "{n, plural, one {# conta em atenção} other {# contas em atenção}}",
       "saude": "{n, plural, one {# saldo abaixo do alerta} other {# saldos abaixo do alerta}}"
-    }
+    },
+    "audited": "Ações com motivo e auditoria"
   },
   "twofa": {
     "kicker": "Segurança",
@@ -74,7 +75,6 @@
     "inferred": "Inferida",
     "inferredTitle": "Profundidade inferida do catálogo; aguarda confirmação do dono",
     "readOnlyAction": "Só leitura nesta fase",
-    "comesIn": "Chega na {slice}",
     "editLater": "A edição chega depois: preço e venda esperam a decisão do dono.",
     "next": "Próxima página",
     "first": "Voltar ao início",
@@ -326,10 +326,6 @@
   "conta": {
     "crumb": "Contas",
     "since": "Conta criada em {date} · endereço /app/{slug}",
-    "actEnter": "Entrar no ambiente",
-    "actCredit": "Ajustar crédito",
-    "actSuspend": "Suspender",
-    "actionsNote": "Entrar no ambiente do cliente, ajustar crédito e suspender chegam na SA6, sempre com motivo e auditoria.",
     "audited": "Abrir esta conta ficou registrado na Auditoria como acesso do suporte.",
     "metPlan": "Plano",
     "metBalance": "Saldo de créditos",
@@ -408,7 +404,6 @@
     "locked": "Travado até o preço ser aprovado",
     "versions": "versão {n}",
     "revision": "Ajuste: {credits}",
-    "edit": "Editar preço e venda",
     "note": "Nada está à venda: a trava \"preço aprovado comercialmente\" está desmarcada em todas as deliveries, e os preços são provisórios até o dono definir.",
     "empty": "Nenhuma delivery para este agente."
   },
@@ -429,7 +424,6 @@
     "approved": "Preço aprovado comercialmente",
     "forSale": "À venda",
     "lockNote": "Trava de venda: sem o preço aprovado comercialmente, o plano não aparece para o cliente.",
-    "edit": "Editar como versão nova",
     "missingFields": "Bônus, rollover e membros por plano ainda não existem no banco; aparecem quando o dono definir os campos do plano.",
     "empty": "Nenhum plano cadastrado.",
     "topupsEmpty": "Nenhuma recarga cadastrada.",
@@ -464,9 +458,7 @@
     "colConfirmed": "Confirmado em",
     "colEvent": "Evento e id do evento",
     "colOutcome": "Resultado",
-    "colNote": "Nota",
-    "reprocess": "Reprocessar webhook",
-    "reconcile": "Marcar conciliação"
+    "colNote": "Nota"
   },
   "auditoria": {
     "title": "Auditoria",
@@ -514,8 +506,6 @@
     "colError": "Último erro",
     "openRun": "Abrir o run {id}",
     "empty": "Nenhum run com esse estado.",
-    "requeue": "Reenfileirar",
-    "cancel": "Cancelar",
     "noWork": "Sem trabalho ligado"
   },
   "run": {

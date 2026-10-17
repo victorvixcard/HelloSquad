@@ -41,7 +41,8 @@
     "badge": {
       "consumo": "{n, plural, one {# cuenta requiere atención} other {# cuentas requieren atención}}",
       "saude": "{n, plural, one {# saldo por debajo de la alerta} other {# saldos por debajo de la alerta}}"
-    }
+    },
+    "audited": "Acciones con motivo y auditoría"
   },
   "twofa": {
     "kicker": "Seguridad",
@@ -74,7 +75,6 @@
     "inferred": "Inferida",
     "inferredTitle": "Profundidad inferida del catálogo; espera la confirmación del dueño",
     "readOnlyAction": "Solo lectura en esta fase",
-    "comesIn": "Llega en la {slice}",
     "editLater": "La edición llega después: precio y venta esperan la decisión del dueño.",
     "next": "Página siguiente",
     "first": "Volver al inicio",
@@ -326,10 +326,6 @@
   "conta": {
     "crumb": "Cuentas",
     "since": "Cuenta creada el {date} · dirección /app/{slug}",
-    "actEnter": "Entrar al entorno",
-    "actCredit": "Ajustar crédito",
-    "actSuspend": "Suspender",
-    "actionsNote": "Entrar al entorno del cliente, ajustar crédito y suspender llegan en la SA6, siempre con motivo y auditoría.",
     "audited": "Abrir esta cuenta quedó registrado en la Auditoría como acceso de soporte.",
     "metPlan": "Plan",
     "metBalance": "Saldo de créditos",
@@ -408,7 +404,6 @@
     "locked": "Bloqueado hasta que el precio sea aprobado",
     "versions": "versión {n}",
     "revision": "Ajuste: {credits}",
-    "edit": "Editar precio y venta",
     "note": "Nada está a la venta: el bloqueo \"precio aprobado comercialmente\" está desmarcado en todas las entregas, y los precios son provisorios hasta que el dueño decida.",
     "empty": "Ninguna entrega para este agente."
   },
@@ -429,7 +424,6 @@
     "approved": "Precio aprobado comercialmente",
     "forSale": "A la venta",
     "lockNote": "Bloqueo de venta: sin el precio aprobado comercialmente, el plan no aparece para el cliente.",
-    "edit": "Editar como versión nueva",
     "missingFields": "Bono, rollover y miembros por plan todavía no existen en la base; aparecen cuando el dueño defina los campos del plan.",
     "empty": "Ningún plan registrado.",
     "topupsEmpty": "Ninguna recarga registrada.",
@@ -464,9 +458,7 @@
     "colConfirmed": "Confirmado el",
     "colEvent": "Evento e id del evento",
     "colOutcome": "Resultado",
-    "colNote": "Nota",
-    "reprocess": "Reprocesar webhook",
-    "reconcile": "Marcar conciliación"
+    "colNote": "Nota"
   },
   "auditoria": {
     "title": "Auditoría",
@@ -514,8 +506,6 @@
     "colError": "Último error",
     "openRun": "Abrir el run {id}",
     "empty": "Ningún run con este estado.",
-    "requeue": "Volver a la cola",
-    "cancel": "Cancelar",
     "noWork": "Sin trabajo vinculado"
   },
   "run": {

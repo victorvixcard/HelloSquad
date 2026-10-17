@@ -20,6 +20,8 @@ export async function AdminPage(props: {
   avatar?: ReactNode;
   /** Telas do Squad IA editam com versão: a etiqueta do topo diz isso no lugar de "Só leitura". */
   versioned?: boolean;
+  /** Telas com ações de escrita (SA6b): a etiqueta diz "Ações com motivo e auditoria" no lugar de "Só leitura". */
+  audited?: boolean;
   children: ReactNode;
 }) {
   const t = await getTranslations("admin.shell");
@@ -39,7 +41,7 @@ export async function AdminPage(props: {
         </nav>
         <div className="sa-crumb">
           <Status kind="draft" small>
-            {props.versioned ? t("versioned") : t("readOnly")}
+            {props.versioned ? t("versioned") : props.audited ? t("audited") : t("readOnly")}
           </Status>
         </div>
       </div>

@@ -41,7 +41,8 @@
     "badge": {
       "consumo": "{n, plural, one {# account needs attention} other {# accounts need attention}}",
       "saude": "{n, plural, one {# balance below the alert} other {# balances below the alert}}"
-    }
+    },
+    "audited": "Actions with reason and audit"
   },
   "twofa": {
     "kicker": "Security",
@@ -74,7 +75,6 @@
     "inferred": "Inferred",
     "inferredTitle": "Depth inferred from the catalog; waiting for the owner to confirm",
     "readOnlyAction": "Read only in this phase",
-    "comesIn": "Arrives in {slice}",
     "editLater": "Editing comes later: price and availability wait for the owner decision.",
     "next": "Next page",
     "first": "Back to the start",
@@ -326,10 +326,6 @@
   "conta": {
     "crumb": "Accounts",
     "since": "Account created on {date} · address /app/{slug}",
-    "actEnter": "Enter the workspace",
-    "actCredit": "Adjust credit",
-    "actSuspend": "Suspend",
-    "actionsNote": "Entering the customer workspace, adjusting credit and suspending arrive in SA6, always with a reason and an audit record.",
     "audited": "Opening this account was recorded in the Audit log as support access.",
     "metPlan": "Plan",
     "metBalance": "Credit balance",
@@ -408,7 +404,6 @@
     "locked": "Locked until the price is approved",
     "versions": "version {n}",
     "revision": "Revision: {credits}",
-    "edit": "Edit price and availability",
     "note": "Nothing is for sale: the \"price commercially approved\" lock is off for every delivery, and prices are provisional until the owner decides.",
     "empty": "No delivery for this agent."
   },
@@ -429,7 +424,6 @@
     "approved": "Price commercially approved",
     "forSale": "For sale",
     "lockNote": "Sales lock: without a commercially approved price, the plan is not shown to customers.",
-    "edit": "Edit as a new version",
     "missingFields": "Bonus, rollover and members per plan do not exist in the database yet; they show up when the owner defines the plan fields.",
     "empty": "No plan registered.",
     "topupsEmpty": "No top-up registered.",
@@ -464,9 +458,7 @@
     "colConfirmed": "Confirmed on",
     "colEvent": "Event and event id",
     "colOutcome": "Outcome",
-    "colNote": "Note",
-    "reprocess": "Reprocess webhook",
-    "reconcile": "Mark as reconciled"
+    "colNote": "Note"
   },
   "auditoria": {
     "title": "Audit log",
@@ -514,8 +506,6 @@
     "colError": "Last error",
     "openRun": "Open run {id}",
     "empty": "No run with this status.",
-    "requeue": "Requeue",
-    "cancel": "Cancel",
     "noWork": "No linked work"
   },
   "run": {

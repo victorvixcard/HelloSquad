@@ -73,6 +73,7 @@ export default async function AccountPage({ params }: { params: Params }) {
 
   return (
     <AdminPage
+      audited
       nav="contas"
       title={a.name}
       desc={t("conta.since", { date: f.date(a.created_at), slug: a.slug })}
