@@ -168,7 +168,11 @@ async def token(request: Request) -> Response:
         refresh = None
         if code.access_type == "offline" and (first_consent or "consent" in code.prompt):
             refresh = STATE.issue(
-                "google", "refresh", code.user_key, code.client_id, code.scopes,
+                "google",
+                "refresh",
+                code.user_key,
+                code.client_id,
+                code.scopes,
                 config["refresh_ttl"],
             )
             body["refresh_token"] = refresh.value
@@ -176,7 +180,12 @@ async def token(request: Request) -> Response:
                 body["refresh_token_expires_in"] = config["refresh_ttl"]
         STATE.google_granted.add(grant_key)
         access = STATE.issue(
-            "google", "access", code.user_key, code.client_id, code.scopes, config["access_ttl"],
+            "google",
+            "access",
+            code.user_key,
+            code.client_id,
+            code.scopes,
+            config["access_ttl"],
             parent=refresh.value if refresh else None,
         )
         body = {"access_token": access.value, "expires_in": config["access_ttl"], **body}
@@ -192,8 +201,13 @@ async def token(request: Request) -> Response:
         if refresh.state(STATE.now()) != "valid":
             raise errors.oauth_error("invalid_grant", "Token has been expired or revoked.")
         access = STATE.issue(
-            "google", "access", refresh.user_key, refresh.client_id, refresh.scopes,
-            config["access_ttl"], parent=refresh.value,
+            "google",
+            "access",
+            refresh.user_key,
+            refresh.client_id,
+            refresh.scopes,
+            config["access_ttl"],
+            parent=refresh.value,
         )
         return JSONResponse(
             {
@@ -278,5 +292,6 @@ def userinfo(request: Request) -> Response:
     if token is None or token.kind != "access" or token.state(STATE.now()) != "valid":
         raise errors.google_unauthenticated("openidconnect.googleapis.com", "userinfo")
     user = fixtures.USERS[token.user_key]
-    return JSONResponse({"sub": user.google_sub, "name": user.name, "email": user.email,
-                         "email_verified": True})
+    return JSONResponse(
+        {"sub": user.google_sub, "name": user.name, "email": user.email, "email_verified": True}
+    )

@@ -38,7 +38,11 @@ MAX_HISTORY_DAYS = 400
 
 def _account(property_id: str) -> fixtures.GoogleAccount | None:
     return next(
-        (g for g in fixtures.GOOGLE_ACCOUNTS.values() if g.ga_property == f"properties/{property_id}"),
+        (
+            g
+            for g in fixtures.GOOGLE_ACCOUNTS.values()
+            if g.ga_property == f"properties/{property_id}"
+        ),
         None,
     )
 
@@ -83,11 +87,15 @@ def _rows_for_day(slug: str, day: date, days_ago: int, dims: list[str]) -> list[
         return []
     groups: list[tuple[dict, float]] = [({}, 1.0)]
     if "sessionDefaultChannelGroup" in dims:
-        groups = [({**k, "sessionDefaultChannelGroup": c}, w * cw) for k, w in groups
-                  for c, cw in fixtures.GA4_CHANNELS]
+        groups = [
+            ({**k, "sessionDefaultChannelGroup": c}, w * cw)
+            for k, w in groups
+            for c, cw in fixtures.GA4_CHANNELS
+        ]
     if "pagePath" in dims:
-        groups = [({**k, "pagePath": p}, w * pw) for k, w in groups
-                  for p, pw in fixtures.GA4_PAGES[slug]]
+        groups = [
+            ({**k, "pagePath": p}, w * pw) for k, w in groups for p, pw in fixtures.GA4_PAGES[slug]
+        ]
     shares = [(str(i), w) for i, (_k, w) in enumerate(groups)]
     split = {
         metric: dict(fixtures.split(int(values[metric]), shares))
@@ -147,14 +155,16 @@ async def run_report(property_id: str, request: Request) -> JSONResponse:
     for name in dims:
         if name not in DIMENSIONS:
             raise errors.google_error(
-                400, f"Field {name} is not a valid dimension. For a list of valid dimensions and "
-                f"metrics, see {SCHEMA}"
+                400,
+                f"Field {name} is not a valid dimension. For a list of valid dimensions and "
+                f"metrics, see {SCHEMA}",
             )
     for name in metrics:
         if name not in METRICS:
             raise errors.google_error(
-                400, f"Field {name} is not a valid metric. For a list of valid dimensions and "
-                f"metrics, see {SCHEMA}"
+                400,
+                f"Field {name} is not a valid metric. For a list of valid dimensions and "
+                f"metrics, see {SCHEMA}",
             )
     if not metrics and not dims:
         raise errors.google_error(400, "Requests must have at least one dimension or metric.")
@@ -170,7 +180,9 @@ async def run_report(property_id: str, request: Request) -> JSONResponse:
         start = _parse_date(date_range.get("startDate", ""), today)
         end = _parse_date(date_range.get("endDate", ""), today)
         if start > end:
-            raise errors.google_error(400, "The start date must be before or equal to the end date.")
+            raise errors.google_error(
+                400, "The start date must be before or equal to the end date."
+            )
         name = date_range.get("name") or f"date_range_{index}"
         day = start
         while day <= end:
@@ -214,8 +226,10 @@ async def run_report(property_id: str, request: Request) -> JSONResponse:
     if "TOTAL" in aggregations and ordered:
         total = _aggregate([({}, v) for _k, v in ordered], [])[()]
         response["totals"] = [
-            {"dimensionValues": [{"value": "RESERVED_TOTAL"} for _ in out_dims],
-             "metricValues": [{"value": _format(m, total[m])} for m in metrics]}
+            {
+                "dimensionValues": [{"value": "RESERVED_TOTAL"} for _ in out_dims],
+                "metricValues": [{"value": _format(m, total[m])} for m in metrics],
+            }
         ]
     response["metadata"] = {"currencyCode": "BRL", "timeZone": "America/Sao_Paulo"}
     if body.get("returnPropertyQuota"):

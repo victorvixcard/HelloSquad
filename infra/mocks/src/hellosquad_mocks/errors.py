@@ -179,7 +179,9 @@ def google_unauthenticated(service: str, method: str, *, missing: bool = False) 
         reason=reason,
         service=service,
         method=method,
-        headers={"WWW-Authenticate": 'Bearer realm="https://accounts.google.com/", error="invalid_token"'},
+        headers={
+            "WWW-Authenticate": 'Bearer realm="https://accounts.google.com/", error="invalid_token"'
+        },
     )
 
 

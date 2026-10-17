@@ -1,4 +1,4 @@
-"""App FastAPI dos mocks: middleware de falhas/rate limit/gravação e rotas de controle `/_mock/*`."""
+"""App FastAPI dos mocks: middleware de falhas, rate limit e gravação; controle em `/_mock/*`."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import json
 import math
 import time
 from datetime import UTC, datetime
+from typing import Annotated
 from urllib.parse import parse_qsl
 
 from fastapi import Body, FastAPI, Request
@@ -95,7 +96,11 @@ def _fault_response(provider: str, service: str, mode: str, path: str) -> Respon
         return _rate_limited(provider, service, 30)
     if mode in ("500", "503"):
         status = int(mode)
-        err = errors.meta_server_error(status) if provider == "meta" else errors.google_server_error(status)
+        err = (
+            errors.meta_server_error(status)
+            if provider == "meta"
+            else errors.google_server_error(status)
+        )
         return err.response
     if mode == "timeout":
         err = errors.meta_timeout() if provider == "meta" else errors.google_timeout()
@@ -113,7 +118,9 @@ def _rate_limited(provider: str, service: str, retry_after: int) -> Response:
     if provider == "meta":
         status = int(STATE.config["meta"].get("rate_limit_status") or 429)
         return errors.meta_rate_limited(retry_after, status).response
-    return errors.google_rate_limited(GOOGLE_HOSTS.get(service, "googleapis.com"), retry_after).response
+    return errors.google_rate_limited(
+        GOOGLE_HOSTS.get(service, "googleapis.com"), retry_after
+    ).response
 
 
 def _take_fail_rule(provider: str, method: str, path: str) -> str | None:
@@ -227,7 +234,9 @@ def create_app() -> FastAPI:
     def health() -> dict:
         return {
             "status": "ok",
-            "providers": {name: {"status": "ok", "base_path": base} for name, base in HEALTH.items()},
+            "providers": {
+                name: {"status": "ok", "base_path": base} for name, base in HEALTH.items()
+            },
             "network_guard": netguard.installed(),
             "calls": len(STATE.calls),
             "tokens": len(STATE.tokens),
@@ -272,7 +281,8 @@ def create_app() -> FastAPI:
         return {"cleared": True}
 
     @app.post("/_mock/expire", tags=["controle"])
-    def expire(payload: dict = Body(default_factory=dict)) -> Response:
+    def expire(payload: Annotated[dict | None, Body()] = None) -> Response:
+        payload = payload or {}
         provider = payload.get("provider")
         kind = payload.get("kind", "access")
         if kind not in ("access", "grant"):
@@ -291,7 +301,7 @@ def create_app() -> FastAPI:
         return JSONResponse({"expired": count, "kind": kind})
 
     @app.post("/_mock/fail", tags=["controle"])
-    def fail(payload: dict = Body(...)) -> Response:
+    def fail(payload: Annotated[dict, Body()]) -> Response:
         mode = str(payload.get("mode", "")).lower()
         if mode not in FAIL_MODES:
             return JSONResponse({"error": f"mode deve ser um de {sorted(FAIL_MODES)}"}, 400)
@@ -314,7 +324,7 @@ def create_app() -> FastAPI:
         return STATE.config
 
     @app.post("/_mock/config", tags=["controle"])
-    def set_config(payload: dict = Body(...)) -> dict:
+    def set_config(payload: Annotated[dict, Body()]) -> dict:
         def merge(target: dict, patch: dict) -> None:
             for key, value in patch.items():
                 if isinstance(value, dict) and isinstance(target.get(key), dict):
@@ -326,7 +336,8 @@ def create_app() -> FastAPI:
         return STATE.config
 
     @app.post("/_mock/clock", tags=["controle"])
-    def clock(payload: dict = Body(default_factory=dict)) -> dict:
+    def clock(payload: Annotated[dict | None, Body()] = None) -> dict:
+        payload = payload or {}
         if payload.get("reset"):
             STATE.clock_offset = 0.0
         STATE.clock_offset += float(payload.get("advance_seconds", 0))
@@ -352,11 +363,19 @@ def create_app() -> FastAPI:
             result[user.workspace] = {
                 "user": user.key,
                 "email": user.email,
-                "meta": {"user_id": user.meta_user_id, "page_id": m.page_id,
-                         "ig_user_id": m.ig_user_id, "ig_username": m.ig_username},
-                "google": {"sub": user.google_sub, "ga4_property": g.ga_property,
-                           "search_console_site": g.site_url, "gbp_account": g.gbp_account,
-                           "gbp_location": g.gbp_location},
+                "meta": {
+                    "user_id": user.meta_user_id,
+                    "page_id": m.page_id,
+                    "ig_user_id": m.ig_user_id,
+                    "ig_username": m.ig_username,
+                },
+                "google": {
+                    "sub": user.google_sub,
+                    "ga4_property": g.ga_property,
+                    "search_console_site": g.site_url,
+                    "gbp_account": g.gbp_account,
+                    "gbp_location": g.gbp_location,
+                },
             }
         return result
 

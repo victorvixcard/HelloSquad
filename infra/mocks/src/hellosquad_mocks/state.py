@@ -26,7 +26,7 @@ def default_config() -> dict:
     return {
         "meta": {
             "app_id": os.environ.get("MOCK_META_APP_ID", "999000000000001"),
-            # Segredo exigido só no modo estrito (vazio = aceita qualquer valor, como o .env.example).
+            # Segredo só no modo estrito (vazio: aceita qualquer valor, como o .env.example).
             "app_secret": os.environ.get("MOCK_META_APP_SECRET", ""),
             "short_ttl": _env_int("MOCK_META_SHORT_TTL", 3600),
             "long_ttl": _env_int("MOCK_META_LONG_TTL", 5184000),
@@ -181,7 +181,7 @@ class State:
         return token
 
     def family(self, token: Token) -> list[Token]:
-        """O token, os filhos (páginas, accesses de um refresh) e, para access do Google, o refresh."""
+        """O token raiz (refresh do Google ou usuário da Meta) e todos os derivados dele."""
         root = token
         if token.parent and token.parent in self.tokens:
             root = self.tokens[token.parent]

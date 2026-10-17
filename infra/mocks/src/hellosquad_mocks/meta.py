@@ -63,7 +63,9 @@ async def _params(request: Request) -> dict:
             except ValueError:
                 body = {}
             if isinstance(body, dict):
-                params.update({k: v if isinstance(v, str) else json.dumps(v) for k, v in body.items()})
+                params.update(
+                    {k: v if isinstance(v, str) else json.dumps(v) for k, v in body.items()}
+                )
         elif raw:
             form = await request.form()
             params.update({k: str(v) for k, v in form.items()})
@@ -241,7 +243,9 @@ async def oauth_access_token(version: str, request: Request) -> Response:
             subcode=36008,
         )
     code.used = True
-    token = STATE.issue("meta", "user", code.user_key, code.client_id, code.scopes, config["short_ttl"])
+    token = STATE.issue(
+        "meta", "user", code.user_key, code.client_id, code.scopes, config["short_ttl"]
+    )
     return JSONResponse(
         {"access_token": token.value, "token_type": "bearer", "expires_in": config["short_ttl"]}
     )
@@ -291,7 +295,8 @@ def debug_token(version: str, request: Request) -> Response:
     elif state == "revoked":
         data["error"] = {
             "code": 190,
-            "message": f"Error validating access token: The user has not authorized application {app_id}.",
+            "message": "Error validating access token: The user has not authorized "
+            f"application {app_id}.",
             "subcode": 458,
         }
     return JSONResponse({"data": data})
@@ -325,7 +330,11 @@ async def me_accounts(version: str, request: Request) -> Response:
     user = fixtures.USERS[token.user_key]
     account = fixtures.META_ACCOUNTS[user.workspace]
     page_token = next(
-        (t for t in STATE.tokens.values() if t.parent == token.value and t.page_id == account.page_id),
+        (
+            t
+            for t in STATE.tokens.values()
+            if t.parent == token.value and t.page_id == account.page_id
+        ),
         None,
     )
     if page_token is None:
@@ -358,7 +367,9 @@ async def me_accounts(version: str, request: Request) -> Response:
 def _permissions_data(token: Token) -> list[dict]:
     declined = STATE.meta_declined.get(token.user_key, set())
     data = [{"permission": s, "status": "granted"} for s in token.scopes]
-    data += [{"permission": s, "status": "declined"} for s in sorted(declined) if s not in token.scopes]
+    data += [
+        {"permission": s, "status": "declined"} for s in sorted(declined) if s not in token.scopes
+    ]
     return data
 
 
@@ -457,7 +468,9 @@ def _comment_node(comment: dict) -> dict:
         "timestamp": _iso(comment["timestamp"]),
         "username": comment["username"],
         "like_count": comment["like_count"],
-        "replies": {"data": [{"id": r["id"], "text": r["text"]} for r in comment.get("replies", [])]},
+        "replies": {
+            "data": [{"id": r["id"], "text": r["text"]} for r in comment.get("replies", [])]
+        },
     }
 
 
@@ -482,7 +495,9 @@ def _page_posts(account: fixtures.MetaAccount, *, scheduled: bool) -> list[dict]
             continue
         if is_scheduled == scheduled:
             posts.append(post)
-    return sorted(posts, key=lambda p: p.get("scheduled_publish_time") or p["created_time"], reverse=True)
+    return sorted(
+        posts, key=lambda p: p.get("scheduled_publish_time") or p["created_time"], reverse=True
+    )
 
 
 def _post_node(post: dict, request: Request) -> dict:
@@ -528,7 +543,9 @@ async def node(version: str, node_id: str, request: Request) -> Response:
     found = _find_media(node_id)
     if found and _owns(token, found[0]):
         auth.meta_require(token, "instagram_basic")
-        return JSONResponse(_select(_media_node(found[0], found[1], request), _fields(params, ["id"])))
+        return JSONResponse(
+            _select(_media_node(found[0], found[1], request), _fields(params, ["id"]))
+        )
     container = STATE.ig_containers.get(node_id)
     if container:
         account = _account_by_ig(container["ig_user_id"])
@@ -610,11 +627,15 @@ def _page_edge(
                     "(#100) You cannot specify a scheduled publish time on a published post"
                 )
             try:
-                when = float(scheduled) if str(scheduled).isdigit() else datetime.fromisoformat(
-                    str(scheduled)
-                ).timestamp()
+                when = (
+                    float(scheduled)
+                    if str(scheduled).isdigit()
+                    else datetime.fromisoformat(str(scheduled)).timestamp()
+                )
             except ValueError as exc:
-                raise errors.meta_param("(#100) The specified scheduled publish time is invalid.") from exc
+                raise errors.meta_param(
+                    "(#100) The specified scheduled publish time is invalid."
+                ) from exc
             delta = when - STATE.now()
             if delta < 600 or delta > 30 * 86400:
                 raise errors.meta_param("(#100) The specified scheduled publish time is invalid.")
@@ -794,6 +815,7 @@ def _publish(account: fixtures.MetaAccount, params: dict) -> Response:
 def _day_range(params: dict, *, max_days: int = 30) -> list[int]:
     """Dias atrás cobertos por since/until (timestamps Unix); padrão: os dois últimos dias."""
     today = fixtures.today()
+
     def to_days(raw: str | None, default: int) -> int:
         if not raw:
             return default
@@ -816,7 +838,9 @@ def _user_insights(account: fixtures.MetaAccount, params: dict) -> Response:
     for index, metric in enumerate(metrics):
         if metric not in IG_USER_INSIGHTS:
             allowed = ", ".join(sorted(IG_USER_INSIGHTS))
-            raise errors.meta_param(f"(#100) metric[{index}] must be one of the following values: {allowed}")
+            raise errors.meta_param(
+                f"(#100) metric[{index}] must be one of the following values: {allowed}"
+            )
     if params.get("period", "day") != "day":
         raise errors.meta_param("(#100) Incompatible period for the requested metrics: use day")
     days = _day_range(params)
@@ -826,13 +850,18 @@ def _user_insights(account: fixtures.MetaAccount, params: dict) -> Response:
         values = []
         for days_ago in days:
             value = _user_metric(account.workspace, metric, days_ago)
-            end = datetime.combine(fixtures.today() - timedelta(days=days_ago - 1), datetime.min.time())
+            end = datetime.combine(
+                fixtures.today() - timedelta(days=days_ago - 1), datetime.min.time()
+            )
             values.append({"value": value, "end_time": end.strftime("%Y-%m-%dT07:00:00+0000")})
         entry: dict = {
             "name": metric,
             "period": "day",
-            "title": {"reach": "Reach", "follower_count": "Follower Count",
-                      "profile_views": "Profile Views"}[metric],
+            "title": {
+                "reach": "Reach",
+                "follower_count": "Follower Count",
+                "profile_views": "Profile Views",
+            }[metric],
             "description": "Dado fictício do mock local (fonte_de_teste).",
             "id": f"{account.ig_user_id}/insights/{metric}/day",
         }
@@ -876,7 +905,9 @@ def _media_edge(
         for index, metric in enumerate(metrics):
             if metric not in IG_MEDIA_INSIGHTS:
                 allowed = ", ".join(IG_MEDIA_INSIGHTS)
-                raise errors.meta_param(f"(#100) metric[{index}] must be one of the following values: {allowed}")
+                raise errors.meta_param(
+                    f"(#100) metric[{index}] must be one of the following values: {allowed}"
+                )
         comments = len(STATE.ig_comments.get(item["id"], []))
         values = {
             "reach": item["reach"],
@@ -902,7 +933,9 @@ def _media_edge(
         return JSONResponse({"data": data})
     if edge == "comments" and request.method == "GET":
         auth.meta_require(token, "instagram_basic")
-        comments = sorted(STATE.ig_comments.get(item["id"], []), key=lambda c: c["timestamp"], reverse=True)
+        comments = sorted(
+            STATE.ig_comments.get(item["id"], []), key=lambda c: c["timestamp"], reverse=True
+        )
         default = ["id", "text", "timestamp"]
         items = [_select(_comment_node(c), _fields(params, default)) for c in comments]
         return JSONResponse(_page(items, params, request))
@@ -929,8 +962,10 @@ def _media_edge(
 def _replies(comment: dict, token: Token, params: dict, request: Request) -> Response:
     if request.method == "GET":
         auth.meta_require(token, "instagram_basic")
-        items = [_select(_comment_node(r), _fields(params, ["id", "text", "timestamp"]))
-                 for r in comment.get("replies", [])]
+        items = [
+            _select(_comment_node(r), _fields(params, ["id", "text", "timestamp"]))
+            for r in comment.get("replies", [])
+        ]
         return JSONResponse(_page(items, params, request))
     if request.method != "POST":
         raise errors.meta_object_not_found(comment["id"], "replies")
