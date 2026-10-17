@@ -52,11 +52,12 @@ async function enter(page: Page, path: string, email: string) {
 }
 
 /** Abre o diálogo pelo botão, escreve o motivo e confirma; espera o diálogo fechar e devolve o aviso do resultado. */
-async function act(page: Page, opener: ReturnType<Page["getByRole"]>, dialogName: string | RegExp, confirm: string, reason: string | null = REASON) {
+async function act(page: Page, opener: ReturnType<Page["getByRole"]>, dialogName: string | RegExp, confirm: string, reason: string | null = REASON, shot?: string) {
   await opener.click();
   const dialog = page.getByRole("dialog", { name: dialogName });
   await expect(dialog).toBeVisible();
   if (reason) await dialog.getByLabel(/^Motivo/).fill(reason);
+  if (shot) await snap(page, shot);
   await dialog.getByRole("button", { name: confirm, exact: true }).click();
   await expect(dialog).toHaveCount(0);
   return page.locator(".sa-toast");
@@ -147,10 +148,23 @@ test("o Vic abre e encerra a sessão de suporte, ajusta crédito, suspende e rea
   await snap(page, "sa6b-fila");
   await page.goto(`/admin/fila/${run}`);
   await expect(
-    await act(page, page.locator(".sa-head-a").getByRole("button", { name: "Cancelar" }), `Cancelar o run ${short}?`, "Cancelar o run", "Pedido em duplicidade (e2e SA6b)"),
+    await act(page, page.locator(".sa-head-a").getByRole("button", { name: "Cancelar" }), `Cancelar o run ${short}?`, "Cancelar o run", "Pedido em duplicidade (e2e SA6b)", "sa6b-dialogo-cancelar"),
   ).toContainText(`Run ${short} cancelado.`);
   expect(sql(`select status from public.runs where id = '${run}'`)).toBe("cancelled");
   await expect(page.locator(".sa-head-a").getByRole("button", { name: "Reenfileirar" })).toBeVisible();
+
+  // Catálogo e planos: os diálogos de edição abrem com o valor vigente (só a captura; nada é gravado aqui).
+  await page.goto("/admin/catalogo?agente=otto");
+  await page.getByRole("row").filter({ hasText: "04.01" }).getByRole("button", { name: "Editar" }).click();
+  await expect(page.getByRole("dialog", { name: /^04\.01 · / })).toBeVisible();
+  await snap(page, "sa6b-dialogo-catalogo");
+  await page.keyboard.press("Escape");
+  await page.goto("/admin/planos");
+  await page.getByRole("button", { name: "Editar como versão nova" }).first().click();
+  await expect(page.getByRole("dialog")).toContainText("À venda fica travado");
+  await snap(page, "sa6b-dialogo-plano");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("region", { name: "Versões gravadas pelo painel" }).or(page.getByRole("table", { name: "Versões gravadas pelo painel" }))).toBeVisible();
 
   // Auditoria: as sete ações com o Vic; as que pedem motivo, com o motivo.
   const vic = "(select id::text from auth.users where email = 'vic@hellosquad.example')";
