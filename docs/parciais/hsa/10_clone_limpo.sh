@@ -2,7 +2,7 @@
 # H-SA alvo 10 — clone limpo em /tmp seguindo só o docs/SETUP_LOCAL.md ("Subir do zero" e "Segundo checkout").
 # Mesmo Supabase (projeto hellosquad); portas do clone 8199/3199; API (8100) e web (3100) do dono intocadas.
 # Nenhuma chave é impressa: o .env do clone recebe o API_DATABASE_URL do dono e as chaves do `supabase status`.
-# Uso: bash docs/parciais/hsa/10_clone_limpo.sh > /tmp/hsa_clone.log 2>&1
+# Uso: PHASE=1 bash docs/parciais/hsa/10_clone_limpo.sh (clone, .env, up, migrate, seed) e PHASE=2 (make test e squad-export)
 set -u
 DONO=/home/vitao/projetos/hellosquad
 C=/tmp/hsa_clone
@@ -10,6 +10,7 @@ step() { echo; echo "== $(date +%H:%M:%S) $*"; }
 run() { local t0=$(date +%s); "$@"; local rc=$?; echo "-- exit=$rc duração=$(( $(date +%s) - t0 ))s"; return $rc; }
 owner_ok() { echo "[dono] health=$(curl -s -m 5 http://127.0.0.1:8100/health | head -c 60) web=$(curl -s -m 10 -o /dev/null -w '%{http_code}' http://127.0.0.1:3100/)"; }
 
+if [ "${PHASE:-1}" = 1 ]; then
 step "git clone (remoto público, como o SETUP_LOCAL)"
 rm -rf "$C"
 run git clone -q https://github.com/victorvixcard/HelloSquad.git "$C" && git -C "$C" log --oneline -1
@@ -58,6 +59,9 @@ run make migrate 2>&1 | tail -6
 step "make seed"
 run make seed 2>&1 | tail -8
 owner_ok
+fi
+cd "$C" || exit 1
+if [ "${PHASE:-1}" = 2 ]; then
 step "make test (saída inteira em /tmp/hsa_clone_test.log)"
 run make test > /tmp/hsa_clone_test.log 2>&1
 grep -E "passed|failed|Result:|Tests +[0-9]+|Test Files|error|Error" /tmp/hsa_clone_test.log | grep -v "^ *✓" | tail -25
@@ -65,4 +69,5 @@ owner_ok
 step "make squad-export no clone e git status de squad/ (alvo 4: vazio quando nada mudou)"
 run make squad-export 2>&1 | tail -5
 echo "git status --porcelain squad/: [$(git status --porcelain squad/ | head -20)]"
+fi
 step "fim"
