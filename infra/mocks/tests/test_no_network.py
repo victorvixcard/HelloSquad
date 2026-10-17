@@ -144,3 +144,38 @@ def test_processo_real_roda_roteiro_sem_nenhuma_tentativa_externa(live_server):
         assert report.status_code == 200
         assert http.get("/_mock/network").json() == {"guard": True, "blocked": []}
         assert http.post("/_mock/network/selftest").json()["blocked"] is True
+
+
+def test_publicacoes_concorrentes_do_mesmo_conteiner_dao_um_post_so(live_server):
+    from concurrent.futures import ThreadPoolExecutor
+
+    with httpx.Client(base_url=live_server, timeout=5) as http:
+        dialog = http.get(
+            "/meta/www/v26.0/dialog/oauth",
+            params={"client_id": META_APP, "redirect_uri": REDIRECT, "scope": META_ALL},
+        )
+        token = http.get(
+            f"{GRAPH}/oauth/access_token",
+            params={
+                "client_id": META_APP,
+                "client_secret": "x",
+                "redirect_uri": REDIRECT,
+                "code": query_of(dialog.headers["location"])["code"],
+            },
+        ).json()["access_token"]
+        container = http.post(
+            f"{GRAPH}/17841400000000101/media",
+            data={"image_url": "https://cdn.example/p.jpg", "access_token": token},
+        ).json()["id"]
+
+        def publish(_n: int) -> int:
+            return http.post(
+                f"{GRAPH}/17841400000000101/media_publish",
+                data={"creation_id": container, "access_token": token},
+            ).status_code
+
+        with ThreadPoolExecutor(max_workers=10) as pool:
+            statuses = sorted(pool.map(publish, range(20)))
+        assert statuses == [200] + [400] * 19
+        media = http.get(f"{GRAPH}/17841400000000101/media", params={"access_token": token})
+        assert len(media.json()["data"]) == 7  # 6 do seed + 1 publicado, nunca 2

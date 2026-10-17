@@ -57,7 +57,7 @@ def _location(token, account_id: str, location_id: str) -> tuple[fixtures.Google
 
 
 @router.get("/google/mybusinessaccountmanagement/v1/accounts")
-def accounts(request: Request) -> JSONResponse:
+async def accounts(request: Request) -> JSONResponse:
     token = _token(request, "google.mybusiness.accountmanagement.v1.AccessControl.ListAccounts")
     account = fixtures.GOOGLE_ACCOUNTS[auth.user_of(token).workspace]
     return JSONResponse(
@@ -78,7 +78,7 @@ def accounts(request: Request) -> JSONResponse:
 
 
 @router.get("/google/mybusinessbusinessinformation/v1/accounts/{account_id}/locations")
-def locations(account_id: str, request: Request) -> JSONResponse:
+async def locations(account_id: str, request: Request) -> JSONResponse:
     token = _token(request, "google.mybusiness.businessinformation.v1.Locations.ListLocations")
     account = fixtures.GOOGLE_ACCOUNTS[auth.user_of(token).workspace]
     if account.gbp_account != f"accounts/{account_id}":
@@ -134,7 +134,7 @@ def _post_body(post: dict, location: str, request: Request) -> dict:
 
 
 @router.get(V4 + "/localPosts")
-def list_posts(account_id: str, location_id: str, request: Request) -> JSONResponse:
+async def list_posts(account_id: str, location_id: str, request: Request) -> JSONResponse:
     token = _token(request, "google.mybusiness.v4.LocalPosts.ListLocalPosts")
     _account, location = _location(token, account_id, location_id)
     posts = sorted(STATE.gbp_posts.get(location, []), key=lambda p: p["createTime"], reverse=True)
@@ -214,7 +214,9 @@ async def create_post(account_id: str, location_id: str, request: Request) -> JS
 
 
 @router.delete(V4 + "/localPosts/{post_id}")
-def delete_post(account_id: str, location_id: str, post_id: str, request: Request) -> JSONResponse:
+async def delete_post(
+    account_id: str, location_id: str, post_id: str, request: Request
+) -> JSONResponse:
     token = _token(request, "google.mybusiness.v4.LocalPosts.DeleteLocalPost")
     _account, location = _location(token, account_id, location_id)
     posts = STATE.gbp_posts.get(location, [])
@@ -244,7 +246,7 @@ def _review_body(review: dict, location: str) -> dict:
 
 
 @router.get(V4 + "/reviews")
-def list_reviews(account_id: str, location_id: str, request: Request) -> JSONResponse:
+async def list_reviews(account_id: str, location_id: str, request: Request) -> JSONResponse:
     token = _token(request, "google.mybusiness.v4.Reviews.ListReviews")
     _account, location = _location(token, account_id, location_id)
     reviews = list(STATE.gbp_reviews.get(location, []))
@@ -275,7 +277,9 @@ def _find_review(location: str, review_id: str) -> dict:
 
 
 @router.get(V4 + "/reviews/{review_id}")
-def get_review(account_id: str, location_id: str, review_id: str, request: Request) -> JSONResponse:
+async def get_review(
+    account_id: str, location_id: str, review_id: str, request: Request
+) -> JSONResponse:
     token = _token(request, "google.mybusiness.v4.Reviews.GetReview")
     _account, location = _location(token, account_id, location_id)
     return JSONResponse(_review_body(_find_review(location, review_id), location))
@@ -306,7 +310,7 @@ async def reply_review(
 
 
 @router.delete(V4 + "/reviews/{review_id}/reply")
-def delete_reply(
+async def delete_reply(
     account_id: str, location_id: str, review_id: str, request: Request
 ) -> JSONResponse:
     token = _token(request, "google.mybusiness.v4.Reviews.DeleteReply")

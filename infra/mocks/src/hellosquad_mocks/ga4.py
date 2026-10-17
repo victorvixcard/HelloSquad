@@ -246,7 +246,7 @@ async def run_report(property_id: str, request: Request) -> JSONResponse:
 
 
 @router.get("/google/analyticsadmin/v1beta/accountSummaries")
-def account_summaries(request: Request) -> JSONResponse:
+async def account_summaries(request: Request) -> JSONResponse:
     method = "google.analytics.admin.v1beta.AnalyticsAdminService.ListAccountSummaries"
     token = auth.google_token(request, ADMIN_HOST, method, READ_SCOPES)
     user = auth.user_of(token)

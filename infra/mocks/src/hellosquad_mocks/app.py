@@ -232,7 +232,7 @@ def create_app() -> FastAPI:
     # --- controle -----------------------------------------------------------------------
 
     @app.get("/_mock/health", tags=["controle"])
-    def health() -> dict:
+    async def health() -> dict:
         return {
             "status": "ok",
             "providers": {
@@ -245,18 +245,18 @@ def create_app() -> FastAPI:
         }
 
     @app.get("/_mock/health/{provider}", tags=["controle"])
-    def health_provider(provider: str) -> Response:
+    async def health_provider(provider: str) -> Response:
         if provider not in HEALTH:
             return JSONResponse({"status": "unknown", "providers": sorted(HEALTH)}, 404)
         return JSONResponse({"provider": provider, "status": "ok", "base_path": HEALTH[provider]})
 
     @app.post("/_mock/reset", tags=["controle"])
-    def reset() -> dict:
+    async def reset() -> dict:
         STATE.reset()
         return {"reset": True}
 
     @app.get("/_mock/calls", tags=["controle"])
-    def calls(
+    async def calls(
         provider: str | None = None,
         service: str | None = None,
         method: str | None = None,
@@ -277,12 +277,12 @@ def create_app() -> FastAPI:
         return {"count": len(selected), "calls": selected}
 
     @app.delete("/_mock/calls", tags=["controle"])
-    def clear_calls() -> dict:
+    async def clear_calls() -> dict:
         STATE.calls.clear()
         return {"cleared": True}
 
     @app.post("/_mock/expire", tags=["controle"])
-    def expire(payload: Annotated[dict | None, Body()] = None) -> Response:
+    async def expire(payload: Annotated[dict | None, Body()] = None) -> Response:
         payload = payload or {}
         provider = payload.get("provider")
         kind = payload.get("kind", "access")
@@ -302,7 +302,7 @@ def create_app() -> FastAPI:
         return JSONResponse({"expired": count, "kind": kind})
 
     @app.post("/_mock/fail", tags=["controle"])
-    def fail(payload: Annotated[dict, Body()]) -> Response:
+    async def fail(payload: Annotated[dict, Body()]) -> Response:
         mode = str(payload.get("mode", "")).lower()
         if mode not in FAIL_MODES:
             return JSONResponse({"error": f"mode deve ser um de {sorted(FAIL_MODES)}"}, 400)
@@ -317,15 +317,15 @@ def create_app() -> FastAPI:
         return JSONResponse({"queued": rule.__dict__, "pending": len(STATE.fail_rules)})
 
     @app.get("/_mock/fail", tags=["controle"])
-    def pending_failures() -> dict:
+    async def pending_failures() -> dict:
         return {"pending": [r.__dict__ for r in STATE.fail_rules]}
 
     @app.get("/_mock/config", tags=["controle"])
-    def get_config() -> dict:
+    async def get_config() -> dict:
         return STATE.config
 
     @app.post("/_mock/config", tags=["controle"])
-    def set_config(payload: Annotated[dict, Body()]) -> dict:
+    async def set_config(payload: Annotated[dict, Body()]) -> dict:
         def merge(target: dict, patch: dict) -> None:
             for key, value in patch.items():
                 if isinstance(value, dict) and isinstance(target.get(key), dict):
@@ -337,7 +337,7 @@ def create_app() -> FastAPI:
         return STATE.config
 
     @app.post("/_mock/clock", tags=["controle"])
-    def clock(payload: Annotated[dict | None, Body()] = None) -> dict:
+    async def clock(payload: Annotated[dict | None, Body()] = None) -> dict:
         payload = payload or {}
         if payload.get("reset"):
             STATE.clock_offset = 0.0
@@ -348,15 +348,15 @@ def create_app() -> FastAPI:
         }
 
     @app.get("/_mock/network", tags=["controle"])
-    def network() -> dict:
+    async def network() -> dict:
         return {"guard": netguard.installed(), "blocked": netguard.blocked}
 
     @app.post("/_mock/network/selftest", tags=["controle"])
-    def network_selftest() -> dict:
+    async def network_selftest() -> dict:
         return netguard.selftest()
 
     @app.get("/_mock/fixtures", tags=["controle"])
-    def fixture_summary() -> dict:
+    async def fixture_summary() -> dict:
         result = {}
         for user in fixtures.USERS.values():
             m = fixtures.META_ACCOUNTS[user.workspace]
@@ -381,7 +381,7 @@ def create_app() -> FastAPI:
         return result
 
     @app.get("/_mock/media/{name}", tags=["controle"])
-    def media_placeholder(name: str) -> Response:
+    async def media_placeholder(name: str) -> Response:
         label = name.rsplit(".", 1)[0][:24]
         svg = (
             '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080">'

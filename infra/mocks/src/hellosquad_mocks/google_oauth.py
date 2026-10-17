@@ -46,7 +46,7 @@ def _redirect_error(redirect_uri: str, error: str, state: str | None) -> Redirec
 
 
 @router.get("/google/accounts/o/oauth2/v2/auth")
-def authorize(request: Request) -> Response:
+async def authorize(request: Request) -> Response:
     q = request.query_params
     config = STATE.config["google"]
     consent = STATE.config["consent"]["google"]
@@ -262,7 +262,7 @@ async def revoke(request: Request) -> Response:
 
 @router.get("/google/oauth2/tokeninfo")
 @router.get("/google/oauth2/v3/tokeninfo")
-def tokeninfo(request: Request) -> Response:
+async def tokeninfo(request: Request) -> Response:
     value = request.query_params.get("access_token", "")
     token = STATE.tokens.get(value)
     if token is None or token.provider != "google" or token.state(STATE.now()) != "valid":
@@ -285,7 +285,7 @@ def tokeninfo(request: Request) -> Response:
 
 
 @router.get("/google/openidconnect/v1/userinfo")
-def userinfo(request: Request) -> Response:
+async def userinfo(request: Request) -> Response:
     header = request.headers.get("authorization", "")
     value = header[7:] if header.lower().startswith("bearer ") else ""
     token = STATE.tokens.get(value)

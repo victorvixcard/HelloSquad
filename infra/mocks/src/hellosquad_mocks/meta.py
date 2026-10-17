@@ -124,7 +124,7 @@ def _select(node: dict, fields: list[str]) -> dict:
 
 
 @router.get("/meta/www/{version}/dialog/oauth")
-def oauth_dialog(version: str, request: Request) -> Response:
+async def oauth_dialog(version: str, request: Request) -> Response:
     _check_version(version)
     q = request.query_params
     config = STATE.config["meta"]
@@ -251,7 +251,7 @@ async def oauth_access_token(version: str, request: Request) -> Response:
 
 
 @router.get(GRAPH + "/debug_token")
-def debug_token(version: str, request: Request) -> Response:
+async def debug_token(version: str, request: Request) -> Response:
     _check_version(version)
     if not request.query_params.get("access_token"):
         raise errors.meta_token_missing()
@@ -373,7 +373,7 @@ def _permissions_data(token: Token) -> list[dict]:
 
 
 @router.get(GRAPH + "/me/permissions")
-def me_permissions(version: str, request: Request) -> Response:
+async def me_permissions(version: str, request: Request) -> Response:
     _check_version(version)
     token = auth.meta_token(request)
     return JSONResponse({"data": _permissions_data(token)})
@@ -381,7 +381,9 @@ def me_permissions(version: str, request: Request) -> Response:
 
 @router.delete(GRAPH + "/me/permissions")
 @router.delete(GRAPH + "/me/permissions/{permission}")
-def revoke_permissions(version: str, request: Request, permission: str | None = None) -> Response:
+async def revoke_permissions(
+    version: str, request: Request, permission: str | None = None
+) -> Response:
     _check_version(version)
     token = auth.meta_token(request)
     for other in STATE.tokens.values():
@@ -572,7 +574,7 @@ async def node_edge(version: str, node_id: str, edge: str, request: Request) -> 
         if node_id != user.meta_user_id:
             raise errors.meta_object_not_found(node_id, edge)
         if request.method == "DELETE":
-            return revoke_permissions(version, request)
+            return await revoke_permissions(version, request)
         return JSONResponse({"data": _permissions_data(token)})
     page_account = _account_by_page(node_id)
     if page_account and _owns(token, page_account):

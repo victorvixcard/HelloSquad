@@ -37,7 +37,7 @@ def _site_for(token, site_url: str) -> fixtures.GoogleAccount:
 
 
 @router.get(BASE + "/sites")
-def list_sites(request: Request) -> JSONResponse:
+async def list_sites(request: Request) -> JSONResponse:
     token = auth.google_token(request, HOST, "webmasters.sites.list", READ_SCOPES)
     account = fixtures.GOOGLE_ACCOUNTS[auth.user_of(token).workspace]
     return JSONResponse(
@@ -46,7 +46,7 @@ def list_sites(request: Request) -> JSONResponse:
 
 
 @router.get(BASE + "/sites/{site_url:path}")
-def get_site(site_url: str, request: Request) -> JSONResponse:
+async def get_site(site_url: str, request: Request) -> JSONResponse:
     if site_url.endswith("/searchAnalytics/query"):
         raise errors.google_error(404, "Method not found.")
     token = auth.google_token(request, HOST, "webmasters.sites.get", READ_SCOPES)
