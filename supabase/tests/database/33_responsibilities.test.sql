@@ -6,7 +6,7 @@ begin;
 set local client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
-select plan(44);
+select plan(46);
 
 create temporary table fx as
 select
@@ -160,8 +160,28 @@ select is(
 );
 select is(app.set_autonomy((select miolo from fx), true), 3, 'interruptor retoma as três pausadas');
 
--- Imutabilidade
+-- Realtime: responsibility.<estado> e responsibility_run.<estado> no tópico privado do workspace
 reset role;
+select ok(
+  exists (
+    select 1 from realtime.messages
+    where topic = 'workspace:' || (select miolo from fx)::text and event = 'responsibility.paused'
+      and payload ->> 'id' = (select plan from fx)::text
+  ),
+  'pausar publica responsibility.paused no tópico do workspace'
+);
+insert into public.responsibility_runs (workspace_id, responsibility_id, code, period_no, title_key, scheduled_for)
+select miolo, plan, 'PL-50', 50, 'plan', '2026-12-10 12:00+00' from fx;
+select ok(
+  exists (
+    select 1 from realtime.messages
+    where topic = 'workspace:' || (select miolo from fx)::text and event = 'responsibility_run.created'
+      and payload ->> 'code' = 'PL-50'
+  ),
+  'execução nova publica responsibility_run.created'
+);
+
+-- Imutabilidade
 select throws_ok(
   $$update public.responsibility_runs set message_key = 'delivered' where id = (select pl42 from fx)$$,
   '42501', 'Execução encerrada não muda: o registro fica como aconteceu.', 'execução encerrada não muda'
