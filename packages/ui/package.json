@@ -16,7 +16,8 @@
     "./product-ui.css": "./src/generated/product-ui.css",
     "./ds-bundle.css": "./src/generated/ds-bundle.css",
     "./super-admin.css": "./src/generated/super-admin.css",
-    "./landing.css": "./src/generated/landing.css"
+    "./landing.css": "./src/generated/landing.css",
+    "./landing": "./src/landing/index.ts"
   },
   "scripts": {
     "build:tokens": "node scripts/build-tokens.ts",
