@@ -1,0 +1,28 @@
+sessão: 201
+  200                              GET /conversations/{conversation_id}
+  200                              GET /conversations/{conversation_id}/messages
+  (sem id no seed) /projects/{project_id}
+  200                              GET /runs/{run_id}
+  200                              GET /runs/{run_id}/events
+  200                              GET /work-items/{work_item_id}
+  404 workspace_not_found          GET /workspaces/{workspace_id}
+  200                              GET /workspaces/{workspace_id}/approvals
+  403 owner_only                   GET /workspaces/{workspace_id}/billing/payments
+  403 owner_only                   GET /workspaces/{workspace_id}/billing/subscription
+  422 validation_error             GET /workspaces/{workspace_id}/calendar
+  200                              GET /workspaces/{workspace_id}/contacts/summary
+  200                              GET /workspaces/{workspace_id}/conversations
+  200                              GET /workspaces/{workspace_id}/conversations/unread
+  200                              GET /workspaces/{workspace_id}/memory
+  200                              GET /workspaces/{workspace_id}/memory/conflicts
+  200                              GET /workspaces/{workspace_id}/memory/learnings
+  422 validation_error             GET /workspaces/{workspace_id}/memory/search
+  200                              GET /workspaces/{workspace_id}/memory/sources
+  200                              GET /workspaces/{workspace_id}/memory/suggestions
+  422 validation_error             GET /workspaces/{workspace_id}/metrics
+  200                              GET /workspaces/{workspace_id}/milestones
+  200                              GET /workspaces/{workspace_id}/needs
+  200                              GET /workspaces/{workspace_id}/projects
+  200                              GET /workspaces/{workspace_id}/squad/status
+  200                              GET /workspaces/{workspace_id}/work-items
+fim: 200
