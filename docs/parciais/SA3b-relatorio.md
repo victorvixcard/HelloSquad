@@ -1,6 +1,6 @@
 # SA3b — UI Squad IA do Super Admin · relatório
 
-Aranha (Frontend & Design), 16/10/2026, 22:26–22:56, em paralelo com a SA4a do Stark (`apps/backend`, `supabase/`), sem sub-agentes. Skill principal `frontend-vix`; apoio `verification-before-completion`. Área tocada: `apps/web` (rotas `/admin/squad`, `/admin/squad/[agente]`, `/admin/regras`, ações de servidor, componentes `components/admin/squad/*`, barra lateral, catálogo `admin` nos 3 idiomas, testes), `packages/ui` (o `regras.css` do SA0 portado pelo script de extração) e os documentos da fatia. Nada em `apps/backend`, `supabase/`, `squad/` ou `packages/contracts`.
+Aranha (Frontend & Design), 16/10/2026, 22:26–22:54, em paralelo com a SA4a do Stark (`apps/backend`, `supabase/`), sem sub-agentes. Skill principal `frontend-vix`; apoio `verification-before-completion`. Área tocada: `apps/web` (rotas `/admin/squad`, `/admin/squad/[agente]`, `/admin/regras`, ações de servidor, componentes `components/admin/squad/*`, barra lateral, catálogo `admin` nos 3 idiomas, testes), `packages/ui` (o `regras.css` do SA0 portado pelo script de extração) e os documentos da fatia. Nada em `apps/backend`, `supabase/`, `squad/` ou `packages/contracts`.
 
 ## 1. Entregue
 

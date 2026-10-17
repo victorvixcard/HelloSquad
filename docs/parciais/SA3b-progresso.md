@@ -21,6 +21,6 @@ Aranha (Frontend & Design), 16/10/2026, início 22:26. Área: `apps/web` (rotas 
 | 5 | Regras de negócio (documentos marcados por parágrafo, flag entra no prompt/referência interna, editar com versão; regras compartilhadas pela rota `shared/README.md`; `regras.css` do SA0 portado por script) | feito | `aa955a5` |
 | 6 | Vitest (17), e2e (2, worktree `/tmp/sa3b-wt`, web na 3200), lado a lado, relatório | feito | `4361266` (autosave), `a2f0b84`, `f801aa5`, `66e7285`, `1666c24`, `6423523`, relatório |
 
-## Fechamento (22:56)
+## Fechamento (22:54)
 
 Vitest da fatia 17/17; `make test-web` verde (web 440, ui 50, contracts 9); e2e 5/5 no worktree `/tmp/sa3b-wt` (os 2 da SA3b e os 3 da SA2, web de produção na 3200); banco do dono de volta à versão 1 de tudo; lado a lado em `docs/parciais/sa3b/`. Relatório: `docs/parciais/SA3b-relatorio.md`.
