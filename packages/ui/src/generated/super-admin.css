@@ -1,5 +1,5 @@
 /* Gerado por packages/ui/scripts/extract-super-admin-css.ts a partir de design/super-admin-proto/app/shell.css
-   e pages/planos.css (protótipo SA0). Não edite à mão: rode pnpm --filter @hellosquad/ui extract:admin. */
+   e pages/planos.css e pages/regras.css (protótipo SA0). Não edite à mão: rode pnpm --filter @hellosquad/ui extract:admin. */
 /* Super Admin · SA0 — casca e composições.
    Só tokens do DS (app/tokens.css, gerado de tokens.json; bundle.css traz cores e movimento) e os
    desenhos já aprovados da Product UI V4.6 (barra lateral, superfícies A/B, status, faixa "Precisa de você").
@@ -297,3 +297,22 @@ textarea.sa-inp{height:auto;min-height:120px;padding:12px 14px;line-height:1.55;
 /* Planos e recargas: cartões da mesma linha com a mesma altura e o rodapé de gravação alinhado embaixo. */
 .pl-oferta{display:flex;flex-direction:column}
 .pl-oferta>.sa-card-b{flex:1;display:flex;flex-direction:column}
+/* Regras de negócio · lista de documentos (abas verticais) e parágrafos marcados.
+   Só tokens do DS: o item escolhido segue a barra lateral (Branco sobre Papel); linhas L1 entre parágrafos. */
+.rg-docs{display:flex;flex-direction:column;gap:2px}
+.rg-doc{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;margin:0;padding:11px 12px 12px;border:0;border-radius:var(--r-acao);background:transparent;color:var(--hs-tinta);font:inherit;text-align:left;cursor:pointer;transition:background-color var(--t-rapido) var(--e-saida),box-shadow var(--t-rapido) var(--e-saida)}
+.rg-doc:hover{background:var(--hs-nevoa)}
+.rg-doc[aria-selected="true"]{background:var(--hs-branco);box-shadow:inset 0 0 0 1px var(--hs-l1),0 2px 0 0 var(--hs-lip)}
+.rg-doc-t{font-size:14.5px;font-weight:700;line-height:1.3}
+.rg-doc-f{font-size:12.5px;line-height:1.3;color:var(--hs-tinta-suave)}
+.rg-doc-c{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:12.5px;line-height:1.3;color:var(--hs-tinta-suave)}
+
+.rg-ps{display:flex;flex-direction:column;margin-top:8px}
+.rg-p{display:grid;grid-template-columns:96px minmax(0,1fr) auto;column-gap:16px;align-items:start;padding:16px 0;border-top:1px solid var(--hs-l1)}
+.rg-p:first-child{border-top:0}
+.rg-p-t{font-size:14.5px;line-height:1.55;color:var(--hs-tinta)}
+.rg-p-t b{font-weight:700}
+.rg-p-s{margin-top:9px}
+.rg-p-f{display:block;margin-top:7px;font-size:11.5px;color:var(--hs-kbd)}
+.rg-p-a{margin-top:-9px}
+.rg-ed{grid-column:2/4;display:flex;flex-direction:column;gap:12px;min-width:0}

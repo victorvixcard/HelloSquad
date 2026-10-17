@@ -117,3 +117,9 @@
 .sq-pnote{margin:0 0 12px}
 .sq-hash{font-size:22px}
 .sq-src{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+.rg-side{position:sticky;top:16px;align-self:start}
+.rg-side-t{font-size:14px;font-weight:700}
+.rg-leg-d{margin:8px 0 0;font-size:13px;line-height:1.45;color:var(--hs-tinta-suave)}
+.rg-flag{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.rg-stack{display:inline-flex;gap:2px}
+.rg-p-b{min-width:0}

@@ -272,6 +272,12 @@
       "analisar": "Analyze",
       "preparar": "Prepare",
       "executar": "Execute"
+    },
+    "mark": {
+      "decided": "Decided",
+      "current_base": "Current base",
+      "pending": "Pending",
+      "proposal": "Proposal"
     }
   },
   "contas": {
@@ -773,5 +779,63 @@
     "cached": "Cached",
     "notCached": "Not cached",
     "blockSize": "{chars} characters · ≈ {tokens} tokens"
+  },
+  "regras": {
+    "title": "Business rules",
+    "desc": "Operating rules written and marked paragraph by paragraph. What goes into the prompt becomes part of the shared rules of the seven agents; what is pending shows as such, and the panel does not apply it.",
+    "none": "No rules document in the database.",
+    "metDocs": "Documents",
+    "metDocsSub": "{prompt} go into the prompt · {internal} internal reference",
+    "metParagraphs": "Paragraphs",
+    "metPending": "Pending",
+    "metPendingSome": "waiting for the owner's decision; the panel does not apply them",
+    "metPendingNone": "no decision waiting",
+    "metProposals": "Proposals",
+    "metProposalsSub": "suggestions not approved yet",
+    "count": {
+      "decided": "{n} decided",
+      "current_base": "{n} current base",
+      "pending": "{n} pending",
+      "proposal": "{n, plural, one {# proposal} other {# proposals}}"
+    },
+    "legendTitle": "How to read the marks",
+    "legendSub": "every paragraph carries one",
+    "legend": {
+      "decided": "A recorded decision by the owner.",
+      "current_base": "How the system works today.",
+      "pending": "Waiting for the owner's decision. The panel does not apply it.",
+      "proposal": "A suggestion not approved yet."
+    },
+    "docs": "Documents",
+    "docsLabel": "Rules documents",
+    "inPrompt": "Goes into the prompt",
+    "internal": "Internal reference",
+    "versionN": "version {v}",
+    "sharedTitle": "Shared agent rules",
+    "sharedUnit": "of the shared rules",
+    "flagInternal": "The team reads this document here; no agent reads it. Prices, plans and catalog never go into the prompt: they come from the database on every conversation.",
+    "flagDoc": "Decided and current-base paragraphs go to the shared rules (squad/README.md), which reach the prompt of the seven once published. Pending and proposals do not.",
+    "flagFile": "This is {file}: it goes into the prompt of the seven, together with each one's soul. Prices, plans and catalog never go into the prompt: they come from the database on every conversation.",
+    "sevenRead": "The seven agents read it",
+    "versionLine": "Version {v} · {date} · {author}",
+    "paragraphs": "Paragraphs",
+    "paragraphN": "paragraph {n}",
+    "edit": "Edit",
+    "fieldText": "Text of paragraph {n}",
+    "fieldMark": "Mark",
+    "fieldSource": "Source",
+    "pendingNotApplied": "Pending: the panel does not apply it",
+    "saveVersion": "Save as a new version",
+    "saved": "Version {v} of \"{title}\" saved. It stays in the audit log.",
+    "versionsSub": "every save is a new version; the latest one is valid",
+    "toPrompt": "Send to the prompt",
+    "toInternal": "Take out of the prompt",
+    "toPromptTitle": "Send \"{title}\" to the prompt?",
+    "toPromptDesc": "Saves a new version of the document marked \"goes into the prompt\". Decided and current-base paragraphs become a draft of the shared rules, which only reaches the runtime when you publish it.",
+    "toInternalTitle": "Take \"{title}\" out of the prompt?",
+    "toInternalDesc": "Saves a new version of the document as an internal reference. The shared rules get a draft without this document, valid only once you publish it.",
+    "sharedDraft": "Draft of the shared rules (version {v}) waiting to be published.",
+    "sharedDraftCheck": "The seven agents start reading the new text when you publish it. Check \"What it reads\" with the drafts.",
+    "sharedLineMissing": "I could not find this paragraph exactly once in the file; nothing was saved."
   }
 }

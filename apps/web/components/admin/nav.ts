@@ -35,7 +35,7 @@ export const ADMIN_NAV: { id: "op" | "ia"; items: AdminNavItem[] }[] = [
     id: "ia",
     items: [
       { id: "squad", icon: "squad", href: "/admin/squad" },
-      { id: "regras", icon: "file", slice: "SA3b" },
+      { id: "regras", icon: "file", href: "/admin/regras" },
       { id: "referencias", icon: "folder", slice: "SA5" },
       { id: "motor", icon: "image", slice: "SA5" },
       { id: "modelos", icon: "spark", href: "/admin/modelos" },

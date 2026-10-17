@@ -272,6 +272,12 @@
       "analisar": "Analizar",
       "preparar": "Preparar",
       "executar": "Ejecutar"
+    },
+    "mark": {
+      "decided": "Decidido",
+      "current_base": "Base actual",
+      "pending": "Pendiente",
+      "proposal": "Propuesta"
     }
   },
   "contas": {
@@ -773,5 +779,63 @@
     "cached": "En caché",
     "notCached": "Sin caché",
     "blockSize": "{chars} caracteres · ≈ {tokens} tokens"
+  },
+  "regras": {
+    "title": "Reglas de negocio",
+    "desc": "Reglas operativas escritas y marcadas párrafo por párrafo. Lo que entra en el prompt pasa a las reglas compartidas de los siete agentes; lo pendiente aparece como tal y el panel no lo aplica.",
+    "none": "No hay documentos de reglas en la base de datos.",
+    "metDocs": "Documentos",
+    "metDocsSub": "{prompt} entran en el prompt · {internal} de referencia interna",
+    "metParagraphs": "Párrafos",
+    "metPending": "Pendientes",
+    "metPendingSome": "esperan la decisión del dueño; el panel no los aplica",
+    "metPendingNone": "ninguna decisión en espera",
+    "metProposals": "Propuestas",
+    "metProposalsSub": "sugerencias todavía no aprobadas",
+    "count": {
+      "decided": "{n, plural, one {# decidido} other {# decididos}}",
+      "current_base": "{n} de base actual",
+      "pending": "{n, plural, one {# pendiente} other {# pendientes}}",
+      "proposal": "{n, plural, one {# propuesta} other {# propuestas}}"
+    },
+    "legendTitle": "Cómo leer las marcas",
+    "legendSub": "cada párrafo lleva una",
+    "legend": {
+      "decided": "Decisión del dueño registrada.",
+      "current_base": "Cómo funciona el sistema hoy.",
+      "pending": "Espera la decisión del dueño. El panel no la aplica.",
+      "proposal": "Sugerencia todavía no aprobada."
+    },
+    "docs": "Documentos",
+    "docsLabel": "Documentos de reglas",
+    "inPrompt": "Entra en el prompt",
+    "internal": "Referencia interna",
+    "versionN": "versión {v}",
+    "sharedTitle": "Reglas compartidas de los agentes",
+    "sharedUnit": "de las reglas compartidas",
+    "flagInternal": "El equipo consulta este documento aquí; ningún agente lo lee. Precios, planes y catálogo nunca entran en el prompt: vienen de la base de datos en cada conversación.",
+    "flagDoc": "Los párrafos decididos y de base actual pasan a las reglas compartidas (squad/README.md), que llegan al prompt de los siete una vez publicadas. Pendientes y propuestas no entran.",
+    "flagFile": "Este es {file}: entra en el prompt de los siete, junto con el alma de cada uno. Precios, planes y catálogo nunca entran en el prompt: vienen de la base de datos en cada conversación.",
+    "sevenRead": "Los siete agentes lo leen",
+    "versionLine": "Versión {v} · {date} · {author}",
+    "paragraphs": "Párrafos",
+    "paragraphN": "el párrafo {n}",
+    "edit": "Editar",
+    "fieldText": "Texto del párrafo {n}",
+    "fieldMark": "Marca",
+    "fieldSource": "Fuente",
+    "pendingNotApplied": "Pendiente: el panel no lo aplica",
+    "saveVersion": "Guardar como versión nueva",
+    "saved": "Versión {v} de \"{title}\" guardada. Queda en la auditoría.",
+    "versionsSub": "cada guardado es una versión nueva; vale la más reciente",
+    "toPrompt": "Llevar al prompt",
+    "toInternal": "Sacar del prompt",
+    "toPromptTitle": "¿Llevar \"{title}\" al prompt?",
+    "toPromptDesc": "Guarda una versión nueva del documento marcada \"entra en el prompt\". Los párrafos decididos y de base actual se vuelven un borrador de las reglas compartidas, que solo llega al runtime cuando lo publiques.",
+    "toInternalTitle": "¿Sacar \"{title}\" del prompt?",
+    "toInternalDesc": "Guarda una versión nueva del documento como referencia interna. Las reglas compartidas reciben un borrador sin este documento, que solo vale cuando lo publiques.",
+    "sharedDraft": "Borrador de las reglas compartidas (versión {v}) esperando publicación.",
+    "sharedDraftCheck": "Los siete agentes empiezan a leer el texto nuevo cuando lo publiques. Revisa \"Lo que lee\" con los borradores.",
+    "sharedLineMissing": "No encontré este párrafo una sola vez en el archivo; no se guardó nada."
   }
 }

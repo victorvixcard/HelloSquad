@@ -272,6 +272,12 @@
       "analisar": "Analisar",
       "preparar": "Preparar",
       "executar": "Executar"
+    },
+    "mark": {
+      "decided": "Decidido",
+      "current_base": "Base atual",
+      "pending": "Pendente",
+      "proposal": "Proposta"
     }
   },
   "contas": {
@@ -773,5 +779,63 @@
     "cached": "Em cache",
     "notCached": "Sem cache",
     "blockSize": "{chars} caracteres · ≈ {tokens} tokens"
+  },
+  "regras": {
+    "title": "Regras de negócio",
+    "desc": "Regras operacionais escritas e marcadas parágrafo a parágrafo. O que entra no prompt vai para as regras compartilhadas dos sete agentes; o que está pendente aparece como tal, e o painel não aplica.",
+    "none": "Nenhum documento de regras no banco.",
+    "metDocs": "Documentos",
+    "metDocsSub": "{prompt} entram no prompt · {internal} de referência interna",
+    "metParagraphs": "Parágrafos",
+    "metPending": "Pendentes",
+    "metPendingSome": "aguardam decisão do dono; o painel não aplica",
+    "metPendingNone": "nenhuma decisão aguardando",
+    "metProposals": "Propostas",
+    "metProposalsSub": "sugestões ainda não aprovadas",
+    "count": {
+      "decided": "{n, plural, one {# decidido} other {# decididos}}",
+      "current_base": "{n} de base atual",
+      "pending": "{n, plural, one {# pendente} other {# pendentes}}",
+      "proposal": "{n, plural, one {# proposta} other {# propostas}}"
+    },
+    "legendTitle": "Como ler as marcações",
+    "legendSub": "cada parágrafo leva uma",
+    "legend": {
+      "decided": "Decisão do dono registrada.",
+      "current_base": "Como o sistema funciona hoje.",
+      "pending": "Aguarda decisão do dono. O painel não aplica.",
+      "proposal": "Sugestão ainda não aprovada."
+    },
+    "docs": "Documentos",
+    "docsLabel": "Documentos de regras",
+    "inPrompt": "Entra no prompt",
+    "internal": "Referência interna",
+    "versionN": "versão {v}",
+    "sharedTitle": "Regras compartilhadas dos agentes",
+    "sharedUnit": "das regras compartilhadas",
+    "flagInternal": "O time consulta este documento aqui; nenhum agente o lê. Preços, planos e catálogo nunca entram no prompt: vêm do banco a cada conversa.",
+    "flagDoc": "Os parágrafos decididos e de base atual vão para as regras compartilhadas (squad/README.md), que entram no prompt dos sete depois de publicadas. Pendente e proposta não entram.",
+    "flagFile": "Este é o {file}: entra no prompt dos sete, junto com a Alma de cada um. Preços, planos e catálogo nunca entram no prompt: vêm do banco a cada conversa.",
+    "sevenRead": "Os sete agentes leem",
+    "versionLine": "Versão {v} · {date} · {author}",
+    "paragraphs": "Parágrafos",
+    "paragraphN": "o parágrafo {n}",
+    "edit": "Editar",
+    "fieldText": "Texto do parágrafo {n}",
+    "fieldMark": "Marcação",
+    "fieldSource": "Fonte",
+    "pendingNotApplied": "Pendente: o painel não aplica",
+    "saveVersion": "Salvar como versão nova",
+    "saved": "Versão {v} de \"{title}\" salva. Fica na auditoria.",
+    "versionsSub": "cada gravação é uma versão nova; a mais recente vale",
+    "toPrompt": "Levar para o prompt",
+    "toInternal": "Tirar do prompt",
+    "toPromptTitle": "Levar \"{title}\" para o prompt?",
+    "toPromptDesc": "Grava uma versão nova do documento marcada \"entra no prompt\". Os parágrafos decididos e de base atual viram um rascunho das regras compartilhadas, que só entra no runtime quando você publicar.",
+    "toInternalTitle": "Tirar \"{title}\" do prompt?",
+    "toInternalDesc": "Grava uma versão nova do documento como referência interna. As regras compartilhadas ganham um rascunho sem este documento, que só vale quando você publicar.",
+    "sharedDraft": "Rascunho das regras compartilhadas (versão {v}) esperando publicação.",
+    "sharedDraftCheck": "Os sete agentes passam a ler o texto novo quando você publicar. Confira em \"O que ele lê\" com os rascunhos.",
+    "sharedLineMissing": "Não achei este parágrafo uma única vez no arquivo; nada foi gravado."
   }
 }
