@@ -40,3 +40,11 @@ export const ACTION_PATH_HEADER = "x-hellosquad-action-path";
 export function isAppPath(pathname: string): boolean {
   return pathname === "/app" || pathname.startsWith("/app/");
 }
+
+/** O painel do Super Admin (SA2): `/admin` e o que vem abaixo dele. Mesma aplicação, mesma sessão. */
+export function isAdminPath(pathname: string): boolean {
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
+/** Página 403 honesta do painel: o middleware reescreve para ela quando a API responde `platform_admin_only`. */
+export const ADMIN_FORBIDDEN_PATH = "/admin/sem-acesso";

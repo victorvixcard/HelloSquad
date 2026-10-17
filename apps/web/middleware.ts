@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { LOCALE_HEADER, publicLocaleOf } from "./i18n/resolve";
 import { updateSession } from "./lib/supabase/middleware";
-import { ACTION_PATH_HEADER, isAppPath } from "./lib/supabase/session-cookie";
+import { ACTION_PATH_HEADER, isAdminPath, isAppPath } from "./lib/supabase/session-cookie";
 import { contentSecurityPolicy, createNonce } from "./lib/security-headers";
 
 const SESSION_PAGES = ["/entrar", "/criar-conta", "/sair"];
@@ -20,7 +20,9 @@ export async function middleware(request: NextRequest) {
     request.headers.set(LOCALE_HEADER, publicLocale);
     return NextResponse.next({ request });
   }
-  if (!isAppPath(pathname) && !SESSION_PAGES.includes(pathname)) return NextResponse.next({ request });
+  if (!isAppPath(pathname) && !isAdminPath(pathname) && !SESSION_PAGES.includes(pathname)) {
+    return NextResponse.next({ request });
+  }
 
   // CSP com nonce por requisição. O Next lê o nonce deste cabeçalho da requisição e o põe nos
   // próprios scripts; por isso toda página coberta pelo matcher precisa ser dinâmica.
@@ -35,12 +37,15 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-// Só onde a sessão ou o idioma importam: a área logada, as telas de entrar, criar conta e sair, e o site em en e es.
+// Só onde a sessão ou o idioma importam: a área logada, o Super Admin, as telas de entrar, criar conta e sair, e o
+// site em en e es.
 // A página pública fica estática e não depende da Auth; nela o middleware só vê os POSTs de Server Action.
 export const config = {
   matcher: [
     "/app",
     "/app/:path*",
+    "/admin",
+    "/admin/:path*",
     "/entrar",
     "/criar-conta",
     "/sair",

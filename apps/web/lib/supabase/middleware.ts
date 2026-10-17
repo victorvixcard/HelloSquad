@@ -9,14 +9,41 @@ import {
   WORKSPACE_LOCALE_MAX_AGE_S,
 } from "@/i18n/resolve";
 import { apiBaseUrl, supabasePublicEnv } from "../env";
-import { isAppPath, isLocalHttp, SESSION_COOKIE_OPTIONS, sessionCookieOptions } from "./session-cookie";
+import {
+  ADMIN_FORBIDDEN_PATH,
+  isAdminPath,
+  isAppPath,
+  isLocalHttp,
+  SESSION_COOKIE_OPTIONS,
+  sessionCookieOptions,
+} from "./session-cookie";
 
 const AUTH_PAGES = ["/entrar", "/criar-conta"];
 
 /** Tempo máximo da consulta do idioma do negócio: API lenta não segura a tela (cai no pt-BR, sem cookie). */
 const WORKSPACE_LOCALE_TIMEOUT_MS = 2000;
 
-/** Renova a sessão nos cookies, protege /app/* e resolve o idioma da tela (pessoa → negócio → pt-BR). */
+/** Tempo máximo da consulta do Super Admin; sem resposta, a casca do painel pergunta de novo e mostra a falha. */
+const ADMIN_GATE_TIMEOUT_MS = 3000;
+
+/** O que a API disse sobre quem abre o painel: entra, 403 honesto, login de novo ou não respondeu. */
+export type AdminGate = "admin" | "forbidden" | "login" | "unknown";
+
+/**
+ * Super Admin (SA2): quem decide é a API (`GET /admin/me`), nunca o conteúdo do token. 200 = entra;
+ * 403 = página 403 honesta; 401 = login; qualquer outra resposta passa e a casca mostra a falha da API.
+ */
+export function adminGateOf(status: number | null): AdminGate {
+  if (status === 200) return "admin";
+  if (status === 403) return "forbidden";
+  if (status === 401) return "login";
+  return "unknown";
+}
+
+/**
+ * Renova a sessão nos cookies, protege /app/* e /admin/* (o painel só abre com o 200 de `GET /admin/me`) e resolve o
+ * idioma da tela (pessoa → negócio → pt-BR).
+ */
 export async function updateSession(request: NextRequest) {
   // O que a renovação da sessão gravou, para refazer a resposta depois de pôr o idioma na requisição.
   const renewed: { cookies: { name: string; value: string; options: CookieOptions }[]; headers: Record<string, string> } = {
@@ -96,8 +123,34 @@ export async function updateSession(request: NextRequest) {
     return redirect;
   };
 
-  if (!signedIn && isAppPath(pathname)) {
+  if (!signedIn && (isAppPath(pathname) || isAdminPath(pathname))) {
     return redirectTo(`/entrar?${new URLSearchParams({ next: `${pathname}${search}` })}`);
+  }
+
+  if (signedIn && isAdminPath(pathname)) {
+    const { data: session } = await supabase.auth.getSession();
+    const token = session.session?.access_token;
+    const status = token
+      ? await fetch(`${apiBaseUrl()}/admin/me`, {
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+          signal: AbortSignal.timeout(ADMIN_GATE_TIMEOUT_MS),
+          cache: "no-store",
+        })
+          .then((res) => res.status)
+          .catch(() => null)
+      : 401;
+    const gate = adminGateOf(status);
+    if (gate === "login") {
+      return redirectTo(`/entrar?${new URLSearchParams({ sessao: "expirada", next: `${pathname}${search}` })}`);
+    }
+    if (gate === "forbidden" && pathname !== ADMIN_FORBIDDEN_PATH) {
+      // Mesma URL na barra do navegador; o conteúdo é a página 403 no idioma da pessoa (o cabeçalho já está na requisição).
+      const forbidden = NextResponse.rewrite(new URL(ADMIN_FORBIDDEN_PATH, request.url), { request });
+      for (const cookie of response.cookies.getAll()) forbidden.cookies.set(cookie);
+      for (const [key, value] of Object.entries(renewed.headers)) forbidden.headers.set(key, value);
+      return forbidden;
+    }
+    if (gate === "admin" && pathname === ADMIN_FORBIDDEN_PATH) return redirectTo("/admin");
   }
 
   if (signedIn && AUTH_PAGES.includes(pathname)) {
