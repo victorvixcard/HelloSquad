@@ -182,3 +182,6 @@
 .hl-check input{width:16px;height:16px;accent-color:var(--hs-tinta)}
 .hl-sec{margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.01em}
 .hl-hist{margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--hs-tinta-suave)}
+/* SA6b: seis tokens do SA0 (app/tokens.css) que o CSS portado usa e o painel não declarava — campos e diálogos
+   ficavam sem contorno. Mesmos valores, pelos tokens do DS; o diálogo mora fora de .sa (portal), por isso .sa-ovl. */
+.sa,.sa-ovl{--e1-apoiado:var(--hs-e1-apoiado);--e2-flutuante:var(--hs-e2-flutuante);--halo-campo:var(--hs-halo-campo);--r-acao:var(--hs-r-acao);--r-caixa:var(--hs-r-caixa);--r-painel-s:var(--hs-r-painel-s)}
