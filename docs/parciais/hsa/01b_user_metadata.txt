@@ -1,0 +1,7 @@
+PUT /auth/v1/user só com data: 200
+user_metadata no token novo: {'full_name': 'Marina Costa', 'is_super_admin': True, 'platform_admin': True, 'role': 'platform_admin'}
+  GET /admin/me: 403 {"error": {"code": "platform_admin_only", "message": "Só o Super Admin da plataforma acess
+  GET /admin/accounts: 403 {"error": {"code": "platform_admin_only", "message": "Só o Super Admin da plataforma acess
+  GET /admin/audit: 403 {"error": {"code": "platform_admin_only", "message": "Só o Super Admin da plataforma acess
+  POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/credit-adjustments: 403 {"error": {"code": "platform_admin_only", "message": "Só o Super Admin da plataforma acess
+user_metadata restaurado: True

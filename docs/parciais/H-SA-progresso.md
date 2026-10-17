@@ -8,8 +8,8 @@ o banco roda dentro da trava `flock -o /tmp/hellosquad-db.lock` (lição da H2 �
 | Bloco | Alvos | Estado |
 |---|---|---|
 | 0 | PASSO 0: diretrizes, plano SA (8 perguntas e leitura conservadora), SUPER_ADMIN §1–§4, relatórios SA1–SA6b, H2 (formato), SETUP_LOCAL (Vic fictício) | ✅ 00:16 |
-| 1 | (1) escalonamento: Marina, Carla, Pedro, anon, authenticated sem papel, token forjado, Data API | em andamento |
-| 2 | (2) papel privilegiado não vaza; sessão de suporte (expirada, encerrada, só leitura) | — |
+| 1 | (1) escalonamento: Marina, Carla, Pedro, anon, authenticated sem papel, token forjado, Data API | ✅ API 00:21 (48 operações × 4 personas = 403; sem token, chaves publicável/anon/service_role legadas e 4 forjados = 401; user_metadata de Super Admin = 403; banco sem mudança; Data API 401/403 em 23 de 24 tabelas, `delivery_prices` lida por qualquer autenticado: ver bloco 3). Web `/admin` no bloco 6 |
+| 2 | (2) papel privilegiado não vaza; sessão de suporte (expirada, encerrada, só leitura) | em andamento |
 | 3 | (3) auditoria de cada escrita; (5) cobrança e créditos; (6) valores e segredos | — |
 | 4 | (4) versões do squad × runtime; `make squad-export` | — |
 | 5 | (8) consumo/qualidade/saúde; (9) e-mail da sessão de suporte no Mailpit | — |

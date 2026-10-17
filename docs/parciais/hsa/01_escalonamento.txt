@@ -1,0 +1,40 @@
+== 48 operações /admin/* no OpenAPI vivo
+  Marina grava user_metadata de Super Admin pela Auth: 403
+  token novo da Marina: user_metadata = {"full_name": "Marina Costa"} | app_metadata = {"provider": "email", "providers": ["email"]}
+== resultado por quem ataca (status: quantas operações)
+  Marina (owner): {403: 48}
+  Carla (editora): {403: 48}
+  Pedro (sem negócio): {403: 48}
+  Juliana (owner): {403: 48}
+  sem token: {401: 48}
+  chave publicável como bearer: {401: 48}
+  chave anon legada (JWT role=anon): {401: 48}
+  chave service_role legada (JWT role=service_role): {401: 48}
+  marina+platform_admin no payload (assinatura original): {401: 48}
+  marina com sub do Vic (assinatura original): {401: 48}
+  alg none com sub do Vic: {401: 48}
+  HS256 com o segredo padrão do Supabase local, sub do Vic: {401: 48}
+  marina com user_metadata platform_admin (assinatura válida): {403: 48}
+== anomalias (status diferente de 403 platform_admin_only / 401): 0
+== impressão digital do banco antes == depois: True
+  user_metadata da Marina restaurado: True
+  app_metadata da Marina (o usuário não muda): {"provider": "email", "providers": ["email"]}
+== controle: Vic 200 nas operações GET
+   Vic 422 /admin/quality/compare {"error": {"code": "validation_error", "message": "Dados inválidos.", "details": [{"field": "a_since", "message": "Campo
+   Vic 422 /admin/squad/versions {"error": {"code": "validation_error", "message": "Dados inválidos.", "details": [{"field": "kind", "message": "Campo ob
+   Vic 422 /admin/squad/agents/otto/prompt {"error": {"code": "validation_error", "message": "Dados inválidos.", "details": [{"field": "route", "message": "Campo o
+  Vic: {200: 22, 422: 3} em 25 GET
+== Data API (/rest/v1) e GraphQL contra as tabelas e views do SA
+  status [anon, Marina, Pedro, Vic] por tabela: {"platform_admins": [401, 403, 403, 403], "support_access_log": [401, 403, 403, 403], "topups": [401, 403, 403, 403], "topup_versions": [401, 403, 403, 403], "delivery_catalog": [401, 403, 403, 403], "business_rule_docs": [401, 403, 403, 403], "business_rule_doc_versions": [401, 403, 403, 403], "reference_items": [401, 403, 403, 403], "model_pricing": [401, 403, 403, 403], "task_model_rules": [401, 403, 403, 403], "provider_health": [401, 403, 403, 403], "v_consumo_por_cliente": [401, 403, 403, 403], "v_qualidade_entregas": [401, 403, 403, 403], "v_qualidade_itens": [401, 403, 403, 403], "v_fila": [401, 403, 403, 403], "v_fila_filas": [401, 403, 403, 403], "squad_versions": [401, 403, 403, 403], "agent_prompt_sections": [401, 403, 403, 403], "economic_alert_rules": [401, 403, 403, 403], "provider_balance_reports": [401, 403, 403, 403], "payment_reconciliations": [401, 403, 403, 403], "audit_events": [401, 403, 403, 403], "delivery_prices": [401, 200, 200, 200], "agent_prompt_versions": [401, 403, 403, 403]}
+  leituras 200: [('delivery_prices', 'Marina', '[{"id":"ba71181c-3bab-fd0a-1e57-660cf6f75dee","delivery_type":"01.01","depth":"orientar","credits":0.00,"revision_credit'), ('delivery_prices', 'Pedro', '[{"id":"ba71181c-3bab-fd0a-1e57-660cf6f75dee","delivery_type":"01.01","depth":"orientar","credits":0.00,"revision_credit'), ('delivery_prices', 'Vic', '[{"id":"ba71181c-3bab-fd0a-1e57-660cf6f75dee","delivery_type":"01.01","depth":"orientar","credits":0.00,"revision_credit')]
+  POST platform_admins como marina: 403 {"code":"42501","details":null,"hint":"Grant the required privileges to the current role w
+  POST platform_admins como pedro: 403 {"code":"42501","details":null,"hint":"Grant the required privileges to the current role w
+  POST support_access_log como vic: 403 {"code":"42501","details":null,"hint":"Grant the required privileges to the current role w
+  PATCH squad_versions como vic: 403 {"code":"42501","details":null,"hint":"Grant the required privileges to the current role w
+  DELETE audit_events como vic: 403 {"code":"42501","details":null,"hint":"Grant the required privileges to the current role w
+  PATCH delivery_catalog como vic: 403 {"code":"42501","details":null,"hint":"Grant the required privileges to the current role w
+  PATCH support_access_log como vic: 403 {"code":"42501","details":null,"hint":"Grant the required privileges to the current role w
+  GraphQL anon: 200; campos de consulta 0; do SA: []
+  GraphQL Marina: 200; campos de consulta 0; do SA: []
+  GraphQL Vic: 200; campos de consulta 0; do SA: []
+== impressão digital depois da Data API == antes: False
