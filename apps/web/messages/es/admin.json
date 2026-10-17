@@ -431,7 +431,7 @@
   },
   "pagamentos": {
     "title": "Pagos",
-    "desc": "Suscripciones, recargas, webhooks y fallas, por proveedor. Las cuentas en Asaas y Mercado Pago todavía no existen; reprocesar webhooks y conciliar llegan en la SA6.",
+    "desc": "Suscripciones, recargas, webhooks y conciliación, por proveedor. Las cuentas en Asaas y Mercado Pago todavía no existen.",
     "providers": "Proveedores",
     "selected": "En uso",
     "apiKey": "Clave de la API",

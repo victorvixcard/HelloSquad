@@ -431,7 +431,7 @@
   },
   "pagamentos": {
     "title": "Payments",
-    "desc": "Subscriptions, top-ups, webhooks and failures, by provider. The Asaas and Mercado Pago accounts do not exist yet; reprocessing webhooks and reconciliation arrive in SA6.",
+    "desc": "Subscriptions, top-ups, webhooks and reconciliation, by provider. The Asaas and Mercado Pago accounts do not exist yet.",
     "providers": "Providers",
     "selected": "In use",
     "apiKey": "API key",
