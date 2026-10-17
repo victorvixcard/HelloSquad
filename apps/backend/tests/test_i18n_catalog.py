@@ -13,7 +13,12 @@ AGENT_NAMES = {
     f"agent.{agent}.name" for agent in ("nexo", "bia", "kaia", "otto", "kiwi", "max", "iris")
 }
 # Iguais ao pt-BR de propósito: nomes próprios (agentes e Pix) e formatos sem palavra.
-SAME_EVERYWHERE = AGENT_NAMES | {"email.payment_method.pix", "status.label", "work.status.doing"}
+SAME_EVERYWHERE = AGENT_NAMES | {
+    "email.payment_method.pix",
+    "status.label",
+    "work.status.doing",
+    "autonomy.connection.instagram",
+}
 SAME_AS_PT_BR = {
     "en": SAME_EVERYWHERE,
     # No espanhol, também o que se escreve igual nas duas línguas.
@@ -39,6 +44,7 @@ SAME_AS_PT_BR = {
         "history.mark.automatic",  # automático
         "project.owner_responsibility",  # decide cada entrega
         "email.role.owner",  # Titular
+        "autonomy.action.identify_opportunities",  # Identificar oportunidades
     },
 }
 

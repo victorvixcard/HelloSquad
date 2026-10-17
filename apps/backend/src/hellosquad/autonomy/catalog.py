@@ -1,8 +1,9 @@
-"""Catálogo de responsabilidades do Modo Autônomo (V4.6 `TPL`, `Q5`, `lv5`; FLUXOS §7, notas x1 §B2–§B9).
+"""Catálogo de responsabilidades do Modo Autônomo (V4.6 `TPL`, `Q5`, `lv5`; FLUXOS §7; x1 §B).
 
-As opções guardam chaves (o rótulo sai do catálogo de mensagens no idioma de quem lê). O combinado é
-renderizado no idioma do negócio quando o dono confirma. `steps` é o trabalho que cada execução abre no
-runtime (etapa por agente, como a S2d); modelo sem etapa ainda não tem leitor (a S3a liga as conexões).
+As opções guardam chaves (o rótulo sai do catálogo de mensagens no idioma de quem lê). O combinado
+é renderizado no idioma do negócio quando o dono confirma. `steps` é o trabalho que cada execução
+abre no runtime (etapa por agente, como a S2d); modelo sem etapa ainda não tem leitor (a S3a liga
+as conexões).
 """
 
 from dataclasses import dataclass, field
@@ -30,6 +31,7 @@ class Question:
     key: str
     values: tuple[str, ...]
     default: str
+    asked: bool = True
 
 
 @dataclass(frozen=True)
@@ -78,7 +80,13 @@ TEMPLATES: dict[str, Template] = {
             "plan",
             "otto",
             ("kaia",),
-            (OBJ_CONTENT, DAY_PLAN, Question("vol", ("posts3", "posts3_stories2", "posts5_stories3"), "posts3_stories2")),
+            (
+                OBJ_CONTENT,
+                DAY_PLAN,
+                Question(
+                    "vol", ("posts3", "posts3_stories2", "posts5_stories3"), "posts3_stories2"
+                ),
+            ),
             time(9, 0),
             (Step("otto", "04.02"), Step("kaia", "03.01", (1,))),
             (
@@ -125,7 +133,8 @@ TEMPLATES: dict[str, Template] = {
             (),
             (
                 Question("freq", ("weekly_mon", "weekly_mon_fri", "daily"), "weekly_mon"),
-                Question("src", ("ig_site_google", "ig_site"), "ig_site_google"),
+                # A fonte não é perguntada na conversa (Q5 só pergunta a frequência): fica o padrão.
+                Question("src", ("ig_site_google", "ig_site"), "ig_site_google", asked=False),
             ),
             time(9, 0),
             (Step("iris", "07.05"),),
@@ -261,8 +270,8 @@ FREQUENCIES: dict[str, tuple[str, tuple[int, ...], int | None]] = {
     "daily": ("daily", (), None),
     "monthly": ("monthly", (), 1),
     "biweekly": ("biweekly", (), None),
-    # "Duas vezes por semana": o protótipo só mostra a primeira (qua, 14/10); quarta e sábado é escolha
-    # técnica, registrada como pergunta.
+    # "Duas vezes por semana": o protótipo só mostra a primeira (qua, 14/10); quarta e sábado é
+    # escolha técnica, registrada como pergunta.
     "twice_weekly": ("weekly", (3, 6), None),
 }
 
@@ -302,23 +311,26 @@ def rhythm(tpl: Template, options: dict[str, str]) -> dict[str, Any]:
 
 
 def actions_for(tpl: Template, auto_publish: bool) -> list[dict[str, Any]]:
-    """Nível por ação. "Publicar sozinho o que eu aprovar no plano" só muda a publicação no Instagram
-    (autorização antecipada dos itens aprovados); não autoriza anúncios, mensagens nem investimento."""
+    """Nível por ação. "Publicar sozinho o que eu aprovar no plano" só muda a publicação no
+    Instagram (autorização antecipada dos itens aprovados); não autoriza anúncios, mensagens nem
+    investimento."""
     items: list[dict[str, Any]] = []
     for action in tpl.actions:
         item: dict[str, Any] = {"action": action.action, "level": action.level}
         if action.level == "execute":
             requirement = action.requirement or "approval_each"
             granted = False
-            if auto_publish and action.action == "publish_instagram":
-                requirement, granted = "authorized_plan", True
+            if action.action == "publish_instagram":
+                requirement = "approval_each_publication"
+                if auto_publish:
+                    requirement, granted = "authorized_plan", True
             item.update(requirement=requirement, granted=granted)
         items.append(item)
     return items
 
 
 def agent_name(locale: str, agent_id: str) -> str:
-    return t(locale, f"autonomy.agent.{agent_id}")
+    return t(locale, f"agent.{agent_id}.name")
 
 
 def option_label(locale: str, template: str, key: str, value: str) -> str:
@@ -343,28 +355,44 @@ def frequency_label(locale: str, template: str, options: dict[str, str], run_tim
         )
     label = option_label(locale, template, "freq", options["freq"])
     if TEMPLATES[template].time_in_frequency:
-        return t(locale, "autonomy.frequency.with_time", frequency=label, time=time_label(locale, run_time))
+        return t(
+            locale,
+            "autonomy.frequency.with_time",
+            frequency=label,
+            time=time_label(locale, run_time),
+        )
     return label
 
 
-def agreement(locale: str, template: str, options: dict[str, str], auto_publish: bool) -> str:
+def option_params(locale: str, template: str, options: dict[str, str]) -> dict[str, str]:
+    return {key: option_label(locale, template, key, value) for key, value in options.items()}
+
+
+def agreement(
+    locale: str, template: str, options: dict[str, str], auto_publish: bool, brand: str
+) -> str:
     """'O combinado': a frase do modelo com as palavras trocáveis (V4.6 `seg`)."""
     tpl = TEMPLATES[template]
-    params = {
-        key: option_label(locale, template, key, value) for key, value in options.items() if key != "obj"
-    }
-    sentence = t(locale, f"autonomy.template.{template}.agreement", time=time_label(locale, tpl.run_time), **params)
+    sentence = t(
+        locale,
+        f"autonomy.template.{template}.agreement",
+        time=time_label(locale, tpl.run_time),
+        brand=brand,
+        **option_params(locale, template, options),
+    )
     if tpl.publish_option:
         suffix = "auto" if auto_publish else "approval"
         sentence = f"{sentence} {t(locale, f'autonomy.agreement.publish.{suffix}')}"
     return sentence
 
 
-def deliverable(locale: str, template: str, options: dict[str, str]) -> str:
-    params = {
-        key: option_label(locale, template, key, value) for key, value in options.items() if key != "obj"
-    }
-    return t(locale, f"autonomy.template.{template}.deliver", **params)
+def deliverable(locale: str, template: str, options: dict[str, str], brand: str) -> str:
+    return t(
+        locale,
+        f"autonomy.template.{template}.deliver",
+        brand=brand,
+        **option_params(locale, template, options),
+    )
 
 
 def approval_label(locale: str, template: str, auto_publish: bool) -> str:
@@ -378,27 +406,24 @@ def collaboration_label(locale: str, collaborators: list[str]) -> str:
     return ", ".join(agent_name(locale, a) for a in collaborators)
 
 
-def weekday_short(locale: str, value: datetime) -> str:
-    return t(locale, f"autonomy.weekday.short.{value.isoweekday()}")
-
-
 def date_label(locale: str, value: datetime | None, tz: ZoneInfo) -> str | None:
-    """"qui, 22/10, 9h" no fuso do negócio."""
+    """ "qui, 22/10, 9h" no fuso do negócio (formato `date.day_hour` do catálogo)."""
     if value is None:
         return None
     local = value.astimezone(tz)
-    return t(
-        locale,
-        "autonomy.date.with_time",
-        weekday=weekday_short(locale, local),
-        day=f"{local.day:02d}",
-        month=f"{local.month:02d}",
-        time=time_label(locale, local.time().replace(second=0, microsecond=0)),
-    )
+    params = {
+        "weekday": t(locale, f"date.weekday.{local.weekday()}"),
+        "day": f"{local.day:02d}",
+        "month": f"{local.month:02d}",
+        "hour": local.hour,
+    }
+    if local.minute:
+        return t(locale, "date.day_hour_minute", minute=f"{local.minute:02d}", **params)
+    return t(locale, "date.day_hour", **params)
 
 
 def when_label(locale: str, value: datetime, tz: ZoneInfo) -> str:
-    """"na sexta, 17:42": dia da semana com artigo e a hora, para "Aprovado por você …"."""
+    """ "na sexta, 17:42": dia da semana com artigo e a hora, para "Aprovado por você …"."""
     local = value.astimezone(tz)
     return t(
         locale,
@@ -420,7 +445,9 @@ def period_of(template: str, scheduled_for: datetime, tz: ZoneInfo) -> int:
     return local.isocalendar().week
 
 
-def run_title_params(template: str, scheduled_for: datetime, tz: ZoneInfo, period_no: int) -> dict[str, Any]:
+def run_title_params(
+    template: str, scheduled_for: datetime, tz: ZoneInfo, period_no: int
+) -> dict[str, Any]:
     local = scheduled_for.astimezone(tz)
     if template == "res":
         # "Leitura da semana 05 a 11/10": a semana anterior à execução, segunda a domingo.
