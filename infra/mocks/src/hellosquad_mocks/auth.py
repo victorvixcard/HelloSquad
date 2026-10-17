@@ -2,10 +2,20 @@
 
 from __future__ import annotations
 
+from urllib.parse import parse_qsl
+
 from fastapi import Request
 
 from . import errors, fixtures
 from .state import STATE, Token
+
+
+async def form_data(request: Request) -> dict:
+    """Corpo application/x-www-form-urlencoded (formato do OAuth e da Graph API)."""
+    raw = await request.body()
+    if not raw:
+        return {}
+    return dict(parse_qsl(raw.decode(errors="replace"), keep_blank_values=True))
 
 
 def bearer(request: Request) -> str | None:

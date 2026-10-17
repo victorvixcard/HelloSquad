@@ -16,7 +16,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 
-from . import errors, fixtures
+from . import auth, errors, fixtures
 from .state import STATE, AuthCode
 
 router = APIRouter(tags=["google-oauth"])
@@ -147,7 +147,7 @@ def _pkce_ok(code: AuthCode, verifier: str | None) -> bool:
 
 @router.post("/google/oauth2/token")
 async def token(request: Request) -> Response:
-    form = {k: str(v) for k, v in (await request.form()).items()}
+    form = await auth.form_data(request)
     _check_client(form)
     config = STATE.config["google"]
     grant_type = form.get("grant_type")
@@ -248,7 +248,7 @@ def _fake_id_token(user_key: str, client_id: str) -> str:
 
 @router.post("/google/oauth2/revoke")
 async def revoke(request: Request) -> Response:
-    form = {k: str(v) for k, v in (await request.form()).items()}
+    form = await auth.form_data(request)
     value = request.query_params.get("token") or form.get("token", "")
     token = STATE.tokens.get(value)
     if token is None or token.provider != "google" or token.state(STATE.now()) == "revoked":

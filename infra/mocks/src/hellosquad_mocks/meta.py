@@ -67,8 +67,7 @@ async def _params(request: Request) -> dict:
                     {k: v if isinstance(v, str) else json.dumps(v) for k, v in body.items()}
                 )
         elif raw:
-            form = await request.form()
-            params.update({k: str(v) for k, v in form.items()})
+            params.update(await auth.form_data(request))
     return params
 
 
