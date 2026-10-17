@@ -52,6 +52,7 @@ class CreditAdjustmentRequest(BaseModel):
         default=None,
         min_length=8,
         max_length=120,
+        pattern=r"^[A-Za-z0-9._:-]+$",
         description="Repetir o pedido com a mesma chave não lança de novo.",
     )
 

@@ -272,6 +272,8 @@ async def test_credit_adjustment_is_audited_and_never_leaves_a_negative_balance(
 
     zero = await api.post(url, headers=vic, json={"amount": "0", "reason": REASON})
     assert zero.status_code == 422
+    wildcard = {"amount": "1", "reason": REASON, "idempotency_key": "chave-%-curinga"}
+    assert (await api.post(url, headers=vic, json=wildcard)).status_code == 422
     adjusted = await audits(admin_db, "credits.adjusted", since)
     assert len(adjusted) == 3
     assert all(a["email"] == VIC and a["payload"]["reason"] == REASON for a in adjusted)
@@ -402,6 +404,16 @@ async def test_catalog_and_plans_get_new_versions_and_for_sale_needs_homologatio
         plan = {"credits": "120", "cycle": "monthly", "amount": "109.00", "reason": REASON}
         refused = await api.put("/admin/plans/squad", headers=vic, json={**plan, "for_sale": True})
         assert refused.status_code == 409
+        approved_plan = {
+            "credits": "120",
+            "cycle": "monthly",
+            "provisional": False,
+            "approved_commercially": True,
+            "for_sale": True,
+            "reason": REASON,
+        }
+        old_money = await api.put("/admin/plans/squad", headers=vic, json=approved_plan)
+        assert old_money.status_code == 409, old_money.text
         created = await api.put("/admin/plans/squad", headers=vic, json=plan)
         assert created.status_code == 200, created.text
         assert created.json()["version"] == 2 and created.json()["provisional"] is True
@@ -460,6 +472,7 @@ async def test_queue_requeue_and_cancel_need_a_reason_and_are_audited(
         miolo,
         f"sa6a-run-{uuid4().hex}",
     )
+    held = None
     try:
         requeue = f"/admin/queue/runs/{run}/requeue"
         assert (await api.post(requeue, headers=vic, json={"reason": "curto"})).status_code == 422
@@ -484,13 +497,34 @@ async def test_queue_requeue_and_cancel_need_a_reason_and_are_audited(
             f"/admin/queue/runs/{uuid4()}/cancel", headers=vic, json={"reason": REASON}
         )
         assert missing.status_code == 404
+
+        # Run que já reservou créditos não volta à fila (S1e: uma reserva por run).
+        held = await scalar(
+            admin_db,
+            "insert into public.runs (workspace_id, agent_id, status, idempotency_key)"
+            " values (%s, 'otto', 'running', %s) returning id",
+            miolo,
+            f"sa6a-run-{uuid4().hex}",
+        )
+        await admin_db.execute(
+            "select app.reserve_credits(%s, 1, 'run:' || %s::text)", (held, str(held))
+        )
+        await admin_db.execute(
+            "update public.runs set status = 'failed', started_at = now(), finished_at = now()"
+            " where id = %s",
+            (held,),
+        )
+        refused = await api.post(
+            f"/admin/queue/runs/{held}/requeue", headers=vic, json={"reason": REASON}
+        )
+        assert refused.status_code == 409, refused.text
     finally:
         await admin_db.execute(
             "select pgmq.delete('runs_interactive', msg_id) from pgmq.q_runs_interactive"
             " where message ->> 'run_id' = %s",
             (str(run),),
         )
-        await admin_db.execute("delete from public.runs where id = %s", (run,))
+        await admin_db.execute("delete from public.runs where id = any(%s)", ([run, held],))
     for action in ("run.requeued_by_support", "run.cancelled_by_support"):
         [audit] = await audits(admin_db, action, since)
         assert audit["email"] == VIC and audit["payload"]["reason"] == REASON
