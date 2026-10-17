@@ -396,5 +396,14 @@
   "admin.quality.how_to_read.failed_call.title": "Failed call",
   "admin.quality.how_to_read.failed_call.text": "Provider call that failed, including the ones that succeeded on retry.",
   "admin.quality.how_to_read.rates.title": "Comparing periods",
-  "admin.quality.how_to_read.rates.text": "To compare periods with different volumes, counts become rates: not approved as % of deliveries; errors and failed calls per 100 deliveries. Each delivery counts in the month of its first decision and in the prompt version that produced its first version."
+  "admin.quality.how_to_read.rates.text": "To compare periods with different volumes, counts become rates: not approved as % of deliveries; errors and failed calls per 100 deliveries. Each delivery counts in the month of its first decision and in the prompt version that produced its first version.",
+  "error.support_session_read_only": "The support session is read-only: nothing is saved in this business.",
+  "error.support_session_required": "Open a support session, with a reason, to view this business.",
+  "error.workspace_suspended": "This account is suspended: billing and routines are paused.",
+  "error.webhook_not_found": "Webhook not found.",
+  "error.webhook_not_reprocessable": "This webhook is not linked to a charge: there is nothing to reprocess.",
+  "email.support_session_started.subject": "HelloSquad support entered {workspace}",
+  "email.support_session_started.intro": "HelloSquad support opened a session in {workspace} for {minutes} minutes, read-only, until {until}.",
+  "email.support_session_started.reason": "Reason given: {reason}",
+  "email.support_session_started.detail": "During the session, support sees what a member with the viewer role sees and saves nothing. The access is recorded in the audit log."
 }

@@ -187,6 +187,9 @@ SQLSTATE_ERRORS: dict[str, tuple[int, str]] = {
     "55000": (409, "invalid_state"),
     "WI001": (409, "transition_not_allowed"),
     "WI002": (409, "status_changed"),
+    # Escrita numa transação READ ONLY: só acontece na leitura do suporte (db.transaction_as).
+    "25006": (403, "support_session_read_only"),
+    "HS423": (423, "workspace_suspended"),
 }
 
 

@@ -178,6 +178,28 @@ class EmailRenderer:
             footer=[t(locale, "email.footer.owner", workspace=workspace)],
         )
 
+    def _support_session_started(self, locale: str, v: dict[str, Any]) -> _Parts:
+        workspace = v.get("workspace_name", "")
+        until = self._datetime(locale, v["expires_at"]) if v.get("expires_at") else ""
+        return _Parts(
+            subject=t(locale, "email.support_session_started.subject", workspace=workspace),
+            greeting=self._greeting(locale, v),
+            paragraphs=[
+                t(
+                    locale,
+                    "email.support_session_started.intro",
+                    workspace=workspace,
+                    minutes=v.get("minutes", ""),
+                    until=until,
+                ),
+                t(locale, "email.support_session_started.reason", reason=v.get("reason", "")),
+                t(locale, "email.support_session_started.detail"),
+            ],
+            cta_label=t(locale, "email.cta.open"),
+            cta_url=self._workspace_url(v),
+            footer=[t(locale, "email.footer.owner", workspace=workspace)],
+        )
+
     def _password_changed(self, locale: str, v: dict[str, Any]) -> _Parts:
         when = self._datetime(locale, v["changed_at"]) if v.get("changed_at") else ""
         return _Parts(

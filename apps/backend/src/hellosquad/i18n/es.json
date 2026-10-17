@@ -396,5 +396,14 @@
   "admin.quality.how_to_read.failed_call.title": "Llamada con falla",
   "admin.quality.how_to_read.failed_call.text": "Llamada al proveedor que falló, incluso las que salieron bien en el nuevo intento.",
   "admin.quality.how_to_read.rates.title": "Comparar períodos",
-  "admin.quality.how_to_read.rates.text": "Para comparar períodos de volúmenes distintos, los conteos se vuelven tasas: no aprobadas en % de las entregas; errores y llamadas con falla por cada 100 entregas. Cada entrega cuenta en el mes de su primera decisión y en la versión del prompt que produjo la primera versión."
+  "admin.quality.how_to_read.rates.text": "Para comparar períodos de volúmenes distintos, los conteos se vuelven tasas: no aprobadas en % de las entregas; errores y llamadas con falla por cada 100 entregas. Cada entrega cuenta en el mes de su primera decisión y en la versión del prompt que produjo la primera versión.",
+  "error.support_session_read_only": "La sesión de soporte es solo de lectura: no se guarda nada en este negocio.",
+  "error.support_session_required": "Abre una sesión de soporte, con motivo, para ver este negocio.",
+  "error.workspace_suspended": "Esta cuenta está suspendida: el cobro y las rutinas están en pausa.",
+  "error.webhook_not_found": "Webhook no encontrado.",
+  "error.webhook_not_reprocessable": "Este webhook no está vinculado a un cobro: no hay nada que reprocesar.",
+  "email.support_session_started.subject": "El soporte de HelloSquad entró en {workspace}",
+  "email.support_session_started.intro": "El soporte de HelloSquad abrió una sesión en {workspace} durante {minutes} minutos, solo de lectura, hasta {until}.",
+  "email.support_session_started.reason": "Motivo indicado: {reason}",
+  "email.support_session_started.detail": "Durante la sesión, el soporte ve lo mismo que un miembro con rol de lectura y no guarda nada. El acceso queda registrado en la auditoría."
 }

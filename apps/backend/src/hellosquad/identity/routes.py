@@ -27,6 +27,7 @@ router = APIRouter(tags=["identity"])
 # saldo pelo extrato; reservado e ciclo pelos grants válidos agora.
 MY_MEMBERSHIPS = """
 select w.id, w.slug, w.name, w.locale, m.role,
+       case when w.suspended_at is null then 'active' else 'suspended' end as workspace_status,
        pl.name as plan, coalesce(v.provisional, true) as provisional,
        app.credit_balance(w.id) as balance,
        c.reserved, c.cycle_credits, c.cycle_used, c.cycle_ends_at
@@ -88,6 +89,7 @@ async def get_me(principal: CurrentPrincipal, db: DatabaseDep) -> Me:
                     id=row["id"], slug=row["slug"], name=row["name"], locale=row["locale"]
                 ),
                 role=row["role"],
+                workspace_status=row["workspace_status"],
                 credits=CreditBalance(
                     plan=row["plan"],
                     provisional=row["provisional"],

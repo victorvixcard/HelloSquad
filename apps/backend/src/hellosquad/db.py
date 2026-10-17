@@ -28,6 +28,7 @@ select set_config('role', 'authenticated', true),
 
 
 IS_PLATFORM_ADMIN = "select app.is_platform_admin() as ok"
+SUPPORT_SESSION_ENTER = "select app.support_session_enter()"
 
 
 class UnsafeDatabaseRoleError(RuntimeError):
@@ -93,9 +94,13 @@ class Database:
 
     @asynccontextmanager
     async def transaction_as(self, principal: Principal) -> AsyncIterator[AsyncConnection[DictRow]]:
-        """Transação em que o banco enxerga o usuário do JWT: papel authenticated, RLS valendo."""
+        """Transação em que o banco enxerga o usuário do JWT: papel authenticated, RLS valendo. Num
+        pedido de leitura, o Super Admin com sessão de suporte aberta lê o negócio da sessão numa
+        transação READ ONLY (app.support_session_enter): o banco recusa qualquer escrita."""
         async with self._pool.connection() as conn, conn.transaction():
             await conn.execute(
                 SET_USER_CONTEXT, (json.dumps(principal.claims), str(principal.user_id))
             )
+            if principal.read_request:
+                await conn.execute(SUPPORT_SESSION_ENTER)
             yield conn

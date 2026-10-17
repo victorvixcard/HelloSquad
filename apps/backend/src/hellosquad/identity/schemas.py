@@ -115,6 +115,11 @@ class User(BaseModel):
 class Membership(BaseModel):
     workspace: WorkspaceSummary
     role: WorkspaceRole
+    workspace_status: Literal["active", "suspended"] = Field(
+        default="active",
+        description="`suspended` = conta suspensa pelo suporte: cobrança e rotinas pausadas; os dados "
+        "e a assinatura ficam.",
+    )
     credits: CreditBalance = Field(description="Créditos do workspace (valores provisórios).")
 
 

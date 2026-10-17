@@ -30,6 +30,8 @@ class AuthUnavailableError(Exception):
 class Principal:
     user_id: UUID
     claims: dict[str, Any]
+    # Pedido de leitura (GET/HEAD): a transação pode virar a leitura do suporte (db.transaction_as).
+    read_request: bool = False
 
     @property
     def email(self) -> str | None:
