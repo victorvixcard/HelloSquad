@@ -103,6 +103,11 @@ REQUESTS = {
         "Íris, o que devemos fazer primeiro a partir dos números?",
         "Prioridades a partir dos números",
     ),
+    "07.05": (
+        "iris",
+        "Íris, monte a leitura da semana, com a fonte de cada número.",
+        "Leitura da semana",
+    ),
 }
 
 
