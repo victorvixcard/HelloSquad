@@ -625,6 +625,27 @@ curl -s -X POST $API/admin/rules/<doc_id>/versions -H "$AUTH" \
 - **Regras de negócio:** cada gravação é uma versão nova (a mais recente vale). Se o documento entra no prompt, os parágrafos `[DECIDIDO]` e `[BASE ATUAL]` viram um **rascunho** das regras compartilhadas (bloco "Regras de negócio" no `README.md`), que só entra no runtime quando publicado; `[PENDENTE]` e `[PROPOSTA]` nunca entram.
 - Roteiro executado com a saída: `docs/parciais/sa3a/curl_squad.sh` (`curl_squad.txt` ao lado; apaga no fim as versões que criou, só no banco local).
 
+### Consumo, Qualidade e Saúde das APIs (SA4a)
+
+Leitura só para `platform_admins`, com o token do Vic da seção do Super Admin. Período em dias de Brasília (`since`/`until`, padrão 30 dias até hoje, máximo 366).
+
+```bash
+curl -s "$API/admin/consumption?granularity=week" -H "$AUTH"      # por conta: solicitações, créditos, IA de entregas e de conversa, turnos, economics
+curl -s "$API/admin/consumption?workspace_id=<id>" -H "$AUTH"     # uma conta; series por dia (padrão), semana (começa na segunda) ou mês
+curl -s $API/admin/alerts -H "$AUTH"                              # contas com leitura fora da faixa + saldos abaixo do limiar
+curl -s "$API/admin/quality?locale=en" -H "$AUTH"                 # por tipo, mês e versão do prompt; "como ler" em pt-BR, en ou es
+curl -s "$API/admin/quality/compare?a_since=2026-09-01&a_until=2026-09-30&b_since=2026-10-01&b_until=2026-10-16" -H "$AUTH"
+curl -s $API/admin/providers -H "$AUTH"                           # estado, chave (configured/missing), chamadas, falhas, gasto, saldo
+curl -s -X PATCH $API/admin/providers/anthropic/balance -H "$AUTH" -H 'Content-Type: application/json' \
+  -d '{"amount": "38.00", "currency": "USD", "read_at": "2026-10-16T22:00:00-03:00", "reason": "Saldo lido no console", "alert_below": "50.00"}'
+```
+
+- **Faixas dos alertas** (`economic_alert_rules`, todas `proposal = true`, do protótipo SA0): IA por crédito até R$ 0,15; margem bruta estimada a partir de 65% com o crédito a R$ 0,50 (exemplo); custo por turno até +10% nos últimos 7 dias contra os 7 anteriores. Mudar uma faixa = inserir versão nova (`valid_from`); a linha antiga não se altera. **Alerta só avisa**: nenhuma conta, plano, crédito ou provedor muda por causa dele.
+- **Contas:** IA em R$ pelo câmbio de Modelos e custos (exemplo); turno = run com chamada de IA (cada resposta de um agente); chamada de IA inclui a autoverificação; conversa não cobra crédito, mas custa (`ai_cost_conversation_usd`).
+- **Qualidade:** cada trabalho entra no dia e no mês da primeira decisão e na versão do prompt do especialista que produziu a v1 (`runs.prompt_version` → `agent_prompt_versions`, com `origin` e `sources` da SA3a). Erro do agente = autoverificação reprovada ou resposta fora do formato; chamada com falha = etapa que falhou, inclusive as que deram certo na nova tentativa.
+- **Saldo informado:** histórico em `provider_balance_reports` (só inserção) e o último em `provider_health`; motivo de 10 a 500 caracteres, moeda em 3 letras, leitura no futuro recusada (422), provedor desconhecido 404; `alert_below` nulo mantém o limiar; cada gravação vira `admin.provider_balance_reported` na Auditoria (categoria configuração).
+- Roteiro executado com a saída: `docs/parciais/sa4a/curl_sa4a.sh` (`curl_sa4a.txt` ao lado; cruza a faixa com uma chamada fictícia temporária na Miolo e apaga no fim o que criou).
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
