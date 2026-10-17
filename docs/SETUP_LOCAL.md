@@ -686,9 +686,32 @@ curl -s -X POST $API/admin/payments/webhooks/<evento>/reconcile -H "$AUTH" -H 'C
 - **O que o `make seed` faz com o que o painel gravou (SA7a).** Apaga e devolve ao seed: negócios em que só o Vic ou o Pedro são owner e as memberships deles; o crédito dos três negócios do seed (a conta recomeça, então ajustes somem); a suspensão deles (com o motivo); o saldo informado na Saúde (`provider_balance_reports` e o último valor em `provider_health`). Encerra, sem apagar, sessão de suporte aberta. **Preserva** (o seed não volta): versões novas de preço, homologação e "à venda" do Catálogo, versões de plano e de recarga, regras de negócio e versões do squad publicadas (o banco vale; `make squad-export` regrava `squad/`), a auditoria e o registro de acesso do suporte (só crescem). Para voltar ao preço do seed: `delete from public.delivery_prices where delivery_type = '04.01' and id <> md5('seed:price:04.01')::uuid` (como o `curl_sa6a.sh`).
 - **Motivos internos só no painel (SA7a).** O motivo da versão de preço fica em `delivery_price_notes` e o da suspensão em `workspace_suspension_reasons`, tabelas sem GRANT para nenhum papel da Data API (só `hellosquad_admin` lê); `delivery_prices` e `workspaces` não têm mais essas colunas. As rotas `/admin/*` devolvem o mesmo de antes.
 
+### Modo Autônomo: responsabilidades, scheduler e execuções (S3b)
+
+O Modo Autônomo segue a V4.6 §7 (`docs/FLUXOS_DA_V46.md`). O `make seed` deixa a Miolo como a conta em uso do protótipo: "Planejar meus conteúdos toda semana" **Ativa** (toda quinta, 9h, 3 posts por semana), "Acompanhar meus resultados" **Ativa** (toda segunda, 9h), "Monitorar oportunidades de busca local" em **Falha na execução** (Google Perfil expirado), "Preparar posts toda segunda-feira" **Pausada** e "Preparar campanhas de relacionamento" **Bloqueada por integração** (e-mail não conectado), com as execuções PL-41, PL-42 (aprovadas), RS-42 (concluída), BL-42 (falhou nas duas tentativas) e RC-10 (não executada). Vitta e Trilha começam sem nada.
+
+**Scheduler.** `make scheduler` sobe o `hellosquad-scheduler`, que a cada `SCHEDULER_TICK_SECONDS` (60) dispara as responsabilidades **Ativas** vencidas no fuso do negócio (`workspaces.timezone`, Brasília nos fictícios) e depois roda a renovação das assinaturas (S2e). Cada ciclo cria a execução (código PL/RS/BL/RC-NN; a segunda do mesmo período vira `-NNb`), reagenda a próxima e abre o trabalho do runtime com as etapas do modelo (`plan`: Otto 04.02 → Kaia 03.01; `res`: Íris 07.05; `reat` e `crm`: Max 06.01 → 06.02; `posts`: Kaia 03.01), com a primeira etapa na fila **`runs_scheduled`**. O worker (`make worker`) lê essa fila depois da interativa. Pausada e encerrada não têm próxima execução; bloqueada por integração registra "Não executada" no ciclo; conexão expirada tenta de novo em `AUTONOMY_RETRY_MINUTES` (30) e, na segunda, "Falhou" e a responsabilidade vai para "Falha na execução". Dois schedulers no ar não duplicam (trava consultiva `HS_AUTON` e chave única por ciclo).
+
+```bash
+make scheduler                                   # fica no ar; Ctrl+C encerra
+cd apps/backend && uv run hellosquad-scheduler --once        # um tick e sai
+
+# Forçar uma execução agora (só local/test), sem esperar a quinta: o plano da Miolo
+cd apps/backend && uv run hellosquad-scheduler --once --force-due 5eed0000-0000-4000-8000-000000000a01
+cd apps/backend && LLM_PROVIDER=simulated uv run hellosquad-worker --drain   # o Otto entrega o plano
+# GET /workspaces/<miolo>/autonomy/runs → "PL-NN · Plano da semana NN · Aguarda sua aprovação"
+# Marina aprova a pendência (POST /approvals/<id>/decision) → "Aprovada por você"; a Kaia fica aguardando o motor
+```
+
+Roteiro completo com a saída: `docs/parciais/s3b/roteiro_modo_autonomo.sh` (`.txt` ao lado); termina com `make seed`.
+
+**API** (`/workspaces/{id}/autonomy…`; textos no idioma de quem pede, pt-BR, en e es): `GET /autonomy` (interruptor "Ligado"/"Pausado", contagens, próxima, últimos 7 dias, responsabilidades, encerradas, "O que mais pode ficar com o squad", próximas e histórico), `GET /autonomy/templates` (perguntas e opções da conversa), `GET /autonomy/responsibilities[/{id}]` (o combinado, limites por nível, memória usada, próximas, histórico, alterações), `GET /autonomy/upcoming`, `GET /autonomy/runs`, `POST …/{id}/pause|resume|end`, `POST /autonomy/switch` e `POST …/{id}/redelegate` (só o owner), `POST /autonomy/proposals` (editor ou acima: o Nexo apresenta o combinado na conversa com o cartão `responsibility_proposal` e a pendência `confirm`; **só ativa quando o owner confirma** em `POST /approvals/{id}/decision`, e o Nexo responde "Delegado. …"). Realtime no canal `workspace:<id>`: `responsibility.<estado>` e `responsibility_run.<estado>`.
+
+**Conexões (gancho da S3a).** Enquanto `connections` não existe, o estado da conexão sai das fontes da Memória (`fact_sources` do tipo `connection`, pelo nome: "Google Perfil", "E-mail marketing"). A S3a troca o corpo de `app.responsibility_connection_state` e chama `app.block_responsibilities_for_connection` / `app.unblock_responsibilities_for_connection` (com o horário da nova tentativa) ao expirar e ao reconectar.
+
 ## Worker do squad (S1c)
 
-`make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
+`make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq; com vaga, também `runs_scheduled`, as execuções do Modo Autônomo, S3b), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
 
 ```bash
 make worker                                   # fica no ar; Ctrl+C (ou SIGTERM) encerra limpo

@@ -131,5 +131,5 @@ mocks-stop: ## Para os mocks locais (só o processo do make mocks; web e API seg
 	fi
 	@rm -f $(MOCKS_PID)
 
-scheduler: ## Scheduler: renovação mensal das assinaturas (concilia com o provedor; sem pagamento confirmado, past_due)
+scheduler: ## Scheduler: a cada minuto, o Modo Autônomo (responsabilidades vencidas) e a renovação mensal das assinaturas
 	cd $(BACKEND_DIR) && uv run hellosquad-scheduler
