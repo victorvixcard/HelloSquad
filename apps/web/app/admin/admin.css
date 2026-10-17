@@ -1,0 +1,48 @@
+/* SA2 — o pouco que o protótipo SA0 não tinha e a tela real precisa: item "em breve", menu da pessoa, página 403,
+   filtros por formulário (GET) e paginação por cursor. Só tokens do DS e os alfas de Tinta da V4.6; nenhuma cor nova. */
+
+.sa-agl{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.sa-cb-check{display:block;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.sa .hs-btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* item da barra que chega numa fatia futura */
+.sa-ni.is-soon{cursor:default;color:var(--hs-rotulo)}
+.sa-ni.is-soon:hover{background:transparent;color:var(--hs-rotulo)}
+.sa-ni.is-soon .sa-ic{opacity:.6}
+.sa-soon{flex:none;font-family:var(--hs-font-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--hs-kbd)}
+
+/* menu da pessoa no pé da barra */
+.sa-me{position:relative}
+.sa-me-b{display:flex;align-items:center;gap:11px;width:100%;min-width:0;margin:0;padding:6px;border:0;border-radius:12px;background:transparent;text-align:left;cursor:pointer}
+.sa-me-b:hover{background:rgba(15,13,34,.05)}
+.sa-me-chev{flex:none;transform:rotate(180deg);color:var(--hs-kbd)}
+.sa-me-pop{position:absolute;left:8px;right:8px;bottom:calc(100% + 6px);z-index:20}
+.sa-me-pop .hs-menu{width:100%}
+.sa-me-pop .hs-mi{text-decoration:none;color:var(--hs-tinta)}
+.sa-me-pop .hs-mi .sa-ic{width:18px;height:18px}
+
+/* página 403 honesta */
+.sa-denied{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--hs-papel)}
+.sa-denied-c{width:100%;max-width:560px}
+.sa-denied-c .sa-card-b{display:flex;flex-direction:column;align-items:center;gap:14px;padding:36px 32px;text-align:center}
+.sa-denied-c .sa-sb-top{justify-content:center;padding:0;height:auto}
+
+/* filtros (formulário GET: funciona sem JavaScript) e paginação por cursor */
+.sa-filters{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;min-width:0;margin-bottom:14px}
+.sa-filters .sa-fld{flex:0 1 200px}
+.sa-filters .sa-fld.is-grow{flex:1 1 280px}
+.sa-filters .sa-inp{height:40px;min-height:0;padding:0 12px;resize:none}
+.sa-filters select.sa-inp{padding-right:28px}
+.sa-pager{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 0 0}
+.sa-segl{display:inline-flex;gap:4px;padding:3px;border-radius:12px;background:var(--hs-papel)}
+.sa-segl a{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:9px;color:var(--hs-tinta-suave);font-size:13.5px;font-weight:600;text-decoration:none;white-space:nowrap}
+.sa-segl a:hover{color:var(--hs-tinta)}
+.sa-segl a[aria-current="page"]{background:var(--hs-branco);color:var(--hs-tinta);box-shadow:0 0 0 1px rgba(15,13,34,.06),0 1px 3px rgba(15,13,34,.06)}
+.sa-segl .sa-nb{height:18px;min-width:18px;font-size:11px}
+
+/* células */
+.sa-code{font-family:var(--hs-font-mono);font-size:12px;letter-spacing:0}
+.sa-trunc{display:inline-block;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+.sa-tags{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sa-tabp:focus-visible{outline-offset:6px}
+.sa-tabp+.sa-card,.sa-tabs-w+.sa-tabp{margin-top:16px}
