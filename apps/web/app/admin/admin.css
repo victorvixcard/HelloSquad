@@ -185,3 +185,13 @@
 /* SA6b: seis tokens do SA0 (app/tokens.css) que o CSS portado usa e o painel não declarava — campos e diálogos
    ficavam sem contorno. Mesmos valores, pelos tokens do DS; o diálogo mora fora de .sa (portal), por isso .sa-ovl. */
 .sa,.sa-ovl{--e1-apoiado:var(--hs-e1-apoiado);--e2-flutuante:var(--hs-e2-flutuante);--halo-campo:var(--hs-halo-campo);--r-acao:var(--hs-r-acao);--r-caixa:var(--hs-r-caixa);--r-painel-s:var(--hs-r-painel-s)}
+
+/* SA7b: Catálogo como o SA0. Filtro por agente em chips (links com aria-current, o filtro é do servidor),
+   contagem esmaecida, resumo de homologação no cabeçalho do agente e integrações em etiquetas pequenas. */
+.sa-tabs.is-line a.sa-tab{text-decoration:none}
+.sa-tabs.is-line a.sa-tab[aria-current="page"]{background:var(--hs-tinta);color:var(--hs-papel);box-shadow:none}
+.sa-tab-n{opacity:.6;font-variant-numeric:tabular-nums}
+.sa-tool-hint{display:inline-flex;align-items:center;gap:8px;font-size:13px}
+.sa-card-sum{font-size:12.5px;text-align:right}
+.sa-integ{gap:4px;min-width:140px;max-width:180px}
+.sa-integ .sa-chip{height:22px;padding:0 8px;font-size:11.5px}

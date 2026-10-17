@@ -1,15 +1,16 @@
 import { unwrap } from "@hellosquad/contracts";
-import { AGENT_IDS, getAgent, isAgentId, type AgentId } from "@hellosquad/ui";
+import { Agent, AGENT_IDS, getAgent, isAgentId } from "@hellosquad/ui";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { CatalogEditDialog } from "@/components/admin/actions/CatalogActions";
 import { RecentAudit } from "@/components/admin/actions/RecentAudit";
 import { AdminPage } from "@/components/admin/AdminPage";
-import { FilterSelect } from "@/components/admin/Filters";
+import { catalogVersion, homologationCounts, integrationTags } from "@/components/admin/catalog";
 import { AgentLabel, ApiProblem, Card, DataTable, LockedCheck, Metrics, Note, Status, Tag, type StatusKind } from "@/components/admin/ui";
 import { adminRead, type CatalogItem } from "@/lib/admin";
 import { adminFormat } from "@/lib/admin-format";
-import { codeLabel, one } from "@/lib/admin-labels";
+import { codeLabel, hrefWith, one } from "@/lib/admin-labels";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.catalogo");
@@ -33,6 +34,8 @@ type Search = Promise<Record<string, string | string[] | undefined>>;
  * Catálogo (SA0 `catalogo.html` → `GET /admin/catalog`): as 46 deliveries, um cartão por agente. Profundidade inferida
  * marcada, preço provisório marcado, travas "preço aprovado comercialmente" e "à venda" na tabela só como leitura; a
  * edição (SA6b) é por delivery, em "Editar": preço novo, homologação e "à venda", cada um com motivo e auditoria.
+ * Como o SA0 (SA7b): versão e "Ver histórico" no topo, linha de apoio nos números, filtro por agente em chips com a
+ * contagem, cabeçalho do agente com deliveries, homologação e "Abrir o agente", integrações em etiquetas.
  */
 export default async function CatalogPage({ searchParams }: { searchParams: Search }) {
   const sp = await searchParams;
@@ -41,7 +44,8 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
   const [t, areas, locale] = await Promise.all([getTranslations("admin"), getTranslations("common"), getLocale()]);
   const f = adminFormat(locale);
   const dash = t("common.dash");
-  const result = await adminRead((api) => unwrap(api.GET("/admin/catalog", { params: { query: { agent_id: agent } } })), "/admin/catalogo");
+  // O catálogo inteiro (46 linhas): os chips contam por agente e os números do topo não dependem do filtro.
+  const result = await adminRead((api) => unwrap(api.GET("/admin/catalog")), "/admin/catalogo");
   const locked = t("catalogo.locked");
 
   const columns = [
@@ -71,7 +75,23 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
         </span>
       ),
     },
-    { key: "integ", label: t("catalogo.colIntegrations"), cell: (d: CatalogItem) => <small className="sa-mut">{d.integrations ?? dash}</small> },
+    {
+      key: "integ",
+      label: t("catalogo.colIntegrations"),
+      cell: (d: CatalogItem) => {
+        const tags = integrationTags(d.integrations);
+        if (!tags.length) return <small className="sa-mut">{d.integrations ?? dash}</small>;
+        return (
+          <div className="sa-chips sa-integ" title={d.integrations ?? undefined}>
+            {tags.map((tag) => (
+              <span key={tag} className="sa-chip">
+                {t(`catalogo.integ.${tag}`)}
+              </span>
+            ))}
+          </div>
+        );
+      },
+    },
     {
       key: "homol",
       label: t("catalogo.colHomologation"),
@@ -124,10 +144,16 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
   ];
 
   const items = result.ok ? result.data.items : [];
-  const byAgent = AGENT_IDS.map((id) => ({ id, items: items.filter((d) => d.agent_id === id) })).filter((g) => g.items.length);
-  const options = [
-    { value: "", label: t("catalogo.allAgents") },
-    ...AGENT_IDS.map((id) => ({ value: id, label: getAgent(id).name, agent: id as AgentId })),
+  const groups = AGENT_IDS.map((id) => ({ id, items: items.filter((d) => d.agent_id === id) }));
+  const byAgent = groups.filter((g) => g.items.length && (!agent || g.id === agent));
+  const count = (pred: (d: CatalogItem) => boolean) => items.filter(pred).length;
+  const forSale = count((d) => d.for_sale);
+  const approved = count((d) => Boolean(d.price?.approved_commercially));
+  const engine = count((d) => d.homologation_status === "awaiting_engine");
+  const integration = count((d) => d.homologation_status === "awaiting_integration");
+  const chips = [
+    { id: undefined, label: t("common.all"), n: items.length },
+    ...groups.map((g) => ({ id: g.id, label: getAgent(g.id).name, n: g.items.length })),
   ];
 
   return (
@@ -136,23 +162,72 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
       nav="catalogo"
       title={t("catalogo.title")}
       desc={t("catalogo.desc")}
+      actions={
+        result.ok ? (
+          <>
+            <span className="sa-chip is-mono" title={t("catalogo.versionTitle")}>
+              {t("catalogo.version", { n: catalogVersion(items) })}
+            </span>
+            <Link className="hs-btn hs-btn--ghost hs-btn--s" href={hrefWith("/admin/auditoria", { quem: "platform_admin", tipo: "configuration" })}>
+              {t("catalogo.history")}
+            </Link>
+          </>
+        ) : undefined
+      }
     >
       {result.ok ? (
         <>
           <Metrics
             items={[
-              { label: t("catalogo.metDeliveries"), value: f.int(items.length) },
-              { label: t("catalogo.metForSale"), value: f.int(items.filter((d) => d.for_sale).length) },
-              { label: t("catalogo.metApproved"), value: f.int(items.filter((d) => d.price?.approved_commercially).length) },
-              { label: t("catalogo.metHomologated"), value: f.int(items.filter((d) => d.homologation_status === "homologated").length) },
-              { label: t("catalogo.metWaiting"), value: f.int(items.filter((d) => d.homologation_status === "awaiting_engine").length) },
+              {
+                label: t("catalogo.metDeliveries"),
+                value: f.int(items.length),
+                detail: t("catalogo.metDeliveriesDetail", { agents: groups.filter((g) => g.items.length).length }),
+              },
+              {
+                label: t("catalogo.metForSale"),
+                value: f.int(forSale),
+                detail: forSale ? t("catalogo.metForSaleYes") : t("catalogo.metForSaleNone"),
+              },
+              {
+                label: t("catalogo.metApproved"),
+                value: f.int(approved),
+                unit: t("catalogo.metOf", { total: f.int(items.length) }),
+                detail: approved ? t("catalogo.metApprovedYes") : t("catalogo.metApprovedNone"),
+              },
+              {
+                label: t("catalogo.metHomologated"),
+                value: f.int(count((d) => d.homologation_status === "homologated")),
+                detail: t("catalogo.metHomologatedDetail", { n: count((d) => d.homologation_status === "in_homologation") }),
+              },
+              {
+                label: t("catalogo.metWaiting"),
+                value: f.int(engine + integration),
+                detail: t("catalogo.metWaitingDetail", { engine, integration }),
+              },
             ]}
           />
           <Note kind="draft" label={t("common.provisional")}>
             {items.some((d) => d.for_sale || d.price?.approved_commercially) ? t("acoes.catalog.noteLive") : t("catalogo.note")}
           </Note>
           <div className="sa-tool" style={{ margin: "16px 0" }}>
-            <FilterSelect name="agente" title={t("catalogo.filterAgent")} options={options} />
+            <nav className="sa-tabs is-line" aria-label={t("catalogo.filterAgent")}>
+              {chips.map((c) => (
+                <Link
+                  key={c.id ?? "todos"}
+                  className="sa-tab"
+                  href={hrefWith("/admin/catalogo", { agente: c.id })}
+                  aria-current={agent === c.id ? "page" : undefined}
+                >
+                  {c.id ? <Agent agent={c.id} size={18} /> : null}
+                  {c.label} <span className="sa-tab-n">{f.int(c.n)}</span>
+                </Link>
+              ))}
+            </nav>
+            <span className="sa-grow" />
+            <span className="sa-mut sa-tool-hint">
+              {t("catalogo.creditsHint")} <Tag kind="sim">{t("common.provisional")}</Tag>
+            </span>
           </div>
           {byAgent.length ? (
             byAgent.map((g) => (
@@ -160,7 +235,19 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
                 key={g.id}
                 id={`cat-${g.id}`}
                 title={<AgentLabel agent={g.id} name={getAgent(g.id).name} />}
-                sub={areas(`areas.${g.id}`)}
+                sub={`${areas(`areas.${g.id}`)} · ${t("catalogo.deliveriesCount", { n: g.items.length })}`}
+                actions={
+                  <>
+                    <small className="sa-mut sa-card-sum">
+                      {homologationCounts(g.items)
+                        .map((c) => t(`catalogo.homolSummary.${c.status}`, { n: c.n }))
+                        .join(" · ")}
+                    </small>
+                    <Link className="hs-btn hs-btn--ghost hs-btn--s" href={`/admin/squad/${g.id}`}>
+                      {t("catalogo.openAgent")}
+                    </Link>
+                  </>
+                }
                 flush
               >
                 <DataTable<CatalogItem>
