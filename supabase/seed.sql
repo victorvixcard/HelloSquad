@@ -7,6 +7,7 @@
 --   vitta  → Rafael owner, Carla editor
 --   trilha → Juliana owner
 --   Pedro  → autenticado e sem membership em lugar nenhum (testes negativos de RLS)
+--   Vic    → Super Admin local (platform_admins), sem membership (SA1)
 
 do $seed$
 declare
@@ -26,7 +27,8 @@ begin
       ('rafael@vitta.example', 'Rafael Nunes'),
       ('carla@vitta.example', 'Carla Dias'),
       ('juliana@trilha.example', 'Juliana Prado'),
-      ('pedro@semconta.example', 'Pedro Teste')
+      ('pedro@semconta.example', 'Pedro Teste'),
+      ('vic@hellosquad.example', 'Vic')
     ) as t (email, full_name)
   loop
     select id into v_user_id from auth.users where email = v_user.email;
@@ -139,6 +141,17 @@ begin
       select 1 from public.memberships o where o.workspace_id = m.workspace_id and o.user_id <> v_pedro_id
     );
   delete from public.memberships where user_id = v_pedro_id;
+
+  -- Super Admin é papel de plataforma, fora de memberships (SUPER_ADMIN.md §1). Só o Vic fictício.
+  insert into public.platform_admins (user_id, mfa_enforced)
+  select u.id, false from auth.users u where u.email = 'vic@hellosquad.example'
+  on conflict (user_id) do nothing;
+  delete from public.platform_admins pa
+  using auth.users u
+  where u.id = pa.user_id and u.email <> 'vic@hellosquad.example';
+  delete from public.memberships m
+  using auth.users u
+  where u.id = m.user_id and u.email = 'vic@hellosquad.example';
 
   drop table seed_memberships;
 end;

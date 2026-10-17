@@ -21,8 +21,11 @@ Convenções: e-mails no TLD reservado `.example` (nunca entrega); telefones no 
 | `carla@vitta.example` | Carla Dias | vitta | editor | `Senha!Teste123` |
 | `juliana@trilha.example` | Juliana Prado | trilha | owner | `Senha!Teste123` |
 | `pedro@semconta.example` | Pedro Teste | nenhum | sem membership | `Senha!Teste123` |
+| `vic@hellosquad.example` | Vic | nenhum | Super Admin local (`platform_admins`, SA1) | `Senha!Teste123` |
 
 `pedro@semconta.example` existe para os testes negativos de RLS: autenticado, mas sem acesso a nenhum workspace.
+
+`vic@hellosquad.example` é o Super Admin fictício do painel `/admin` (SA1): papel de plataforma, fora de `memberships`; não é o Vic de verdade nem tem conta em produção.
 
 ## Memória da Marca fictícia (seed da Miolo)
 
