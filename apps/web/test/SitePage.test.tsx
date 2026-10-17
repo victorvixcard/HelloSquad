@@ -123,4 +123,23 @@ describe("Landing (R32 portada, L1)", () => {
     expect(document.querySelectorAll(".lp-c2-logo")).toHaveLength(2);
     expect(document.body.textContent).toContain("Publicar 3x por semana nas redes sociais.");
   });
+
+  it("en e es: a mesma R32 pelo dicionário, sem português nos títulos e na barra", async () => {
+    await renderServer(<Landing locale="en" />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/You run your business\.\s*Your AI squad takes over the marketing\./);
+    expect(within(screen.getByRole("navigation", { name: "Sections" })).getAllByRole("link").map((a) => a.textContent)).toEqual([
+      "How it works", "Specialists", "Autonomous mode", "Memory", "Results",
+    ]);
+    const h2 = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent!.replace(/\s+/g, " ").trim()).join(" | ");
+    expect(h2).toContain("From request to delivery.");
+    expect(h2).not.toMatch(/Você|Seu |pedido|ferramentas/);
+    expect(document.body.textContent).not.toMatch(vendors);
+  });
+
+  it("es: título e perguntas em espanhol", async () => {
+    await renderServer(<Landing locale="es" />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/Tú te ocupas de tu negocio\./);
+    expect(document.body.textContent).toContain("¿Qué es HelloSquad?");
+  });
 });
+
