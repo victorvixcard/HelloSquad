@@ -18,13 +18,18 @@ DB_LOCK := $(if $(filter 1,$(HELLOSQUAD_DB_LOCK_HELD)),,flock -o -w 600 /tmp/hel
 # make status e make up não imprimem chaves nem a senha da URL do banco (valores: pnpm exec supabase status -o env).
 MASK_KEYS := sed -E -f infra/mask-keys.sed
 
-# Portas lidas do .env, se existir (só estas duas chaves; segredos não entram no make).
+# Portas lidas do .env, se existir (só estas chaves; segredos não entram no make).
 env_value = $(shell sed -n 's/^$(1)=//p' .env 2>/dev/null | tail -n 1)
 API_PORT ?= $(or $(call env_value,API_PORT),8100)
 WEB_PORT ?= $(or $(call env_value,WEB_PORT),3100)
+# Mocks dos provedores (Fase 3): um processo em 127.0.0.1, faixa 8300–8309. Guia: docs/MOCKS_LOCAIS.md.
+MOCKS_DIR := infra/mocks
+MOCKS_PORT ?= $(or $(call env_value,MOCKS_PORT),8300)
+MOCKS_LOG := /tmp/hellosquad-mocks.log
+MOCKS_PID := /tmp/hellosquad-mocks.pid
 
 .PHONY: help install up down status migrate seed squad-seed squad-export test test-backend test-web test-db test-infra e2e build \
-	openapi dev dev-api dev-web worker scheduler
+	openapi dev dev-api dev-web worker scheduler mocks mocks-stop
 
 help: ## Lista os alvos disponíveis
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -81,8 +86,10 @@ e2e: ## Ponta a ponta (Playwright, Chromium) no ambiente local: build do web, wo
 test-db: ## Banco: testes pgTAP de supabase/tests (exige make up; com trava)
 	$(DB_LOCK) $(SUPABASE) test db
 
-test-infra: ## Infra: guarda de segredo do autosave, num repositório temporário em /tmp (sem banco)
+test-infra: ## Infra: guarda de segredo do autosave (repositório temporário em /tmp) e mocks dos provedores (ruff e pytest, sem banco)
 	bash infra/tests/git-autosave-guard.sh
+	cd $(MOCKS_DIR) && uv sync --locked -q && uv run --locked ruff check . && uv run --locked ruff format --check . \
+		&& uv run --locked pytest -q
 
 build: ## Build de produção do web (o mesmo que o CI roda)
 	pnpm --filter web build
@@ -101,6 +108,25 @@ dev-web: ## Web Next.js em http://127.0.0.1:3100
 
 worker: ## Worker do squad: consome a fila runs_interactive (LLM simulado sem ANTHROPIC_API_KEY; Ctrl+C encerra)
 	cd $(BACKEND_DIR) && uv run hellosquad-worker
+
+mocks: ## Mocks locais (Meta, GA4, Search Console, GBP) em background em http://127.0.0.1:8300; log em /tmp/hellosquad-mocks.log
+	@if [ -f $(MOCKS_PID) ] && kill -0 "$$(cat $(MOCKS_PID))" 2>/dev/null; then \
+		echo "Mocks já no ar (pid $$(cat $(MOCKS_PID)), porta $(MOCKS_PORT))"; \
+	else \
+		cd $(MOCKS_DIR) && uv sync --locked -q && { MOCKS_PORT=$(MOCKS_PORT) nohup .venv/bin/hellosquad-mocks \
+			> $(MOCKS_LOG) 2>&1 < /dev/null & echo $$! > $(MOCKS_PID); }; \
+	fi
+	@for i in $$(seq 1 50); do curl -fsS -o /dev/null --max-time 1 http://127.0.0.1:$(MOCKS_PORT)/_mock/health 2>/dev/null && break; sleep 0.2; done
+	@curl -fsS --max-time 2 http://127.0.0.1:$(MOCKS_PORT)/_mock/health && echo \
+		|| { echo "Mocks não subiram em :$(MOCKS_PORT); veja $(MOCKS_LOG)"; exit 1; }
+
+mocks-stop: ## Para os mocks locais (só o processo do make mocks; web e API seguem no ar)
+	@if [ -f $(MOCKS_PID) ] && kill "$$(cat $(MOCKS_PID))" 2>/dev/null; then \
+		echo "Mocks parados (pid $$(cat $(MOCKS_PID)))"; \
+	else \
+		echo "Mocks não estavam no ar pelo make mocks"; \
+	fi
+	@rm -f $(MOCKS_PID)
 
 scheduler: ## Scheduler: renovação mensal das assinaturas (concilia com o provedor; sem pagamento confirmado, past_due)
 	cd $(BACKEND_DIR) && uv run hellosquad-scheduler
