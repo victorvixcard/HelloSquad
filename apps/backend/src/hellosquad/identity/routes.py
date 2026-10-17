@@ -64,6 +64,7 @@ join public.memberships m on m.workspace_id = w.id and m.user_id = %s
 where w.id = %s
 """
 
+IS_PLATFORM_ADMIN = "select app.is_platform_admin() as is_platform_admin"
 CREATE_WORKSPACE = "select id, slug, name, locale, created_at from app.create_workspace(%s, %s)"
 SET_LOCALE = "select id from app.set_workspace_locale(%s, %s)"
 
@@ -76,7 +77,9 @@ SET_LOCALE = "select id from app.set_workspace_locale(%s, %s)"
 async def get_me(principal: CurrentPrincipal, db: DatabaseDep) -> Me:
     async with db.transaction_as(principal) as conn:
         rows = await (await conn.execute(MY_MEMBERSHIPS, (principal.user_id,))).fetchall()
+        admin = await (await conn.execute(IS_PLATFORM_ADMIN)).fetchone()
     return Me(
+        is_platform_admin=admin["is_platform_admin"],
         user=User(
             id=principal.user_id,
             email=principal.email,

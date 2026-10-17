@@ -126,3 +126,7 @@ class Membership(BaseModel):
 class Me(BaseModel):
     user: User
     memberships: list[Membership] = Field(description="Workspaces ativos de que você participa.")
+    is_platform_admin: bool = Field(
+        default=False,
+        description="Super Admin da plataforma (papel fora de memberships): o painel fica em /admin.",
+    )

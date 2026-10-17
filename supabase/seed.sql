@@ -14,7 +14,6 @@ declare
   v_password constant text := 'Senha!Teste123';
   v_user record;
   v_user_id uuid;
-  v_pedro_id uuid;
 begin
   -- Usuário com senha conhecida nunca entra em banco com gente de verdade (DIRETRIZES_DO_DONO.md).
   if exists (select 1 from auth.users where email is not null and email not like '%.example') then
@@ -124,24 +123,6 @@ begin
   where w.id = i.workspace_id
     and w.slug in ('miolo', 'vitta', 'trilha');
 
-  -- Workspaces que só o Pedro integra são resíduo de teste manual: saem com a trilha de auditoria deles.
-  select id into v_pedro_id from auth.users where email = 'pedro@semconta.example';
-  delete from public.audit_events a
-  using public.memberships m
-  where m.user_id = v_pedro_id
-    and a.workspace_id = m.workspace_id
-    and not exists (
-      select 1 from public.memberships o where o.workspace_id = m.workspace_id and o.user_id <> v_pedro_id
-    );
-  delete from public.workspaces w
-  using public.memberships m
-  where m.user_id = v_pedro_id
-    and w.id = m.workspace_id
-    and not exists (
-      select 1 from public.memberships o where o.workspace_id = m.workspace_id and o.user_id <> v_pedro_id
-    );
-  delete from public.memberships where user_id = v_pedro_id;
-
   -- Super Admin é papel de plataforma, fora de memberships (SUPER_ADMIN.md §1). Só o Vic fictício.
   insert into public.platform_admins (user_id, mfa_enforced)
   select u.id, false from auth.users u where u.email = 'vic@hellosquad.example'
@@ -149,10 +130,29 @@ begin
   delete from public.platform_admins pa
   using auth.users u
   where u.id = pa.user_id and u.email <> 'vic@hellosquad.example';
-  delete from public.memberships m
-  using auth.users u
-  where u.id = m.user_id and u.email = 'vic@hellosquad.example';
 
+  -- Pedro e Vic terminam sem membership. Negócio em que só eles são owner é resíduo de teste manual (inclusive
+  -- o que o Vic cria pelo produto, H-SA-02): sai com a trilha de auditoria dele, antes das memberships, para a
+  -- trava "pelo menos um owner" (S0) não recusar. Nos outros, só a membership deles sai.
+  create temporary table seed_without_membership on commit drop as
+  select id as user_id from auth.users where email in ('pedro@semconta.example', 'vic@hellosquad.example');
+  create temporary table seed_orphan_workspaces on commit drop as
+  select distinct m.workspace_id
+  from public.memberships m
+  join public.workspaces w on w.id = m.workspace_id
+  where m.user_id in (select user_id from seed_without_membership)
+    and w.slug not in ('miolo', 'vitta', 'trilha')
+    and not exists (
+      select 1 from public.memberships o
+      where o.workspace_id = m.workspace_id and o.role = 'owner'
+        and o.user_id not in (select user_id from seed_without_membership)
+    );
+  delete from public.audit_events a using seed_orphan_workspaces o where a.workspace_id = o.workspace_id;
+  delete from public.workspaces w using seed_orphan_workspaces o where w.id = o.workspace_id;
+  delete from public.memberships m using seed_without_membership u where m.user_id = u.user_id;
+
+  drop table seed_orphan_workspaces;
+  drop table seed_without_membership;
   drop table seed_memberships;
 end;
 $seed$;
@@ -676,3 +676,10 @@ delete from public.workspace_suspension_reasons r
 using public.workspaces w
 where w.id = r.workspace_id and w.slug in ('miolo', 'vitta', 'trilha');
 update public.support_access_log set ended_at = now() where ended_at is null and expires_at > now();
+
+-- SA7a (H-SA-02) — saldo informado pela tela Saúde volta ao estado do seed: nenhum saldo nem relatório de saldo
+-- (o test_admin_sa4 parte daí). A auditoria do que foi informado fica: audit_events só cresce.
+delete from public.provider_balance_reports;
+update public.provider_health
+set reported_balance = null, reported_balance_currency = null, reported_balance_at = null, alert_below = null
+where reported_balance is not null or reported_balance_currency is not null or alert_below is not null;
