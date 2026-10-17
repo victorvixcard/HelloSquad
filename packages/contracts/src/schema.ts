@@ -1136,10 +1136,30 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Consumo por cliente e período: solicitações, créditos cobrados, tokens e custo de IA
-         * @description Conversa não cobra crédito, mas custa: aparece em `ai_cost_conversation_usd`. Reais pelo câmbio informado em Modelos e custos (provisório). Alertas econômicos ficam para a SA4.
+         * Consumo por cliente e período: solicitações, créditos, custo de IA e alertas
+         * @description Conversa não cobra crédito, mas custa: aparece em `ai_cost_conversation_usd`. Reais pelo câmbio informado em Modelos e custos (provisório). Alertas econômicos comparam IA por crédito, margem bruta estimada (crédito ao valor de referência da faixa, exemplo) e tendência do custo por turno com as faixas de `alert_rules` (proposta); só avisam, nada muda automaticamente. `series` agrupa o conjunto filtrado por dia, semana (começa na segunda) ou mês; balde sem atividade não aparece.
          */
         get: operations["get_consumption_admin_consumption_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/alerts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Alertas ativos: contas com leitura econômica fora da faixa e saldos abaixo do limiar
+         * @description As faixas são proposta (`alert_rules[].proposal`). Alerta só avisa: nenhuma conta, plano, crédito ou provedor muda por causa dele.
+         */
+        get: operations["get_alerts_admin_alerts_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1155,8 +1175,31 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Qualidade das entregas por tipo e por mês (aprovadas de primeira, ajustes, custo) */
+        /**
+         * Qualidade das entregas por tipo, por mês e por versão do prompt, com o "como ler"
+         * @description Mês e dia da primeira decisão (Brasília). `by_prompt_version` liga cada trabalho à versão do prompt do especialista que produziu a v1 (`runs.prompt_version` → `agent_prompt_versions`, com as versões do painel em `sources`).
+         */
         get: operations["get_quality_admin_quality_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/quality/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Comparar a qualidade de dois períodos (mede mudança de prompt ou modelo)
+         * @description Período = dia da primeira decisão (Brasília). Contagens viram taxa: não aprovadas e aprovadas de primeira em fração das entregas, ajustes por entrega, erros do agente e chamadas com falha por 100 entregas. `delta` = b − a. Cada período lista as versões de prompt que produziram as entregas dele.
+         */
+        get: operations["compare_quality_admin_quality_compare_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1172,7 +1215,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Saúde das APIs: estado, chave configurada ou ausente, chamadas, falhas e gasto */
+        /**
+         * Saúde das APIs: estado, chave configurada ou ausente, chamadas, falhas, gasto e saldo
+         * @description Chamadas, falhas e gasto vêm de `run_steps` (Anthropic: chamadas e autoverificações; motor de imagem: `imagem.gerar`); e-mail só conta envios e falhas, sem custo; Asaas e Mercado Pago sem atividade até a conta existir. Saldo é o último informado à mão; `balance_alert` liga abaixo de `alert_below`. Chave nunca sai: só `configured`/`missing`.
+         */
         get: operations["get_providers_admin_providers_get"];
         put?: never;
         post?: never;
@@ -1180,6 +1226,26 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/admin/providers/{provider}/balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Informar o saldo lido no painel do provedor (valor, moeda, data, motivo; auditado)
+         * @description Grava o histórico, atualiza o último saldo e, se vier, o limiar do alerta (na moeda do saldo; nulo mantém o atual). Fica em `audit_events` (`admin.provider_balance_reported`) com o Super Admin como autor. Nada mais muda: é o número que o painel mostra.
+         */
+        patch: operations["report_provider_balance_admin_providers__provider__balance_patch"];
         trace?: never;
     };
     "/admin/squad": {
@@ -1480,6 +1546,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AccountAlerts */
+        AccountAlerts: {
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** Workspace Name */
+            workspace_name: string;
+            /** Alerts */
+            alerts: components["schemas"]["EconomicAlert"][];
+        };
         /** AccountCredits */
         AccountCredits: {
             /** Balance */
@@ -1860,6 +1938,69 @@ export interface components {
             messages: number;
             agent_id: components["schemas"]["AgentId"];
         };
+        /** AlertRule */
+        AlertRule: {
+            /**
+             * Metric
+             * @enum {string}
+             */
+            metric: "ai_cost_per_credit_brl" | "gross_margin" | "cost_per_turn_trend";
+            /**
+             * Comparison
+             * @description max = OK até o limite (acima, atenção); min = OK a partir do limite.
+             * @enum {string}
+             */
+            comparison: "max" | "min";
+            /**
+             * Threshold
+             * @description R$ por crédito, ou fração (0,65 = 65%; 0,10 = +10%).
+             */
+            threshold: string;
+            /**
+             * Credit Reference Brl
+             * @description Valor do crédito em R$ usado na margem (exemplo do protótipo, provisório).
+             */
+            credit_reference_brl: string | null;
+            /** Window Days */
+            window_days: number | null;
+            /**
+             * Proposal
+             * @description Faixa ainda é proposta; o Vic decide.
+             */
+            proposal: boolean;
+            /** Source */
+            source: string;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+        };
+        /** AlertsResponse */
+        AlertsResponse: {
+            /**
+             * Since
+             * Format: date
+             */
+            since: string;
+            /**
+             * Until
+             * Format: date
+             */
+            until: string;
+            /**
+             * Accounts
+             * @description Só as contas com alguma leitura fora da faixa.
+             */
+            accounts: components["schemas"]["AccountAlerts"][];
+            /**
+             * Providers
+             * @description Saldo informado abaixo do limiar.
+             */
+            providers: components["schemas"]["ProviderBalanceAlert"][];
+            /** Alert Rules */
+            alert_rules: components["schemas"]["AlertRule"][];
+        };
         /** Approval */
         Approval: {
             /**
@@ -2058,6 +2199,59 @@ export interface components {
             items: components["schemas"]["AuditItem"][];
             /** Next Cursor */
             next_cursor: string | null;
+        };
+        /** BalanceReport */
+        BalanceReport: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Amount */
+            amount: string;
+            /** Currency */
+            currency: string;
+            /**
+             * Read At
+             * Format: date-time
+             */
+            read_at: string;
+            /** Alert Below */
+            alert_below: string | null;
+            /** Reason */
+            reason: string;
+            /**
+             * Reported By
+             * Format: uuid
+             */
+            reported_by: string;
+            /** Reported By Email */
+            reported_by_email: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** BalanceUpdate */
+        BalanceUpdate: {
+            /** Amount */
+            amount: number | string;
+            /** Currency */
+            currency: string;
+            /**
+             * Read At
+             * Format: date-time
+             * @description Quando o saldo foi lido no painel do provedor.
+             */
+            read_at: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Alert Below
+             * @description Nulo mantém o limiar atual.
+             */
+            alert_below?: number | string | null;
         };
         /** BrandFact */
         BrandFact: {
@@ -2525,6 +2719,38 @@ export interface components {
              */
             given_at: string;
         };
+        /** ConsumptionBucket */
+        ConsumptionBucket: {
+            /**
+             * Period Start
+             * Format: date
+             */
+            period_start: string;
+            /** Requests */
+            requests: number;
+            /** Credits Charged */
+            credits_charged: string;
+            /** Llm Calls */
+            llm_calls: number;
+            /** Ai Cost Deliveries Usd */
+            ai_cost_deliveries_usd: string;
+            /** Ai Cost Conversation Usd */
+            ai_cost_conversation_usd: string;
+            /** Ai Cost Usd */
+            ai_cost_usd: string;
+            /** Ai Cost Brl */
+            ai_cost_brl: string | null;
+            /** Turns */
+            turns: number;
+            /** Turn Cost Usd */
+            turn_cost_usd: string;
+            /** Ai Cost Per Credit Brl */
+            ai_cost_per_credit_brl: string | null;
+            /** Gross Margin */
+            gross_margin: string | null;
+            /** Cost Per Turn Usd */
+            cost_per_turn_usd: string | null;
+        };
         /** ConsumptionResponse */
         ConsumptionResponse: {
             /**
@@ -2542,6 +2768,20 @@ export interface components {
             /** Items */
             items: components["schemas"]["ConsumptionRow"][];
             totals: components["schemas"]["UsageTotals"];
+            /**
+             * Granularity
+             * @enum {string}
+             */
+            granularity: "day" | "week" | "month";
+            /**
+             * Series
+             * @description Conjunto filtrado (todas as contas ou `workspace_id`) por dia, semana ou mês.
+             */
+            series: components["schemas"]["ConsumptionBucket"][];
+            /** @description Leituras do conjunto filtrado. */
+            economics: components["schemas"]["EconomicReadings"];
+            /** Alert Rules */
+            alert_rules: components["schemas"]["AlertRule"][];
         };
         /** ConsumptionRow */
         ConsumptionRow: {
@@ -2568,6 +2808,15 @@ export interface components {
             /** Ai Cost Usd */
             ai_cost_usd: string;
             /**
+             * Turns
+             * @description Runs com chamada de IA (cada resposta de um agente).
+             */
+            turns: number;
+            /** Conversation Turns */
+            conversation_turns: number;
+            /** Turn Cost Usd */
+            turn_cost_usd: string;
+            /**
              * Workspace Id
              * Format: uuid
              */
@@ -2578,6 +2827,7 @@ export interface components {
             ai_cost_brl: string | null;
             /** Ai Cost Per Credit Brl */
             ai_cost_per_credit_brl: string | null;
+            economics: components["schemas"]["EconomicReadings"];
         };
         /** ContactImport */
         ContactImport: {
@@ -3215,6 +3465,53 @@ export interface components {
             /** Text */
             text: string;
         };
+        /** EconomicAlert */
+        EconomicAlert: {
+            /**
+             * Metric
+             * @enum {string}
+             */
+            metric: "ai_cost_per_credit_brl" | "gross_margin" | "cost_per_turn_trend";
+            /** Value */
+            value: string;
+            /** Threshold */
+            threshold: string;
+            /**
+             * Comparison
+             * @enum {string}
+             */
+            comparison: "max" | "min";
+            /** Proposal */
+            proposal: boolean;
+        };
+        /**
+         * EconomicReadings
+         * @description As três leituras econômicas; alerta só avisa, nada muda automaticamente.
+         */
+        EconomicReadings: {
+            /**
+             * Ai Cost Per Credit Brl
+             * @description Custo de IA (entregas e conversa) em R$ ÷ créditos cobrados.
+             */
+            ai_cost_per_credit_brl: string | null;
+            /**
+             * Gross Margin
+             * @description 1 − custo de IA em R$ ÷ (créditos × valor de referência do crédito).
+             */
+            gross_margin: string | null;
+            /**
+             * Cost Per Turn Usd
+             * @description Custo dos turnos ÷ turnos, no período.
+             */
+            cost_per_turn_usd: string | null;
+            /**
+             * Cost Per Turn Trend
+             * @description Custo por turno nos últimos N dias ÷ nos N anteriores − 1 (N da faixa).
+             */
+            cost_per_turn_trend: string | null;
+            /** Alerts */
+            alerts: components["schemas"]["EconomicAlert"][];
+        };
         /** EmailPreference */
         EmailPreference: {
             /**
@@ -3343,6 +3640,15 @@ export interface components {
             version: string;
             /** Environment */
             environment: string;
+        };
+        /** HowToRead */
+        HowToRead: {
+            /** Key */
+            key: string;
+            /** Title */
+            title: string;
+            /** Text */
+            text: string;
         };
         /** LedgerEntry */
         LedgerEntry: {
@@ -4674,6 +4980,33 @@ export interface components {
             /** Token Estimate Method */
             token_estimate_method: string;
         };
+        /** PromptVersionSource */
+        PromptVersionSource: {
+            /** Kind */
+            kind?: string | null;
+            /** Key */
+            key?: string | null;
+            /** Version */
+            version?: number | null;
+        };
+        /** ProviderBalanceAlert */
+        ProviderBalanceAlert: {
+            /** Provider */
+            provider: string;
+            /** Display Name */
+            display_name: string;
+            /** Reported Balance */
+            reported_balance: string;
+            /** Reported Balance Currency */
+            reported_balance_currency: string;
+            /**
+             * Reported Balance At
+             * Format: date-time
+             */
+            reported_balance_at: string;
+            /** Alert Below */
+            alert_below: string;
+        };
         /** ProviderHealthItem */
         ProviderHealthItem: {
             /** Provider */
@@ -4712,6 +5045,18 @@ export interface components {
             alert_below: string | null;
             /** Note */
             note: string | null;
+            /** Calls 7D */
+            calls_7d?: number | null;
+            /** Failures 7D */
+            failures_7d?: number | null;
+            /**
+             * Balance Alert
+             * @description Saldo informado abaixo do limiar (na moeda do saldo).
+             * @default false
+             */
+            balance_alert: boolean;
+            /** Balance History */
+            balance_history?: components["schemas"]["BalanceReport"][];
         };
         /** ProviderSpend */
         ProviderSpend: {
@@ -4729,6 +5074,89 @@ export interface components {
             /** Items */
             items: components["schemas"]["ProviderHealthItem"][];
         };
+        /** QualityComparison */
+        QualityComparison: {
+            a: components["schemas"]["QualityPeriod"];
+            b: components["schemas"]["QualityPeriod"];
+            /** @description b − a, nas mesmas unidades das taxas. */
+            delta: components["schemas"]["QualityRates"];
+        };
+        /** QualityPeriod */
+        QualityPeriod: {
+            /**
+             * Since
+             * Format: date
+             */
+            since: string;
+            /**
+             * Until
+             * Format: date
+             */
+            until: string;
+            totals: components["schemas"]["QualityRow"];
+            rates: components["schemas"]["QualityRates"];
+            /** Prompt Versions */
+            prompt_versions: components["schemas"]["QualityPromptVersionRow"][];
+        };
+        /** QualityPromptVersionRow */
+        QualityPromptVersionRow: {
+            /**
+             * Key
+             * @description delivery_type em by_type; AAAA-MM em by_month.
+             */
+            key: string;
+            /** Deliveries */
+            deliveries: number;
+            /** Approved First Time */
+            approved_first_time: number;
+            /** Approved */
+            approved: number;
+            /** Adjustments */
+            adjustments: number;
+            /** Not Approved */
+            not_approved: number;
+            /** Ai Cost Usd */
+            ai_cost_usd: string;
+            /** Ai Cost Per Approved Usd */
+            ai_cost_per_approved_usd: string | null;
+            /** Failed Runs */
+            failed_runs: number;
+            /** Failed Steps */
+            failed_steps: number;
+            /** Agent Errors */
+            agent_errors: number;
+            /** Agent Id */
+            agent_id: string;
+            /**
+             * Prompt Version
+             * @description Hash do prompt montado (runs.prompt_version).
+             */
+            prompt_version: string;
+            /**
+             * Origin
+             * @description database = versões do painel (SA3a); files = squad/.
+             */
+            origin: string | null;
+            /** Sources */
+            sources: components["schemas"]["PromptVersionSource"][];
+            /** First Used At */
+            first_used_at: string | null;
+        };
+        /** QualityRates */
+        QualityRates: {
+            /** Approved First Rate */
+            approved_first_rate: string | null;
+            /** Adjustments Per Delivery */
+            adjustments_per_delivery: string | null;
+            /** Not Approved Rate */
+            not_approved_rate: string | null;
+            /** Ai Cost Per Approved Usd */
+            ai_cost_per_approved_usd: string | null;
+            /** Agent Errors Per 100 */
+            agent_errors_per_100: string | null;
+            /** Failed Calls Per 100 */
+            failed_calls_per_100: string | null;
+        };
         /** QualityResponse */
         QualityResponse: {
             /**
@@ -4745,6 +5173,12 @@ export interface components {
             by_type: components["schemas"]["QualityRow"][];
             /** By Month */
             by_month: components["schemas"]["QualityRow"][];
+            /** By Prompt Version */
+            by_prompt_version: components["schemas"]["QualityPromptVersionRow"][];
+            /** Locale */
+            locale: string;
+            /** How To Read */
+            how_to_read: components["schemas"]["HowToRead"][];
         };
         /** QualityRow */
         QualityRow: {
@@ -4771,6 +5205,8 @@ export interface components {
             failed_runs: number;
             /** Failed Steps */
             failed_steps: number;
+            /** Agent Errors */
+            agent_errors: number;
         };
         /** QueueOverview */
         QueueOverview: {
@@ -5541,6 +5977,15 @@ export interface components {
             ai_cost_conversation_usd: string;
             /** Ai Cost Usd */
             ai_cost_usd: string;
+            /**
+             * Turns
+             * @description Runs com chamada de IA (cada resposta de um agente).
+             */
+            turns: number;
+            /** Conversation Turns */
+            conversation_turns: number;
+            /** Turn Cost Usd */
+            turn_cost_usd: string;
         };
         /** User */
         User: {
@@ -10655,6 +11100,7 @@ export interface operations {
                 /** @description Último dia, inclusive (padrão: hoje). */
                 until?: string | null;
                 workspace_id?: string | null;
+                granularity?: "day" | "week" | "month";
             };
             header?: never;
             path?: never;
@@ -10709,6 +11155,67 @@ export interface operations {
             };
         };
     };
+    get_alerts_admin_alerts_get: {
+        parameters: {
+            query?: {
+                /** @description Primeiro dia (padrão: 30 dias até `until`). */
+                since?: string | null;
+                /** @description Último dia, inclusive (padrão: hoje). */
+                until?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlertsResponse"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_quality_admin_quality_get: {
         parameters: {
             query?: {
@@ -10717,6 +11224,8 @@ export interface operations {
                 /** @description Último dia, inclusive (padrão: hoje). */
                 until?: string | null;
                 workspace_id?: string | null;
+                /** @description Idioma do "como ler" (padrão: o da pessoa; sem ele, pt-BR). */
+                locale?: ("pt-BR" | "en" | "es") | null;
             };
             header?: never;
             path?: never;
@@ -10731,6 +11240,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QualityResponse"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    compare_quality_admin_quality_compare_get: {
+        parameters: {
+            query: {
+                a_since: string;
+                a_until: string;
+                b_since: string;
+                b_until: string;
+                workspace_id?: string | null;
+                delivery_type?: string | null;
+                agent_id?: components["schemas"]["AgentId"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QualityComparison"];
                 };
             };
             /** @description Token ausente, inválido ou expirado. */
@@ -10800,6 +11373,77 @@ export interface operations {
             };
             /** @description Sem permissão para esta ação. */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    report_provider_balance_admin_providers__provider__balance_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BalanceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProviderHealthItem"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

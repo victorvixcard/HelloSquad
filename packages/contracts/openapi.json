@@ -6682,8 +6682,8 @@
         "tags": [
           "admin"
         ],
-        "summary": "Consumo por cliente e período: solicitações, créditos cobrados, tokens e custo de IA",
-        "description": "Conversa não cobra crédito, mas custa: aparece em `ai_cost_conversation_usd`. Reais pelo câmbio informado em Modelos e custos (provisório). Alertas econômicos ficam para a SA4.",
+        "summary": "Consumo por cliente e período: solicitações, créditos, custo de IA e alertas",
+        "description": "Conversa não cobra crédito, mas custa: aparece em `ai_cost_conversation_usd`. Reais pelo câmbio informado em Modelos e custos (provisório). Alertas econômicos comparam IA por crédito, margem bruta estimada (crédito ao valor de referência da faixa, exemplo) e tendência do custo por turno com as faixas de `alert_rules` (proposta); só avisam, nada muda automaticamente. `series` agrupa o conjunto filtrado por dia, semana (começa na segunda) ou mês; balde sem atividade não aparece.",
         "operationId": "get_consumption_admin_consumption_get",
         "security": [
           {
@@ -6745,6 +6745,21 @@
               ],
               "title": "Workspace Id"
             }
+          },
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ],
+              "type": "string",
+              "default": "day",
+              "title": "Granularity"
+            }
           }
         ],
         "responses": {
@@ -6801,12 +6816,120 @@
         }
       }
     },
+    "/admin/alerts": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Alertas ativos: contas com leitura econômica fora da faixa e saldos abaixo do limiar",
+        "description": "As faixas são proposta (`alert_rules[].proposal`). Alerta só avisa: nenhuma conta, plano, crédito ou provedor muda por causa dele.",
+        "operationId": "get_alerts_admin_alerts_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Primeiro dia (padrão: 30 dias até `until`).",
+              "title": "Since"
+            },
+            "description": "Primeiro dia (padrão: 30 dias até `until`)."
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Último dia, inclusive (padrão: hoje).",
+              "title": "Until"
+            },
+            "description": "Último dia, inclusive (padrão: hoje)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/quality": {
       "get": {
         "tags": [
           "admin"
         ],
-        "summary": "Qualidade das entregas por tipo e por mês (aprovadas de primeira, ajustes, custo)",
+        "summary": "Qualidade das entregas por tipo, por mês e por versão do prompt, com o \"como ler\"",
+        "description": "Mês e dia da primeira decisão (Brasília). `by_prompt_version` liga cada trabalho à versão do prompt do especialista que produziu a v1 (`runs.prompt_version` → `agent_prompt_versions`, com as versões do painel em `sources`).",
         "operationId": "get_quality_admin_quality_get",
         "security": [
           {
@@ -6868,6 +6991,29 @@
               ],
               "title": "Workspace Id"
             }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "pt-BR",
+                    "en",
+                    "es"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Idioma do \"como ler\" (padrão: o da pessoa; sem ele, pt-BR).",
+              "title": "Locale"
+            },
+            "description": "Idioma do \"como ler\" (padrão: o da pessoa; sem ele, pt-BR)."
           }
         ],
         "responses": {
@@ -6924,12 +7070,172 @@
         }
       }
     },
+    "/admin/quality/compare": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Comparar a qualidade de dois períodos (mede mudança de prompt ou modelo)",
+        "description": "Período = dia da primeira decisão (Brasília). Contagens viram taxa: não aprovadas e aprovadas de primeira em fração das entregas, ajustes por entrega, erros do agente e chamadas com falha por 100 entregas. `delta` = b − a. Cada período lista as versões de prompt que produziram as entregas dele.",
+        "operationId": "compare_quality_admin_quality_compare_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "a_since",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "A Since"
+            }
+          },
+          {
+            "name": "a_until",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "A Until"
+            }
+          },
+          {
+            "name": "b_since",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "B Since"
+            }
+          },
+          {
+            "name": "b_until",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "B Until"
+            }
+          },
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "name": "delivery_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 10
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Delivery Type"
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AgentId"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Agent Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QualityComparison"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/providers": {
       "get": {
         "tags": [
           "admin"
         ],
-        "summary": "Saúde das APIs: estado, chave configurada ou ausente, chamadas, falhas e gasto",
+        "summary": "Saúde das APIs: estado, chave configurada ou ausente, chamadas, falhas, gasto e saldo",
+        "description": "Chamadas, falhas e gasto vêm de `run_steps` (Anthropic: chamadas e autoverificações; motor de imagem: `imagem.gerar`); e-mail só conta envios e falhas, sem custo; Asaas e Mercado Pago sem atividade até a conta existir. Saldo é o último informado à mão; `balance_alert` liga abaixo de `alert_below`. Chave nunca sai: só `configured`/`missing`.",
         "operationId": "get_providers_admin_providers_get",
         "responses": {
           "200": {
@@ -6988,6 +7294,105 @@
             "HTTPBearer": []
           }
         ]
+      }
+    },
+    "/admin/providers/{provider}/balance": {
+      "patch": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Informar o saldo lido no painel do provedor (valor, moeda, data, motivo; auditado)",
+        "description": "Grava o histórico, atualiza o último saldo e, se vier, o limiar do alerta (na moeda do saldo; nulo mantém o atual). Fica em `audit_events` (`admin.provider_balance_reported`) com o Super Admin como autor. Nada mais muda: é o número que o painel mostra.",
+        "operationId": "report_provider_balance_admin_providers__provider__balance_patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 40,
+              "title": "Provider"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BalanceUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderHealthItem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, inválido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para esta ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado (ou fora do seu acesso).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependência indisponível (banco ou Auth).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/admin/squad": {
@@ -8822,6 +9227,33 @@
   },
   "components": {
     "schemas": {
+      "AccountAlerts": {
+        "properties": {
+          "workspace_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workspace Id"
+          },
+          "workspace_name": {
+            "type": "string",
+            "title": "Workspace Name"
+          },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/EconomicAlert"
+            },
+            "type": "array",
+            "title": "Alerts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workspace_id",
+          "workspace_name",
+          "alerts"
+        ],
+        "title": "AccountAlerts"
+      },
       "AccountCredits": {
         "properties": {
           "balance": {
@@ -9886,6 +10318,128 @@
         ],
         "title": "AgentUnread"
       },
+      "AlertRule": {
+        "properties": {
+          "metric": {
+            "type": "string",
+            "enum": [
+              "ai_cost_per_credit_brl",
+              "gross_margin",
+              "cost_per_turn_trend"
+            ],
+            "title": "Metric"
+          },
+          "comparison": {
+            "type": "string",
+            "enum": [
+              "max",
+              "min"
+            ],
+            "title": "Comparison",
+            "description": "max = OK até o limite (acima, atenção); min = OK a partir do limite."
+          },
+          "threshold": {
+            "type": "string",
+            "title": "Threshold",
+            "description": "R$ por crédito, ou fração (0,65 = 65%; 0,10 = +10%)."
+          },
+          "credit_reference_brl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credit Reference Brl",
+            "description": "Valor do crédito em R$ usado na margem (exemplo do protótipo, provisório)."
+          },
+          "window_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window Days"
+          },
+          "proposal": {
+            "type": "boolean",
+            "title": "Proposal",
+            "description": "Faixa ainda é proposta; o Vic decide."
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Valid From"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric",
+          "comparison",
+          "threshold",
+          "credit_reference_brl",
+          "window_days",
+          "proposal",
+          "source",
+          "valid_from"
+        ],
+        "title": "AlertRule"
+      },
+      "AlertsResponse": {
+        "properties": {
+          "since": {
+            "type": "string",
+            "format": "date",
+            "title": "Since"
+          },
+          "until": {
+            "type": "string",
+            "format": "date",
+            "title": "Until"
+          },
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/AccountAlerts"
+            },
+            "type": "array",
+            "title": "Accounts",
+            "description": "Só as contas com alguma leitura fora da faixa."
+          },
+          "providers": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderBalanceAlert"
+            },
+            "type": "array",
+            "title": "Providers",
+            "description": "Saldo informado abaixo do limiar."
+          },
+          "alert_rules": {
+            "items": {
+              "$ref": "#/components/schemas/AlertRule"
+            },
+            "type": "array",
+            "title": "Alert Rules"
+          }
+        },
+        "type": "object",
+        "required": [
+          "since",
+          "until",
+          "accounts",
+          "providers",
+          "alert_rules"
+        ],
+        "title": "AlertsResponse"
+      },
       "Approval": {
         "properties": {
           "id": {
@@ -10436,6 +10990,134 @@
           "next_cursor"
         ],
         "title": "AuditPage"
+      },
+      "BalanceReport": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "read_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Read At"
+          },
+          "alert_below": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Below"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "reported_by": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Reported By"
+          },
+          "reported_by_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported By Email"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "amount",
+          "currency",
+          "read_at",
+          "alert_below",
+          "reason",
+          "reported_by",
+          "reported_by_email",
+          "created_at"
+        ],
+        "title": "BalanceReport"
+      },
+      "BalanceUpdate": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency"
+          },
+          "read_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Read At",
+            "description": "Quando o saldo foi lido no painel do provedor."
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 10,
+            "title": "Reason"
+          },
+          "alert_below": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Below",
+            "description": "Nulo mantém o limiar atual."
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount",
+          "currency",
+          "read_at",
+          "reason"
+        ],
+        "title": "BalanceUpdate"
       },
       "BrandFact": {
         "properties": {
@@ -11612,6 +12294,108 @@
         ],
         "title": "ConsentState"
       },
+      "ConsumptionBucket": {
+        "properties": {
+          "period_start": {
+            "type": "string",
+            "format": "date",
+            "title": "Period Start"
+          },
+          "requests": {
+            "type": "integer",
+            "title": "Requests"
+          },
+          "credits_charged": {
+            "type": "string",
+            "title": "Credits Charged"
+          },
+          "llm_calls": {
+            "type": "integer",
+            "title": "Llm Calls"
+          },
+          "ai_cost_deliveries_usd": {
+            "type": "string",
+            "title": "Ai Cost Deliveries Usd"
+          },
+          "ai_cost_conversation_usd": {
+            "type": "string",
+            "title": "Ai Cost Conversation Usd"
+          },
+          "ai_cost_usd": {
+            "type": "string",
+            "title": "Ai Cost Usd"
+          },
+          "ai_cost_brl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cost Brl"
+          },
+          "turns": {
+            "type": "integer",
+            "title": "Turns"
+          },
+          "turn_cost_usd": {
+            "type": "string",
+            "title": "Turn Cost Usd"
+          },
+          "ai_cost_per_credit_brl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cost Per Credit Brl"
+          },
+          "gross_margin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Margin"
+          },
+          "cost_per_turn_usd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Per Turn Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period_start",
+          "requests",
+          "credits_charged",
+          "llm_calls",
+          "ai_cost_deliveries_usd",
+          "ai_cost_conversation_usd",
+          "ai_cost_usd",
+          "ai_cost_brl",
+          "turns",
+          "turn_cost_usd",
+          "ai_cost_per_credit_brl",
+          "gross_margin",
+          "cost_per_turn_usd"
+        ],
+        "title": "ConsumptionBucket"
+      },
       "ConsumptionResponse": {
         "properties": {
           "since": {
@@ -11644,6 +12428,34 @@
           },
           "totals": {
             "$ref": "#/components/schemas/UsageTotals"
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "title": "Granularity"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/ConsumptionBucket"
+            },
+            "type": "array",
+            "title": "Series",
+            "description": "Conjunto filtrado (todas as contas ou `workspace_id`) por dia, semana ou mês."
+          },
+          "economics": {
+            "$ref": "#/components/schemas/EconomicReadings",
+            "description": "Leituras do conjunto filtrado."
+          },
+          "alert_rules": {
+            "items": {
+              "$ref": "#/components/schemas/AlertRule"
+            },
+            "type": "array",
+            "title": "Alert Rules"
           }
         },
         "type": "object",
@@ -11652,7 +12464,11 @@
           "until",
           "usd_brl",
           "items",
-          "totals"
+          "totals",
+          "granularity",
+          "series",
+          "economics",
+          "alert_rules"
         ],
         "title": "ConsumptionResponse"
       },
@@ -11702,6 +12518,19 @@
             "type": "string",
             "title": "Ai Cost Usd"
           },
+          "turns": {
+            "type": "integer",
+            "title": "Turns",
+            "description": "Runs com chamada de IA (cada resposta de um agente)."
+          },
+          "conversation_turns": {
+            "type": "integer",
+            "title": "Conversation Turns"
+          },
+          "turn_cost_usd": {
+            "type": "string",
+            "title": "Turn Cost Usd"
+          },
           "workspace_id": {
             "type": "string",
             "format": "uuid",
@@ -11732,6 +12561,9 @@
               }
             ],
             "title": "Ai Cost Per Credit Brl"
+          },
+          "economics": {
+            "$ref": "#/components/schemas/EconomicReadings"
           }
         },
         "type": "object",
@@ -11747,10 +12579,14 @@
           "ai_cost_deliveries_usd",
           "ai_cost_conversation_usd",
           "ai_cost_usd",
+          "turns",
+          "conversation_turns",
+          "turn_cost_usd",
           "workspace_id",
           "workspace_name",
           "ai_cost_brl",
-          "ai_cost_per_credit_brl"
+          "ai_cost_per_credit_brl",
+          "economics"
         ],
         "title": "ConsumptionRow"
       },
@@ -13241,6 +14077,117 @@
         ],
         "title": "DiffLine"
       },
+      "EconomicAlert": {
+        "properties": {
+          "metric": {
+            "type": "string",
+            "enum": [
+              "ai_cost_per_credit_brl",
+              "gross_margin",
+              "cost_per_turn_trend"
+            ],
+            "title": "Metric"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "threshold": {
+            "type": "string",
+            "title": "Threshold"
+          },
+          "comparison": {
+            "type": "string",
+            "enum": [
+              "max",
+              "min"
+            ],
+            "title": "Comparison"
+          },
+          "proposal": {
+            "type": "boolean",
+            "title": "Proposal"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric",
+          "value",
+          "threshold",
+          "comparison",
+          "proposal"
+        ],
+        "title": "EconomicAlert"
+      },
+      "EconomicReadings": {
+        "properties": {
+          "ai_cost_per_credit_brl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cost Per Credit Brl",
+            "description": "Custo de IA (entregas e conversa) em R$ ÷ créditos cobrados."
+          },
+          "gross_margin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Margin",
+            "description": "1 − custo de IA em R$ ÷ (créditos × valor de referência do crédito)."
+          },
+          "cost_per_turn_usd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Per Turn Usd",
+            "description": "Custo dos turnos ÷ turnos, no período."
+          },
+          "cost_per_turn_trend": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Per Turn Trend",
+            "description": "Custo por turno nos últimos N dias ÷ nos N anteriores − 1 (N da faixa)."
+          },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/EconomicAlert"
+            },
+            "type": "array",
+            "title": "Alerts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ai_cost_per_credit_brl",
+          "gross_margin",
+          "cost_per_turn_usd",
+          "cost_per_turn_trend",
+          "alerts"
+        ],
+        "title": "EconomicReadings",
+        "description": "As três leituras econômicas; alerta só avisa, nada muda automaticamente."
+      },
       "EmailPreference": {
         "properties": {
           "template": {
@@ -13521,6 +14468,29 @@
           "environment"
         ],
         "title": "Health"
+      },
+      "HowToRead": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "title",
+          "text"
+        ],
+        "title": "HowToRead"
       },
       "LedgerEntry": {
         "properties": {
@@ -16907,6 +17877,84 @@
         ],
         "title": "PromptPreview"
       },
+      "PromptVersionSource": {
+        "properties": {
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "type": "object",
+        "title": "PromptVersionSource"
+      },
+      "ProviderBalanceAlert": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "reported_balance": {
+            "type": "string",
+            "title": "Reported Balance"
+          },
+          "reported_balance_currency": {
+            "type": "string",
+            "title": "Reported Balance Currency"
+          },
+          "reported_balance_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Reported Balance At"
+          },
+          "alert_below": {
+            "type": "string",
+            "title": "Alert Below"
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider",
+          "display_name",
+          "reported_balance",
+          "reported_balance_currency",
+          "reported_balance_at",
+          "alert_below"
+        ],
+        "title": "ProviderBalanceAlert"
+      },
       "ProviderHealthItem": {
         "properties": {
           "provider": {
@@ -17068,6 +18116,41 @@
               }
             ],
             "title": "Note"
+          },
+          "calls_7d": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calls 7D"
+          },
+          "failures_7d": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failures 7D"
+          },
+          "balance_alert": {
+            "type": "boolean",
+            "title": "Balance Alert",
+            "description": "Saldo informado abaixo do limiar (na moeda do saldo).",
+            "default": false
+          },
+          "balance_history": {
+            "items": {
+              "$ref": "#/components/schemas/BalanceReport"
+            },
+            "type": "array",
+            "title": "Balance History"
           }
         },
         "type": "object",
@@ -17136,6 +18219,259 @@
         ],
         "title": "ProvidersResponse"
       },
+      "QualityComparison": {
+        "properties": {
+          "a": {
+            "$ref": "#/components/schemas/QualityPeriod"
+          },
+          "b": {
+            "$ref": "#/components/schemas/QualityPeriod"
+          },
+          "delta": {
+            "$ref": "#/components/schemas/QualityRates",
+            "description": "b − a, nas mesmas unidades das taxas."
+          }
+        },
+        "type": "object",
+        "required": [
+          "a",
+          "b",
+          "delta"
+        ],
+        "title": "QualityComparison"
+      },
+      "QualityPeriod": {
+        "properties": {
+          "since": {
+            "type": "string",
+            "format": "date",
+            "title": "Since"
+          },
+          "until": {
+            "type": "string",
+            "format": "date",
+            "title": "Until"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/QualityRow"
+          },
+          "rates": {
+            "$ref": "#/components/schemas/QualityRates"
+          },
+          "prompt_versions": {
+            "items": {
+              "$ref": "#/components/schemas/QualityPromptVersionRow"
+            },
+            "type": "array",
+            "title": "Prompt Versions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "since",
+          "until",
+          "totals",
+          "rates",
+          "prompt_versions"
+        ],
+        "title": "QualityPeriod"
+      },
+      "QualityPromptVersionRow": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "description": "delivery_type em by_type; AAAA-MM em by_month."
+          },
+          "deliveries": {
+            "type": "integer",
+            "title": "Deliveries"
+          },
+          "approved_first_time": {
+            "type": "integer",
+            "title": "Approved First Time"
+          },
+          "approved": {
+            "type": "integer",
+            "title": "Approved"
+          },
+          "adjustments": {
+            "type": "integer",
+            "title": "Adjustments"
+          },
+          "not_approved": {
+            "type": "integer",
+            "title": "Not Approved"
+          },
+          "ai_cost_usd": {
+            "type": "string",
+            "title": "Ai Cost Usd"
+          },
+          "ai_cost_per_approved_usd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cost Per Approved Usd"
+          },
+          "failed_runs": {
+            "type": "integer",
+            "title": "Failed Runs"
+          },
+          "failed_steps": {
+            "type": "integer",
+            "title": "Failed Steps"
+          },
+          "agent_errors": {
+            "type": "integer",
+            "title": "Agent Errors"
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent Id"
+          },
+          "prompt_version": {
+            "type": "string",
+            "title": "Prompt Version",
+            "description": "Hash do prompt montado (runs.prompt_version)."
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin",
+            "description": "database = versões do painel (SA3a); files = squad/."
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/PromptVersionSource"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "first_used_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Used At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "deliveries",
+          "approved_first_time",
+          "approved",
+          "adjustments",
+          "not_approved",
+          "ai_cost_usd",
+          "ai_cost_per_approved_usd",
+          "failed_runs",
+          "failed_steps",
+          "agent_errors",
+          "agent_id",
+          "prompt_version",
+          "origin",
+          "sources",
+          "first_used_at"
+        ],
+        "title": "QualityPromptVersionRow"
+      },
+      "QualityRates": {
+        "properties": {
+          "approved_first_rate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved First Rate"
+          },
+          "adjustments_per_delivery": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adjustments Per Delivery"
+          },
+          "not_approved_rate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Not Approved Rate"
+          },
+          "ai_cost_per_approved_usd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cost Per Approved Usd"
+          },
+          "agent_errors_per_100": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Errors Per 100"
+          },
+          "failed_calls_per_100": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failed Calls Per 100"
+          }
+        },
+        "type": "object",
+        "required": [
+          "approved_first_rate",
+          "adjustments_per_delivery",
+          "not_approved_rate",
+          "ai_cost_per_approved_usd",
+          "agent_errors_per_100",
+          "failed_calls_per_100"
+        ],
+        "title": "QualityRates"
+      },
       "QualityResponse": {
         "properties": {
           "since": {
@@ -17161,6 +18497,24 @@
             },
             "type": "array",
             "title": "By Month"
+          },
+          "by_prompt_version": {
+            "items": {
+              "$ref": "#/components/schemas/QualityPromptVersionRow"
+            },
+            "type": "array",
+            "title": "By Prompt Version"
+          },
+          "locale": {
+            "type": "string",
+            "title": "Locale"
+          },
+          "how_to_read": {
+            "items": {
+              "$ref": "#/components/schemas/HowToRead"
+            },
+            "type": "array",
+            "title": "How To Read"
           }
         },
         "type": "object",
@@ -17168,7 +18522,10 @@
           "since",
           "until",
           "by_type",
-          "by_month"
+          "by_month",
+          "by_prompt_version",
+          "locale",
+          "how_to_read"
         ],
         "title": "QualityResponse"
       },
@@ -17221,6 +18578,10 @@
           "failed_steps": {
             "type": "integer",
             "title": "Failed Steps"
+          },
+          "agent_errors": {
+            "type": "integer",
+            "title": "Agent Errors"
           }
         },
         "type": "object",
@@ -17234,7 +18595,8 @@
           "ai_cost_usd",
           "ai_cost_per_approved_usd",
           "failed_runs",
-          "failed_steps"
+          "failed_steps",
+          "agent_errors"
         ],
         "title": "QualityRow"
       },
@@ -19506,6 +20868,19 @@
           "ai_cost_usd": {
             "type": "string",
             "title": "Ai Cost Usd"
+          },
+          "turns": {
+            "type": "integer",
+            "title": "Turns",
+            "description": "Runs com chamada de IA (cada resposta de um agente)."
+          },
+          "conversation_turns": {
+            "type": "integer",
+            "title": "Conversation Turns"
+          },
+          "turn_cost_usd": {
+            "type": "string",
+            "title": "Turn Cost Usd"
           }
         },
         "type": "object",
@@ -19520,7 +20895,10 @@
           "output_tokens",
           "ai_cost_deliveries_usd",
           "ai_cost_conversation_usd",
-          "ai_cost_usd"
+          "ai_cost_usd",
+          "turns",
+          "conversation_turns",
+          "turn_cost_usd"
         ],
         "title": "UsageTotals"
       },
