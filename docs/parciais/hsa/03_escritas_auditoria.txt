@@ -1,0 +1,106 @@
+== 5. créditos (Miolo); saldo inicial 36.00 disponível 36.00
+  +10 com chave K1: 201 {"workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "amount": "10", "balance_before": "36.00", "balance_after": "46.00", "entries": 1, "duplicate
+    saldo: 46.00
+  +10 repetindo K1: 201 {"workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "amount": "10", "balance_before": "46.00", "balance_after": "46.00", "entries": 0, "duplicate
+  +999 com a mesma K1: 201 {"workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "amount": "999", "balance_before": "46.00", "balance_after": "46.00", "entries": 0, "duplicat
+    saldo depois das repetições: 46.00
+  débito de disponível+0,01 (-46.01): 409 invalid_state
+    saldo: 46.00
+  zero: 422 invalid_parameter
+  3 casas: 422 validation_error
+  motivo curto: 422 validation_error
+  motivo só espaços: 422 invalid_parameter
+  não numérico: 422 validation_error
+  5 débitos paralelos de -24.00 (disponível 46.00): [201, 409, 409, 409, 409]; saldo 22.00, disponível 22.00; grant negativo: 0
+  5 ajustes paralelos com a mesma chave K2: duplicate = ['False', 'True', 'True', 'True', 'True'] | grants de ajuste com K2: 1
+  extrato da Marina (produto) mostra o motivo do Super Admin? sem rota de extrato
+== 5. suspender / reativar (Miolo)
+  assinatura: active | devida para a renovação (daqui a 400 dias): 1
+  reativar conta ativa: 409 invalid_state
+  suspender: 200 {"workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "status": "suspended", "suspended_at": "2026-10-17T03:29:21.091686Z", "suspension_reason": "T
+  suspender de novo: 409 invalid_state
+  assinatura: active | devida para a renovação: 0
+  GET /me da Marina: [('', 'suspended', '—')]
+  Data API: a Marina lê o motivo da suspensão? 200 [{"slug":"miolo","suspended_at":"2026-10-17T03:29:21.091686+00:00","suspension_reason":"Teste da H-SA com motivo registrado"}]
+  rotina com a conta suspensa: ERROR:  Esta conta está suspensa: as rotinas estão pausadas.
+  conversa pedida pela Marina com a conta suspensa: 201
+  sessão de suporte em conta suspensa (a SA6b esconde o botão): 201 {"id": "7124b1d9-a505-49a8-afcd-d40f41cb48e5", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "reason": "Teste da H-SA com motivo registrado"
+  reativar: 200 {"workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "status": "active", "suspended_at": null, "suspension_reason": null}
+  assinatura: active | devida para a renovação: 1
+  rotina depois de reativar: entrou na fila (msg 10 )
+== 6. catálogo, planos e recargas
+  04.01 antes: in_homologation False {"credits": "10.00", "revision_credits": null, "provisional": true, "approved_commercially": false, "valid_from": "2026-
+  itens do catálogo com preço provisório: 46 de 46 | à venda: 0 | profundidade inferida: 46
+  à venda sem homologação nem preço aprovado: 409 invalid_state
+  aprovado e provisório ao mesmo tempo: 422 invalid_parameter
+  homologar: 200 {"delivery_type": "04.01", "homologation_status": "homologated", "for_sale": false}
+  à venda homologada com preço provisório: 409 invalid_state
+  preço aprovado: 200 {"id": "9ab6b0f9-e9c2-4dc6-b0ea-a0c39e6bb55b", "delivery_type": "04.01", "credits": "12.00", "revision_credits": null, "provisional": false, "approved
+  à venda homologada com preço aprovado: 200 {"delivery_type": "04.01", "homologation_status": "homologated", "for_sale": true}
+  reabrir homologação à venda: 409 invalid_state
+  preço provisório com a delivery à venda: 409 invalid_state
+  delivery que não existe: 404 not_found
+  preço negativo: 422 validation_error
+  Data API: o Pedro (sem negócio) lê a versão nova de preço com o motivo do Super Admin: 200 [{"delivery_type":"04.01","credits":12.00,"note":"Teste da H-SA com motivo registrado"}, 
+ {"delivery_type":"04.01","credits":10.00,"note":null}]
+  estimativa da Marina para 04.01 (preço novo vale para o cliente): 200 {"delivery_type": "04.01", "depth": "produzir", "credits": 12.0, "revision": false, "provisional": false, "available": 25.0, "sufficient": t
+  plano à venda com preço provisório: 409 invalid_state
+  plano: versão nova (provisória): 200 {"plan": "squad", "version": 2, "credits": "120.00", "cycle": "monthly", "validity_days": null, "provisional": true, "approved_commercially": false, "
+  recarga à venda com preço provisório: 409 invalid_state
+  recarga: versão nova (provisória): 200 {"topup": "recarga-50", "pack_id": "4e5b387d-8c72-47d5-af8a-1d20524d9a6a", "credits": "60.00", "validity_days": null, "amount": "59.00", "currency": "
+  versões antigas intactas (plano squad): [['1', '100.00'], ['2', '120.00']]
+== 3. fila e pagamentos
+  cancelar run que falhou: 409 invalid_state
+  reenfileirar run que falhou (sem reserva): 200 {"id": "8d266a6d-87af-4077-ba99-8ef804f1d0d4", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "status": "queued", "attempts": 0}
+  reenfileirar de novo (já na fila): 409 invalid_state
+  cancelar o reenfileirado: 200 {"id": "8d266a6d-87af-4077-ba99-8ef804f1d0d4", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "status": "cancelled", "attempts": 0}
+  run: [['cancelled', '0', 'cancelled_by_support', 'Teste da H-SA com motivo registrado']]
+  mensagens do run na fila: 1
+  sem segredo do webhook simulado no .env (PAYMENT_MOCK_WEBHOOK_SECRET vazio): evento da recarga pendente da Miolo inserido direto no banco
+  reprocessar (simulado não informa estado): 200 {"payment_event_id": "0eb0e282-05ba-4f77-921c-1c71ca0700a8", "provider": "mock", "provider_status": null, "applied_event_id": null, "duplicate": null,
+  reprocessar de novo: 200 {"payment_event_id": "0eb0e282-05ba-4f77-921c-1c71ca0700a8", "provider": "mock", "provider_status": null, "applied_event_id": null, "duplicate": null,
+  conciliar: 201 {"id": "1e5e84c4-6c39-421a-ac5b-ddc92db44bc4", "payment_event_id": "0eb0e282-05ba-4f77-921c-1c71ca0700a8", "reason": "Teste da H-SA com motivo registr
+  conciliar de novo: 409 invalid_state
+  grants da Miolo antes/depois do reprocessar: 3 3
+== 3. saldo informado e regras de negócio
+  saldo informado: 200 {"provider": "anthropic", "display_name": "Anthropic", "purpose": "Modelos de linguagem dos sete agentes", "status": "simulated", "key": "missing", "c
+  leitura no futuro: 422 invalid_parameter
+  provedor desconhecido: 404 not_found
+  saldo negativo: 422 validation_error
+  regra: versão nova com um [PENDENTE]: 201 {"doc": {"id": "a8506735-3b39-4d39-b456-b112a2995dd8", "slug": "diretrizes-do-dono", "title": "Diretrizes do dono", "in_prompt": false, "version": 2, 
+== 3. auditoria de tudo o que este roteiro escreveu
+   ['admin.catalog_for_sale_changed', '1', 't', 't', 't']
+   ['admin.catalog_homologation_changed', '1', 't', 't', 't']
+   ['admin.catalog_price_versioned', '1', 't', 't', 't']
+   ['admin.plan_versioned', '1', 't', 't', 't']
+   ['admin.provider_balance_reported', '1', 't', 't', 't']
+   ['admin.topup_versioned', '1', 't', 't', 't']
+   ['credits.adjusted', '3', 't', 't', 't']
+   ['payment.reconciled', '1', 't', 't', 't']
+   ['payment.webhook_reprocessed', '2', 't', 't', 't']
+   ['rules.version_saved', '1', 't', 'f', 't']
+   ['run.cancelled_by_support', '1', 't', 't', 't']
+   ['run.requeued_by_support', '1', 't', 't', 't']
+   ['support.session_ended', '1', 't', 't', 't']
+   ['support.session_started', '1', 't', 't', 't']
+   ['workspace.reactivated', '1', 't', 't', 't']
+   ['workspace.suspended', '1', 't', 't', 't']
+  eventos novos: 20
+  escritas sem evento: ajuste/suspensão/preço/plano/recarga/fila/webhook/saldo/regra = ['payment.webhook_reconciled']
+  as recusas (409/422) gravaram evento? 1 evento(s) de à venda (só 1 aceito)
+  apagar evento como hellosquad_api: ERROR:  permission denied to set role "hellosquad_api"
+  apagar evento como hellosquad_admin: ERROR:  permission denied to set role "hellosquad_admin"
+  apagar evento como authenticated: ERROR:  permission denied for table audit_events
+== 6. segredos e nuvem nas respostas de /admin/* (Vic)
+  respostas lidas: 28 | bytes: 217459
+  padrões de chave/segredo encontrados: []
+  'configured/missing' nas chaves dos provedores: []
+== restauração (versões novas com os valores do seed; nada apagado)
+  04.01 fora de venda: 200 {"delivery_type": "04.01", "homologation_status": "homologated", "for_sale": false}
+  04.01 preço do seed: 200 {"id": "8348beb0-95fd-4926-9db5-14ac6cc65b8c", "delivery_type": "04.01", "credits": "10.00", "revision_credits": null, "provisional": true, "approved_
+  04.01 homologação do seed: 200 {"delivery_type": "04.01", "homologation_status": "in_homologation", "for_sale": false}
+  plano squad do seed: 200 {"plan": "squad", "version": 3, "credits": "100.00", "cycle": "monthly", "validity_days": null, "provisional": true, "approved_commercially": false, "
+  recarga do seed: 200 {"topup": "recarga-50", "pack_id": "7844882f-9a2a-412f-8a05-7dbeaaa275c4", "credits": "50.00", "validity_days": null, "amount": "49.00", "currency": "
+  make seed: exit 0 | saldos: [['miolo', '36.00'], ['trilha', '19.20'], ['vitta', '20.00']]
+  04.01 depois: in_homologation False {"credits": "10.00", "revision_credits": null, "provisional": true, "approved_commercially": false, "valid_from": "2026-
+  planos depois: [('free', '20.00', False, 1), ('squad', '100.00', False, 3)]

@@ -1,0 +1,12 @@
+ok   delete from public.delivery_prices where delivery_type = '04.01' and id <> 'f15cff7b-4bca-30b3-d2f2-fde870d3c1
+ok   update public.delivery_catalog set for_sale = false, homologation_status = 'in_homologation' where delivery_ty
+ok   delete from public.plan_prices where created_at >= '2026-10-17 03:29:00+00'
+ok   delete from public.plan_versions where created_at >= '2026-10-17 03:29:00+00'
+ok   delete from public.topup_packs where created_at >= '2026-10-17 03:29:00+00'
+ok   update public.plans set for_sale = false
+ok   update public.topups set for_sale = false
+ok   delete from public.business_rule_doc_versions where created_at >= '2026-10-17 03:29:00+00'
+ok   delete from public.payment_reconciliations where payment_event_id in (select id from public.payment_events whe
+ok   delete from public.payment_events where event_id like 'evt-hsa-%'
+runs fictícios removidos (com a mensagem da fila): []
+conferência: plano squad [['1', '100.00']] | recarga [['50.00', '49.00']] | 04.01 [['10.00', 't', 'f']] | diretrizes [['1', '26']] | squad_versions criadas desde T0 0
