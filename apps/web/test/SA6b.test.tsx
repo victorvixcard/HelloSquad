@@ -60,6 +60,13 @@ vi.mock("@/lib/admin", () => ({
   },
   loadAdminMe: async () => ({ ok: true, data: state.me }),
 }));
+vi.mock("@/components/admin/actions/RecentAudit", () => ({
+  RecentAudit: (p: { title: string; workspaceId?: string; actions?: readonly string[] }) => (
+    <div data-testid="recent" data-workspace={p.workspaceId} data-actions={p.actions?.join(",")}>
+      {p.title}
+    </div>
+  ),
+}));
 const acoes = vi.hoisted(() => ({
   startSupportSessionAction: vi.fn(),
   endSupportSessionAction: vi.fn(),
@@ -249,7 +256,7 @@ describe("sessão de suporte e estado da conta", () => {
     const user = userEvent.setup();
     const { unmount } = renderAdmin(<EnterSupportDialog workspaceId={MIOLO} name="Miolo" />, en, "en");
     await user.click(screen.getByRole("button", { name: "Enter the workspace" }));
-    expect(screen.getByRole("dialog", { name: "Enter Miolo's workspace" })).toHaveTextContent("Session length");
+    expect(screen.getByRole("dialog", { name: "Enter Miolo’s workspace" })).toHaveTextContent("Session length");
     unmount();
     renderAdmin(<CreditAdjustDialog workspaceId={MIOLO} name="Miolo" balance="1" available="1" />, es, "es");
     expect(screen.getByRole("button", { name: "Ajustar créditos" })).toBeInTheDocument();
@@ -319,22 +326,33 @@ describe("detalhe da conta", () => {
     return renderAdmin(ui);
   }
 
-  it("ações habilitadas, etiqueta de ações auditadas e a auditoria desta conta só com as ações do Super Admin", async () => {
-    await renderAccount(detail({}), [
-      audit("credits.adjusted", "Devolver crédito da falha"),
-      audit("support.account_viewed", ""),
-      audit("workspace.suspended", "Conta em teste de suspensão"),
-    ]);
+  it("ações habilitadas, etiqueta de ações auditadas e a auditoria desta conta pedida com as ações do Super Admin", async () => {
+    await renderAccount(detail({}), []);
     expect(screen.getByTestId("top-tag")).toHaveTextContent("audited");
     const actions = screen.getByTestId("actions");
     for (const name of ["Ajustar crédito", "Suspender", "Entrar no ambiente"]) expect(within(actions).getByRole("button", { name })).toBeEnabled();
+    const recent = screen.getByTestId("recent");
+    expect(recent).toHaveAttribute("data-workspace", MIOLO);
+    expect(recent.getAttribute("data-actions")).toBe("support.session_started,support.session_ended,credits.adjusted,workspace.suspended,workspace.reactivated");
+    expect(screen.queryByRole("region", { name: "Suporte" })).toBeNull();
+  });
+
+  it("a auditoria da tela lê só o Super Admin, filtra pelas ações da tela e mostra o motivo", async () => {
+    const { RecentAudit } = await vi.importActual<typeof import("@/components/admin/actions/RecentAudit")>("@/components/admin/actions/RecentAudit");
+    state.data["/admin/audit"] = {
+      items: [audit("credits.adjusted", "Devolver crédito da falha"), audit("support.account_viewed", ""), audit("workspace.suspended", "Conta em teste de suspensão")],
+      next_cursor: null,
+    };
+    const ui = await RecentAudit({ id: "x", title: "Auditoria desta conta", sub: "s", empty: "vazio", workspaceId: MIOLO, actions: ["credits.adjusted", "workspace.suspended"] });
+    renderAdmin(ui);
     expect(state.calls.find((c) => c.path === "/admin/audit")?.query).toMatchObject({ actor: "platform_admin", workspace_id: MIOLO });
     const table = screen.getByRole("table", { name: "Auditoria desta conta" });
     expect(table).toHaveTextContent("credits.adjusted");
     expect(table).toHaveTextContent("Devolver crédito da falha");
+    expect(table).toHaveTextContent("vic@hellosquad.example");
     expect(table).toHaveTextContent("workspace.suspended");
     expect(table).not.toHaveTextContent("support.account_viewed");
-    expect(screen.queryByRole("region", { name: "Suporte" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Ver tudo na Auditoria" })).toHaveAttribute("href", `/admin/auditoria?quem=platform_admin&conta=${MIOLO}`);
   });
 
   it("sessão aberta pelo Super Admin: faixa com Encerrar e 'Entrar' desabilitado; sessão de outro ou vencida não conta", async () => {

@@ -1153,7 +1153,7 @@
     "audited": "Recorded in the audit log.",
     "enter": {
       "open": "Enter the workspace",
-      "title": "Enter {name}'s workspace",
+      "title": "Enter {name}’s workspace",
       "desc": "Opens a read-only support session with a time limit. Account, reason and duration go to the audit log, and the account holder gets an email about it.",
       "reason": "Reason for access",
       "reasonHint": "Example: check the publishing error the account owner asked about.",
@@ -1171,16 +1171,16 @@
       "left": "{n} min left.",
       "expired": "Time is up.",
       "reason": "Reason: {reason}",
-      "readOnly": "Read only: the product screens don't open for support yet; the product API already answers reads.",
+      "readOnly": "Read only: the product screens don’t open for support yet; the product API already answers reads.",
       "end": "End session",
       "endTitle": "End the support session in {name}?",
-      "endDesc": "Support reading stops now. The end goes to the audit log and to the account's access history.",
+      "endDesc": "Support reading stops now. The end goes to the audit log and to the account’s access history.",
       "endConfirm": "End session",
       "ended": "Support session in {name} ended. Recorded in the audit log."
     },
     "credit": {
       "open": "Adjust credits",
-      "title": "Adjust {name}'s credits",
+      "title": "Adjust {name}’s credits",
       "desc": "Use it to return credits after a failure or fix an entry. The adjustment goes to the statement with the reason.",
       "amount": "Credits",
       "amountHint": "Negative to remove; up to 2 decimals. Available now: {available}.",
@@ -1226,7 +1226,7 @@
       "revisionHint": "Optional; empty = no revision price.",
       "provisional": "Provisional",
       "approved": "Price commercially approved",
-      "approvedHint": "An approved price can't be provisional; while the delivery is for sale, only an approved price.",
+      "approvedHint": "An approved price can’t be provisional; while the delivery is for sale, only an approved price.",
       "approvedInvalid": "Uncheck \"Provisional\" to mark the price as approved.",
       "homologation": "Approval testing status",
       "homologationHint": "Reopening testing for a delivery on sale is refused: take it off sale first.",
@@ -1278,7 +1278,7 @@
       },
       "current": "Current",
       "history": "Versions saved through the panel",
-      "historySub": "From the audit log; read only, never editable. Version 1 of each offer came from the seed and doesn't show here.",
+      "historySub": "From the audit log; read only, never editable. Version 1 of each offer came from the seed and doesn’t show here.",
       "historyEmpty": "No version saved through the panel yet.",
       "colOffer": "Offer"
     },
@@ -1294,7 +1294,7 @@
       "cancel": {
         "open": "Cancel",
         "title": "Cancel run {id}?",
-        "desc": "{what}. The run leaves the queue and doesn't come back by itself. Whether to charge credits on cancellation is still a pending decision in Business rules.",
+        "desc": "{what}. The run leaves the queue and doesn’t come back by itself. Whether to charge credits on cancellation is still a pending decision in Business rules.",
         "reasonHint": "Stays in the audit log and in the run error.",
         "confirm": "Cancel the run",
         "done": "Run {id} cancelled. Recorded in the audit log."
@@ -1306,12 +1306,12 @@
       "reprocess": {
         "open": "Reprocess",
         "title": "Reprocess {event}?",
-        "desc": "Checks the charge with the provider and applies the status through the same billing path. Each event counts once: what was already applied doesn't repeat or credit again.",
+        "desc": "Checks the charge with the provider and applies the status through the same billing path. Each event counts once: what was already applied doesn’t repeat or credit again.",
         "confirm": "Reprocess with the reason",
         "applied": "Reprocessed: status {status} applied. Recorded in the audit log.",
         "noChange": "Reprocessed with no change: status {status} was already in place. Recorded in the audit log.",
         "duplicate": "Duplicate: status {status} had already been applied with this id; nothing repeated. Recorded in the audit log.",
-        "unknown": "The provider didn't report a status (simulated provider); nothing was applied. Recorded in the audit log.",
+        "unknown": "The provider didn’t report a status (simulated provider); nothing was applied. Recorded in the audit log.",
         "other": "Reprocessed: {outcome} (status {status}). Recorded in the audit log."
       },
       "reconcile": {
