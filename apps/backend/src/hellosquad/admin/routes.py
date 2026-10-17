@@ -522,7 +522,7 @@ limit 50
 
 @router.get(
     "/payments",
-    summary="Pagamentos: provedores (chave configurada ou ausente), assinaturas, cobranças e eventos",
+    summary="Pagamentos: provedores, assinaturas, cobranças e eventos de webhook",
     responses=error_responses(*ADMIN_ERRORS),
 )
 async def get_payments(tx: AdminTx) -> PaymentsOverview:
