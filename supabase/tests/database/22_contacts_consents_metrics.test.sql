@@ -185,7 +185,7 @@ select is(
    from app.create_conversation((select miolo from fx), 'object', null, 'metric', null, null, null, 'site.sessions',
                                 '{"title": "Sessões no site"}') c),
   row('iris'::public.agent_id, 'fonte_de_teste',
-      (current_date - 90)::text || '/' || (current_date - 1)::text)::text,
+      ((now() at time zone 'America/Sao_Paulo')::date - 90)::text || '/' || ((now() at time zone 'America/Sao_Paulo')::date - 1)::text)::text,
   'metric com a chave de uma série: Íris à frente, período e origem lidos da tabela'
 );
 select is(
@@ -199,7 +199,7 @@ select is(
   (select c.context_meta ->> 'period'
    from app.create_conversation((select vitta from fx), 'object', null, 'metric', null, null, null, 'site.sessions',
                                 '{"title": "Sessões no site"}') c),
-  (current_date - 90)::text || '/' || (current_date - 1)::text,
+  ((now() at time zone 'America/Sao_Paulo')::date - 90)::text || '/' || ((now() at time zone 'America/Sao_Paulo')::date - 1)::text,
   'a Vitta abre a série dela'
 );
 
