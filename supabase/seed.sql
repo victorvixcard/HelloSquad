@@ -683,3 +683,119 @@ delete from public.provider_balance_reports;
 update public.provider_health
 set reported_balance = null, reported_balance_currency = null, reported_balance_at = null, alert_below = null
 where reported_balance is not null or reported_balance_currency is not null or alert_below is not null;
+
+-- S3b — Modo Autônomo da conta em uso (V4.6 §7, notas x1 §B3/§B6): plano Ativa desde 28/09 (toda quinta, 3 posts
+-- por semana), resultados Ativa desde 01/10 (toda segunda), busca local em "Falha na execução" (Google Perfil
+-- expirado), posts Pausada, relacionamento "Bloqueada por integração" (e-mail não conectado). Execuções do
+-- protótipo sem número inventado: PL-41 e PL-42 aprovadas, RS-42 concluída, BL-42 falhou nas duas tentativas,
+-- RC-10 não executada. Vitta e Trilha sem nada (primeiro acesso). Apagar a responsabilidade leva as execuções.
+do $seed_autonomo$
+declare
+  v_miolo uuid := (select id from public.workspaces where slug = 'miolo');
+  v_marina uuid := (select id from auth.users where email = 'marina@miolo.example');
+  v_tz text := 'America/Sao_Paulo';
+  v_plan uuid := '5eed0000-0000-4000-8000-000000000a01';
+  v_res uuid := '5eed0000-0000-4000-8000-000000000a02';
+  v_seo uuid := '5eed0000-0000-4000-8000-000000000a03';
+  v_posts uuid := '5eed0000-0000-4000-8000-000000000a04';
+  v_crm uuid := '5eed0000-0000-4000-8000-000000000a05';
+begin
+  delete from public.responsibility_proposals p using public.workspaces s
+  where s.id = p.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  delete from public.responsibilities r using public.workspaces s
+  where s.id = r.workspace_id and s.slug in ('miolo', 'vitta', 'trilha');
+  update public.workspaces set timezone = v_tz where slug in ('miolo', 'vitta', 'trilha') and timezone <> v_tz;
+
+  insert into public.responsibilities (
+    id, workspace_id, template, title, lead_agent_id, collaborator_agent_ids, cadence, weekdays, month_day,
+    run_time, options, agreement, actions, auto_publish, approval_required, required_connections, status,
+    status_reason, status_params, blocked_by_connection, since, paused_at, created_by, created_at
+  ) values
+    (v_plan, v_miolo, 'plan', 'Planejar meus conteúdos toda semana', 'otto', '{kaia}', 'weekly', '{4}', null,
+     '09:00', '{"obj": "Trazer encomendas pelo site", "day": "quinta", "vol": "3 posts por semana"}',
+     'Toda quinta às 9h, o Otto apresenta o plano da semana seguinte com 3 posts por semana. A Kaia cria as artes. Nada é publicado sem a sua aprovação.',
+     '[{"action": "read_post_performance", "level": "analyze"}, {"action": "follow_calendar", "level": "analyze"},
+       {"action": "create_topics", "level": "prepare"}, {"action": "write_captions", "level": "prepare"},
+       {"action": "prepare_pieces_with_kaia", "level": "prepare"},
+       {"action": "publish_instagram", "level": "execute", "requirement": "approval_each", "granted": false},
+       {"action": "change_paid_campaigns", "level": "execute", "requirement": "specific_authorization", "granted": false},
+       {"action": "invest_in_ads", "level": "never"}, {"action": "reply_customer_messages", "level": "never"},
+       {"action": "change_prices_or_offers", "level": "never"}]',
+     false, true, '{}', 'active', null, '{}', null, '2026-09-28 12:00+00', null, v_marina, '2026-09-28 12:00+00'),
+    (v_res, v_miolo, 'res', 'Acompanhar meus resultados', 'iris', '{}', 'weekly', '{1}', null, '09:00',
+     '{"freq": "Toda segunda", "src": "Instagram, site e Google"}',
+     'Toda segunda, às 9h, a Íris te manda uma leitura de Instagram, site e Google, com a fonte de cada número.',
+     '[{"action": "read_instagram_site_google", "level": "analyze"}, {"action": "compare_previous_period", "level": "analyze"},
+       {"action": "point_out_changes", "level": "analyze"}, {"action": "build_weekly_reading", "level": "prepare"},
+       {"action": "change_ads_or_campaigns", "level": "never"}, {"action": "publish_or_send_anything", "level": "never"}]',
+     false, false, '{}', 'active', null, '{}', null, '2026-10-01 12:00+00', null, v_marina, '2026-10-01 12:00+00'),
+    (v_seo, v_miolo, 'seo', 'Monitorar oportunidades de busca local', 'kiwi', '{iris}', 'weekly', '{1}', null, '09:00',
+     '{"freq": "Toda segunda"}',
+     'Toda segunda, às 9h, o Kiwi consulta as buscas do bairro e o Google Perfil e prepara recomendações. A Íris confere os números.',
+     '[{"action": "analyze_local_searches", "level": "analyze"}, {"action": "follow_google_profile", "level": "analyze"},
+       {"action": "identify_opportunities", "level": "analyze"}, {"action": "prepare_recommendations", "level": "prepare"},
+       {"action": "activate_ads", "level": "execute", "requirement": "specific_authorization", "granted": false},
+       {"action": "change_budget", "level": "execute", "requirement": "specific_authorization", "granted": false},
+       {"action": "execute_investments", "level": "execute", "requirement": "specific_authorization_with_cap", "granted": false},
+       {"action": "change_site_without_approval", "level": "never"}]',
+     false, false, '{google_business_profile}', 'failed', 'connection_expired',
+     '{"connection": "google_business_profile"}', 'google_business_profile', '2026-09-21 12:00+00', null, v_marina,
+     '2026-09-21 12:00+00'),
+    (v_posts, v_miolo, 'posts', 'Preparar posts toda segunda-feira', 'kaia', '{otto}', 'weekly', '{1}', null, '08:00',
+     '{"obj": "Manter o Instagram ativo", "day": "segunda", "vol": "3 posts"}',
+     'Toda segunda às 8h, a Kaia prepara 3 posts para a semana. O Otto escreve as legendas. Nada é publicado sem a sua aprovação.',
+     '[{"action": "create_pieces_with_brand", "level": "prepare"}, {"action": "write_captions", "level": "prepare"},
+       {"action": "weekly_pieces", "level": "execute", "requirement": "approval_each", "granted": false},
+       {"action": "publish_instagram", "level": "execute", "requirement": "approval_each", "granted": false},
+       {"action": "invest_in_ads", "level": "never"}, {"action": "use_unlicensed_photos", "level": "never"},
+       {"action": "change_prices_or_offers", "level": "never"}]',
+     false, true, '{}', 'paused', null, '{}', null, '2026-10-05 12:00+00', '2026-10-12 13:00+00', v_marina,
+     '2026-10-05 12:00+00'),
+    (v_crm, v_miolo, 'crm', 'Preparar campanhas de relacionamento', 'max', '{otto}', 'monthly', '{}', 1, '09:00',
+     '{"freq": "Todo mês"}',
+     'Todo mês, o Max separa os públicos com consentimento e o Otto escreve as mensagens. Nada é enviado sem a sua autorização.',
+     '[{"action": "read_customer_base", "level": "analyze"}, {"action": "see_inactive_60_days", "level": "analyze"},
+       {"action": "create_segments", "level": "prepare"}, {"action": "prepare_messages_with_otto", "level": "prepare"},
+       {"action": "send_messages", "level": "execute", "requirement": "consent_connection_authorization", "granted": false},
+       {"action": "send_without_consent", "level": "never"}, {"action": "offer_discounts_without_you", "level": "never"}]',
+     false, true, '{email_marketing}', 'blocked', 'connection_missing', '{"connection": "email_marketing"}',
+     'email_marketing', '2026-09-01 12:00+00', null, v_marina, '2026-09-01 12:00+00');
+
+  update public.responsibilities r
+  set next_run_at = app.responsibility_next_run(r.cadence, r.weekdays, r.month_day, r.run_time, v_tz, now())
+  where r.workspace_id = v_miolo and r.status in ('active', 'blocked', 'failed');
+
+  insert into public.responsibility_runs (
+    id, workspace_id, responsibility_id, code, period_no, title_key, title_params, status, message_key,
+    message_params, scheduled_for, started_at, finished_at, attempts, attempt_times, approved_by, approved_at,
+    created_at
+  ) values
+    ('5eed0000-0000-4000-8000-000000000a11', v_miolo, v_plan, 'PL-41', 41, 'plan', '{"week": 41}', 'approved',
+     'approved_with_changes', '{"at": "2026-10-02T13:00:00Z"}', '2026-10-01 12:00+00', '2026-10-01 12:00+00',
+     '2026-10-02 13:00+00', 1, '{"2026-10-01 12:00+00"}', v_marina, '2026-10-02 13:00+00', '2026-10-01 12:00+00'),
+    ('5eed0000-0000-4000-8000-000000000a12', v_miolo, v_crm, 'RC-10', 10, 'crm', '{"month": 10}', 'skipped',
+     'not_connected', '{"connection": "email_marketing"}', '2026-10-01 12:00+00', null, '2026-10-01 12:00+00', 0,
+     '{}', null, null, '2026-10-01 12:00+00'),
+    ('5eed0000-0000-4000-8000-000000000a13', v_miolo, v_plan, 'PL-42', 42, 'plan', '{"week": 42}', 'approved',
+     'approved', '{"at": "2026-10-09T20:42:00Z"}', '2026-10-08 12:00+00', '2026-10-08 12:00+00',
+     '2026-10-09 20:42+00', 1, '{"2026-10-08 12:00+00"}', v_marina, '2026-10-09 20:42+00', '2026-10-08 12:00+00'),
+    ('5eed0000-0000-4000-8000-000000000a14', v_miolo, v_res, 'RS-42', 42, 'res', '{"week": 42}', 'done',
+     'delivered', '{}', '2026-10-12 12:00+00', '2026-10-12 12:00+00', '2026-10-12 12:03+00', 1,
+     '{"2026-10-12 12:00+00"}', null, null, '2026-10-12 12:00+00'),
+    ('5eed0000-0000-4000-8000-000000000a15', v_miolo, v_seo, 'BL-42', 42, 'seo', '{"week": 42}', 'failed',
+     'failed_attempts', '{"reason": "connection_expired", "connection": "google_business_profile", "attempt_times": ["2026-10-12T12:00:00Z", "2026-10-12T12:30:00Z"]}',
+     '2026-10-12 12:00+00', '2026-10-12 12:00+00', '2026-10-12 12:30+00', 2,
+     '{"2026-10-12 12:00+00", "2026-10-12 12:30+00"}', null, null, '2026-10-12 12:00+00');
+
+  insert into public.responsibility_events (workspace_id, responsibility_id, actor_type, actor_id, action, params, created_at)
+  values
+    (v_miolo, v_crm, 'user', v_marina::text, 'delegated', '{"template": "crm"}', '2026-09-01 12:00+00'),
+    (v_miolo, v_crm, 'system', null, 'blocked', '{"connection": "email_marketing", "reason": "connection_missing"}', '2026-09-01 12:01+00'),
+    (v_miolo, v_seo, 'user', v_marina::text, 'delegated', '{"template": "seo"}', '2026-09-21 12:00+00'),
+    (v_miolo, v_plan, 'user', v_marina::text, 'delegated', '{"template": "plan"}', '2026-09-28 12:00+00'),
+    (v_miolo, v_res, 'user', v_marina::text, 'delegated', '{"template": "res"}', '2026-10-01 12:00+00'),
+    (v_miolo, v_posts, 'user', v_marina::text, 'delegated', '{"template": "posts"}', '2026-10-05 12:00+00'),
+    (v_miolo, v_seo, 'system', null, 'failed', '{"connection": "google_business_profile", "reason": "connection_expired"}', '2026-10-12 12:30+00'),
+    (v_miolo, v_posts, 'user', v_marina::text, 'paused', '{}', '2026-10-12 13:00+00');
+end;
+$seed_autonomo$;
