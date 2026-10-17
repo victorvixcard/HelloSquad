@@ -1093,8 +1093,7 @@
         "alert_below": "Informe un valor, por ejemplo 50,00, o déjelo vacío.",
         "reason": "Escriba el motivo con 10 a 500 caracteres."
       },
-      "saved": "Saldo de {name} registrado.",
-      "savedBelow": "Saldo de {name} registrado: por debajo de la alerta."
+      "saved": "Saldo de {name} registrado."
     },
     "balanceLabel": "Saldo",
     "alertBelow": "Alertar por debajo de",

@@ -79,7 +79,7 @@ export function BalanceDialog(props: { provider: string; providerName: string; c
       return;
     }
     close();
-    notice.show(result.data.balance_alert ? t("savedBelow", { name: props.providerName }) : t("saved", { name: props.providerName }));
+    notice.show(t("saved", { name: props.providerName }));
     router.refresh();
   };
 

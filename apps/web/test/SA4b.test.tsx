@@ -458,7 +458,7 @@ describe("Saúde das APIs (SA4b)", () => {
     });
     expect(state.refresh).toHaveBeenCalled();
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(screen.getByRole("status")).toHaveTextContent("Saldo de Anthropic registrado: abaixo do alerta.");
+    expect(screen.getByRole("status")).toHaveTextContent("Saldo de Anthropic registrado.");
   });
 
   it("erro da API aparece no diálogo, com o campo recusado marcado", async () => {

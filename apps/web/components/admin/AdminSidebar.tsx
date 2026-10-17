@@ -20,6 +20,12 @@ export function AdminSidebar({ person, badges = {} }: { person: AdminPerson; bad
   const pathname = usePathname() ?? "";
   const current = adminNavOf(pathname);
   const agentOpen = /^\/admin\/squad\/([^/?#]+)/.exec(pathname)?.[1] ?? null;
+  const tb = useTranslations("admin.shell.badge");
+  /* Com contador, o nome do link diz o que ele conta ("Saúde das APIs, 1 saldo abaixo do alerta"); sem, fica o rótulo. */
+  const badgeName = (id: string) => {
+    const n = id === "consumo" || id === "saude" ? (badges[id] ?? 0) : 0;
+    return n ? `${t(`nav.${id as "consumo" | "saude"}`)}, ${tb(id as "consumo" | "saude", { n })}` : undefined;
+  };
   return (
     <nav className="sa-sb" aria-label={t("navLabel")}>
       <div className="sa-sb-top">
@@ -41,6 +47,7 @@ export function AdminSidebar({ person, badges = {} }: { person: AdminPerson; bad
                     className={`sa-ni${current === item.id ? " is-on" : ""}`}
                     href={item.href}
                     aria-current={current === item.id && !agentOpen ? "page" : undefined}
+                    aria-label={badgeName(item.id)}
                   >
                     <Icon name={item.icon} />
                     <span className="sa-ni-l">{t(`nav.${item.id}`)}</span>
@@ -84,15 +91,13 @@ export function AdminSidebar({ person, badges = {} }: { person: AdminPerson; bad
   );
 }
 
-/** Contador do item: o número à vista e, para o leitor de tela, o que ele conta. */
+/** Contador do item: o número à vista (o leitor de tela ouve o que ele conta no nome do link). */
 function NavBadge({ id, n }: { id: "consumo" | "saude"; n: number }) {
   const t = useTranslations("admin.shell.badge");
   if (!n) return null;
-  const label = t(id, { n });
   return (
-    <span className="sa-nb is-hot" title={label}>
-      <span aria-hidden="true">{n}</span>
-      <span className="sa-sr">{`, ${label}`}</span>
+    <span className="sa-nb is-hot" aria-hidden="true" title={t(id, { n })}>
+      {n}
     </span>
   );
 }

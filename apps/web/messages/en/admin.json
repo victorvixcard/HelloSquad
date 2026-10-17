@@ -1093,8 +1093,7 @@
         "alert_below": "Enter an amount, for example 50.00, or leave it empty.",
         "reason": "Write a reason with 10 to 500 characters."
       },
-      "saved": "{name} balance saved.",
-      "savedBelow": "{name} balance saved: below the alert."
+      "saved": "{name} balance saved."
     },
     "balanceLabel": "Balance",
     "alertBelow": "Alert below",
