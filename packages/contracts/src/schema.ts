@@ -4085,6 +4085,12 @@ export interface components {
              * @description Workspaces ativos de que você participa.
              */
             memberships: components["schemas"]["Membership"][];
+            /**
+             * Is Platform Admin
+             * @description Super Admin da plataforma (papel fora de memberships); o painel é /admin.
+             * @default false
+             */
+            is_platform_admin: boolean;
         };
         /** Membership */
         Membership: {

@@ -16472,6 +16472,12 @@
             "type": "array",
             "title": "Memberships",
             "description": "Workspaces ativos de que você participa."
+          },
+          "is_platform_admin": {
+            "type": "boolean",
+            "title": "Is Platform Admin",
+            "description": "Super Admin da plataforma (papel fora de memberships); o painel é /admin.",
+            "default": false
           }
         },
         "type": "object",

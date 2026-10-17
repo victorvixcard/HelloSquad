@@ -396,8 +396,8 @@ async def test_comparing_two_periods_turns_counts_into_rates(api, access_token, 
 
 @pytest.fixture
 async def anthropic_balance(admin_db: psycopg.AsyncConnection) -> AsyncIterator[None]:
-    """Parte do estado do seed (sem saldo informado), mesmo com saldo informado antes pelo painel, e tira o
-    que o teste gravou."""
+    """Parte do estado do seed (sem saldo informado), mesmo com saldo informado antes pelo painel,
+    e tira o que o teste gravou."""
 
     async def reset() -> None:
         await admin_db.execute("delete from public.provider_balance_reports")
