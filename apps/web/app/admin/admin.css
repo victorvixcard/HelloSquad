@@ -138,3 +138,14 @@
 .sa-alert-out p{margin:6px 0 0;font-size:13px}
 .sa-cell-m.sa-cell-top{align-items:flex-start;gap:4px}
 .sa-fx{font-size:12.5px}
+.sa-cell-m.sa-cell-end{align-items:flex-end}
+.sa-card-note{margin:0;padding:10px 20px 12px;font-size:12.5px;line-height:1.45;color:var(--hs-tinta-suave)}
+.sa-card-lead{padding:2px 20px 12px;font-size:13.5px;line-height:1.5}
+.sa-card-lead p{margin:0}
+.sa-card-lead p+p{margin-top:4px;font-size:12.5px}
+#como-ler{margin-top:16px}
+#comparar{margin-top:16px}
+.ql-how{gap:14px 28px}
+.ql-how b{font-size:13.5px}
+.ql-how p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--hs-tinta-suave)}
+.ql-how-foot{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--hs-l1);font-size:13px;line-height:1.45;color:var(--hs-tinta-suave)}

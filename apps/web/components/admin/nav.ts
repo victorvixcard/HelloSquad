@@ -42,7 +42,7 @@ export const ADMIN_NAV: { id: "op" | "ia"; items: AdminNavItem[] }[] = [
       { id: "consumo", icon: "chart", href: "/admin/consumo" },
       { id: "saude", icon: "pulse", slice: "SA4" },
       { id: "fila", icon: "works", href: "/admin/fila" },
-      { id: "qualidade", icon: "checkc", slice: "SA4" },
+      { id: "qualidade", icon: "checkc", href: "/admin/qualidade" },
     ],
   },
 ];

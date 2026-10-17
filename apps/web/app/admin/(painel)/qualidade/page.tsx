@@ -300,12 +300,12 @@ export default async function QualityPage({ searchParams }: { searchParams: Sear
   const comparePanel = compare.ok ? (
     (() => {
       const lines = cmpLines(compare.data);
-      const better = lines.filter((l) => l.reading === "better").length;
-      const worse = lines.filter((l) => l.reading === "worse").length;
+      const betterN = lines.filter((l) => l.reading === "better").length;
+      const worseN = lines.filter((l) => l.reading === "worse").length;
       return (
         <>
           <div className="sa-card-lead">
-            <p>{t("qualidade.cmpSummary", { better, worse, total: QUALITY_METRICS.length, month: monthName(a) })}</p>
+            <p>{t("qualidade.cmpSummary", { betterN, worseN, total: QUALITY_METRICS.length, month: monthName(a) })}</p>
             <p className="sa-mut">{t("qualidade.cmpVersions", { month: monthName(a), versions: versionsOf(compare.data.a) })}</p>
             <p className="sa-mut">{t("qualidade.cmpVersions", { month: monthName(b), versions: versionsOf(compare.data.b) })}</p>
           </div>
@@ -346,7 +346,7 @@ export default async function QualityPage({ searchParams }: { searchParams: Sear
         <h2>{partial(months[0]!) ? `${monthName(months[0]!)}, ${partial(months[0]!)}` : monthName(months[0]!)}</h2>
         <small>
           {top
-            ? t("qualidade.topSub", { n: top.b.totals.deliveries, month: monthName(months[1]!), before: top.a.totals.deliveries })
+            ? t("qualidade.topSub", { n: top.b.totals.deliveries, month: monthName(months[1]!), beforeN: top.a.totals.deliveries })
             : t("common.apiDown")}
         </small>
       </div>
