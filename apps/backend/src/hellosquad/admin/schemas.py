@@ -472,7 +472,13 @@ class ConsumptionResponse(BaseModel):
     series: list[ConsumptionBucket] = Field(
         description="Conjunto filtrado (todas as contas ou `workspace_id`) por dia, semana ou mês."
     )
-    economics: EconomicReadings = Field(description="Leituras do conjunto filtrado.")
+    economics: EconomicReadings = Field(
+        description=(
+            "Leituras do conjunto filtrado: somas para IA por crédito, margem e custo por turno; "
+            "tendência = média das contas ponderada pelo custo (como o protótipo)."
+        )
+    )
+    trend_accounts: int = Field(description="Contas que entraram na tendência do conjunto.")
     alert_rules: list[AlertRule]
     margin_basis: MarginBasis
 

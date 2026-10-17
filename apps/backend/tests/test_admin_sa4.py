@@ -237,6 +237,7 @@ async def test_consumption_matches_the_known_numbers_and_stays_inside_the_bands(
     assert Decimal(economics["cost_per_turn_trend"]) == Decimal("0")
     assert economics["alerts"] == []
     assert body["economics"] == economics
+    assert body["trend_accounts"] == 1
     assert [r["metric"] for r in body["alert_rules"]] == [
         "ai_cost_per_credit_brl",
         "gross_margin",

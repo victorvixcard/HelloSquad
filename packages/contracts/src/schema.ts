@@ -2778,8 +2778,13 @@ export interface components {
              * @description Conjunto filtrado (todas as contas ou `workspace_id`) por dia, semana ou mês.
              */
             series: components["schemas"]["ConsumptionBucket"][];
-            /** @description Leituras do conjunto filtrado. */
+            /** @description Leituras do conjunto filtrado: somas para IA por crédito, margem e custo por turno; tendência = média das contas ponderada pelo custo (como o protótipo). */
             economics: components["schemas"]["EconomicReadings"];
+            /**
+             * Trend Accounts
+             * @description Contas que entraram na tendência do conjunto.
+             */
+            trend_accounts: number;
             /** Alert Rules */
             alert_rules: components["schemas"]["AlertRule"][];
             margin_basis: components["schemas"]["MarginBasis"];

@@ -77,14 +77,37 @@ def outside(rule: AlertRule, value: Decimal) -> bool:
     return value > rule.threshold if rule.comparison == "max" else value < rule.threshold
 
 
-def readings(s: Sums, usd_brl: Decimal | None, rules: list[AlertRule]) -> EconomicReadings:
+def account_trend(s: Sums) -> Decimal | None:
+    """Custo por turno nos últimos N dias ÷ nos N anteriores − 1; sem turno num dos dois, nulo."""
+    if not (s.recent_turns and s.previous_turns and s.previous_turn_cost_usd):
+        return None
+    recent = s.recent_turn_cost_usd / s.recent_turns
+    previous = s.previous_turn_cost_usd / s.previous_turns
+    return (recent / previous - 1).quantize(CENTS)
+
+
+def weighted_trend(pairs: list[tuple[Decimal | None, Decimal]]) -> tuple[Decimal | None, int]:
+    """Tendência do conjunto como no protótipo: média das contas com tendência e custo no período,
+    ponderada pelo custo. Devolve também quantas contas entraram."""
+    used = [(t, c) for t, c in pairs if t is not None and c > 0]
+    weight = sum((c for _, c in used), start=Decimal(0))
+    if not weight:
+        return None, len(used)
+    return (sum((t * c for t, c in used), start=Decimal(0)) / weight).quantize(CENTS), len(used)
+
+
+def readings(
+    s: Sums,
+    usd_brl: Decimal | None,
+    rules: list[AlertRule],
+    trend: Decimal | None = None,
+    *,
+    own_trend: bool = True,
+) -> EconomicReadings:
     by_metric = {r.metric: r for r in rules}
     brl = cost_brl(s.ai_cost_usd, usd_brl)
-    trend = None
-    if s.recent_turns and s.previous_turns and s.previous_turn_cost_usd:
-        recent = s.recent_turn_cost_usd / s.recent_turns
-        previous = s.previous_turn_cost_usd / s.previous_turns
-        trend = (recent / previous - 1).quantize(CENTS)
+    if own_trend:
+        trend = account_trend(s)
     values = {
         "ai_cost_per_credit_brl": per_credit(brl, s.credits_charged),
         "gross_margin": margin(brl, s.credits_charged, by_metric.get("gross_margin")),

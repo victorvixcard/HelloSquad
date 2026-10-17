@@ -964,10 +964,16 @@ class Consumption:
             provisional=(rule is None or rule.proposal) or (fx is None or fx["provisional"]),
         )
 
-    def total_readings(self) -> EconomicReadings:
-        totals = self.totals().model_dump()
-        trend = {f: sum((t[f] for t in self.trend.values()), start=0) for f in TREND_FIELDS}
-        return economics.readings(self.sums(totals, trend), self.usd_brl, self.rules)
+    def total_readings(self) -> tuple[EconomicReadings, int]:
+        """Conjunto: somas para IA por crédito, margem e custo por turno; tendência como no
+        protótipo (média das contas ponderada pelo custo)."""
+        trend, accounts = economics.weighted_trend(
+            [(i.economics.cost_per_turn_trend, i.ai_cost_usd) for i in self.items]
+        )
+        totals = self.sums(self.totals().model_dump(), None)
+        return economics.readings(
+            totals, self.usd_brl, self.rules, trend, own_trend=False
+        ), accounts
 
 
 async def load_consumption(
@@ -1034,6 +1040,7 @@ async def get_consumption(
                 cost_per_turn_usd=economics.per_turn(b["turn_cost_usd"], b["turns"]),
             )
         )
+    readings, trend_accounts = data.total_readings()
     return ConsumptionResponse(
         since=since,
         until=until,
@@ -1042,7 +1049,8 @@ async def get_consumption(
         totals=data.totals(),
         granularity=granularity,
         series=buckets,
-        economics=data.total_readings(),
+        economics=readings,
+        trend_accounts=trend_accounts,
         alert_rules=data.rules,
         margin_basis=data.margin_basis(),
     )
