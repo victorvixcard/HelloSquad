@@ -54,8 +54,8 @@ export function BalanceDialog(props: { provider: string; providerName: string; c
     opener.current?.focus();
   };
 
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
+  const submit = async (e?: FormEvent) => {
+    e?.preventDefault();
     const amount = parseAmount(form.amount);
     const currency = form.currency.trim().toUpperCase();
     const alertBelow = form.alertBelow.trim() ? parseAmount(form.alertBelow) : null;
@@ -116,7 +116,7 @@ export function BalanceDialog(props: { provider: string; providerName: string; c
             <button type="button" className="hs-btn hs-btn--ghost hs-btn--s" onClick={close}>
               <span className="hs-lbl">{t("cancel")}</span>
             </button>
-            <button type="submit" form={`${id}-form`} className="hs-btn hs-btn--primary hs-btn--s" disabled={busy}>
+            <button type="button" className="hs-btn hs-btn--primary hs-btn--s" disabled={busy} onClick={() => void submit()}>
               <span className="hs-lbl">{busy ? t("saving") : t("save")}</span>
             </button>
           </>
@@ -127,7 +127,7 @@ export function BalanceDialog(props: { provider: string; providerName: string; c
             "amount",
             t("amount"),
             t("amountHint"),
-            <input {...common("amount")} className="sa-inp is-num" inputMode="decimal" autoComplete="off" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />,
+            <input {...common("amount")} data-autofocus className="sa-inp is-num" inputMode="decimal" autoComplete="off" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />,
           )}
           {field(
             "currency",
