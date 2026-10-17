@@ -670,6 +670,9 @@ $seed_cobranca$;
 -- SA6a — contas do seed ativas (sem suspensão) e nenhuma sessão de suporte aberta. O registro de acesso
 -- do suporte só cresce: a sessão aberta ganha o fim, nada se apaga.
 update public.workspaces
-set suspended_at = null, suspension_reason = null
+set suspended_at = null
 where slug in ('miolo', 'vitta', 'trilha') and suspended_at is not null;
+delete from public.workspace_suspension_reasons r
+using public.workspaces w
+where w.id = r.workspace_id and w.slug in ('miolo', 'vitta', 'trilha');
 update public.support_access_log set ended_at = now() where ended_at is null and expires_at > now();

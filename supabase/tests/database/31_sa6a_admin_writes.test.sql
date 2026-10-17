@@ -214,7 +214,8 @@ select lives_ok(
 );
 reset role;
 select ok(
-  (select suspended_at is not null and suspension_reason = 'Suspensa a pedido da titular' from public.workspaces where id = (select miolo from fx))
+  (select suspended_at is not null from public.workspaces where id = (select miolo from fx))
+  and (select reason = 'Suspensa a pedido da titular' from public.workspace_suspension_reasons where workspace_id = (select miolo from fx))
   and not exists (
     select 1 from app.billing_due_subscriptions(now() + interval '400 days', interval '0 seconds', 1000) s
     where s.workspace_id = (select miolo from fx)

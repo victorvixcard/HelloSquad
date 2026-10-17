@@ -180,7 +180,8 @@ with acc as (
   select w.id, w.slug, w.name, w.locale, w.created_at,
          case when w.deleted_at is not null then 'deleted'
               when w.suspended_at is not null then 'suspended' else 'active' end as status,
-         w.suspension_reason,
+         (select r.reason from public.workspace_suspension_reasons r where r.workspace_id = w.id)
+           as suspension_reason,
          p.slug as plan_slug, p.name as plan_name, v.provisional as plan_provisional,
          app.credit_balance(w.id, now()) as credits_balance,
          (select count(*) from public.memberships m where m.workspace_id = w.id)::integer

@@ -36,6 +36,8 @@ SA_OBJECTS = [
     "economic_alert_rules",
     "provider_balance_reports",
     "payment_reconciliations",
+    "delivery_price_notes",
+    "workspace_suspension_reasons",
     "v_consumo_por_cliente",
     "v_qualidade_entregas",
     "v_qualidade_itens",
