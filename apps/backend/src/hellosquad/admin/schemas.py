@@ -33,7 +33,10 @@ class AccountSummary(BaseModel):
     slug: str
     name: str
     locale: str
-    status: Literal["active", "deleted"]
+    status: Literal["active", "suspended", "deleted"] = Field(
+        description="`suspended` = suspensa pelo Super Admin (cobrança e rotinas pausadas)."
+    )
+    suspension_reason: str | None = None
     created_at: datetime
     plan: AccountPlan | None
     credits_balance: Decimal
@@ -238,6 +241,8 @@ class AdminWebhookEvent(BaseModel):
     note: str | None
     received_at: datetime
     processed_at: datetime | None
+    reconciled_at: datetime | None = None
+    reconciliation_reason: str | None = None
 
 
 class PaymentsOverview(BaseModel):

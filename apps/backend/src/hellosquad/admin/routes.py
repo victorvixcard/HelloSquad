@@ -178,7 +178,9 @@ async def admin_me(admin: PlatformAdmin, tx: AdminTx) -> AdminMe:
 ACCOUNTS_BASE = """
 with acc as (
   select w.id, w.slug, w.name, w.locale, w.created_at,
-         case when w.deleted_at is null then 'active' else 'deleted' end as status,
+         case when w.deleted_at is not null then 'deleted'
+              when w.suspended_at is not null then 'suspended' else 'active' end as status,
+         w.suspension_reason,
          p.slug as plan_slug, p.name as plan_name, v.provisional as plan_provisional,
          app.credit_balance(w.id, now()) as credits_balance,
          (select count(*) from public.memberships m where m.workspace_id = w.id)::integer
@@ -191,7 +193,8 @@ with acc as (
          or w.slug ilike '%%' || %(q)s || '%%')
     and (%(plan)s::text is null or p.slug = %(plan)s)
     and (%(status)s::text is null
-         or (%(status)s = 'active' and w.deleted_at is null)
+         or (%(status)s = 'active' and w.deleted_at is null and w.suspended_at is null)
+         or (%(status)s = 'suspended' and w.deleted_at is null and w.suspended_at is not null)
          or (%(status)s = 'deleted' and w.deleted_at is not null))
 )
 """
@@ -236,6 +239,7 @@ def account_summary(row: dict) -> AccountSummary:
         name=row["name"],
         locale=row["locale"],
         status=row["status"],
+        suspension_reason=row.get("suspension_reason"),
         created_at=row["created_at"],
         plan=plan,
         credits_balance=row["credits_balance"],
@@ -253,7 +257,7 @@ async def list_accounts(
     tx: AdminTx,
     q: Annotated[str | None, Query(max_length=80, description="Busca no nome ou no slug.")] = None,
     plan: Annotated[str | None, Query(max_length=40, description="Slug do plano.")] = None,
-    status: Literal["active", "deleted"] | None = None,
+    status: Literal["active", "suspended", "deleted"] | None = None,
     cursor: CursorQuery = None,
     limit: Annotated[int, limit_query(100)] = 50,
 ) -> AccountPage:
@@ -532,9 +536,11 @@ limit 50
 
 WEBHOOKS = """
 select e.id, e.provider::text as provider, e.event_id, e.event_type, e.workspace_id,
-       w.name as workspace_name, e.outcome, e.note, e.received_at, e.processed_at
+       w.name as workspace_name, e.outcome, e.note, e.received_at, e.processed_at,
+       r.created_at as reconciled_at, r.reason as reconciliation_reason
 from public.payment_events e
 left join public.workspaces w on w.id = e.workspace_id
+left join public.payment_reconciliations r on r.payment_event_id = e.id
 order by e.received_at desc, e.id desc
 limit 50
 """
