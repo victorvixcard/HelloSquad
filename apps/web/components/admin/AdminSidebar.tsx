@@ -45,7 +45,7 @@ export function AdminSidebar({ person }: { person: AdminPerson }) {
                   key={item.id}
                   className="sa-ni is-soon"
                   aria-disabled="true"
-                  title={t("soonTitle", { slice: item.slice })}
+                  title={t("soonTitle", { slice: item.slice ?? "" })}
                 >
                   <Icon name={item.icon} />
                   <span className="sa-ni-l">{t(`nav.${item.id}`)}</span>
