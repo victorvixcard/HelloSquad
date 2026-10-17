@@ -1,0 +1,19 @@
+== Vic (Super Admin fictício)
+/admin/me -> 200 vic@hellosquad.example mfa_enforced: False
+/admin/accounts -> 200 contas: {'accounts': 3, 'paid_plans': 1, 'free_plans': 2, 'credits_balance': '75.20'} ['vitta', 'trilha', 'miolo']
+/admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2 -> 200 membros: ['marina@miolo.example/owner'] créditos: {'balance': '36.00', 'reserved': '0.00', 'available': '36.00'} auditoria: 856d2163
+/admin/catalog -> 200 itens: 46 à venda: 0 primeiro: 01.01 orientar inferred 0.00 provisório
+/admin/plans -> 200 [('free', '20.00', 'fora de venda'), ('squad', '100.00', 'fora de venda')] [('recarga-50', '49.00')]
+/admin/payments -> 200 [('asaas', 'missing', ''), ('mercadopago', 'missing', ''), ('mock', 'not_applicable', 'selecionado')] assinaturas: 1 cobranças: 2 eventos: 0
+/admin/audit?actor=platform_admin&category=support_access&limit=3 -> 200 [('support.account_viewed', 'vic@hellosquad.example', 'Miolo'), ('support.account_viewed', 'vic@hellosquad.example', 'Miolo'), ('support.account_viewed', 'vic@hellosquad.example', 'Miolo')]
+/admin/queue -> 200 filas: [('email_outbox', 74), ('external_actions', 0), ('memory_reflect', 0), ('runs_interactive', 0), ('runs_scheduled', 0)] estados: {'waiting_approval': 1}
+/admin/queue/runs/5eed0000-0000-4000-8000-000000000401 -> 200 run: waiting_approval otto passos: 0 eventos: 0
+/admin/models -> 200 preços: [('claude-haiku-4-5', '1.0000', '5.0000'), ('claude-opus-4-8', '5.0000', '25.0000'), ('claude-opus-5', '5.0000', '25.0000'), ('claude-opus-5-5', '4.0000', '20.0000'), ('claude-sonnet-5-5', '2.0000', '10.0000')] câmbio: 5.4000 regras: 8
+/admin/consumption?since=2026-09-17&until=2026-10-16 -> 200 contas: [('Miolo', 0, '0.000000')]
+/admin/quality?since=2026-08-01&until=2026-10-31 -> 200 por tipo: []
+/admin/providers -> 200 [('anthropic', 'simulated', 'missing'), ('image_engine', 'not_integrated', 'not_applicable'), ('asaas', 'account_not_created', 'missing'), ('mercadopago', 'account_not_created', 'missing'), ('email', 'local_only', 'not_applicable')]
+== Marina (owner da Miolo)
+/admin/accounts -> 403 platform_admin_only Só o Super Admin da plataforma acessa o painel.
+/admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2 -> 403 platform_admin_only
+== Data API com o JWT do Vic
+{"code":"42501","details":null,"hint":"Grant the required privileges to the current role with: GRANT SELECT ON public.delivery_catalog TO authenticated;","message":"permission denied for table delivery_catalog"} -> 403
