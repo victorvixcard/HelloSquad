@@ -73,3 +73,8 @@ FAILED tests/test_email.py::test_events_reach_mailpit_in_three_languages_for_thr
 2026-10-17T03:45:53 Needs you: Legenda do pão de abóbora ['http://127.0.0.1:3199/app/vitta']
 == a mesma prova na árvore do dono (EMAIL_APP_URL na 3100): pytest tests/test_email.py -k 'mailpit or vitta or rafael'
 2 passed, 5 deselected in 2.60s
+
+== 00:48:19 make seed e make test-db no clone
+Files=32, Tests=862,  1 wallclock secs ( 0.10 usr  0.02 sys +  0.20 cusr  0.11 csys =  0.43 CPU)
+Result: PASS
+seed exit=0, test-db exit=0
