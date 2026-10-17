@@ -1,7 +1,9 @@
 """Entrypoint `hellosquad-scheduler`: a cada tick (60 s), as responsabilidades vencidas do Modo
 Autônomo (S3b) e a renovação mensal das assinaturas (S2e).
 
-`--once` roda um tick e sai (roteiro local). Em local/test usa DATABASE_URL, como o worker.
+`--once` roda um tick e sai (roteiro local). `--force-due <id>` (só local e test) põe a próxima
+execução de uma responsabilidade ativa ou bloqueada para agora antes do tick: é como se forçar a
+"execução de quinta" sem esperar o relógio. Em local/test usa DATABASE_URL, como o worker.
 """
 
 import argparse
@@ -24,7 +26,14 @@ from hellosquad.worker.main import worker_conninfo
 log = logging.getLogger("hellosquad.scheduler")
 
 
-async def main(settings: Settings, *, once: bool) -> None:
+FORCE_DUE = """
+update public.responsibilities set next_run_at = now()
+where id = %s and status in ('active', 'blocked')
+returning template::text
+"""
+
+
+async def main(settings: Settings, *, once: bool, force_due: str | None = None) -> None:
     stop = asyncio.Event()
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
@@ -35,6 +44,15 @@ async def main(settings: Settings, *, once: bool) -> None:
         ) as conn,
         httpx.AsyncClient(timeout=settings.payment_timeout_seconds) as http,
     ):
+        if force_due is not None:
+            if settings.app_env not in ("local", "test"):
+                raise SystemExit("--force-due só vale no ambiente local ou de teste")
+            forced = await (await conn.execute(FORCE_DUE, (force_due,))).fetchone()
+            log.info(
+                "modo autônomo: próxima execução de %s forçada para agora (%s)",
+                force_due,
+                forced["template"] if forced else "não encontrada, pausada ou encerrada",
+            )
         providers = configured_providers(settings, http)
         log.info(
             "scheduler iniciado, intervalo de %ss; provedores de pagamento: %s",
@@ -77,7 +95,12 @@ async def main(settings: Settings, *, once: bool) -> None:
 def run() -> None:
     parser = argparse.ArgumentParser(prog="hellosquad-scheduler")
     parser.add_argument("--once", action="store_true", help="roda um tick e sai")
+    parser.add_argument(
+        "--force-due",
+        metavar="RESPONSIBILITY_ID",
+        help="(local/test) a próxima execução desta responsabilidade passa a ser agora",
+    )
     args = parser.parse_args()
     settings = get_settings()
     configure_logging(settings.log_level)
-    asyncio.run(main(settings, once=args.once))
+    asyncio.run(main(settings, once=args.once, force_due=args.force_due))

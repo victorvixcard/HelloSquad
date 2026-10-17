@@ -1,0 +1,47 @@
+== 1. Modo Autônomo da Miolo (conta em uso)
+  interruptor: Ligado | contagem: {"active": 2, "paused": 1, "failed": 1, "blocked": 1, "ended": 0}
+  Preparar campanhas de relacionamento · Bloqueada por integração · O e-mail marketing não está conectado: o Max prepara segmentos, mas nada pode ser enviado.
+  Monitorar oportunidades de busca local · Falha na execução · A última execução falhou: o acesso ao Google Perfil expirou e precisa ser reconectado.
+  Planejar meus conteúdos toda semana · Ativa · Próxima execução: qui, 22/10, 9h · Plano da semana 44. Plano editorial com 3 posts por semana.
+  Acompanhar meus resultados · Ativa · Próxima execução: seg, 19/10, 9h · Leitura da semana 12 a 18/10. Leitura curta, com a fonte de cada número.
+  Preparar posts toda segunda-feira · Pausada · Pausada por você: nada novo é preparado ou publicado até você retomar.
+  próximas: seg, 19/10, 9h Leitura da semana 12 a 18/10 (programada) | seg, 19/10, 9h Consulta das buscas da semana (bloqueada) | qui, 22/10, 9h Plano da semana 44 (programada) | seg, 26/10, 9h Leitura da semana 19 a 25/10 (programada) | seg, 26/10, 9h Consulta das buscas da semana (bloqueada)
+  histórico:
+  BL-42 · Consulta das buscas da semana · Falhou · Falhou nas duas tentativas: o acesso ao Google Perfil expirou e precisa ser reconectado.
+  RS-42 · Leitura da semana 05 a 11/10 · Concluída · Entregue
+  PL-42 · Plano da semana 42 · Aprovada por você · Aprovado por você na sexta, 17:42
+  RC-10 · Campanha mensal de relacionamento · Não executada · Não executada: o e-mail marketing não está conectado. Nada foi preparado para envio.
+  PL-41 · Plano da semana 41 · Aprovada por você · Aprovado por você com um ajuste
+== 2. O scheduler dispara o plano sem pedido manual (forçado para agora; o ritmo é toda quinta, 9h)
+  scheduler: modo autônomo: próxima execução de 5eed0000-0000-4000-8000-000000000a01 forçada para agora (plan)
+  scheduler: modo autônomo: PL-43 (plan) programada para 2026-10-17 11:12:48.337702+00:00
+  scheduler: modo autônomo: 1 em andamento, 0 não executadas, 0 para nova tentativa, 0 falharam
+  execução PL-43: running
+  trabalho: routine_run PL-43 · Plano da semana 43 · draft
+  run na fila runs_scheduled: 1
+  etapas: 1 otto 04.02 pending → 2 kaia 03.01 pending
+  worker: entrega v1; revisão pedida, trabalho em needs_you; 10.00 créditos cobrados; 3400 tokens de entrada, 1080 de saída, 3200 lidos e 3200 gravados no cache, US$ 0.051840
+  PL-43 · Plano da semana 43 · Aguarda sua aprovação · Entregue · aguarda a sua aprovação
+== 3. Marina aprova o plano; a Kaia fica aguardando o motor de imagem
+  decisão: decided approved
+  worker: etapa aguarda o motor de imagem; seguinte: waiting; 0 tokens de entrada, 0 de saída, 0 lidos e 0 gravados no cache, US$ 0.000000
+  PL-43 · Plano da semana 43 · Aprovada por você · Aprovado por você no sábado, 08:12
+  etapas: 1 otto done → 2 kaia waiting_engine (image_engine_pending)
+  memória usada: 4 orientações
+== 4. Pausada não executa
+  Pausada · Pausada por você: nada novo é preparado ou publicado até você retomar. · Nenhuma execução até você retomar.
+  scheduler: modo autônomo: próxima execução de 5eed0000-0000-4000-8000-000000000a01 forçada para agora (não encontrada, pausada ou encerrada)
+  execuções do plano: antes 3, depois 3
+  retomada: Ativa · Próxima execução: qui, 22/10, 9h · Plano da semana 44. Plano editorial com 3 posts por semana.
+== 5. Delegar é conversa: o Nexo apresenta o combinado e só o dono confirma (Vitta)
+  Nexo: Antes de ativar, confira o combinado:
+  cartão: Toda sexta às 9h, o Otto apresenta o plano da semana seguinte com 3 posts por semana. A Kaia cria as artes. Nada é publicado sem a sua aprovação.
+  primeira execução: sex, 23/10, 9h
+  Carla (editora) confirma: HTTP 403
+  Rafael (dono) confirma: HTTP 200
+  Nexo: Delegado. Está no Modo Autônomo como responsabilidade ativa. Primeira execução: sex, 23/10, 9h. Nada sai da Vitta Estética sem a sua aprovação.
+  Planejar meus conteúdos toda semana · Ativa · Próxima execução: sex, 23/10, 9h · Plano da semana 44. Plano editorial com 3 posts por semana.
+== 6. Outro negócio não vê nada
+  Rafael no Modo Autônomo da Miolo: HTTP 404
+  Rafael pausando o plano da Miolo: HTTP 404
+== seed reaplicado
