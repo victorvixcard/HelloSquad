@@ -1,0 +1,38 @@
+== 0. linha de base (bônus de 300 na Miolo para os runs; o make seed do fim devolve o saldo)
+  make squad-export (nada mudou): exit 0; git status squad/ = []; linhas novas: []
+  Alma ativa do Otto: 1 f0fb15bc | seção como_fala: 48 palavras
+  run do Otto (antes de tudo): succeeded  | hash fb290a332565 | versões de entrega 1 | sources [{"id": "c95568d1-ceb5-456f-8ce7-be97872d81a9", "key": "README.md", "kind": "shared", "version": 1}, {"id": "f0fb15bc-378f-4618-9905-946ffb60099a", "key": "SOUL
+  prompt ativo (preview) hash fb290a332565 == hash do run: True
+== 1. rascunho com marcador
+  PUT seção: 200 rascunho 523c8c0d None
+  preview ativo tem o marcador? False (hash fb290a332565 == base True) | preview com rascunho tem? True (hash 0fff429cb033)
+  run do Otto (com rascunho pendente): succeeded  | hash fb290a332565 | versões de entrega 1 | sources [{"id": "c95568d1-ceb5-456f-8ce7-be97872d81a9", "key": "README.md", "kind": "shared", "version": 1}, {"id": "f0fb15bc-378f-4618-9905-946ffb60099a", "key": "SOUL
+  run com rascunho pendente usou o hash da v1: True | rascunho em sources: False
+  marcador no prompt de conversa (preview ativo): False
+== 2. publicar
+  publicar: 200 active
+  preview ativo depois de publicar tem o marcador? True (hash 0fff429cb033)
+  run do Otto (depois de publicar): succeeded  | hash 0fff429cb033 | versões de entrega 1 | sources [{"id": "c95568d1-ceb5-456f-8ce7-be97872d81a9", "key": "README.md", "kind": "shared", "version": 1}, {"id": "523c8c0d-6319-4ad7-9a72-ea2c054e225b", "key": "SOUL
+  run depois de publicar: hash == preview publicado: True | != v1: True | versão publicada em sources: True
+  make squad-export (com a v2 publicada): exit 0; git status squad/ = [M squad/otto/SOUL.md]; linhas novas: ['+Frase de teste HSAMARCA81FE922BCC.', '+']
+== 3. voltar à v1
+  voltar: 200 versão nova 3 7cb95eb8
+  run do Otto (depois de voltar): succeeded  | hash fb290a332565 | versões de entrega 1 | sources [{"id": "c95568d1-ceb5-456f-8ce7-be97872d81a9", "key": "README.md", "kind": "shared", "version": 1}, {"id": "f0fb15bc-378f-4618-9905-946ffb60099a", "key": "SOUL
+  preview tem o marcador? False | run depois de voltar usa o hash da v1: True | v3 em sources: False
+  make squad-export (depois de voltar (conteúdo da v1)): exit 0; git status squad/ = []; linhas novas: []
+== 4. ferramentas
+  ferramenta desconhecida: 422 unknown_tool
+  config sem entregas.criar_versao (rascunho): 200 14e9b1b0
+  publicar config: 200
+  run do Otto (sem a ferramenta de entregar): failed tool_not_allowed | hash  | versões de entrega 0 | sources 
+    erro: {"code": "tool_not_allowed", "details": {"tool": "entregas.criar_versao", "agent_id": "otto"}, "message": "O agente tentou usar uma ferramenta que não tem permissão para usar.", "attempts": 1}
+  voltar o agent.yaml: 200
+  run do Otto (com o agent.yaml de volta): succeeded  | hash fb290a332565 | versões de entrega 1 | sources [{"id": "c95568d1-ceb5-456f-8ce7-be97872d81a9", "key": "README.md", "kind": "shared", "version": 1}, {"id": "f0fb15bc-378f-4618-9905-946ffb60099a", "key": "SOUL
+== 6. auditoria das gravações do squad
+   ['squad.draft_saved', '2', 't', 't', 't']
+   ['squad.version_published', '2', 't', 'f', 't']
+   ['squad.version_restored', '2', 't', 'f', 't']
+== limpeza (como o roteiro da SA3a: só as versões criadas aqui, gatilhos desligados só nessa limpeza)
+  make seed: 0 | versões do Otto: [['config', 'agent.yaml', '1', 'active'], ['soul', 'SOUL.md', '1', 'active']]
+  make squad-export (depois da limpeza): exit 0; git status squad/ = []; linhas novas: []
+  worker: 5 concluídos; 1 falhas no log
