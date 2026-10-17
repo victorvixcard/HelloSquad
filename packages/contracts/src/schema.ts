@@ -1522,6 +1522,243 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/accounts/{workspace_id}/support-session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Entrar no ambiente do cliente: sessão de suporte só leitura (motivo, 15/30/60 min)
+         * @description Grava `support_access_log` e `audit_events` (`support.session_started`) e põe na fila o e-mail ao titular da conta (`support_session_started`, no idioma dele). Durante a janela, os GET da API do produto deste negócio respondem ao Super Admin como a um membro de leitura, numa transação READ ONLY; qualquer escrita é recusada. Expira sozinha.
+         */
+        post: operations["start_support_session_admin_accounts__workspace_id__support_session_post"];
+        /** Encerrar a sessão de suporte aberta nesta conta (auditado) */
+        delete: operations["end_support_session_admin_accounts__workspace_id__support_session_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/accounts/{workspace_id}/credit-adjustments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ajustar crédito com motivo (positivo concede, negativo debita só até o disponível)
+         * @description Sem limite de valor (leitura conservadora do dono), sempre com motivo e auditoria (`credits.adjusted`, com saldo antes e depois). Positivo: grant de origem `adjustment`. Negativo: lançamentos `adjustment` nos grants válidos, primeiro o que vence antes; se deixaria o saldo disponível negativo, 409 e nada muda.
+         */
+        post: operations["adjust_credits_admin_accounts__workspace_id__credit_adjustments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/accounts/{workspace_id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Suspender a conta: pausa a renovação da cobrança e as rotinas; não cancela
+         * @description A assinatura e os dados ficam; a renovação do scheduler pula a conta e run agendado (rotina) recebe 423 `workspace_suspended`. Os membros veem `workspace_status: suspended` em `GET /me`. Auditado (`workspace.suspended`).
+         */
+        post: operations["suspend_account_admin_accounts__workspace_id__suspend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/accounts/{workspace_id}/reactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reativar a conta suspensa (auditado) */
+        post: operations["reactivate_account_admin_accounts__workspace_id__reactivate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/{delivery_type}/price": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Preço em créditos de uma delivery: versão nova (provisório marcado por padrão) */
+        put: operations["put_catalog_price_admin_catalog__delivery_type__price_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/{delivery_type}/homologation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Estado de homologação de uma delivery (auditado) */
+        put: operations["put_catalog_homologation_admin_catalog__delivery_type__homologation_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/{delivery_type}/for-sale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** "À venda": só com homologação concluída e preço aprovado comercialmente */
+        put: operations["put_catalog_for_sale_admin_catalog__delivery_type__for_sale_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/plans/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Plano: versão nova (créditos, ciclo, validade, preço) com a trava de preço aprovado
+         * @description Grava `plan_versions` (versão + 1) e, com `amount`, `plan_prices`; as versões passadas não mudam (trigger). "À venda" só com preço aprovado comercialmente e não provisório.
+         */
+        put: operations["put_plan_admin_plans__slug__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/topups/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Recarga avulsa: versão nova com a trava de preço aprovado */
+        put: operations["put_topup_admin_topups__slug__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/queue/runs/{run_id}/requeue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reenfileirar run que falhou ou foi cancelado (com motivo; tentativas zeradas) */
+        post: operations["requeue_run_admin_queue_runs__run_id__requeue_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/queue/runs/{run_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancelar run na fila ou esperando aprovação (com motivo) */
+        post: operations["cancel_run_admin_queue_runs__run_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payments/webhooks/{event_id}/reprocess": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reprocessar webhook: consulta a cobrança no provedor e aplica o estado (idempotente)
+         * @description O estado atual da cobrança ligada ao webhook vem do provedor e entra pela `app.billing_apply_event` como evento `reprocess:<cobrança>:<estado>` (o mesmo caminho e a mesma idempotência da S2e): repetir não lança crédito de novo. Webhook sem cobrança: 409. Auditado (`payment.webhook_reprocessed`) com o resultado.
+         */
+        post: operations["reprocess_webhook_admin_payments_webhooks__event_id__reprocess_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payments/webhooks/{event_id}/reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Marcar o webhook como conciliado (com motivo; uma vez, só inserção) */
+        post: operations["reconcile_webhook_admin_payments_webhooks__event_id__reconcile_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1627,6 +1864,23 @@ export interface components {
             /** Provisional */
             provisional: boolean;
         };
+        /** AccountStatusResult */
+        AccountStatusResult: {
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "active" | "suspended";
+            /** Suspended At */
+            suspended_at: string | null;
+            /** Suspension Reason */
+            suspension_reason: string | null;
+        };
         /** AccountSubscription */
         AccountSubscription: {
             /** Status */
@@ -1657,9 +1911,12 @@ export interface components {
             locale: string;
             /**
              * Status
+             * @description `suspended` = suspensa pelo Super Admin (cobrança e rotinas pausadas).
              * @enum {string}
              */
-            status: "active" | "deleted";
+            status: "active" | "suspended" | "deleted";
+            /** Suspension Reason */
+            suspension_reason?: string | null;
             /**
              * Created At
              * Format: date-time
@@ -1796,6 +2053,10 @@ export interface components {
             received_at: string;
             /** Processed At */
             processed_at: string | null;
+            /** Reconciled At */
+            reconciled_at?: string | null;
+            /** Reconciliation Reason */
+            reconciliation_reason?: string | null;
         };
         /** AgentDetail */
         AgentDetail: {
@@ -2591,10 +2852,69 @@ export interface components {
             /** Versions */
             versions: number;
         };
+        /** CatalogPriceUpdate */
+        CatalogPriceUpdate: {
+            /** Credits */
+            credits: number | string;
+            /** Revision Credits */
+            revision_credits?: number | string | null;
+            /**
+             * Provisional
+             * @description Valor provisório (padrão: sim).
+             * @default true
+             */
+            provisional: boolean;
+            /**
+             * Approved Commercially
+             * @description Trava "preço aprovado comercialmente" (padrão: não).
+             * @default false
+             */
+            approved_commercially: boolean;
+            /**
+             * Reason
+             * @description Motivo (10 a 500 caracteres); fica em `audit_events`.
+             */
+            reason: string;
+        };
+        /** CatalogPriceVersion */
+        CatalogPriceVersion: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Delivery Type */
+            delivery_type: string;
+            /** Credits */
+            credits: string;
+            /** Revision Credits */
+            revision_credits: string | null;
+            /** Provisional */
+            provisional: boolean;
+            /** Approved Commercially */
+            approved_commercially: boolean;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+        };
         /** CatalogResponse */
         CatalogResponse: {
             /** Items */
             items: components["schemas"]["CatalogItem"][];
+        };
+        /** CatalogState */
+        CatalogState: {
+            /** Delivery Type */
+            delivery_type: string;
+            /**
+             * Homologation Status
+             * @enum {string}
+             */
+            homologation_status: "not_started" | "in_homologation" | "awaiting_integration" | "awaiting_engine" | "homologated";
+            /** For Sale */
+            for_sale: boolean;
         };
         /** ConfigEdit */
         ConfigEdit: {
@@ -3246,6 +3566,45 @@ export interface components {
             /** Unread Count */
             unread_count: number;
         };
+        /** CreditAdjustmentRequest */
+        CreditAdjustmentRequest: {
+            /**
+             * Amount
+             * @description Créditos: positivo concede (grant de origem `adjustment`); negativo debita (lançamento `adjustment`) só até o saldo disponível.
+             */
+            amount: number | string;
+            /**
+             * Reason
+             * @description Motivo (10 a 500 caracteres); fica em `audit_events`.
+             */
+            reason: string;
+            /**
+             * Idempotency Key
+             * @description Repetir o pedido com a mesma chave não lança de novo.
+             */
+            idempotency_key?: string | null;
+        };
+        /** CreditAdjustmentResult */
+        CreditAdjustmentResult: {
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** Amount */
+            amount: string;
+            /** Balance Before */
+            balance_before: string;
+            /** Balance After */
+            balance_after: string;
+            /**
+             * Entries
+             * @description Lançamentos gravados no extrato (0 quando repetido).
+             */
+            entries: number;
+            /** Duplicate */
+            duplicate: boolean;
+        };
         /** CreditBalance */
         CreditBalance: {
             /**
@@ -3634,6 +3993,16 @@ export interface components {
          * @enum {string}
          */
         FactSourceState: "declared" | "connected" | "outdated" | "needs_reconnect" | "not_connected" | "unavailable";
+        /** ForSaleUpdate */
+        ForSaleUpdate: {
+            /** For Sale */
+            for_sale: boolean;
+            /**
+             * Reason
+             * @description Motivo (10 a 500 caracteres); fica em `audit_events`.
+             */
+            reason: string;
+        };
         /** Health */
         Health: {
             /**
@@ -3646,6 +4015,19 @@ export interface components {
             version: string;
             /** Environment */
             environment: string;
+        };
+        /** HomologationUpdate */
+        HomologationUpdate: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_started" | "in_homologation" | "awaiting_integration" | "awaiting_engine" | "homologated";
+            /**
+             * Reason
+             * @description Motivo (10 a 500 caracteres); fica em `audit_events`.
+             */
+            reason: string;
         };
         /** HowToRead */
         HowToRead: {
@@ -3708,6 +4090,13 @@ export interface components {
         Membership: {
             workspace: components["schemas"]["WorkspaceSummary"];
             role: components["schemas"]["WorkspaceRole"];
+            /**
+             * Workspace Status
+             * @description `suspended` = conta suspensa pelo suporte: cobrança e rotinas pausadas; os dados e a assinatura ficam.
+             * @default active
+             * @enum {string}
+             */
+            workspace_status: "active" | "suspended";
             /** @description Créditos do workspace (valores provisórios). */
             credits: components["schemas"]["CreditBalance"];
         };
@@ -4645,6 +5034,73 @@ export interface components {
             /** Price Approved Commercially */
             price_approved_commercially: boolean | null;
         };
+        /** PlanVersionResult */
+        PlanVersionResult: {
+            /** Plan */
+            plan: string;
+            /** Version */
+            version: number;
+            /** Credits */
+            credits: string;
+            /** Cycle */
+            cycle: string;
+            /** Validity Days */
+            validity_days: number | null;
+            /** Provisional */
+            provisional: boolean;
+            /** Approved Commercially */
+            approved_commercially: boolean;
+            /** For Sale */
+            for_sale: boolean;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+        };
+        /** PlanVersionUpdate */
+        PlanVersionUpdate: {
+            /** Credits */
+            credits: number | string;
+            /**
+             * Cycle
+             * @enum {string}
+             */
+            cycle: "one_time" | "monthly";
+            /** Validity Days */
+            validity_days?: number | null;
+            /**
+             * Amount
+             * @description Preço em dinheiro (versão nova).
+             */
+            amount?: number | string | null;
+            /**
+             * Currency
+             * @default BRL
+             */
+            currency: string;
+            /**
+             * Provisional
+             * @default true
+             */
+            provisional: boolean;
+            /**
+             * Approved Commercially
+             * @default false
+             */
+            approved_commercially: boolean;
+            /**
+             * For Sale
+             * @description Só com preço aprovado comercialmente.
+             * @default false
+             */
+            for_sale: boolean;
+            /**
+             * Reason
+             * @description Motivo (10 a 500 caracteres); fica em `audit_events`.
+             */
+            reason: string;
+        };
         /** PlansResponse */
         PlansResponse: {
             /** Plans */
@@ -5314,6 +5770,34 @@ export interface components {
              */
             read_at?: string | null;
         };
+        /** ReasonRequest */
+        ReasonRequest: {
+            /**
+             * Reason
+             * @description Motivo (10 a 500 caracteres); fica em `audit_events`.
+             */
+            reason: string;
+        };
+        /** ReconciliationResult */
+        ReconciliationResult: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Payment Event Id
+             * Format: uuid
+             */
+            payment_event_id: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** RefusedLine */
         RefusedLine: {
             /**
@@ -5496,6 +5980,23 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+        };
+        /** RunActionResult */
+        RunActionResult: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** Status */
+            status: string;
+            /** Attempts */
+            attempts: number;
         };
         /** RunDetail */
         RunDetail: {
@@ -5898,6 +6399,58 @@ export interface components {
             /** Ended At */
             ended_at: string | null;
         };
+        /** SupportSession */
+        SupportSession: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Mode
+             * @constant
+             */
+            mode: "read_only";
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Ended At */
+            ended_at: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "active" | "ended" | "expired";
+        };
+        /** SupportSessionStart */
+        SupportSessionStart: {
+            /**
+             * Reason
+             * @description Motivo (10 a 500 caracteres); fica em `audit_events`.
+             */
+            reason: string;
+            /**
+             * Duration Minutes
+             * @description Duração da sessão (padrão 30, leitura conservadora do dono).
+             * @default 30
+             * @enum {integer}
+             */
+            duration_minutes: 15 | 30 | 60;
+        };
         /** TaskRule */
         TaskRule: {
             /** Agent Id */
@@ -5949,6 +6502,70 @@ export interface components {
             provisional: boolean;
             /** Approved Commercially */
             approved_commercially: boolean;
+        };
+        /** TopupVersionResult */
+        TopupVersionResult: {
+            /** Topup */
+            topup: string;
+            /**
+             * Pack Id
+             * Format: uuid
+             */
+            pack_id: string;
+            /** Credits */
+            credits: string;
+            /** Validity Days */
+            validity_days: number | null;
+            /** Amount */
+            amount: string;
+            /** Currency */
+            currency: string;
+            /** Provisional */
+            provisional: boolean;
+            /** Approved Commercially */
+            approved_commercially: boolean;
+            /** For Sale */
+            for_sale: boolean;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+        };
+        /** TopupVersionUpdate */
+        TopupVersionUpdate: {
+            /** Credits */
+            credits: number | string;
+            /** Validity Days */
+            validity_days?: number | null;
+            /** Amount */
+            amount: number | string;
+            /**
+             * Currency
+             * @default BRL
+             */
+            currency: string;
+            /**
+             * Provisional
+             * @default true
+             */
+            provisional: boolean;
+            /**
+             * Approved Commercially
+             * @default false
+             */
+            approved_commercially: boolean;
+            /**
+             * For Sale
+             * @description Só com preço aprovado comercialmente.
+             * @default false
+             */
+            for_sale: boolean;
+            /**
+             * Reason
+             * @description Motivo (10 a 500 caracteres); fica em `audit_events`.
+             */
+            reason: string;
         };
         /** UnreadCount */
         UnreadCount: {
@@ -6132,6 +6749,36 @@ export interface components {
              * @enum {string}
              */
             outcome: "received" | "applied" | "no_change" | "ignored" | "needs_review";
+        };
+        /** WebhookReprocessResult */
+        WebhookReprocessResult: {
+            /**
+             * Payment Event Id
+             * Format: uuid
+             */
+            payment_event_id: string;
+            /** Provider */
+            provider: string;
+            /**
+             * Provider Status
+             * @description Estado da cobrança no provedor agora (nulo = o provedor não informou).
+             */
+            provider_status: string | null;
+            /**
+             * Applied Event Id
+             * @description Evento de conciliação aplicado (`reprocess:<cobrança>:<estado>`).
+             */
+            applied_event_id: string | null;
+            /**
+             * Duplicate
+             * @description true = este estado já tinha sido aplicado.
+             */
+            duplicate: boolean | null;
+            /**
+             * Outcome
+             * @description `applied`, `no_change`, `ignored` ou `provider_unknown`.
+             */
+            outcome: string;
         };
         /** WorkItem */
         WorkItem: {
@@ -10562,7 +11209,7 @@ export interface operations {
                 q?: string | null;
                 /** @description Slug do plano. */
                 plan?: string | null;
-                status?: ("active" | "deleted") | null;
+                status?: ("active" | "suspended" | "deleted") | null;
                 /** @description Valor de `next_cursor` da página anterior. Vazio = primeira página. */
                 cursor?: string | null;
                 /** @description Itens por página (1 a 100). */
@@ -12746,6 +13393,1122 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RuleSaveResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    start_support_session_admin_accounts__workspace_id__support_session_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupportSessionStart"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportSession"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    end_support_session_admin_accounts__workspace_id__support_session_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportSession"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    adjust_credits_admin_accounts__workspace_id__credit_adjustments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreditAdjustmentRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditAdjustmentResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    suspend_account_admin_accounts__workspace_id__suspend_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountStatusResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reactivate_account_admin_accounts__workspace_id__reactivate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountStatusResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_catalog_price_admin_catalog__delivery_type__price_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                delivery_type: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CatalogPriceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogPriceVersion"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_catalog_homologation_admin_catalog__delivery_type__homologation_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                delivery_type: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HomologationUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogState"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_catalog_for_sale_admin_catalog__delivery_type__for_sale_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                delivery_type: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForSaleUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogState"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_plan_admin_plans__slug__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanVersionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanVersionResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_topup_admin_topups__slug__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TopupVersionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopupVersionResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    requeue_run_admin_queue_runs__run_id__requeue_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunActionResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_run_admin_queue_runs__run_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunActionResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reprocess_webhook_admin_payments_webhooks__event_id__reprocess_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebhookReprocessResult"];
+                };
+            };
+            /** @description Token ausente, inválido ou expirado. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Sem permissão para esta ação. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Recurso não encontrado (ou fora do seu acesso). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflito com o estado atual do registro. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dados inválidos. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Dependência indisponível (banco ou Auth). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reconcile_webhook_admin_payments_webhooks__event_id__reconcile_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationResult"];
                 };
             };
             /** @description Token ausente, inválido ou expirado. */
