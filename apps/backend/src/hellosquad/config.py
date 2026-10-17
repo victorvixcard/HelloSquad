@@ -32,6 +32,8 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     worker_idle_seconds: float = 30.0
     scheduler_tick_seconds: float = 60.0
+    # Modo Autônomo (S3b): intervalo entre a primeira e a segunda tentativa (9h e 9h30).
+    autonomy_retry_minutes: int = Field(default=30, ge=1)
 
     supabase_url: str = "http://127.0.0.1:56321"
     supabase_publishable_key: str | None = None

@@ -688,5 +688,7 @@
   "autonomy.metric.instagram.followers": "Instagram followers",
   "autonomy.metric.instagram.reach": "Instagram reach",
   "autonomy.metric.site.sessions": "Website sessions",
-  "autonomy.metric.store.orders": "Orders"
+  "autonomy.metric.store.orders": "Orders",
+  "autonomy.run_message.not_retried": "Not run: the responsibility was not active at the time of the new attempt.",
+  "work_item_step.produce.07.05": "Build the week's reading"
 }

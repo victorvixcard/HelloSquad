@@ -688,5 +688,7 @@
   "autonomy.metric.instagram.followers": "Seguidores no Instagram",
   "autonomy.metric.instagram.reach": "Alcance no Instagram",
   "autonomy.metric.site.sessions": "Sessões no site",
-  "autonomy.metric.store.orders": "Pedidos"
+  "autonomy.metric.store.orders": "Pedidos",
+  "autonomy.run_message.not_retried": "Não executada: a responsabilidade não estava ativa na hora da nova tentativa.",
+  "work_item_step.produce.07.05": "Montar a leitura da semana"
 }

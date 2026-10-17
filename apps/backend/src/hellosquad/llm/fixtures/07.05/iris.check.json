@@ -1,0 +1,33 @@
+{
+  "delivery_type": "07.05",
+  "step": "iris.check",
+  "cases": [
+    {
+      "name": "aprovada",
+      "usage": {
+        "input_tokens": 1400,
+        "output_tokens": 190,
+        "cache_read_tokens": 3400
+      },
+      "output": {
+        "aderencia_ao_briefing": {
+          "ok": true,
+          "observacao": "Compara os últimos 30 dias com os 30 anteriores, como pedido."
+        },
+        "consistencia_de_marca": {
+          "ok": true,
+          "observacao": "Ligado à operação da padaria e aos canais confirmados."
+        },
+        "qualidade_profissional": {
+          "ok": true,
+          "observacao": "Destaques e canais com evidência, hipótese como hipótese, limitações ditas."
+        },
+        "aplicabilidade_no_canal": {
+          "ok": true,
+          "observacao": "Relatório claro e revisável, com o que muda no próximo."
+        },
+        "ajustes": []
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
-"""Entrypoint `hellosquad-scheduler`: a cada tick, a renovação mensal das assinaturas (S2e).
+"""Entrypoint `hellosquad-scheduler`: a cada tick (60 s), as responsabilidades vencidas do Modo
+Autônomo (S3b) e a renovação mensal das assinaturas (S2e).
 
 `--once` roda um tick e sai (roteiro local). Em local/test usa DATABASE_URL, como o worker.
 """
@@ -13,6 +14,7 @@ import httpx
 import psycopg
 from psycopg.rows import dict_row
 
+from hellosquad.autonomy.scheduler import run_due_responsibilities
 from hellosquad.billing.factory import configured_providers
 from hellosquad.billing.renewal import renew_due_subscriptions
 from hellosquad.config import Settings, get_settings
@@ -40,6 +42,18 @@ async def main(settings: Settings, *, once: bool) -> None:
             ", ".join(sorted(providers)) or "nenhum",
         )
         while True:
+            autonomy = await run_due_responsibilities(
+                conn, retry_minutes=settings.autonomy_retry_minutes
+            )
+            if autonomy.total:
+                log.info(
+                    "modo autônomo: %s em andamento, %s não executadas, %s para nova tentativa, "
+                    "%s falharam",
+                    autonomy.started,
+                    autonomy.skipped,
+                    autonomy.retried,
+                    autonomy.failed,
+                )
             report = await renew_due_subscriptions(
                 conn, providers, recheck_minutes=settings.billing_recheck_minutes
             )

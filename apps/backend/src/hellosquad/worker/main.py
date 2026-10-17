@@ -1,6 +1,6 @@
 """Entrypoint `hellosquad-worker`: consome `runs_interactive` (pgmq) e executa o fluxo do squad; com
-vaga sobrando, consome `memory_reflect` (reflexão do trabalho fechado, S2c) e `email_outbox` (e-mail
-transacional pelo EmailProvider, S2f).
+vaga sobrando, consome `runs_scheduled` (execuções do Modo Autônomo, S3b), `memory_reflect`
+(reflexão do trabalho fechado, S2c) e `email_outbox` (e-mail transacional pelo EmailProvider, S2f).
 
 Cada mensagem fica invisível por WORKER_VISIBILITY_TIMEOUT_SECONDS; o batimento estende o prazo
 enquanto o run roda. Concluído: `delete`. Falha passageira: o run volta para queued e a mensagem
@@ -42,6 +42,8 @@ from hellosquad.squad.versions import SquadCatalog
 log = logging.getLogger("hellosquad.worker")
 
 QUEUE = "runs_interactive"
+# Execuções do Modo Autônomo (S3b): lidas depois das interativas, que têm prioridade.
+SCHEDULED_QUEUE = "runs_scheduled"
 REFLECT_QUEUE = "memory_reflect"
 CAPPED_DELAY_SECONDS = 5
 
@@ -184,13 +186,13 @@ class Worker:
         async with self.pool.connection() as conn:
             return replace(self.squad, loader=await self.catalog.loader(conn))
 
-    async def handle(self, msg: dict[str, Any]) -> str:
+    async def handle(self, msg: dict[str, Any], queue: str = QUEUE) -> str:
         msg_id, message = msg["msg_id"], msg["message"] or {}
         try:
             run_id, workspace_id = UUID(message["run_id"]), UUID(message["workspace_id"])
         except (KeyError, TypeError, ValueError):
             log.error("mensagem %s sem run_id ou workspace_id válidos: arquivada", msg_id)
-            await self.queue_call("archive", msg_id)
+            await self.queue_call("archive", msg_id, queue=queue)
             return "invalid"
 
         store = RunStore(self.pool, workspace_id=workspace_id, run_id=run_id)
@@ -200,7 +202,7 @@ class Worker:
             max_attempts=self.settings.worker_max_attempts,
         )
         if claim.outcome in ("finished", "missing", "skipped"):
-            await self.queue_call("delete", msg_id)
+            await self.queue_call("delete", msg_id, queue=queue)
             log.info(
                 "run %s: %s, nada a fazer (mensagem %s apagada)", run_id, claim.outcome, msg_id
             )
@@ -209,7 +211,7 @@ class Worker:
             log.info("run %s em execução em outro worker; a mensagem %s espera", run_id, msg_id)
             return "busy"
         if claim.outcome == "capped":
-            await self.queue_call("set_vt", msg_id, CAPPED_DELAY_SECONDS)
+            await self.queue_call("set_vt", msg_id, CAPPED_DELAY_SECONDS, queue=queue)
             log.info(
                 "workspace %s no teto de %s runs simultâneos; run %s volta em %ss",
                 workspace_id,
@@ -219,7 +221,7 @@ class Worker:
             )
             return "capped"
         if claim.outcome == "waiting":
-            await self.queue_call("set_vt", msg_id, CAPPED_DELAY_SECONDS)
+            await self.queue_call("set_vt", msg_id, CAPPED_DELAY_SECONDS, queue=queue)
             log.info(
                 "run %s: outro especialista está respondendo nesta conversa; volta em %ss",
                 run_id,
@@ -227,9 +229,9 @@ class Worker:
             )
             return "waiting"
         if claim.outcome == "exhausted":
-            return await self.failed(store, msg_id, claim, AttemptsExhausted())
+            return await self.failed(store, msg_id, claim, AttemptsExhausted(), queue)
         if claim.outcome == "unbillable":
-            return await self.failed(store, msg_id, claim, CreditsRefused(**claim.error))
+            return await self.failed(store, msg_id, claim, CreditsRefused(**claim.error), queue)
 
         log.info(
             "run %s (workspace %s, %s): tentativa %s de %s",
@@ -239,12 +241,12 @@ class Worker:
             claim.attempts,
             self.settings.worker_max_attempts,
         )
-        heartbeat = asyncio.create_task(self.heartbeat(store, msg_id))
+        heartbeat = asyncio.create_task(self.heartbeat(store, msg_id, queue))
         try:
             flow = run_reply if claim.work_item_id is None else run_flow
             result = await flow(await self.current_squad(), store)
         except asyncio.CancelledError:
-            await asyncio.shield(self.release(store, msg_id))
+            await asyncio.shield(self.release(store, msg_id, queue))
             raise
         except RunLost:
             log.warning(
@@ -252,10 +254,10 @@ class Worker:
             )
             return "lost"
         except Exception as exc:
-            return await self.failed(store, msg_id, claim, exc)
+            return await self.failed(store, msg_id, claim, exc, queue)
         finally:
             heartbeat.cancel()
-        await self.queue_call("delete", msg_id)
+        await self.queue_call("delete", msg_id, queue=queue)
         log.info("run %s concluído: %s", run_id, summary(result))
         return result["outcome"]
 
@@ -323,22 +325,24 @@ class Worker:
         """Processa a fila email_outbox até não ter mensagem visível (testes e `--drain`)."""
         return await self.outbox.drain(max_rounds) if self.outbox is not None else []
 
-    async def heartbeat(self, store: RunStore, msg_id: int) -> None:
+    async def heartbeat(self, store: RunStore, msg_id: int, queue: str = QUEUE) -> None:
         timeout = self.settings.worker_visibility_timeout_seconds
         while True:
             await asyncio.sleep(max(timeout / 3, 1))
             try:
                 await store.touch()
-                await self.queue_call("set_vt", msg_id, timeout)
+                await self.queue_call("set_vt", msg_id, timeout, queue=queue)
             except Exception:
                 log.warning("batimento do run %s falhou", store.run_id, exc_info=True)
 
-    async def release(self, store: RunStore, msg_id: int) -> None:
+    async def release(self, store: RunStore, msg_id: int, queue: str = QUEUE) -> None:
         await store.release()
-        await self.queue_call("set_vt", msg_id, 0)
+        await self.queue_call("set_vt", msg_id, 0, queue=queue)
         log.warning("run %s devolvido à fila no encerramento do worker", store.run_id)
 
-    async def failed(self, store: RunStore, msg_id: int, claim: Claim, exc: Exception) -> str:
+    async def failed(
+        self, store: RunStore, msg_id: int, claim: Claim, exc: Exception, queue: str = QUEUE
+    ) -> str:
         transient, code, details = classify(exc)
         if code == "internal":
             log.exception("run %s: erro inesperado", store.run_id)
@@ -351,7 +355,7 @@ class Worker:
         if transient and claim.attempts < self.settings.worker_max_attempts:
             delay = self.settings.worker_retry_base_seconds * 2 ** (claim.attempts - 1)
             await store.retry_later(error | {"retry_in_seconds": delay})
-            await self.queue_call("set_vt", msg_id, math.ceil(delay))
+            await self.queue_call("set_vt", msg_id, math.ceil(delay), queue=queue)
             log.warning(
                 "run %s: %s na tentativa %s; nova tentativa em %ss",
                 store.run_id,
@@ -361,7 +365,7 @@ class Worker:
             )
             return "retry"
         work_status = await store.fail(error, work_item_id=claim.work_item_id)
-        await self.queue_call("archive", msg_id)
+        await self.queue_call("archive", msg_id, queue=queue)
         log.error(
             "run %s falhou (%s, tentativa %s); trabalho em %s; mensagem %s arquivada",
             store.run_id,
@@ -381,9 +385,17 @@ class Worker:
         outcomes: list[str] = []
         for _ in range(max_rounds):
             batch = await self.read(self.settings.worker_concurrency)
-            if not batch:
+            scheduled = (
+                await self.read(self.settings.worker_concurrency - len(batch), SCHEDULED_QUEUE)
+                if len(batch) < self.settings.worker_concurrency
+                else []
+            )
+            if not batch and not scheduled:
                 break
-            outcomes += await asyncio.gather(*(self.handle(m) for m in batch))
+            outcomes += await asyncio.gather(
+                *(self.handle(m) for m in batch),
+                *(self.handle(m, SCHEDULED_QUEUE) for m in scheduled),
+            )
         return outcomes
 
     def stop(self) -> None:
@@ -410,20 +422,24 @@ class Worker:
                 continue
             try:
                 batch = await self.read(free)
-                reflections = (
-                    await self.read(free - len(batch), REFLECT_QUEUE) if len(batch) < free else []
+                scheduled = (
+                    await self.read(free - len(batch), SCHEDULED_QUEUE) if len(batch) < free else []
                 )
-                left = free - len(batch) - len(reflections)
+                taken = len(batch) + len(scheduled)
+                reflections = await self.read(free - taken, REFLECT_QUEUE) if taken < free else []
+                left = free - taken - len(reflections)
                 emails = await self.outbox.read(left) if self.outbox is not None else []
             except psycopg.OperationalError:
                 log.warning("banco indisponível ao ler a fila; nova leitura em instantes")
-                batch, reflections, emails = [], [], []
-            if not batch and not reflections and not emails:
+                batch, scheduled, reflections, emails = [], [], [], []
+            if not batch and not scheduled and not reflections and not emails:
                 await self.pause(self.settings.worker_poll_seconds)
                 continue
-            jobs = [self.handle(m) for m in batch] + [
-                self.handle_reflection(m) for m in reflections
-            ]
+            jobs = (
+                [self.handle(m) for m in batch]
+                + [self.handle(m, SCHEDULED_QUEUE) for m in scheduled]
+                + [self.handle_reflection(m) for m in reflections]
+            )
             if self.outbox is not None:
                 jobs += [self.outbox.handle(m) for m in emails]
             for job in jobs:

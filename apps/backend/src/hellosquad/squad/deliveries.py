@@ -922,6 +922,7 @@ DELIVERIES: dict[str, DeliverySpec] = {
         DeliverySpec("06.03", SegmentationDelivery, SEGMENTATION_SCHEMA),
         DeliverySpec("07.02", PerformanceAnalysisDelivery, PERFORMANCE_ANALYSIS_SCHEMA),
         DeliverySpec("07.03", PeriodReportDelivery, PERIOD_REPORT_SCHEMA),
+        DeliverySpec("07.05", PeriodReportDelivery, PERIOD_REPORT_SCHEMA),
         DeliverySpec("07.04", RecommendationsDelivery, RECOMMENDATIONS_SCHEMA),
     )
 }

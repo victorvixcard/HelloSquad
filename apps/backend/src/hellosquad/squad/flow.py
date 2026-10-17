@@ -112,13 +112,15 @@ SEQUENCE = "06.02"
 SEGMENTATION = "06.03"
 ANALYSIS = "07.02"
 REPORT = "07.03"
+# Relatório semanal do Modo Autônomo (rotina `res`, S3b): mesmo formato do 07.03, sempre na semana.
+WEEKLY_REPORT = "07.05"
 RECOMMENDATIONS = "07.04"
 # Deliveries do Max que leem a base de contatos; a segmentação e a campanha não existem sem ela (a
 # pessoa é chamada a importar). As da Íris leem as métricas e, sem métrica, pedem conexão ou
 # planilha (Documento Mestre §14: estado vazio pede conexão ou importação, sem inventar resultado).
 CONTACT_BASED = {SEGMENTATION, CAMPAIGN, SEQUENCE}
 NEEDS_CONTACTS = {SEGMENTATION, CAMPAIGN}
-METRIC_BASED = {ANALYSIS, REPORT, RECOMMENDATIONS}
+METRIC_BASED = {ANALYSIS, REPORT, RECOMMENDATIONS, WEEKLY_REPORT}
 # Documentos aprovados que cada delivery lê antes de produzir (no mesmo projeto; sem projeto, no
 # workspace): o plano parte do diagnóstico, a campanha do posicionamento e do plano, e o Otto segue
 # a estratégia da campanha (Documento Mestre, Anexo A: 02.03, 02.04 e 04.03).
@@ -134,6 +136,7 @@ PRIOR_DOCUMENTS = {
     SEQUENCE: [CAMPAIGN],
     REPORT: [ANALYSIS, REPORT],
     RECOMMENDATIONS: [ANALYSIS, REPORT],
+    WEEKLY_REPORT: [ANALYSIS, WEEKLY_REPORT],
 }
 # Deliveries que trabalham com datas: a data de hoje vai no contexto.
 DATED = {
@@ -147,6 +150,7 @@ DATED = {
     ANALYSIS,
     REPORT,
     RECOMMENDATIONS,
+    WEEKLY_REPORT,
 }
 CALENDAR_LOOKAHEAD_DAYS = 35
 
@@ -1035,7 +1039,9 @@ def iris_content(
     elif isinstance(entrega, PeriodReportDelivery):
         content["destaques"] = [ground_reading(r, ids, set()) for r in entrega.destaques]
         content["por_canal"] = [ground_reading(r, ids, set()) for r in entrega.por_canal]
-        content["relatorio_anterior"] = document_reference(documents, REPORT)
+        content["relatorio_anterior"] = document_reference(documents, REPORT) or document_reference(
+            documents, WEEKLY_REPORT
+        )
     else:
         content["recomendacoes"] = [ground_recommendation(r, ids) for r in entrega.recomendacoes]
         content["analises"] = [
