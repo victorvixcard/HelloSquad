@@ -18,5 +18,9 @@ Aranha (Frontend & Design), 16/10/2026, início 21:50. Área: `apps/web` (rota `
 | 2 | Contas + detalhe da conta | feito | `c9d8d26`, `3d6954b` |
 | 3 | Catálogo + Planos e recargas | feito | `8afeae3` |
 | 4 | Pagamentos + Auditoria + Fila de trabalhos | feito | `97e1746`, `54943a3` |
-| 5 | Modelos e custos | feito | (este commit) |
-| 6 | Vitest, e2e (worktree `/tmp`), lado a lado, relatório | em andamento | |
+| 5 | Modelos e custos | feito | `987cf45` |
+| 6 | Vitest, e2e (worktree `/tmp`), lado a lado, relatório | feito | `073b700`, `06c8ff6`, `1f8af8a`, relatório |
+
+## Fechamento (22:20)
+
+Vitest 17/17; `make test-web` verde (web 423, ui 50, contracts 9); e2e da fatia 3/3 no worktree `/tmp/sa2-wt` (web na 3200); lado a lado em `docs/parciais/sa2/`. Relatório: `docs/parciais/SA2-relatorio.md`.
