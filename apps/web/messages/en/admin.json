@@ -98,7 +98,8 @@
   "codes": {
     "accountStatus": {
       "active": "Active",
-      "deleted": "Deleted"
+      "deleted": "Deleted",
+      "suspended": "Suspended"
     },
     "locale": {
       "pt-BR": "Portuguese (Brazil)",
@@ -370,7 +371,17 @@
     "subPeriodEnd": "Next charge",
     "notFound": "Account not found",
     "notFoundBody": "This address does not match any HelloSquad account.",
-    "backToList": "Back to Accounts"
+    "backToList": "Back to Accounts",
+    "suspendedBand": "Account suspended on {date}.",
+    "suspendedLabel": "Suspended",
+    "suspendedReason": "Reason: {reason}",
+    "suspendedEffect": "Renewal and routines paused; nothing was deleted.",
+    "writeNote": "Every action here asks for confirmation and a reason, and goes to the audit log with your name.",
+    "writeLabel": "Audited actions",
+    "recent": "Audit log for this account",
+    "recentSub": "Latest Super Admin actions here; reloaded after each action",
+    "recentEmpty": "No Super Admin action in this account yet.",
+    "recentAll": "See everything in the audit log"
   },
   "catalogo": {
     "title": "Catalog",
@@ -1138,6 +1149,72 @@
       "asaas_account_not_created": "Account not created yet; adapter ready and tested against a fake server (S2e).",
       "mercadopago_account_not_created": "Account not created yet; adapter ready and tested against a fake server (S2e).",
       "email_local_only": "Local only: Mailpit (S2f). Production provider not chosen."
+    }
+  },
+  "acoes": {
+    "cancel": "Cancel",
+    "sending": "Saving…",
+    "reason": "Reason",
+    "reasonHint": "Stays in the audit log with your name.",
+    "reasonInvalid": "Write the reason, {min} to {max} characters.",
+    "reasonCount": "{n} of {max}",
+    "invalid": "The API rejected the request. Check the marked fields.",
+    "audited": "Recorded in the audit log.",
+    "enter": {
+      "open": "Enter the workspace",
+      "title": "Enter {name}'s workspace",
+      "desc": "Opens a read-only support session with a time limit. Account, reason and duration go to the audit log, and the account holder gets an email about it.",
+      "reason": "Reason for access",
+      "reasonHint": "Example: check the publishing error the account owner asked about.",
+      "duration": "Session length",
+      "minutes": "{n} min",
+      "durationHint": "The session closes by itself at the end.",
+      "confirm": "Enter with the reason recorded",
+      "done": "Support session in {name} open until {until}, read only. Recorded in the audit log.",
+      "busy": "You already have a session open in this account.",
+      "deleted": "Deleted account."
+    },
+    "session": {
+      "label": "Support",
+      "until": "Support session active until {time}.",
+      "left": "{n} min left.",
+      "expired": "Time is up.",
+      "reason": "Reason: {reason}",
+      "readOnly": "Read only: the product screens don't open for support yet; the product API already answers reads.",
+      "end": "End session",
+      "endTitle": "End the support session in {name}?",
+      "endDesc": "Support reading stops now. The end goes to the audit log and to the account's access history.",
+      "endConfirm": "End session",
+      "ended": "Support session in {name} ended. Recorded in the audit log."
+    },
+    "credit": {
+      "open": "Adjust credits",
+      "title": "Adjust {name}'s credits",
+      "desc": "Use it to return credits after a failure or fix an entry. The adjustment goes to the statement with the reason.",
+      "amount": "Credits",
+      "amountHint": "Negative to remove; up to 2 decimals. Available now: {available}.",
+      "amountInvalid": "Enter a non-zero amount with up to 2 decimals (e.g. 10 or -5.50).",
+      "summary": "Balance: {before} → {after}",
+      "confirm": "Post adjustment",
+      "done": "Adjustment of {amount} posted: balance {before} → {after}. Recorded in the audit log.",
+      "duplicate": "This adjustment had already been posted (same key); nothing changed. Balance {balance}."
+    },
+    "status": {
+      "reasonHint": "Stays in the audit log and in the account history.",
+      "suspend": {
+        "open": "Suspend",
+        "title": "Suspend {name}",
+        "desc": "Subscription renewal and scheduled routines stop; the subscription is not cancelled and nothing is deleted. Members see the suspended-account notice. You can reactivate later.",
+        "confirm": "Suspend account",
+        "done": "{name} suspended. Data is kept. Recorded in the audit log."
+      },
+      "reactivate": {
+        "open": "Reactivate",
+        "title": "Reactivate {name}",
+        "desc": "Subscription renewal and routines run again, and the notice disappears for members.",
+        "confirm": "Reactivate account",
+        "done": "{name} reactivated. Recorded in the audit log."
+      }
     }
   }
 }

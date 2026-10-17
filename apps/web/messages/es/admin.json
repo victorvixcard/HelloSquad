@@ -98,7 +98,8 @@
   "codes": {
     "accountStatus": {
       "active": "Activa",
-      "deleted": "Eliminada"
+      "deleted": "Eliminada",
+      "suspended": "Suspendida"
     },
     "locale": {
       "pt-BR": "Portugués (Brasil)",
@@ -370,7 +371,17 @@
     "subPeriodEnd": "Próximo cobro",
     "notFound": "Cuenta no encontrada",
     "notFoundBody": "Esta dirección no corresponde a ninguna cuenta de HelloSquad.",
-    "backToList": "Volver a Cuentas"
+    "backToList": "Volver a Cuentas",
+    "suspendedBand": "Cuenta suspendida el {date}.",
+    "suspendedLabel": "Suspendida",
+    "suspendedReason": "Motivo: {reason}",
+    "suspendedEffect": "Renovación y rutinas en pausa; nada se borró.",
+    "writeNote": "Cada acción aquí pide confirmación y motivo, y entra en la auditoría con tu nombre.",
+    "writeLabel": "Acciones auditadas",
+    "recent": "Auditoría de esta cuenta",
+    "recentSub": "Últimas acciones del Super Admin aquí; se relee en cada acción",
+    "recentEmpty": "Ninguna acción del Super Admin en esta cuenta todavía.",
+    "recentAll": "Ver todo en la auditoría"
   },
   "catalogo": {
     "title": "Catálogo",
@@ -1138,6 +1149,72 @@
       "asaas_account_not_created": "Cuenta todavía no creada; adaptador listo y probado contra un servidor falso (S2e).",
       "mercadopago_account_not_created": "Cuenta todavía no creada; adaptador listo y probado contra un servidor falso (S2e).",
       "email_local_only": "Solo local: Mailpit (S2f). Proveedor de producción no elegido."
+    }
+  },
+  "acoes": {
+    "cancel": "Cancelar",
+    "sending": "Guardando…",
+    "reason": "Motivo",
+    "reasonHint": "Queda en la auditoría con tu nombre.",
+    "reasonInvalid": "Escribe el motivo, de {min} a {max} caracteres.",
+    "reasonCount": "{n} de {max}",
+    "invalid": "La API rechazó la solicitud. Revisa los campos marcados.",
+    "audited": "Registrado en la auditoría.",
+    "enter": {
+      "open": "Entrar al entorno",
+      "title": "Entrar al entorno de {name}",
+      "desc": "Abre una sesión de soporte de solo lectura, con tiempo limitado. Cuenta, motivo y duración quedan en la auditoría, y el titular de la cuenta recibe un correo de aviso.",
+      "reason": "Motivo del acceso",
+      "reasonHint": "Ejemplo: revisar el error de publicación que pidió la dueña de la cuenta.",
+      "duration": "Duración de la sesión",
+      "minutes": "{n} min",
+      "durationHint": "La sesión se cierra sola al final.",
+      "confirm": "Entrar con el motivo registrado",
+      "done": "Sesión de soporte en {name} abierta hasta las {until}, solo lectura. Registrada en la auditoría.",
+      "busy": "Ya tienes una sesión abierta en esta cuenta.",
+      "deleted": "Cuenta eliminada."
+    },
+    "session": {
+      "label": "Soporte",
+      "until": "Sesión de soporte activa hasta las {time}.",
+      "left": "Quedan {n} min.",
+      "expired": "Plazo terminado.",
+      "reason": "Motivo: {reason}",
+      "readOnly": "Solo lectura: las pantallas del producto aún no se abren para soporte; la API del producto ya responde a la lectura.",
+      "end": "Cerrar sesión",
+      "endTitle": "¿Cerrar la sesión de soporte en {name}?",
+      "endDesc": "La lectura de soporte se detiene ahora. El cierre queda en la auditoría y en el historial de accesos de la cuenta.",
+      "endConfirm": "Cerrar sesión",
+      "ended": "Sesión de soporte en {name} cerrada. Registrada en la auditoría."
+    },
+    "credit": {
+      "open": "Ajustar créditos",
+      "title": "Ajustar créditos de {name}",
+      "desc": "Úsalo para devolver créditos de una falla o corregir un movimiento. El ajuste entra en el extracto con el motivo.",
+      "amount": "Créditos",
+      "amountHint": "Negativo para retirar; hasta 2 decimales. Disponible ahora: {available}.",
+      "amountInvalid": "Indica un valor distinto de cero, con hasta 2 decimales (ej.: 10 o -5,50).",
+      "summary": "Saldo: {before} → {after}",
+      "confirm": "Registrar ajuste",
+      "done": "Ajuste de {amount} registrado: saldo {before} → {after}. Registrado en la auditoría.",
+      "duplicate": "Este ajuste ya se había registrado (misma clave); nada cambió. Saldo {balance}."
+    },
+    "status": {
+      "reasonHint": "Queda en la auditoría y en el historial de la cuenta.",
+      "suspend": {
+        "open": "Suspender",
+        "title": "Suspender {name}",
+        "desc": "La renovación de la suscripción y las rutinas programadas se detienen; la suscripción no se cancela y nada se borra. Los miembros ven el aviso de cuenta suspendida. Se puede reactivar después.",
+        "confirm": "Suspender cuenta",
+        "done": "{name} suspendida. Los datos se conservan. Registrado en la auditoría."
+      },
+      "reactivate": {
+        "open": "Reactivar",
+        "title": "Reactivar {name}",
+        "desc": "La renovación de la suscripción y las rutinas vuelven a funcionar, y el aviso desaparece para los miembros.",
+        "confirm": "Reactivar cuenta",
+        "done": "{name} reactivada. Registrado en la auditoría."
+      }
     }
   }
 }

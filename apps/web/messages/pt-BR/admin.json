@@ -98,7 +98,8 @@
   "codes": {
     "accountStatus": {
       "active": "Ativa",
-      "deleted": "Excluída"
+      "deleted": "Excluída",
+      "suspended": "Suspensa"
     },
     "locale": {
       "pt-BR": "Português (Brasil)",
@@ -370,7 +371,17 @@
     "subPeriodEnd": "Próxima cobrança",
     "notFound": "Conta não encontrada",
     "notFoundBody": "Este endereço não corresponde a nenhuma conta do HelloSquad.",
-    "backToList": "Voltar para Contas"
+    "backToList": "Voltar para Contas",
+    "suspendedBand": "Conta suspensa em {date}.",
+    "suspendedLabel": "Suspensa",
+    "suspendedReason": "Motivo: {reason}",
+    "suspendedEffect": "Renovação e rotinas pausadas; nada foi apagado.",
+    "writeNote": "Toda ação aqui pede confirmação e motivo, e entra na Auditoria com o seu nome.",
+    "writeLabel": "Ações auditadas",
+    "recent": "Auditoria desta conta",
+    "recentSub": "Últimas ações do Super Admin aqui; relida a cada ação",
+    "recentEmpty": "Nenhuma ação do Super Admin nesta conta ainda.",
+    "recentAll": "Ver tudo na Auditoria"
   },
   "catalogo": {
     "title": "Catálogo",
@@ -1138,6 +1149,72 @@
       "asaas_account_not_created": "Conta ainda não criada; adaptador pronto e testado contra servidor falso (S2e).",
       "mercadopago_account_not_created": "Conta ainda não criada; adaptador pronto e testado contra servidor falso (S2e).",
       "email_local_only": "Só local: Mailpit (S2f). Provedor de produção não escolhido."
+    }
+  },
+  "acoes": {
+    "cancel": "Cancelar",
+    "sending": "Gravando…",
+    "reason": "Motivo",
+    "reasonHint": "Fica na auditoria com o seu nome.",
+    "reasonInvalid": "Escreva o motivo, de {min} a {max} caracteres.",
+    "reasonCount": "{n} de {max}",
+    "invalid": "A API recusou o pedido. Confira os campos marcados.",
+    "audited": "Registrado na Auditoria.",
+    "enter": {
+      "open": "Entrar no ambiente",
+      "title": "Entrar no ambiente da {name}",
+      "desc": "Abre uma sessão de suporte só de leitura, com tempo limitado. Conta, motivo e duração ficam na auditoria, e o titular da conta recebe um e-mail avisando.",
+      "reason": "Motivo do acesso",
+      "reasonHint": "Exemplo: conferir o erro de publicação pedido pela dona da conta.",
+      "duration": "Duração da sessão",
+      "minutes": "{n} min",
+      "durationHint": "A sessão fecha sozinha no fim.",
+      "confirm": "Entrar com o motivo registrado",
+      "done": "Sessão de suporte na {name} aberta até {until}, só leitura. Registrada na Auditoria.",
+      "busy": "Já há uma sessão sua aberta nesta conta.",
+      "deleted": "Conta excluída."
+    },
+    "session": {
+      "label": "Suporte",
+      "until": "Sessão de suporte ativa até {time}.",
+      "left": "Faltam {n} min.",
+      "expired": "Prazo encerrado.",
+      "reason": "Motivo: {reason}",
+      "readOnly": "Só leitura: as telas do produto ainda não abrem para o suporte; a API do produto já responde à leitura.",
+      "end": "Encerrar sessão",
+      "endTitle": "Encerrar a sessão de suporte na {name}?",
+      "endDesc": "A leitura do suporte para agora. O fim fica na auditoria e no histórico de acessos da conta.",
+      "endConfirm": "Encerrar sessão",
+      "ended": "Sessão de suporte na {name} encerrada. Registrada na Auditoria."
+    },
+    "credit": {
+      "open": "Ajustar crédito",
+      "title": "Ajustar crédito da {name}",
+      "desc": "Use para devolver crédito de uma falha ou corrigir um lançamento. O ajuste entra no extrato com o motivo.",
+      "amount": "Créditos",
+      "amountHint": "Negativo para retirar; até 2 casas. Disponível agora: {available}.",
+      "amountInvalid": "Informe um valor diferente de zero, com até 2 casas (ex.: 10 ou -5,50).",
+      "summary": "Saldo: {before} → {after}",
+      "confirm": "Lançar ajuste",
+      "done": "Ajuste de {amount} lançado: saldo {before} → {after}. Registrado na Auditoria.",
+      "duplicate": "Esse ajuste já tinha sido lançado (mesma chave); nada mudou. Saldo {balance}."
+    },
+    "status": {
+      "reasonHint": "Fica na auditoria e no histórico da conta.",
+      "suspend": {
+        "open": "Suspender",
+        "title": "Suspender a {name}",
+        "desc": "A renovação da assinatura e as rotinas agendadas param; a assinatura não é cancelada e nada é apagado. Os membros veem o aviso de conta suspensa. Dá para reativar depois.",
+        "confirm": "Suspender conta",
+        "done": "{name} suspensa. Os dados ficam preservados. Registrado na Auditoria."
+      },
+      "reactivate": {
+        "open": "Reativar",
+        "title": "Reativar a {name}",
+        "desc": "A renovação da assinatura e as rotinas voltam a rodar, e o aviso some para os membros.",
+        "confirm": "Reativar conta",
+        "done": "{name} reativada. Registrado na Auditoria."
+      }
     }
   }
 }
