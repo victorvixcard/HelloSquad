@@ -1,6 +1,6 @@
 # J3 — relatório (mocks locais dos provedores)
 
-Jarvis, 17/10/2026, das 07:33 às 08:06 (alvo: 70 min). Fatia da Fase 3 em paralelo com a S3b (Stark). Não toquei em `apps/` nem em `supabase/`. Os mocks rodam como processo (não como container), na porta 8300. Web (:3100) e API (:8100) seguiram no ar o tempo todo.
+Jarvis, 17/10/2026, das 07:33 às 08:04 (alvo: 70 min). Fatia da Fase 3 em paralelo com a S3b (Stark). Não toquei em `apps/` nem em `supabase/`. Os mocks rodam como processo (não como container), na porta 8300. Web (:3100) e API (:8100) seguiram no ar o tempo todo.
 
 ## 1. Entregue
 
