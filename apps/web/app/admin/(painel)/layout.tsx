@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { ApiUnavailable } from "@/components/ApiUnavailable";
+import { ActionNoticeHost } from "@/components/admin/actions/ActionDialog";
 import { AdminForbidden } from "@/components/admin/AdminForbidden";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { unwrap } from "@hellosquad/contracts";
@@ -33,6 +34,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           <div className="sa-v">{children}</div>
         </div>
       </main>
+      <ActionNoticeHost />
     </div>
   );
 }

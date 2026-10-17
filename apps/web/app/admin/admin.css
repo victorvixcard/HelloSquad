@@ -171,3 +171,14 @@
 .hl-wide{grid-column:1/-1}
 .hl-problem{margin-top:12px}
 .sa-fld-err{color:var(--hs-coord-labio)}
+/* SA6b — ações de escrita: faixa da sessão de suporte, ações por linha, histórico de versões */
+.hl-session{margin-bottom:16px;align-items:center}
+.hl-session-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sa-v>.sa-note+.sa-note{margin-top:12px}
+.hl-pad{padding:14px 20px;margin:0}
+.hl-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.hl-acts .hs-btn{white-space:nowrap}
+.hl-check{display:flex;align-items:center;gap:8px;font-size:14px}
+.hl-check input{width:16px;height:16px;accent-color:var(--hs-tinta)}
+.hl-sec{margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.01em}
+.hl-hist{margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--hs-tinta-suave)}
