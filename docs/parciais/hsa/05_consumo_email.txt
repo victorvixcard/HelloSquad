@@ -1,0 +1,27 @@
+== A. cenário conhecido na Trilha (hoje, 2026-10-17 ): duas legendas do Otto, uma aprovada de primeira, outra com ajuste
+  worker: exit=0 concluídos=2 falhas=0
+  aprovar 1: 200 | ajuste na 2: 200
+  worker: exit=0 concluídos=3 falhas=0
+  aprovar a v2: 200
+  verdade (SQL nas tabelas cruas): {'requests': '2', 'credits_charged': '30.00', 'llm_calls': '9', 'ai_cost_usd': '0.102580', 'input_tokens': '11090', 'output_tokens': '2650', 'turns': '3'}
+  API /admin/consumption:         {'requests': 2, 'credits_charged': '30.00', 'llm_calls': 9, 'ai_cost_usd': '0.102580', 'input_tokens': 11090, 'output_tokens': 2650, 'turns': 3}
+  diferenças: nenhuma
+  qualidade 04.01 hoje: [{'key': '04.01', 'deliveries': 2, 'approved_first_time': 1, 'adjustments': 1, 'not_approved': 0, 'ai_cost_per_approved_usd': '0.051290', 'agent_errors': 0, 'failed_steps': 0}]
+  verdade: 2 entregas, 1 aprovada de primeira, 1 ajuste, 0 não aprovada, custo por aprovada 0.051290
+  modelos hoje (custo por modelo): [('claude-opus-5-5', 6, '0.093880'), ('claude-haiku-4-5', 3, '0.008700')] | SQL: [['claude-haiku-4-5', '3', '0.008700'], ['claude-opus-5-5', '6', '0.093880'], ['', '0', '0.000000']]
+  saúde Anthropic: chamadas 24h 0 -> 9 | gasto 24h 0.000000 -> 0.102580
+== B. etapa fictícia cara na Trilha: o alerta cruza a faixa e só avisa
+  IA por crédito (R$): 0.9185 | alertas da conta: [('ai_cost_per_credit_brl', True, '0.1500'), ('gross_margin', True, '0.6500')]
+  /admin/alerts contas: [('Trilha Urbana', ['ai_cost_per_credit_brl', 'gross_margin'])] | faixas proposta: True
+  nada mudou por causa do alerta: True
+  etapa fictícia removida; alertas da Trilha agora: []
+== C. e-mail da sessão de suporte no idioma do titular (Mailpit)
+  sessão na Miolo: 201 | e-mail na fila: pt-BR queued
+  sessão na Vitta: 201 | e-mail na fila: en queued
+  sessão na Trilha: 201 | e-mail na fila: es queued
+  worker: exit=0 concluídos=3 falhas=0
+  marina@miolo.example: 'O suporte do HelloSquad entrou em Miolo' | 2026-10-17T03:35:15 | corpo: Olá, Marina. | motivo no corpo: True
+  rafael@vitta.example: 'HelloSquad support entered Vitta Estética' | 2026-10-17T03:35:15 | corpo: Hi Rafael, | motivo no corpo: True
+  juliana@trilha.example: 'El soporte de HelloSquad entró en Trilha Urbana' | 2026-10-17T03:35:15 | corpo: Hola, Juliana: | motivo no corpo: True
+  user_metadata de Rafael e Juliana restaurados: True
+  make seed: 0 | saldos: [['miolo', '36.00'], ['trilha', '19.20'], ['vitta', '20.00']]

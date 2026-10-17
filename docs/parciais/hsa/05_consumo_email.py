@@ -65,7 +65,7 @@ print("== B. etapa fictícia cara na Trilha: o alerta cruza a faixa e só avisa"
 rid = sql1(f"select id from runs where work_item_id='{w1}' order by created_at limit 1")
 fp = lambda: sql(f"select app.credit_balance('{TRILHA}'), (select count(*) from workspaces where id='{TRILHA}' and suspended_at is null), (select string_agg(slug,',') from plans where for_sale), (select count(*) from provider_health)")  # noqa: E731
 before = fp()
-step = sql1(f"insert into run_steps (run_id, workspace_id, kind, model, input_tokens, output_tokens, cost_usd, status) values ('{rid}', '{TRILHA}', 'llm_call', 'claude-opus-5-5', 1000, 1000, 5.000000, 'succeeded') returning id")
+step = sql1(f"insert into run_steps (run_id, workspace_id, seq, kind, model, input_tokens, output_tokens, cost_usd, status) values ('{rid}', '{TRILHA}', (select coalesce(max(seq), 0) + 100 from run_steps where run_id='{rid}'), 'llm_call', 'claude-opus-5-5', 1000, 1000, 5.000000, 'succeeded') returning id")
 s, cons = call("GET", f"/admin/consumption?workspace_id={TRILHA}&since={TODAY}&until={TODAY}", V)
 item = (cons.get("items") or [{}])[0]
 print("  IA por crédito (R$):", item.get("economics", {}).get("ai_cost_per_credit_brl"), "| alertas da conta:", [(a.get("metric"), a.get("proposal"), a.get("threshold")) for a in item.get("economics", {}).get("alerts", [])])
