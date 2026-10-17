@@ -13,9 +13,9 @@ Aranha (Frontend & Design), 16/10/2026, início 23:46. Área: `apps/web` (detalh
 
 | # | Item | Estado | Commit |
 |---|---|---|---|
-| 0 | Abertura do progresso | feito | este |
-| 1 | Detalhe da conta: entrar no ambiente (motivo + duração), sessão ativa com tempo restante e Encerrar, "Ver como o cliente", ajustar crédito (idempotency_key, saldo antes/depois), suspender/reativar; estado `suspended` e filtro na lista | em andamento | |
-| 2 | Catálogo (preço e venda, homologação, à venda com 409 honesto); Planos e recargas (versão nova, trava "preço aprovado", versões anteriores só leitura) | pendente | |
-| 3 | Fila (reenfileirar, cancelar com motivo); Pagamentos (reprocessar, marcar conciliação) | pendente | |
-| 4 | Confirmação, motivo, resultado na tela, auditoria sem recarregar; rótulos pt-BR/en/es | pendente | |
-| 5 | Vitest, e2e (worktree `/tmp`), lado a lado, relatório | pendente | |
+| 0 | Abertura do progresso | feito | `6894456` |
+| 1 | Detalhe da conta: entrar no ambiente (motivo + duração), sessão ativa com tempo restante e Encerrar, ajustar crédito (idempotency_key, saldo antes/depois), suspender/reativar; estado `suspended` e filtro na lista. "Ver como o cliente" **não entrou**: o produto resolve o negócio pelos memberships de `GET /me` (`app/app/[workspace]/layout.tsx` → `notFound()`), então não aceita a sessão de suporte (registrado no relatório) | feito | `be834c8`, `8b91c14`, `15d9d29`, `cb91bd1` |
+| 2 | Catálogo (preço, homologação, à venda com 409 honesto) por delivery; Planos e recargas (versão nova, trava "preço aprovado", histórico das versões gravadas pelo painel, só leitura) | feito | `7f04d82`, `8a1e0dc` |
+| 3 | Fila (reenfileirar, cancelar com motivo, na lista e no run); Pagamentos (reprocessar com o resultado, marcar conciliação) | feito | `2b63d96` |
+| 4 | Confirmação, motivo com contador, resultado na tela (aviso na casca), auditoria da tela relida sem recarregar; etiqueta "Ações com motivo e auditoria"; rótulos pt-BR/en/es | feito | `8b91c14`, `954a201` |
+| 5 | Vitest (17), e2e (2, worktree `/tmp/sa6b-wt`, web na 3200), lado a lado, relatório | em andamento | `fe5f9e0`, `b99b233` |
