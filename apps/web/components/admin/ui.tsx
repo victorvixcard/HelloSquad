@@ -238,3 +238,31 @@ export function AgentLabel({ agent, name }: { agent: AgentId; name: string }) {
     </span>
   );
 }
+
+/** A API do painel não respondeu: diz o que houve, sem dado inventado no lugar. */
+export function ApiProblem({ label, message }: { label: string; message: string }) {
+  return (
+    <Note kind="warn" label={label}>
+      {message}
+    </Note>
+  );
+}
+
+/** Paginação por cursor (`next_cursor` da API): "Próxima página" e, depois dela, "Voltar ao início". */
+export function Pager(props: { nextHref: string | null; firstHref: string | null; nextLabel: string; firstLabel: string }) {
+  if (!props.nextHref && !props.firstHref) return null;
+  return (
+    <div className="sa-pager">
+      {props.firstHref ? (
+        <a className="hs-btn hs-btn--ghost hs-btn--s" href={props.firstHref}>
+          <span className="hs-lbl">{props.firstLabel}</span>
+        </a>
+      ) : null}
+      {props.nextHref ? (
+        <a className="hs-btn hs-btn--soft hs-btn--s" href={props.nextHref} rel="next">
+          <span className="hs-lbl">{props.nextLabel}</span>
+        </a>
+      ) : null}
+    </div>
+  );
+}
