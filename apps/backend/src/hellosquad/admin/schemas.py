@@ -119,7 +119,9 @@ class AccountDetail(BaseModel):
     support_accesses: list[SupportAccess]
     usage_30d: UsageTotals
     subscription: AccountSubscription | None
-    audit_event_id: UUID = Field(description="Registro desta leitura em audit_events (acesso do suporte).")
+    audit_event_id: UUID = Field(
+        description="Registro desta leitura em audit_events (acesso do suporte)."
+    )
 
 
 class CatalogPrice(BaseModel):

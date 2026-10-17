@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from hellosquad import __version__
+from hellosquad.admin.routes import router as admin_router
 from hellosquad.api.errors import register_error_handlers
 from hellosquad.approvals.routes import router as approvals_router
 from hellosquad.auth import TokenVerifier
@@ -88,6 +89,7 @@ app.include_router(contacts_router)
 app.include_router(metrics_router)
 app.include_router(email_router)
 app.include_router(billing_router)
+app.include_router(admin_router)
 
 
 class Health(BaseModel):
