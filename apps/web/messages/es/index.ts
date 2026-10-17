@@ -22,6 +22,7 @@ import docs from "./docs.json";
 import editorial from "./editorial.json";
 import growth from "./growth.json";
 import results from "./results.json";
+import admin from "./admin.json";
 import strategy from "./strategy.json";
 
 const messages: Messages = {
@@ -49,6 +50,8 @@ const messages: Messages = {
   growth,
   crm,
   results,
+  // SA2: painel do Super Admin (/admin); só vai ao browser na área do painel.
+  admin,
 };
 
 export default messages;
