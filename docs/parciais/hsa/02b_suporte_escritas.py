@@ -34,7 +34,7 @@ CASES = [
     ("POST", f"/approvals/{appr}/defer", {}),
     ("POST", f"/memory/facts/{fact}/correct", {"content": "Corrigido pelo suporte H-SA"}),
     ("POST", f"/memory/facts/{fact}/state", {"action": "stop_using"}),
-    ("POST", f"/workspaces/{W}/memory/facts", {"area": "voz", "content": "Fato do suporte H-SA"}),
+    ("POST", f"/workspaces/{W}/memory/facts", {"area": "brand", "content": "Fato do suporte H-SA"}),
     ("PUT", f"/workspaces/{W}/memory/profile", {"description": "Perfil escrito pelo suporte H-SA"}),
     ("POST", "/credits/estimate", {"workspace_id": W, "delivery_type": "04.01"}),
     ("POST", f"/workspaces/{W}/contacts/imports", {"file_name": "s.csv", "source": "H-SA", "csv": "nome;email;telefone;consentimento_email;consentimento_whatsapp;data_consentimento;ultima_compra;compras\nH-SA;hsa@contatos.example;;sim;não;2026-10-01;;"}),

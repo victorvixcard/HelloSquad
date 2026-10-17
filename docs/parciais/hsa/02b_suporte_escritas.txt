@@ -1,0 +1,35 @@
+ids da Miolo: {'conversa': True, 'mensagem': True, 'aprovação': True, 'fato': True, 'sugestão': True, 'projeto': False}
+sessão aberta: 201
+  PATCH /workspaces/<miolo>: 404 not_found
+  POST /workspaces/<miolo>/conversations: 403 support_session_read_only
+  POST /conversations/5eed0000-0000-4000-8000-000000000101/read: 404 not_found
+  POST /conversations/5eed0000-0000-4000-8000-000000000101/messages: 404 not_found
+  POST /messages/5eed0000-0000-4000-8000-000000000201/reply: 404 not_found
+  POST /workspaces/<miolo>/projects: 403 support_session_read_only
+  POST /messages/5eed0000-0000-4000-8000-000000000201/work-items: 404 not_found
+  POST /approvals/5eed0000-0000-4000-8000-000000000601/decision: 404 not_found
+  POST /approvals/5eed0000-0000-4000-8000-000000000601/defer: 404 not_found
+  POST /memory/facts/5eed0000-0000-4000-8000-000000000811/correct: 404 not_found
+  POST /memory/facts/5eed0000-0000-4000-8000-000000000811/state: 404 not_found
+  POST /workspaces/<miolo>/memory/facts: 403 support_session_read_only
+  PUT /workspaces/<miolo>/memory/profile: 403 support_session_read_only
+  POST /credits/estimate: 403 support_session_read_only
+  POST /workspaces/<miolo>/contacts/imports: 403 support_session_read_only
+  POST /workspaces/<miolo>/contacts/consents/revocations: 403 support_session_read_only
+  POST /memory/suggestions/5eed0000-0000-4000-8000-000000000821/dec: 404 not_found
+  POST /memory/suggestions/5eed0000-0000-4000-8000-000000000821/see: 404 not_found
+resumo: {'404 not_found': 11, '403 support_session_read_only': 7}
+Miolo antes == depois: True 
+== payload da auditoria e e-mail da sessão
+  chaves do payload de support.session_started: mode,reason,minutes,expires_at,platform_admin,mode,reason,minutes,expires_at,platform_admin,mode,reason,minutes,expires_at,platform_admin,mode,reason,minutes,expires_at,platform_admin
+  e-mails da sessão: [['support_session_started', 'pt-BR', 'queued', 'marina@miolo.example', '17'], ['support_session_started', 'pt-BR', 'sent', 'marina@miolo.example', '9']]
+  fila email_outbox (pgmq): 82
+  chaves de support_accesses no detalhe: ['admin_email', 'ended_at', 'expires_at', 'id', 'mode', 'reason', 'started_at']
+== seis aberturas em paralelo
+  status: [201, 409, 409, 409, 409, 409] | abertas no banco: 1
+  abertas depois do DELETE: 0
+== negócio criado pelo Vic no 02 (POST /workspaces) diante do make seed
+  antes do seed: [['suporte-hsa', '1']]
+  make seed: exit 2
+  depois do seed: [['suporte-hsa', '1']]
+  Contas no painel depois do seed: ['Suporte H-SA', 'Vitta Estética', 'Trilha Urbana', 'Miolo'] | totais: {"accounts": 4, "paid_plans": 1, "free_plans": 3, "credits_balance": "95.20"}

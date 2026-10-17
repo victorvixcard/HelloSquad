@@ -1,0 +1,58 @@
+== A. Vic sem sessão de suporte
+  GET /me: 200 memberships = []
+  GET /workspaces: 200 {"items": []}
+  Miolo, sem sessão: {'200': 3, '404 workspace_not_found': 1, '403 support_session_required': 17, '404 not_found': 7, '422 validation_error': 2}
+    GET 200 sem sessão (só valem /me, /workspaces e /me/email-preferences, sem dado da Miolo): ['/me', '/workspaces', '/me/email-preferences']
+  Vitta, sem sessão: {'200': 3, '404 workspace_not_found': 1, '403 support_session_required': 17, '404 not_found': 7, '422 validation_error': 2}
+== B. Vic com sessão de suporte na Miolo
+  abrir com {"reason": "curto", "duration_minutes": 15}: 422 {"error": {"code": "validation_error", "message": "Dados inválidos.", "details": [{"field": "reason"
+  abrir com {"reason": "          espaços          ", "duration_minutes": 422 {"error": {"code": "invalid_parameter", "message": "O motivo precisa ter de 10 a 500 caracteres.", "
+  abrir com {"reason": "Motivo válido da H-SA", "duration_minutes": 120}: 422 {"error": {"code": "validation_error", "message": "Dados inválidos.", "details": [{"field": "duratio
+  abrir com {"reason": "Motivo válido da H-SA", "duration_minutes": 0}: 422 {"error": {"code": "validation_error", "message": "Dados inválidos.", "details": [{"field": "duratio
+  abrir com {"reason": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: 422 {"error": {"code": "validation_error", "message": "Dados inválidos.", "details": [{"field": "reason"
+  abrir (15 min): 201 {"id": "6e384661-799e-4bc3-b2b2-794728011ee2", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "reason": "Conferência pedida pela titular (H-SA)", "mode": "read_only", "started_at": "2026-10-17T03:23:43.588327Z",
+  abrir de novo com uma aberta: 409 {"error": {"code": "invalid_state", "message": "Já há uma sessão de suporte aberta nesta conta.", "details": []}}
+  Miolo, com sessão: {'200': 24, '404 workspace_not_found': 1, '404 not_found': 1, '422 validation_error': 2, '403 owner_only': 2}
+    GET 200 na Miolo com sessão: 24 de 30
+    GET da Miolo que continuam fechados com sessão: ['/workspaces/{workspace_id}', '/projects/{project_id}', '/workspaces/{workspace_id}/calendar', '/workspaces/{workspace_id}/metrics', '/workspaces/{workspace_id}/billing/subscription', '/workspaces/{workspace_id}/billing/payments']
+  Vitta (sem sessão), enquanto a da Miolo está aberta: {'200': 3, '404 workspace_not_found': 1, '403 support_session_required': 17, '404 not_found': 7, '422 validation_error': 2}
+    GET 200 na Vitta: ['/me', '/workspaces', '/me/email-preferences']
+  conteúdo lido (conversas da Miolo): 200 2
+  escritas do produto na Miolo, com sessão aberta:
+   ATENÇÃO POST /workspaces: 201 {"id": "03df1afc-405b-46f5-8713-eb59799b3d5e", "slug": "suporte-hsa", "name": "Suporte H-SA", "locale": "pt-BR", "role": "owner", "created_at": "2026-10-17T03:2
+   ATENÇÃO PUT /me/email-preferences/{template}: 200 {"template": "delivery_ready", "enabled": false}
+    {'201 ': 1, '404 not_found': 12, '403 support_session_read_only': 2, '422 validation_error': 10, '422 invalid_csv': 1, '200 ': 1}
+  Miolo antes == depois das escritas do suporte: False {'email_prefs_vic': ('0', '1'), 'workspaces_total': ('3', '4')}
+== C. encerrar e ler de novo
+  DELETE: 200 {"id": "6e384661-799e-4bc3-b2b2-794728011ee2", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "reason": "Conferência pedida pela titular (H-SA)", "mode": "read_only", "started_at": "2026-10-1
+  GET conversas logo depois: 403 {"error": {"code": "support_session_required", "message": "Abra uma sessão de suporte, com motivo, para ver este negócio
+  DELETE de novo: 404 {"error": {"code": "not_found", "message": "Não há sessão de suporte aberta nesta conta.", "details": []}}
+== D. expirar (expires_at no passado) e ler
+  abrir: 201 {"id": "edff4ae6-301c-4abb-ab63-a5862de19831", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2", "reason": "Sessão
+  GET trabalhos dentro do prazo: 200
+  GET trabalhos depois do prazo: 403 {"error": {"code": "support_session_required", "message": "Abra uma sessão de suporte, com motivo, para ver este negócio
+  detalhe da conta: sessões mostradas = [(None, 'Conferência pedida pela titula'), (None, 'Sessão para testar o prazo (H-'), (None, 'Conferência pedida pela titula')]
+  DELETE depois do prazo: 404 {"error": {"code": "not_found", "message": "Não há sessão de suporte aberta nesta conta.", "details": []}}
+  reabrir depois de expirar: 201 {"id": "49175d4f-6bcd-4d28-b298-5ef0476e584a", "workspace_id": "6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2
+== E. auditoria e support_access_log
+   ['support.session_ended', 't', 'Reabrir depois de expirar (H-SA)', '', 'true', 'true']
+   ['support.session_started', 't', 'Reabrir depois de expirar (H-SA)', '', '', 'true']
+   ['support.session_started', 't', 'Sessão para testar o prazo (H-SA)', '', '', 'true']
+   ['support.session_ended', 't', 'Conferência pedida pela titular (H-SA)', '', 'true', 'true']
+   ['support.session_started', 't', 'Conferência pedida pela titular (H-SA)', '', '', 'true']
+   ['support.session_ended', 't', 'Conferência pedida pela titular no chamado 42', '', 'true', 'true']
+  eventos novos na auditoria neste bloco: 8
+  log: ['Reabrir depois de expirar (H-SA)', 'read_only', '00:15:00', 't']
+  log: ['Sessão para testar o prazo (H-SA)', 'read_only', '00:15:59', 'f']
+  log: ['Conferência pedida pela titular (H-SA)', 'read_only', '00:15:00', 't']
+  log: ['Conferência pedida pela titular no chamado 42', 'read_only', '01:00:00', 't']
+Traceback (most recent call last):
+  File "/home/vitao/projetos/hellosquad/docs/parciais/hsa/02_suporte.py", line 189, in <module>
+    print("  e-mails support_session_started na fila/enviados à titular:", sql("select template, locale, status, count(*) from email_messages where template like 'support%' group by 1,2,3"))
+                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vitao/projetos/hellosquad/docs/parciais/hsa/hsalib.py", line 76, in sql
+    raise RuntimeError(out.stderr.strip()[:400])
+RuntimeError: ERROR:  operator does not exist: email_template ~~ unknown
+LINE 1: ...atus, count(*) from email_messages where template like 'supp...
+                                                             ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.

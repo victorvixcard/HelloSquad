@@ -1,0 +1,21 @@
+# make seed com o negócio 'suporte-hsa' criado pelo Vic (POST /workspaces no 02), 17/10 00:25
+bash -c 'cd apps/backend && uv run hellosquad-local-db seed ../../supabase/seed.sql && uv run hellosquad-squad seed'
+erro: O workspace precisa de pelo menos um owner.
+CONTEXT:  PL/pgSQL function app.memberships_keep_one_owner() line 20 at RAISE
+SQL statement "delete from public.memberships m
+  using auth.users u
+  where u.id = m.user_id and u.email = 'vic@hellosquad.example'"
+PL/pgSQL function inline_code_block line 141 at SQL statement
+make: *** [Makefile:57: seed] Error 1
+
+# limpeza manual (audit_events e workspace 'suporte-hsa', preferência de e-mail do Vic) e make seed de novo
+bash -c 'cd apps/backend && uv run hellosquad-local-db seed ../../supabase/seed.sql && uv run hellosquad-squad seed'
+  miolo    owner           marina@miolo.example
+  trilha   owner           juliana@trilha.example
+  vitta    editor          carla@vitta.example
+  vitta    owner           rafael@vitta.example
+  -        sem membership  pedro@semconta.example
+  -        sem membership  vic@hellosquad.example
+seed aplicado: ../../supabase/seed.sql
+senha do papel hellosquad_api já confere com API_DATABASE_URL; nada gravado
+squad seed: 0 unidade(s) nova(s), 0 importada(s), 0 divergente(s)
