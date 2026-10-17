@@ -5349,6 +5349,11 @@ export interface components {
             /** Shared */
             shared: components["schemas"]["SharedUnit"][];
             /**
+             * Tool Catalog
+             * @description Catálogo de ferramentas do squad: a união das listas dos sete agent.yaml.
+             */
+            tool_catalog: string[];
+            /**
              * Fingerprint
              * @description Impressão digital das versões ativas (muda quando algo é publicado).
              */

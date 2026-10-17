@@ -127,6 +127,9 @@ class SharedUnit(BaseModel):
 class SquadOverview(BaseModel):
     agents: list[SquadAgentSummary]
     shared: list[SharedUnit]
+    tool_catalog: list[str] = Field(
+        description="Catálogo de ferramentas do squad: a união das listas dos sete agent.yaml."
+    )
     fingerprint: str | None = Field(
         description="Impressão digital das versões ativas (muda quando algo é publicado)."
     )

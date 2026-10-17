@@ -19010,6 +19010,14 @@
             "type": "array",
             "title": "Shared"
           },
+          "tool_catalog": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tool Catalog",
+            "description": "Catálogo de ferramentas do squad: a união das listas dos sete agent.yaml."
+          },
           "fingerprint": {
             "anyOf": [
               {
@@ -19027,6 +19035,7 @@
         "required": [
           "agents",
           "shared",
+          "tool_catalog",
           "fingerprint"
         ],
         "title": "SquadOverview"

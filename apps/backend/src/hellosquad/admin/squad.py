@@ -430,9 +430,14 @@ def require_agent(agent_id: str) -> str:
 async def get_squad(tx: AdminTx) -> SquadOverview:
     async with tx() as conn:
         fingerprint = await fetchone(conn, ACTIVE_FINGERPRINT)
+        configs = await fetchall(
+            conn,
+            "select body from public.squad_versions where kind = 'config' and status = 'active'",
+        )
         return SquadOverview(
             agents=await agent_summaries(conn),
             shared=await shared_units(conn),
+            tool_catalog=sorted(known_tools(r["body"] for r in configs)),
             fingerprint=fingerprint["fingerprint"] if fingerprint else None,
         )
 

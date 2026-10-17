@@ -219,6 +219,8 @@ async def test_tool_removed_from_agent_yaml_is_refused_by_the_runtime(
     agent = (await api.get("/admin/squad/agents/otto", headers=headers)).json()
     tools = agent["config"]["fields"]["tools"]
     assert "entregas.criar_versao" in tools
+    catalog = (await api.get("/admin/squad", headers=headers)).json()["tool_catalog"]
+    assert set(tools) < set(catalog) and "imagem.gerar" in catalog
     assert agent["config"]["fields"]["tool_notes"]["canais.publicar_facebook"] == "idem"
 
     unknown = await api.put(
