@@ -19,7 +19,7 @@ export async function Landing({ locale }: { locale: Locale }) {
   return (
     <>
       <JsonLd data={ld} />
-      <LandingR32 dictionary={landingDictionary(locale)} />
+      <LandingR32 locale={locale} dictionary={landingDictionary(locale)} />
     </>
   );
 }

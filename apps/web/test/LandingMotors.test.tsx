@@ -67,7 +67,7 @@ describe("motores da landing R32 (L1)", () => {
 
   it("en: o motor digita o pedido já traduzido (roteiros traduzidos na fonte, não letra a letra em pt-BR)", async () => {
     stubBrowser(false);
-    render(<LandingR32 dictionary={landingDictionary("en")} />);
+    render(<LandingR32 locale="en" dictionary={landingDictionary("en")} />);
     await advance(4000);
     const typed = field().value;
     expect(typed.length).toBeGreaterThan(0);

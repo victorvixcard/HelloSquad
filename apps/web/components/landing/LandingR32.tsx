@@ -17,6 +17,7 @@ import {
   type LogicClass,
   type RenderCtx,
 } from "@hellosquad/ui/landing";
+import { composeTranslator } from "./compose";
 import "@hellosquad/ui/ds-bundle.css";
 import "@hellosquad/ui/landing.css";
 
@@ -60,24 +61,25 @@ function withRealAuth(Prototype: LogicClass): LogicClass {
 
 // pt-BR usa a classe como o protótipo a define. en/es: uma cópia da classe (a fábrica cria constantes novas a cada
 // chamada) com os roteiros traduzidos na fonte; assim o motor digita o pedido do Hero já no idioma.
+type Translator = (s: string) => string;
 const classes = new Map<Record<string, string> | null, LogicClass>();
-function logicFor(dict: Record<string, string> | null): LogicClass {
+function logicFor(dict: Record<string, string> | null, tr: Translator): LogicClass {
   let cls = classes.get(dict);
   if (!cls) {
     const Prototype = createPrototype();
-    if (dict) translateData((Prototype as unknown as { __data: Record<string, unknown> }).__data, (s) => dict[s] ?? s);
+    if (dict) translateData((Prototype as unknown as { __data: Record<string, unknown> }).__data, tr);
     cls = withRealAuth(Prototype);
     classes.set(dict, cls);
   }
   return cls;
 }
 
-export function LandingR32({ dictionary }: { dictionary?: Record<string, string> }) {
+export function LandingR32({ locale = "pt-BR", dictionary }: { locale?: string; dictionary?: Record<string, string> }) {
   const dict = dictionary && Object.keys(dictionary).length ? dictionary : null;
-  const ctx = React.useMemo<RenderCtx>(() => ({ components: HS, tr: dict ? (s: string) => dict[s] ?? s : identity }), [dict]);
+  const ctx = React.useMemo<RenderCtx>(() => ({ components: HS, tr: dict ? composeTranslator(locale, dict) : identity }), [dict, locale]);
   return (
     <div id="dc-root">
-      <DCHost name="LandingPageV1" Logic={logicFor(dict)} template={LANDING_TEMPLATE} ctx={ctx} />
+      <DCHost name="LandingPageV1" Logic={logicFor(dict, ctx.tr)} template={LANDING_TEMPLATE} ctx={ctx} />
     </div>
   );
 }
