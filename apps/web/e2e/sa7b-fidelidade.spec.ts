@@ -40,6 +40,7 @@ test("o Vic entra pelo /entrar e cai no painel; Catálogo, Pagamentos, Auditoria
   for (const text of ["Conta no provedor", "Ainda não criada", "Webhook", "Não configurado", "Ambiente", "Sandbox, quando a conta for criada", "PaymentProvider", "A validar", "Pix recorrente e cartão recorrente"]) {
     await expect(asaas).toContainText(text);
   }
+  await expect(page.locator("#prov-mock")).toContainText("Local, simulado");
   const tabs = page.getByRole("tablist", { name: "Pagamentos" });
   // o número depois do nome é o contador do SA0 (atrasadas, webhooks com falha, cobranças que falharam), só quando há
   await expect(tabs.getByRole("tab")).toHaveText([/^Assinaturas\d*$/, /^Recargas$/, /^Webhooks\d*$/, /^Conciliação\d*$/]);

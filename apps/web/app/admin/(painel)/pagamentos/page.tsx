@@ -35,17 +35,20 @@ const SUBSCRIPTION_KIND: Record<string, StatusKind> = { active: "done", pending:
 /** Provedores reais (os do adaptador `PaymentProvider`); o simulado local não tem conta, sandbox nem o que validar. */
 const REAL_PROVIDERS = new Set(["asaas", "mercadopago"]);
 
+/** Simulado: o provedor local (fora do `GET /admin/providers`) ou um real rodando em modo simulado. */
+const isLocal = (provider: string, status: string | undefined) => !REAL_PROVIDERS.has(provider) || status === "simulated" || status === "local_only";
+
 /** Conta no provedor, pelo estado de `GET /admin/providers` (o cartão do SA0, com o que a API sabe hoje). */
-function providerAccount(status: string | undefined): "not_created" | "created" | "not_applicable" | null {
+function providerAccount(provider: string, status: string | undefined): "not_created" | "created" | "not_applicable" | null {
+  if (isLocal(provider, status)) return "not_applicable";
   if (status === "account_not_created") return "not_created";
-  if (status === "simulated" || status === "local_only") return "not_applicable";
   if (status === "working" || status === "failing") return "created";
   return null;
 }
 /** Ambiente: sandbox quando a conta existir (como o SA0, sem a fase); o simulado roda só local. */
-function providerEnvironment(status: string | undefined): "sandbox" | "local" | null {
+function providerEnvironment(provider: string, status: string | undefined): "sandbox" | "local" | null {
+  if (isLocal(provider, status)) return "local";
   if (status === "account_not_created") return "sandbox";
-  if (status === "simulated" || status === "local_only") return "local";
   return null;
 }
 
@@ -80,8 +83,8 @@ export default async function PaymentsPage() {
           <div className="sa-row c3">
             {payments.data.providers.map((p) => {
               const h = health.get(p.provider);
-              const accountState = providerAccount(h?.status);
-              const environment = providerEnvironment(h?.status);
+              const accountState = providerAccount(p.provider, h?.status);
+              const environment = providerEnvironment(p.provider, h?.status);
               return (
                 <Card
                   key={p.provider}

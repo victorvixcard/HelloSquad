@@ -237,7 +237,6 @@ const PROVIDERS = {
   items: [
     { provider: "asaas", status: "account_not_created", note: null },
     { provider: "mercadopago", status: "account_not_created", note: null },
-    { provider: "mock", status: "simulated", note: null },
   ],
 };
 
@@ -262,7 +261,7 @@ describe("H-SA-05: Pagamentos em abas e o cartão do provedor do SA0", () => {
     });
     expect(document.getElementById("prov-asaas")).toHaveTextContent("Assinaturas e recargas");
     expect(document.querySelector("#prov-asaas .sa-code")).toHaveTextContent("PaymentProvider");
-    // o simulado local não tem conta, sandbox nem o que validar
+    // o simulado local (fora do GET /admin/providers, como no seed) não tem conta, sandbox nem o que validar
     expect(kv(document.getElementById("prov-mock")!)).toEqual({
       "Conta no provedor": "Não se aplica",
       "Chave da API": "Não se aplica",
