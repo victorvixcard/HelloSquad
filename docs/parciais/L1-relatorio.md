@@ -147,10 +147,10 @@ dois achados são da própria R32 (§4, perguntas 2 e 3). Saídas em `/tmp/l1/lh
 5. **Pedido do Hero depois do cadastro:** a landing guarda o pedido em `hs-landing-pedido`; quer que o Nexo o receba como
    primeira mensagem depois do cadastro (a promessa da R32: "Crie sua conta e o Nexo começa por ele")? É trabalho no
    onboarding/Início, fora desta fatia.
-7. **FAQ:** a R32 tem "Posso começar gratuitamente? Como funcionam os créditos?"; a A2c tirava essa pergunta (P2 da N2a,
-   créditos por último). Segui a R32. Tirar é esconder uma pergunta.
 6. **Performance:** com todos os motores a landing mede ≈ 83 (mobile). Abro uma fatia de otimização (§2.4, três passos sem
    tirar animação) ou fica assim até a publicação?
+7. **FAQ:** a R32 tem "Posso começar gratuitamente? Como funcionam os créditos?"; a A2c tirava essa pergunta (P2 da N2a,
+   créditos por último). Segui a R32. Tirar é esconder uma pergunta.
 
 ## 6. O que ficou de fora
 
@@ -169,6 +169,7 @@ dois achados são da própria R32 (§4, perguntas 2 e 3). Saídas em `/tmp/l1/lh
 ## 8. Estado em que deixei a máquina
 
 - `next dev` do dono (3100): no ar, nunca parado; recarregou do disco (`GET /` 200).
-- Worktree `/tmp/l1-wt`, `next start` da 3200 e o Chromium do Lighthouse (9334): parados e removidos ao fim (§ progresso).
+- Worktree `/tmp/l1-wt` removido (`git worktree list` só mostra o principal); `next start` da 3200 e o Chromium do
+  Lighthouse (9334) parados por PID às 08:32.
 - Banco: nenhuma escrita; nenhum seed reaplicado. API (8100) intocada.
 - Logs e medições em `/tmp/l1/` (sem chave).

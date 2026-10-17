@@ -26,3 +26,4 @@ Build e e2e só no worktree `/tmp/l1-wt` (3200/8200); o `next dev` do dono na 31
 | 08:25 | Build do worktree em `f737bb0` (`/` ○, 210 kB), e2e do site 6/6, Lighthouse final (mediana `/` ≈ 83, `/en` ≈ 81) | ok |
 | 08:28 | `make test-web` no HEAD `0d87ff9`: exit 0 (contracts 9, ui 53, web 502) | ok |
 | 08:31 | Relatório `docs/parciais/L1-relatorio.md` | ok |
+| 08:32 | Limpeza: 3200 e 9334 parados por PID, worktree removido; 3100 do dono no ar (GET / 200) | ok |
