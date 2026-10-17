@@ -163,7 +163,8 @@ def create_app() -> FastAPI:
         description="Meta Graph (Instagram + Pages), Google OAuth, GA4, Search Console e "
         "Business Profile. Só local: nada sai para a internet.",
         version="0.1.0",
-        docs_url="/_mock/docs",
+        # Sem Swagger UI: a página buscaria JS e CSS num CDN externo. O contrato fica no JSON.
+        docs_url=None,
         openapi_url="/_mock/openapi.json",
         redoc_url=None,
     )

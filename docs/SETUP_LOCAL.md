@@ -89,6 +89,7 @@ Esta máquina já roda outros Supabase locais (faixas 5432x, 5442x e 5532x) e ou
 | Shadow DB | 56320 | Só existe durante `supabase db diff`. |
 | API FastAPI | 8100 | http://127.0.0.1:8100/health |
 | Web Next.js | 3100 | http://127.0.0.1:3100 |
+| Mocks dos provedores (Meta, GA4, Search Console, GBP; Fase 3) | 8300 (faixa 8300–8309) | http://127.0.0.1:8300/_mock/health · `make mocks`, guia em `docs/MOCKS_LOCAIS.md` |
 
 As portas do Supabase ficam em `supabase/config.toml`; os alvos `make dev-api` e `make dev-web` leem `API_PORT` e `WEB_PORT` do `.env` (padrão 8100 e 3100). Trocar `API_PORT` pede o mesmo número em `API_URL`; trocar `WEB_PORT`, em `NEXT_PUBLIC_SITE_URL`, `EMAIL_APP_URL` e `PAYMENT_BACK_URL` (caso do segundo checkout, em "Subir do zero"). Para mudar uma porta, altere o arquivo, atualize esta tabela e confira com `ss -ltn | grep <porta>` que ela está livre.
 
