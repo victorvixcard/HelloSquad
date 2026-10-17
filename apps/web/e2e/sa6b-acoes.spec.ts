@@ -164,7 +164,7 @@ test("o Vic abre e encerra a sessão de suporte, ajusta crédito, suspende e rea
   await expect(page.getByRole("dialog")).toContainText("À venda fica travado");
   await snap(page, "sa6b-dialogo-plano");
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("region", { name: "Versões gravadas pelo painel" }).or(page.getByRole("table", { name: "Versões gravadas pelo painel" }))).toBeVisible();
+  await expect(page.getByRole("table", { name: "Versões gravadas pelo painel" })).toBeVisible();
 
   // Auditoria: as sete ações com o Vic; as que pedem motivo, com o motivo.
   const vic = "(select id::text from auth.users where email = 'vic@hellosquad.example')";
