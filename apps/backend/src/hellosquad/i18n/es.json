@@ -375,6 +375,11 @@
   "error.billing_owner_only": "Solo el dueño de la cuenta ve la suscripción y los pagos.",
   "error.platform_admin_only": "Solo el Super Admin de la plataforma accede al panel.",
   "error.account_not_found": "Cuenta no encontrada.",
+  "error.squad_invalid_content": "Contenido inválido para el squad: {detail}",
+  "error.squad_unknown_tool": "Herramienta fuera del catálogo de herramientas del squad: {tools}.",
+  "error.squad_diff_units": "Solo se comparan versiones del mismo SOUL, skill, agent.yaml o regla compartida.",
+  "error.squad_not_seeded": "El squad aún no está en la base de datos: ejecuta make squad-seed.",
+  "error.squad_skill_missing": "Esta delivery aún no tiene una skill escrita.",
   "error.learning_not_found": "Aprendizaje no encontrado.",
   "error.run_not_found": "Run no encontrado.",
   "error.price_not_found": "Esta entrega aún no tiene precio en créditos."

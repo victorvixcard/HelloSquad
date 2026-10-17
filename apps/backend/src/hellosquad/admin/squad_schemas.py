@@ -40,7 +40,7 @@ class SoulSection(BaseModel):
     words: int
     chars: int
     changed_in_version: int = Field(
-        description="Versão da SOUL em que o texto, o título ou a flag desta seção mudou por último."
+        description="Versão da SOUL em que texto, título ou flag desta seção mudou por último."
     )
 
 
@@ -180,7 +180,9 @@ class VersionDiff(BaseModel):
     to_version: VersionRef
     unified: str = Field(description="Diff unificado (difflib), vazio quando o conteúdo é igual.")
     lines: list[DiffLine]
-    changed_sections: list[str] = Field(description="Na SOUL: seções com título, texto ou flag diferente.")
+    changed_sections: list[str] = Field(
+        description="Na SOUL: seções com título, texto ou flag diferente."
+    )
 
 
 class PromptBlock(BaseModel):
@@ -193,7 +195,9 @@ class PromptBlock(BaseModel):
 
 class PromptPreview(BaseModel):
     agent_id: str
-    route: str = Field(description="Delivery (skill), conversa ou reflexao: o que o run lê nessa rota.")
+    route: str = Field(
+        description="Delivery (skill), conversa ou reflexao: o que o run lê nessa rota."
+    )
     draft: bool = Field(description="true: montado com os rascunhos no lugar das versões ativas.")
     origin: Literal["database", "files"]
     content_hash: str
@@ -271,7 +275,7 @@ class RuleDocDetail(BaseModel):
     current: RuleVersion | None
     versions: list[RuleVersion]
     prompt_paragraphs: list[RuleParagraph] = Field(
-        description="O que entra no prompt: só [DECIDIDO] e [BASE ATUAL] de documento que entra no prompt."
+        description="O que entra no prompt: [DECIDIDO] e [BASE ATUAL] de documento no prompt."
     )
 
 
@@ -285,5 +289,5 @@ class RuleSaveResult(BaseModel):
     doc: RuleDocSummary
     version: RuleVersion
     shared_rules_draft: VersionRef | None = Field(
-        description="Rascunho novo das regras compartilhadas (README.md) quando o texto do prompt mudou."
+        description="Rascunho novo do README.md (regras compartilhadas) quando o prompt mudou."
     )
