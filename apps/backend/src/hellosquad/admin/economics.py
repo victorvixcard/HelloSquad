@@ -1,5 +1,6 @@
-"""Leituras econômicas do Consumo por cliente (SA4a): IA por crédito, margem bruta estimada e tendência
-do custo por turno, comparadas com as faixas de economic_alert_rules (proposta até o Vic decidir).
+"""Leituras econômicas do Consumo por cliente (SA4a): IA por crédito, margem bruta estimada e
+tendência do custo por turno, comparadas com as faixas de economic_alert_rules (proposta até o Vic
+decidir).
 Alerta só avisa: nada aqui grava nem muda conta, plano, crédito ou estado."""
 
 from dataclasses import dataclass
@@ -37,7 +38,7 @@ def trend_window(rules: list[AlertRule]) -> int:
 
 
 def trend_dates(until: date, days: int) -> tuple[date, date]:
-    """(primeiro dia dos N dias anteriores, primeiro dia dos últimos N dias); os dois terminam em until."""
+    """(1º dia dos N dias anteriores, 1º dia dos últimos N dias); os dois terminam em until."""
     recent = until - timedelta(days=days - 1)
     return recent - timedelta(days=days), recent
 

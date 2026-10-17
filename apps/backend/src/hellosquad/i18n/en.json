@@ -382,5 +382,19 @@
   "error.squad_skill_missing": "This delivery doesn't have a written skill yet.",
   "error.learning_not_found": "Learning not found.",
   "error.run_not_found": "Run not found.",
-  "error.price_not_found": "This delivery doesn't have a credit price yet."
+  "error.price_not_found": "This delivery doesn't have a credit price yet.",
+  "admin.quality.how_to_read.approved_first.title": "Approved first time",
+  "admin.quality.how_to_read.approved_first.text": "Approved by the account owner without any change request.",
+  "admin.quality.how_to_read.adjustments.title": "Changes per delivery",
+  "admin.quality.how_to_read.adjustments.text": "Change requests ÷ deliveries. Rejecting and asking for a new proposal also counts as a change.",
+  "admin.quality.how_to_read.not_approved.title": "Not approved",
+  "admin.quality.how_to_read.not_approved.text": "Rejected and the work cancelled.",
+  "admin.quality.how_to_read.cost_per_approved.title": "AI cost per approved delivery",
+  "admin.quality.how_to_read.cost_per_approved.text": "AI cost of the deliveries ÷ approved deliveries. Conversations are left out.",
+  "admin.quality.how_to_read.agent_error.title": "Agent error",
+  "admin.quality.how_to_read.agent_error.text": "Delivery that failed the self-check or came out of format.",
+  "admin.quality.how_to_read.failed_call.title": "Failed call",
+  "admin.quality.how_to_read.failed_call.text": "Provider call that failed, including the ones that succeeded on retry.",
+  "admin.quality.how_to_read.rates.title": "Comparing periods",
+  "admin.quality.how_to_read.rates.text": "To compare periods with different volumes, counts become rates: not approved as % of deliveries; errors and failed calls per 100 deliveries. Each delivery counts in the month of its first decision and in the prompt version that produced its first version."
 }

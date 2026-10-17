@@ -458,7 +458,7 @@ class ConsumptionResponse(BaseModel):
     totals: UsageTotals
     granularity: Granularity
     series: list[ConsumptionBucket] = Field(
-        description="O conjunto filtrado (todas as contas ou `workspace_id`) por dia, semana ou mês."
+        description="Conjunto filtrado (todas as contas ou `workspace_id`) por dia, semana ou mês."
     )
     economics: EconomicReadings = Field(description="Leituras do conjunto filtrado.")
     alert_rules: list[AlertRule]
@@ -482,7 +482,9 @@ class ProviderBalanceAlert(BaseModel):
 class AlertsResponse(BaseModel):
     since: date
     until: date
-    accounts: list[AccountAlerts] = Field(description="Só as contas com alguma leitura fora da faixa.")
+    accounts: list[AccountAlerts] = Field(
+        description="Só as contas com alguma leitura fora da faixa."
+    )
     providers: list[ProviderBalanceAlert] = Field(description="Saldo informado abaixo do limiar.")
     alert_rules: list[AlertRule]
 
@@ -609,5 +611,9 @@ class BalanceUpdate(BaseModel):
     read_at: datetime = Field(description="Quando o saldo foi lido no painel do provedor.")
     reason: str = Field(min_length=10, max_length=500)
     alert_below: Decimal | None = Field(
-        default=None, ge=0, max_digits=12, decimal_places=2, description="Nulo mantém o limiar atual."
+        default=None,
+        ge=0,
+        max_digits=12,
+        decimal_places=2,
+        description="Nulo mantém o limiar atual.",
     )

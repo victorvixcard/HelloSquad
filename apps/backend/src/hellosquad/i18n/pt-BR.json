@@ -382,5 +382,19 @@
   "error.squad_skill_missing": "Esta delivery ainda não tem skill escrita.",
   "error.learning_not_found": "Aprendizado não encontrado.",
   "error.run_not_found": "Run não encontrado.",
-  "error.price_not_found": "Esta entrega ainda não tem preço em créditos."
+  "error.price_not_found": "Esta entrega ainda não tem preço em créditos.",
+  "admin.quality.how_to_read.approved_first.title": "Aprovada de primeira",
+  "admin.quality.how_to_read.approved_first.text": "Aprovada pelo dono da conta sem nenhum pedido de ajuste.",
+  "admin.quality.how_to_read.adjustments.title": "Ajustes por entrega",
+  "admin.quality.how_to_read.adjustments.text": "Pedidos de ajuste ÷ entregas. Rejeitar pedindo nova proposta também conta como ajuste.",
+  "admin.quality.how_to_read.not_approved.title": "Não aprovada",
+  "admin.quality.how_to_read.not_approved.text": "Rejeitada com cancelamento do trabalho.",
+  "admin.quality.how_to_read.cost_per_approved.title": "Custo de IA por aprovada",
+  "admin.quality.how_to_read.cost_per_approved.text": "Custo de IA das entregas ÷ entregas aprovadas. A conversa fica fora.",
+  "admin.quality.how_to_read.agent_error.title": "Erro do agente",
+  "admin.quality.how_to_read.agent_error.text": "Entrega reprovada na autoverificação ou fora do formato.",
+  "admin.quality.how_to_read.failed_call.title": "Chamada com falha",
+  "admin.quality.how_to_read.failed_call.text": "Chamada ao provedor que falhou, inclusive as que deram certo na nova tentativa.",
+  "admin.quality.how_to_read.rates.title": "Comparar períodos",
+  "admin.quality.how_to_read.rates.text": "Para comparar períodos de volumes diferentes, as contagens viram taxa: não aprovadas em % das entregas; erros e chamadas com falha por 100 entregas. Cada entrega entra no mês do dia da primeira decisão e na versão do prompt que produziu a primeira versão."
 }

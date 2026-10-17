@@ -19,6 +19,8 @@ SAME_AS_PT_BR = {
     # No espanhol, também o que se escreve igual nas duas línguas.
     "es": SAME_EVERYWHERE
     | {
+        "admin.quality.how_to_read.adjustments.title",  # Ajustes por entrega
+        "admin.quality.how_to_read.rates.title",  # Comparar períodos
         "date.day",  # {weekday}, {day}/{month}
         "date.weekday.5",  # sáb
         "date.weekday.6",  # dom
