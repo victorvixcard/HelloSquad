@@ -65,7 +65,7 @@ test("o Vic abre o Otto, edita uma seção da Alma, publica, vê a versão nova 
   await page.getByRole("button", { name: "Comparar versões" }).click();
   const diff = page.getByRole("dialog", { name: "Comparar: versão 1 e versão 2" });
   await expect(diff.getByRole("columnheader", { name: "Versão 2 · Rascunho" })).toBeVisible();
-  await expect(diff.locator("ins")).toContainText("Texto de teste do e2e da SA3b.");
+  await expect(diff.locator("ins").filter({ hasText: "Texto de teste do e2e da SA3b." })).toBeVisible();
   await snap(page, "sa3b-comparar");
   await diff.getByRole("button", { name: "Fechar" }).click();
 
@@ -102,7 +102,7 @@ test("o Vic abre o Otto, edita uma seção da Alma, publica, vê a versão nova 
   await expect(page.getByRole("tab", { name: /04\.01/ })).toBeVisible();
   await snap(page, "sa3b-skills");
   await page.getByRole("tab", { name: "Ferramentas e limites" }).click();
-  await expect(page.getByText("canais.publicar_instagram")).toBeVisible();
+  await expect(page.getByText("canais.publicar_instagram", { exact: true })).toBeVisible();
   await snap(page, "sa3b-ferramentas");
   await page.getByRole("navigation", { name: "Navegação do Super Admin" }).getByRole("link", { name: "Regras de negócio" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Regras de negócio" })).toBeVisible();
