@@ -550,6 +550,41 @@ psql "$DATABASE_URL" -c "select template, locale, status, attempts, provider_mes
 psql "$DATABASE_URL" -c "delete from public.invitations where email = 'nova.pessoa@miolo.example'"
 ```
 
+### Super Admin: API de leitura do painel (SA1)
+
+O Super Admin é papel de **plataforma** (`platform_admins`), fora de `memberships`, e o painel faz parte da mesma API e do mesmo banco (rotas `/admin/*`). O `make seed` cria o **Vic fictício** como único Super Admin local: `vic@hellosquad.example`, senha `Senha!Teste123` (`docs/DADOS_FICTICIOS.md`), sem conta de cliente e com a verificação em duas etapas desligada (`mfa_enforced = false`; o 2FA é da Fase 5).
+
+```bash
+PK=$(sed -n 's/^SUPABASE_PUBLISHABLE_KEY=//p' .env)
+VIC=$(curl -s -X POST 'http://127.0.0.1:56321/auth/v1/token?grant_type=password' \
+  -H "apikey: $PK" -H 'Content-Type: application/json' \
+  -d '{"email":"vic@hellosquad.example","password":"Senha!Teste123"}' \
+  | python3 -c 'import sys, json; print(json.load(sys.stdin)["access_token"])')
+API=http://127.0.0.1:8100; AUTH="Authorization: Bearer $VIC"
+
+curl -s $API/admin/me -H "$AUTH"                                   # quem está no painel e o 2FA
+curl -s "$API/admin/accounts?q=miolo&limit=20" -H "$AUTH"          # contas (q, plan, status, cursor)
+curl -s $API/admin/accounts/<workspace_id> -H "$AUTH"              # detalhe; grava "acesso do suporte"
+curl -s "$API/admin/catalog?agent_id=otto" -H "$AUTH"              # 46 deliveries, preço provisório
+curl -s $API/admin/plans -H "$AUTH"                                # planos e recargas, nada à venda
+curl -s $API/admin/payments -H "$AUTH"                             # provedores, assinaturas, cobranças, webhooks
+curl -s "$API/admin/audit?actor=platform_admin&since=2026-10-01" -H "$AUTH"   # actor, workspace_id, category, since, until, cursor
+curl -s "$API/admin/queue?status=failed" -H "$AUTH"                # filas pgmq, estados e runs
+curl -s $API/admin/queue/runs/<run_id> -H "$AUTH"                  # run com passos e eventos
+curl -s "$API/admin/models?since=2026-10-01&until=2026-10-16" -H "$AUTH"      # preços, câmbio, regras, custo por modelo
+curl -s "$API/admin/consumption?since=2026-10-01" -H "$AUTH"       # consumo por conta e período
+curl -s "$API/admin/quality?since=2026-08-01" -H "$AUTH"           # qualidade por tipo e por mês
+curl -s $API/admin/providers -H "$AUTH"                            # saúde das APIs
+```
+
+- Roteiro executado com a saída: `docs/parciais/sa1/curl_admin.sh` (`curl_admin.txt` ao lado).
+- **Quem entra:** só quem está em `platform_admins`. Owner, editor ou pessoa sem conta recebem **403** `platform_admin_only` ("Só o Super Admin da plataforma acessa o painel.") em todas as rotas; sem token, 401.
+- **Como a API lê:** a transação da rota confere `app.is_platform_admin()` como `authenticated` e só então assume `hellosquad_admin` (`SET LOCAL ROLE`; papel NOLOGIN, sem BYPASSRLS, que a API assume sem herdar). As políticas desse papel exigem o JWT de um Super Admin: com o JWT de outra pessoa ele não lê nada. Consulta por cliente sempre com `workspace_id` explícito. A auditoria sai por `app.admin_audit_events` (a tabela `audit_events` segue sem política, como na S0).
+- **Data API:** nenhuma tabela ou view do painel tem GRANT para `anon`, `authenticated` ou `service_role`: `/rest/v1/delivery_catalog` responde 401/403 até com o JWT do Vic.
+- **Segredos:** chave de provedor nunca sai da API, só `configured`, `missing` ou `not_applicable`.
+- **Valores provisórios:** catálogo, planos, recargas e preços de modelo vêm marcados `provisional`; "à venda" desmarcado em tudo; profundidade das deliveries `inferred` (pergunta 6 do SA0).
+- Ler o detalhe de uma conta grava `support.account_viewed` em `audit_events` (categoria `support_access`, autor o Super Admin). `make seed` não apaga esses eventos (a auditoria não apaga nada).
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
