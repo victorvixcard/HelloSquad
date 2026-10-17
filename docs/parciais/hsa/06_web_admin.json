@@ -1,0 +1,125 @@
+{
+ "personas": {},
+ "vic": {},
+ "anon": {},
+ "i18n": {
+  "es": [
+   {
+    "route": "/admin",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/contas",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/contas/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/catalogo",
+    "probe": true,
+    "pt": [
+     "Catálogo",
+     "Auditoria"
+    ]
+   },
+   {
+    "route": "/admin/planos",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/pagamentos",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/auditoria",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/fila",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/fila/5eed0000-0000-4000-8000-000000000401",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/modelos",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/squad",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/squad/otto",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/regras",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/consumo",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/saude",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   },
+   {
+    "route": "/admin/qualidade",
+    "probe": true,
+    "pt": [
+     "Catálogo"
+    ]
+   }
+  ]
+ },
+ "console": [
+  "vic@hellosquad.example: A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client"
+ ]
+}
