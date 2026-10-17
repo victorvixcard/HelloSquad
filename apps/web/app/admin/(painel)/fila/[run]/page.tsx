@@ -5,7 +5,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { RUN_KIND } from "@/components/admin/runs";
-import { AgentLabel, ApiProblem, Card, DataTable, Empty, SoonButton, Status } from "@/components/admin/ui";
+import { RunActions } from "@/components/admin/actions/OpsActions";
+import { AgentLabel, ApiProblem, Card, DataTable, Empty, Status } from "@/components/admin/ui";
 import { adminRead, type RunDetail } from "@/lib/admin";
 import { adminFormat } from "@/lib/admin-format";
 import { codeLabel } from "@/lib/admin-labels";
@@ -29,7 +30,6 @@ export default async function RunPage({ params }: { params: Promise<{ run: strin
     `/admin/fila/${runId}`,
   );
   const crumbs = [{ label: t("run.crumb"), href: "/admin/fila" }];
-  const soon = t("common.comesIn", { slice: "SA6" });
 
   if (!result.ok) {
     const missing = result.error.status === 404 || result.error.status === 422;
@@ -68,12 +68,7 @@ export default async function RunPage({ params }: { params: Promise<{ run: strin
       title={t("run.title", { id: short })}
       desc={run.work_title ?? undefined}
       crumbs={[...crumbs, { label: short }]}
-      actions={
-        <>
-          <SoonButton label={t("fila.requeue")} reason={soon} />
-          <SoonButton label={t("fila.cancel")} reason={soon} />
-        </>
-      }
+      actions={<RunActions runId={run.id} status={run.status} work={run.work_title} account={run.workspace_name} />}
     >
       <Card id="run-resumo" title={t("run.summary")}>
         <dl className="sa-kv">

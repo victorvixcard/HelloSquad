@@ -2,7 +2,9 @@ import { unwrap } from "@hellosquad/contracts";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { AdminPage } from "@/components/admin/AdminPage";
-import { ApiProblem, Card, DataTable, Note, SoonButton, Status, Tag, type StatusKind } from "@/components/admin/ui";
+import { WebhookActions } from "@/components/admin/actions/OpsActions";
+import { RecentAudit } from "@/components/admin/actions/RecentAudit";
+import { ApiProblem, Card, DataTable, Note, Status, Tag, type StatusKind } from "@/components/admin/ui";
 import { adminRead, type PaymentsOverview } from "@/lib/admin";
 import { adminFormat } from "@/lib/admin-format";
 import { codeLabel } from "@/lib/admin-labels";
@@ -15,6 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
 type Subscription = PaymentsOverview["subscriptions"][number];
 type Payment = PaymentsOverview["payments"][number];
 type Webhook = PaymentsOverview["webhooks"][number];
+
+/** Ações do Super Admin em pagamentos (a auditoria do pé da página mostra só estas). */
+const PAYMENT_ACTIONS = ["payment.webhook_reprocessed", "payment.reconciled"] as const;
 
 const PROVIDER_KIND: Record<string, StatusKind> = {
   working: "done",
@@ -30,7 +35,7 @@ const SUBSCRIPTION_KIND: Record<string, StatusKind> = { active: "done", pending:
 /**
  * Pagamentos (SA0 `pagamentos.html` → `GET /admin/payments` + estado dos provedores em `GET /admin/providers`):
  * provedores (chave e segredo só como configurada/ausente), assinaturas, cobranças, webhooks e falhas. Asaas e Mercado
- * Pago aparecem como "conta não criada" enquanto for o caso; reprocessar e conciliar chegam na SA6.
+ * Pago aparecem como "conta não criada" enquanto for o caso. Por webhook (SA6b): reprocessar e marcar conciliação, com motivo.
  */
 export default async function PaymentsPage() {
   const [t, locale] = await Promise.all([getTranslations("admin"), getLocale()]);
@@ -41,7 +46,6 @@ export default async function PaymentsPage() {
     adminRead((api) => unwrap(api.GET("/admin/providers")), "/admin/pagamentos"),
   ]);
   const health = new Map((providers.ok ? providers.data.items : []).map((p) => [p.provider, p]));
-  const soon = t("common.comesIn", { slice: "SA6" });
   const money = (amount: string | null, currency: string | null) => (amount && currency ? <span className="sa-num">{f.money(amount, currency)}</span> : dash);
   const account = (id: string | null, name: string | null) => (id && name ? <a className="sa-rowlink" href={`/admin/contas/${id}`}>{name}</a> : (name ?? dash));
 
@@ -50,12 +54,6 @@ export default async function PaymentsPage() {
       nav="pagamentos"
       title={t("pagamentos.title")}
       desc={t("pagamentos.desc")}
-      actions={
-        <>
-          <SoonButton label={t("pagamentos.reprocess")} reason={soon} />
-          <SoonButton label={t("pagamentos.reconcile")} reason={soon} />
-        </>
-      }
     >
       {payments.ok ? (
         <>
@@ -180,7 +178,19 @@ export default async function PaymentsPage() {
                     ),
                   },
                   { key: "account", label: t("pagamentos.colAccount"), cell: (w) => account(w.workspace_id, w.workspace_name) },
-                  { key: "outcome", label: t("pagamentos.colOutcome"), nowrap: true, cell: (w) => codeLabel(t, "webhookOutcome", w.outcome) },
+                  {
+                    key: "outcome",
+                    label: t("pagamentos.colOutcome"),
+                    cell: (w) => (
+                      <div className="sa-cell-m">
+                        <span>{codeLabel(t, "webhookOutcome", w.outcome)}</span>
+                        {w.reconciled_at ? (
+                          <small title={w.reconciliation_reason ?? undefined}>{t("acoes.webhook.reconciledAt", { when: f.dateTime(w.reconciled_at) })}</small>
+                        ) : null}
+                        <WebhookActions eventId={w.id} event={w.event_type} reconciled={Boolean(w.reconciled_at)} />
+                      </div>
+                    ),
+                  },
                 ]}
               />
             </Card>
@@ -202,6 +212,14 @@ export default async function PaymentsPage() {
       ) : (
         <ApiProblem label={t("common.apiDown")} message={payments.error.message} />
       )}
+      <RecentAudit
+        id="pag-auditoria"
+        title={t("acoes.webhook.recent")}
+        sub={t("conta.recentSub")}
+        empty={t("acoes.webhook.recentEmpty")}
+        category="billing"
+        actions={PAYMENT_ACTIONS}
+      />
     </AdminPage>
   );
 }

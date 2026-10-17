@@ -5,7 +5,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { RUN_KIND, RUN_STATES, type RunState } from "@/components/admin/runs";
-import { AgentLabel, ApiProblem, Card, DataTable, Metrics, Pager, SoonButton, Status } from "@/components/admin/ui";
+import { RunActions } from "@/components/admin/actions/OpsActions";
+import { RecentAudit } from "@/components/admin/actions/RecentAudit";
+import { AgentLabel, ApiProblem, Card, DataTable, Metrics, Pager, Status } from "@/components/admin/ui";
 import { adminRead, type QueueOverview, type QueueRun } from "@/lib/admin";
 import { adminFormat } from "@/lib/admin-format";
 import { codeLabel, hrefWith, one } from "@/lib/admin-labels";
@@ -16,6 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 type Queue = QueueOverview["queues"][number];
+/** Ações do Super Admin na fila (a auditoria do pé da página mostra só estas). */
+const RUN_ACTIONS = ["run.requeued_by_support", "run.cancelled_by_support"] as const;
+
 type Search = Promise<Record<string, string | string[] | undefined>>;
 
 /**
@@ -34,7 +39,6 @@ export default async function QueuePage({ searchParams }: { searchParams: Search
     (api) => unwrap(api.GET("/admin/queue", { params: { query: { status, cursor, limit: 50 } } })),
     "/admin/fila",
   );
-  const soon = t("common.comesIn", { slice: "SA6" });
 
   if (!result.ok) {
     return (
@@ -52,12 +56,6 @@ export default async function QueuePage({ searchParams }: { searchParams: Search
       nav="fila"
       title={t("fila.title")}
       desc={t("fila.desc")}
-      actions={
-        <>
-          <SoonButton label={t("fila.requeue")} reason={soon} />
-          <SoonButton label={t("fila.cancel")} reason={soon} />
-        </>
-      }
     >
       <Metrics
         cols={4}
@@ -183,6 +181,12 @@ export default async function QueuePage({ searchParams }: { searchParams: Search
                   dash
                 ),
             },
+            {
+              key: "acts",
+              label: t("acoes.run.col"),
+              nowrap: true,
+              cell: (r) => <RunActions runId={r.id} status={r.status} work={r.work_title} account={r.workspace_name} />,
+            },
           ]}
         />
       </Card>
@@ -191,6 +195,14 @@ export default async function QueuePage({ searchParams }: { searchParams: Search
         firstHref={cursor ? hrefWith("/admin/fila", { estado: status }) : null}
         nextLabel={t("common.next")}
         firstLabel={t("common.first")}
+      />
+      <RecentAudit
+        id="fila-auditoria"
+        title={t("acoes.run.recent")}
+        sub={t("conta.recentSub")}
+        empty={t("acoes.run.recentEmpty")}
+        category="work"
+        actions={RUN_ACTIONS}
       />
     </AdminPage>
   );

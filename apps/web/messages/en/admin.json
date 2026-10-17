@@ -1291,6 +1291,49 @@
       "historySub": "From the audit log; read only, never editable. Version 1 of each offer came from the seed and doesn't show here.",
       "historyEmpty": "No version saved through the panel yet.",
       "colOffer": "Offer"
+    },
+    "run": {
+      "col": "Actions",
+      "requeue": {
+        "open": "Requeue",
+        "title": "Requeue run {id}?",
+        "desc": "{what}. The run goes back to the queue with attempts reset. A run that already reserved credits is refused: then the way is to request the work again.",
+        "confirm": "Requeue with the reason",
+        "done": "Run {id} back in the queue (attempts: {attempts}). Recorded in the audit log."
+      },
+      "cancel": {
+        "open": "Cancel",
+        "title": "Cancel run {id}?",
+        "desc": "{what}. The run leaves the queue and doesn't come back by itself. Whether to charge credits on cancellation is still a pending decision in Business rules.",
+        "reasonHint": "Stays in the audit log and in the run error.",
+        "confirm": "Cancel the run",
+        "done": "Run {id} cancelled. Recorded in the audit log."
+      },
+      "recent": "Queue audit log",
+      "recentEmpty": "No run requeued or cancelled through the panel yet."
+    },
+    "webhook": {
+      "reprocess": {
+        "open": "Reprocess",
+        "title": "Reprocess {event}?",
+        "desc": "Checks the charge with the provider and applies the status through the same billing path. Each event counts once: what was already applied doesn't repeat or credit again.",
+        "confirm": "Reprocess with the reason",
+        "applied": "Reprocessed: status {status} applied. Recorded in the audit log.",
+        "noChange": "Reprocessed with no change: status {status} was already in place. Recorded in the audit log.",
+        "duplicate": "Duplicate: status {status} had already been applied with this id; nothing repeated. Recorded in the audit log.",
+        "unknown": "The provider didn't report a status (simulated provider); nothing was applied. Recorded in the audit log.",
+        "other": "Reprocessed: {outcome} (status {status}). Recorded in the audit log."
+      },
+      "reconcile": {
+        "open": "Mark reconciled",
+        "title": "Mark {event} as reconciled",
+        "desc": "Use it when the mismatch was already explained outside the panel. It counts once per webhook; the reason stays in the audit log with your name.",
+        "confirm": "Mark as reconciled",
+        "done": "{event} marked as reconciled. Recorded in the audit log."
+      },
+      "reconciledAt": "Reconciled on {when}",
+      "recent": "Payments audit log",
+      "recentEmpty": "No webhook reprocessed or reconciled through the panel yet."
     }
   }
 }

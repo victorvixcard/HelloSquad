@@ -1291,6 +1291,49 @@
       "historySub": "De la auditoría; solo lectura, nunca editables. La versión 1 de cada oferta vino del seed y no aparece aquí.",
       "historyEmpty": "Ninguna versión guardada por el panel todavía.",
       "colOffer": "Oferta"
+    },
+    "run": {
+      "col": "Acciones",
+      "requeue": {
+        "open": "Reencolar",
+        "title": "¿Reencolar el run {id}?",
+        "desc": "{what}. El run vuelve a la cola con los intentos en cero. Un run que ya reservó créditos se rechaza: ahí el camino es pedir el trabajo de nuevo.",
+        "confirm": "Reencolar con el motivo",
+        "done": "Run {id} de vuelta en la cola (intentos: {attempts}). Registrado en la auditoría."
+      },
+      "cancel": {
+        "open": "Cancelar",
+        "title": "¿Cancelar el run {id}?",
+        "desc": "{what}. El run sale de la cola y no vuelve solo. Cobrar o no créditos al cancelar sigue siendo una decisión pendiente en Reglas de negocio.",
+        "reasonHint": "Queda en la auditoría y en el error del run.",
+        "confirm": "Cancelar el run",
+        "done": "Run {id} cancelado. Registrado en la auditoría."
+      },
+      "recent": "Auditoría de la cola",
+      "recentEmpty": "Ningún run reencolado o cancelado por el panel todavía."
+    },
+    "webhook": {
+      "reprocess": {
+        "open": "Reprocesar",
+        "title": "¿Reprocesar {event}?",
+        "desc": "Consulta el cobro en el proveedor y aplica el estado por el mismo camino del cobro. Cada evento vale una vez: lo ya aplicado no se repite ni acredita de nuevo.",
+        "confirm": "Reprocesar con el motivo",
+        "applied": "Reprocesado: estado {status} aplicado. Registrado en la auditoría.",
+        "noChange": "Reprocesado sin cambios: el estado {status} ya valía. Registrado en la auditoría.",
+        "duplicate": "Duplicado: el estado {status} ya se había aplicado con este id; nada se repitió. Registrado en la auditoría.",
+        "unknown": "El proveedor no informó el estado (proveedor simulado); no se aplicó nada. Registrado en la auditoría.",
+        "other": "Reprocesado: {outcome} (estado {status}). Registrado en la auditoría."
+      },
+      "reconcile": {
+        "open": "Marcar conciliación",
+        "title": "Marcar {event} como conciliado",
+        "desc": "Úsalo cuando la diferencia ya se explicó fuera del panel. Vale una vez por webhook; el motivo queda en la auditoría con tu nombre.",
+        "confirm": "Marcar como conciliado",
+        "done": "{event} marcado como conciliado. Registrado en la auditoría."
+      },
+      "reconciledAt": "Conciliado el {when}",
+      "recent": "Auditoría de pagos",
+      "recentEmpty": "Ningún webhook reprocesado o conciliado por el panel todavía."
     }
   }
 }
