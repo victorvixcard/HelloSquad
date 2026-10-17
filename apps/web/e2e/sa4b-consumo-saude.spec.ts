@@ -87,7 +87,7 @@ test("o Vic vê o consumo da Miolo, informa um saldo e vê o alerta mudar", asyn
 
   // Saldo abaixo do limiar: o cartão avisa, o histórico guarda o motivo e a barra ganha o contador.
   await informBalance(page, "38,00", "50");
-  await expect(page.getByRole("status").filter({ hasText: "Saldo de Anthropic registrado." })).toBeVisible();
+  await expect(page.getByRole("status").getByText("Saldo de Anthropic registrado.")).toBeVisible();
   await expect(anthropic.getByText("Saldo abaixo do alerta")).toBeVisible();
   await expect(anthropic.getByRole("table", { name: "Saldos informados de Anthropic" }).getByText(REASON)).toBeVisible();
   await expect(page.getByRole("link", { name: "Saúde das APIs, 1 saldo abaixo do alerta" })).toBeVisible();
