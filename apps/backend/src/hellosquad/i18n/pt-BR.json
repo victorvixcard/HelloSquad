@@ -373,6 +373,8 @@
   "error.invalid_payload": "Corpo do webhook fora do formato do provedor.",
   "error.provider_unavailable": "Não foi possível consultar o provedor agora.",
   "error.billing_owner_only": "Só o dono da conta vê a assinatura e os pagamentos.",
+  "error.platform_admin_only": "Só o Super Admin da plataforma acessa o painel.",
+  "error.account_not_found": "Conta não encontrada.",
   "error.learning_not_found": "Aprendizado não encontrado.",
   "error.run_not_found": "Run não encontrado.",
   "error.price_not_found": "Esta entrega ainda não tem preço em créditos."

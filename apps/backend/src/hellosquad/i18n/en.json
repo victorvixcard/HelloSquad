@@ -373,6 +373,8 @@
   "error.invalid_payload": "Webhook body does not match the provider's format.",
   "error.provider_unavailable": "We couldn't reach the provider right now.",
   "error.billing_owner_only": "Only the account owner can see the subscription and payments.",
+  "error.platform_admin_only": "Only the platform Super Admin can access the admin panel.",
+  "error.account_not_found": "Account not found.",
   "error.learning_not_found": "Learning not found.",
   "error.run_not_found": "Run not found.",
   "error.price_not_found": "This delivery doesn't have a credit price yet."

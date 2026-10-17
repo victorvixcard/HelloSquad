@@ -27,7 +27,14 @@ select set_config('role', 'authenticated', true),
 """
 
 
+IS_PLATFORM_ADMIN = "select app.is_platform_admin() as ok"
+
+
 class UnsafeDatabaseRoleError(RuntimeError):
+    pass
+
+
+class NotPlatformAdminError(PermissionError):
     pass
 
 
@@ -66,6 +73,22 @@ class Database:
         executa app.billing_apply_event e não lê tabela nenhuma."""
         async with self._pool.connection() as conn, conn.transaction():
             await conn.execute("select set_config('role', 'hellosquad_billing', true)")
+            yield conn
+
+    @asynccontextmanager
+    async def transaction_as_admin(
+        self, principal: Principal
+    ) -> AsyncIterator[AsyncConnection[DictRow]]:
+        """Transação de uma rota /admin/*: confere platform_admins como authenticated e só então assume
+        hellosquad_admin (sem BYPASSRLS; as políticas dele exigem o JWT de um Super Admin)."""
+        async with self._pool.connection() as conn, conn.transaction():
+            await conn.execute(
+                SET_USER_CONTEXT, (json.dumps(principal.claims), str(principal.user_id))
+            )
+            row = await (await conn.execute(IS_PLATFORM_ADMIN)).fetchone()
+            if row is None or not row["ok"]:
+                raise NotPlatformAdminError(str(principal.user_id))
+            await conn.execute("select set_config('role', 'hellosquad_admin', true)")
             yield conn
 
     @asynccontextmanager
