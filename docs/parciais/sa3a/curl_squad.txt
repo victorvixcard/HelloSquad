@@ -1,0 +1,24 @@
+== Vic: leitura
+GET /admin/squad -> 200 [('nexo', 'alma v1', 'yaml v1', 2, '/', 4), ('bia', 'alma v1', 'yaml v1', 5, '/', 7), ('kaia', 'alma v1', 'yaml v1', 1, '/', 7), ('otto', 'alma v1', 'yaml v1', 3, '/', 7), ('kiwi', 'alma v1', 'yaml v1', 2, '/', 9), ('max', 'alma v1', 'yaml v1', 3, '/', 6), ('iris', 'alma v1', 'yaml v1', 3, '/', 6)] digital: 5f5a4a0031c8
+GET /admin/squad/agents/otto -> 200 alma: Otto — Conteúdo e Comunicação 6 seções no prompt, 2211 caracteres; ferramentas: 14 skills: [('04.01', 1), ('04.02', 1), ('04.03', 1), ('04.04', None), ('04.05', None), ('04.06', None), ('04.07', None)]
+GET /admin/squad/agents/otto/prompt?route=04.01 -> 200 o que ele lê: database fb290a332565 [('rules_and_soul', 3197, 800), ('skill', 3216, 804), ('workspace', 61, 16), ('message', 246, 62)] total 1682 tokens (caracteres/4)
+GET /admin/rules -> 200 [('diretrizes-do-dono', 'v1', 'referência interna', {'decided': 26, 'current_base': 0, 'pending': 0, 'proposal': 0})]
+== Vic: editar → rascunho, comparar, conferir, publicar, voltar
+rascunho: soul v2 draft
+GET /admin/squad/diff?from=f0fb15bc-378f-4618-9905-946ffb60099a&to=c3788062-1a9f-4ccc-87da-d8b2aaa17a41 -> 200 seções mudadas: ['como_fala'] ['- Na voz da marca, não na sua. Frases curtas, concretas, sem c', '+ Na voz da marca, não na sua. Frases curtas e concretas.']
+GET /admin/squad/agents/otto/prompt?route=04.01&draft=true -> 200 com o rascunho: f19bdc4195c4
+POST /admin/squad/versions/c3788062-1a9f-4ccc-87da-d8b2aaa17a41/publish -> 200 publicada: v2 active
+GET /admin/squad/agents/otto/prompt?route=04.01 -> 200 ativo agora: f19bdc4195c4
+POST /admin/squad/versions/f0fb15bc-378f-4618-9905-946ffb60099a/restore -> 200 voltou: v3 active conteúdo da v1
+GET /admin/squad/agents/otto/prompt?route=04.01 -> 200 ativo depois de voltar: fb290a332565
+PUT /admin/squad/agents/otto/config -> 422 unknown_tool Ferramenta fora do catálogo de ferramentas do squad: planilhas.apagar_tudo.
+== Marina (owner da Miolo)
+GET /admin/squad -> 403 platform_admin_only Só o Super Admin da plataforma acessa o painel.
+PUT /admin/squad/agents/otto/soul/sections/como_fala -> 403 platform_admin_only
+POST /admin/squad/versions/f0fb15bc-378f-4618-9905-946ffb60099a/restore -> 403 platform_admin_only
+== Auditoria do roteiro
+squad.version_restored v3 por vic@hellosquad.example
+squad.version_published v2 por vic@hellosquad.example
+squad.draft_saved v2 por vic@hellosquad.example
+== Limpeza (só local): versões criadas pelo roteiro
+versões da SOUL do Otto: v1 active
