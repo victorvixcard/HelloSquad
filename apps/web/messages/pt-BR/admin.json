@@ -735,5 +735,43 @@
     "yaml": "agent.yaml",
     "yamlSub": "squad/{agent}/agent.yaml como o runtime lê",
     "readOnly": "Só leitura"
+  },
+  "le": {
+    "route": "Rota",
+    "routeDelivery": "{code} · {title}",
+    "routeChat": "Conversa",
+    "routeReflection": "Reflexão",
+    "version": "Versão",
+    "active": "Ativa",
+    "withDrafts": "Com os rascunhos",
+    "noDrafts": "Nenhum rascunho esperando: a montagem com os rascunhos é igual à ativa.",
+    "copy": "Copiar o prompt",
+    "copied": "Prompt montado copiado.",
+    "metSystem": "System",
+    "metMessage": "Mensagem",
+    "metTotal": "Total estimado",
+    "metHash": "Hash do prompt",
+    "chars": "caracteres",
+    "tokens": "tokens",
+    "approxTokens": "≈ {n} tokens",
+    "origin": {
+      "database": "versões do banco (o mesmo que o runtime grava)",
+      "files": "arquivos de squad/ (banco sem versão ativa)"
+    },
+    "readOnly": "Só leitura",
+    "how": "Montado na mesma ordem do runtime. Preço, plano e catálogo nunca entram aqui: vêm do banco a cada conversa.",
+    "example": "Contexto de exemplo: marca {brand}, idioma {locale}, pedido \"{request}\".",
+    "sources": "Versões usadas",
+    "blockSystem": "System · bloco {n}",
+    "blockMessage": "Mensagem do usuário",
+    "part": {
+      "rules_and_soul": "regras compartilhadas + Alma",
+      "skill": "skill da rota",
+      "workspace": "idioma, marca e fatos confirmados",
+      "message": "trabalho, histórico, pedido e etapa"
+    },
+    "cached": "Em cache",
+    "notCached": "Sem cache",
+    "blockSize": "{chars} caracteres · ≈ {tokens} tokens"
   }
 }

@@ -1312,13 +1312,12 @@ order by b.provider, b.created_at desc
 
 
 def anthropic_status(stored: str, activity: dict) -> str:
-    """Simulado enquanto o runtime não chama a Anthropic; depois, falhando se a última falha é a
-    mais recente."""
+    """Simulado enquanto o runtime não chama a Anthropic (LLM_PROVIDER=simulated ou sem chave,
+    como em llm/factory.py); com a chave, falhando se a última falha é mais recente que o último
+    sucesso."""
     settings = get_settings()
-    if settings.llm_provider == "simulated":
+    if settings.llm_provider == "simulated" or key_state(settings.anthropic_api_key) == "missing":
         return "simulated"
-    if key_state(settings.anthropic_api_key) == "missing":
-        return "failing"
     failure, success = activity["last_failure_at"], activity["last_success_at"]
     if failure is not None and (success is None or failure > success):
         return "failing"

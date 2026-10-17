@@ -6,6 +6,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { AdminTabs } from "@/components/admin/AdminTabs";
 import { ConfigPanel } from "@/components/admin/squad/ConfigPanel";
+import { PromptPanel } from "@/components/admin/squad/PromptPanel";
 import { SkillsPanel } from "@/components/admin/squad/SkillsPanel";
 import { SoulPanel } from "@/components/admin/squad/SoulPanel";
 import { ApiProblem } from "@/components/admin/ui";
@@ -66,6 +67,24 @@ export default async function AgentPage({ params }: Props) {
     }),
   );
   const written = d.skills.filter((s) => s.active).length;
+  // O que ele lê: as rotas que montam prompt (delivery com skill, conversa, reflexão); abre na primeira, versão ativa.
+  const routes = [
+    ...d.skills
+      .filter((s) => s.active || s.draft)
+      .map((s) => ({ value: s.delivery_type, label: t("le.routeDelivery", { code: s.delivery_type, title: s.title ?? "" }) })),
+    { value: "conversa", label: t("le.routeChat") },
+    { value: "reflexao", label: t("le.routeReflection") },
+  ];
+  const firstPreview = await adminRead(
+    (api) =>
+      unwrap(
+        api.GET("/admin/squad/agents/{agent_id}/prompt", {
+          params: { path: { agent_id: agente }, query: { route: routes[0]!.value, draft: false } },
+        }),
+      ),
+    back,
+  );
+  const hasDrafts = Boolean(d.soul_draft || d.config_draft || d.skills.some((s) => s.draft));
   const i = AGENT_IDS.indexOf(agente);
   const prev = AGENT_IDS[(i + AGENT_IDS.length - 1) % AGENT_IDS.length]!;
   const next = AGENT_IDS[(i + 1) % AGENT_IDS.length]!;
@@ -129,6 +148,19 @@ export default async function AgentPage({ params }: Props) {
                 configDraft={d.config_draft}
                 toolCatalog={squad.ok ? squad.data.tool_catalog : []}
                 versions={configVersions.ok ? configVersions.data.items : []}
+              />
+            ),
+          },
+          {
+            id: "le",
+            label: t("agente.tabReads"),
+            panel: (
+              <PromptPanel
+                agentId={a.id}
+                routes={routes}
+                initial={firstPreview.ok ? firstPreview.data : null}
+                initialError={firstPreview.ok ? null : firstPreview.error.message}
+                hasDrafts={hasDrafts}
               />
             ),
           },

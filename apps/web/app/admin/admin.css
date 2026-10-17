@@ -111,3 +111,9 @@
 .sq-yaml{max-height:420px}
 .sq-vers{margin-top:16px}
 .sa-tabs-w .sa-tabs.is-line{flex:1 1 auto;min-width:0}
+.sq-ptool{align-items:flex-end;gap:16px;margin-bottom:14px}
+.sq-ptool .sa-fld{gap:6px}
+.sq-sel{height:40px;min-height:0;padding:0 28px 0 12px;min-width:280px}
+.sq-pnote{margin:0 0 12px}
+.sq-hash{font-size:22px}
+.sq-src{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}

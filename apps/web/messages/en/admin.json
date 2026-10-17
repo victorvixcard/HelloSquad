@@ -735,5 +735,43 @@
     "yaml": "agent.yaml",
     "yamlSub": "squad/{agent}/agent.yaml as the runtime reads it",
     "readOnly": "Read only"
+  },
+  "le": {
+    "route": "Route",
+    "routeDelivery": "{code} · {title}",
+    "routeChat": "Conversation",
+    "routeReflection": "Reflection",
+    "version": "Version",
+    "active": "Active",
+    "withDrafts": "With the drafts",
+    "noDrafts": "No draft waiting: the assembly with drafts is the same as the active one.",
+    "copy": "Copy the prompt",
+    "copied": "Assembled prompt copied.",
+    "metSystem": "System",
+    "metMessage": "Message",
+    "metTotal": "Estimated total",
+    "metHash": "Prompt hash",
+    "chars": "characters",
+    "tokens": "tokens",
+    "approxTokens": "≈ {n} tokens",
+    "origin": {
+      "database": "database versions (the same the runtime records)",
+      "files": "squad/ files (no active version in the database)"
+    },
+    "readOnly": "Read only",
+    "how": "Assembled in the same order as the runtime. Price, plan and catalog never go in here: they come from the database on every conversation.",
+    "example": "Example context: brand {brand}, language {locale}, request \"{request}\".",
+    "sources": "Versions used",
+    "blockSystem": "System · block {n}",
+    "blockMessage": "User message",
+    "part": {
+      "rules_and_soul": "shared rules + soul",
+      "skill": "route skill",
+      "workspace": "language, brand and confirmed facts",
+      "message": "job, history, request and step"
+    },
+    "cached": "Cached",
+    "notCached": "Not cached",
+    "blockSize": "{chars} characters · ≈ {tokens} tokens"
   }
 }
