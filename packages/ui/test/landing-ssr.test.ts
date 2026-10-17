@@ -14,7 +14,7 @@ describe("landing R32 no servidor", () => {
     for (const id of ["topo", "demo", "squad", "autonomo", "memoria", "resultados", "porque", "faq", "comecar"]) expect(html).toContain(`id="${id}"`);
     expect(html).toContain("Do pedido à entrega.");
     expect(html).toContain("Seu marketing, em modo autônomo.");
-    expect(html).toContain("Dúvidas antes de começar?");
+    expect(html).toContain("Dúvidas antes</span> <span>de começar?</span>");
     expect(html).not.toContain("{{");
   });
 });
