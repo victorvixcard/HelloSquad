@@ -659,7 +659,7 @@
     "restoreTitle": "Go back to version {v} {unit}?",
     "restoreDesc": "Creates a new version, already active, with the content of version {v}. The next runs will use it; nothing is deleted.",
     "restoreConfirm": "Go back to this version",
-    "reason": "Reason (goes to the audit log)",
+    "reason": "Reason (kept in the version history)",
     "reasonHint": "Optional, but it helps whoever reads the history.",
     "done": {
       "saved": "Draft saved as version {v}. Publish it to reach the runtime.",

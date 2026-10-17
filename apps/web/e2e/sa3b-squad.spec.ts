@@ -56,7 +56,7 @@ test("o Vic abre o Otto, edita uma seção da Alma, publica, vê a versão nova 
   const body = page.getByLabel("Texto da seção (markdown)");
   const original = await body.inputValue();
   await body.fill(`${original}\n\nTexto de teste do e2e da SA3b.`);
-  await page.getByLabel("Motivo (vai para a auditoria)").fill("e2e SA3b");
+  await page.getByLabel("Motivo (fica no histórico de versões)").fill("e2e SA3b");
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page.getByText("Versão 2 da Alma do Otto pronta para publicar.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Voltar para esta versão (Versão 1)" })).toHaveCount(0);
@@ -88,10 +88,11 @@ test("o Vic abre o Otto, edita uma seção da Alma, publica, vê a versão nova 
   await page.getByRole("tab", { name: "Alma" }).click();
   await page.getByRole("button", { name: "Voltar para esta versão (Versão 1)" }).click();
   const restore = page.getByRole("dialog", { name: "Voltar para a versão 1 da Alma do Otto?" });
-  await restore.getByLabel("Motivo (vai para a auditoria)").fill("e2e SA3b: voltar");
+  await restore.getByLabel("Motivo (fica no histórico de versões)").fill("e2e SA3b: voltar");
   await restore.getByRole("button", { name: "Voltar para esta versão" }).click();
   await expect(page.getByText("Versão 3 ativa, com o conteúdo da versão 1.")).toBeVisible();
   await expect(page.locator(".sq-vers").first()).toContainText("voltou da versão 1");
+  await expect(page.locator(".sq-vers").first()).toContainText("e2e SA3b: voltar");
   await snap(page, "sa3b-voltou");
   await page.getByRole("tab", { name: "O que ele lê" }).click();
   await expect(page.getByText("fb290a332565")).toBeVisible();

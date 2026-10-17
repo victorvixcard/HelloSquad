@@ -659,7 +659,7 @@
     "restoreTitle": "¿Volver a la versión {v} {unit}?",
     "restoreDesc": "Crea una versión nueva, ya activa, con el contenido de la versión {v}. Los próximos runs la usarán; nada se borra.",
     "restoreConfirm": "Volver a esta versión",
-    "reason": "Motivo (va a la auditoría)",
+    "reason": "Motivo (queda en el historial de versiones)",
     "reasonHint": "Opcional, pero ayuda a quien lee el historial.",
     "done": {
       "saved": "Borrador guardado como versión {v}. Publícalo para que llegue al runtime.",

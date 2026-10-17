@@ -659,7 +659,7 @@
     "restoreTitle": "Voltar para a versão {v} {unit}?",
     "restoreDesc": "Cria uma versão nova, já ativa, com o conteúdo da versão {v}. Os próximos runs passam a usá-la; nada é apagado.",
     "restoreConfirm": "Voltar para esta versão",
-    "reason": "Motivo (vai para a auditoria)",
+    "reason": "Motivo (fica no histórico de versões)",
     "reasonHint": "Opcional, mas ajuda quem lê o histórico.",
     "done": {
       "saved": "Rascunho salvo na versão {v}. Publique para entrar no runtime.",

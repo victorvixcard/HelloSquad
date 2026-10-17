@@ -155,7 +155,7 @@ describe("Agente › Alma", () => {
     const body = screen.getByLabelText("Texto da seção (markdown)");
     await user.clear(body);
     await user.type(body, "Na voz da marca. Frases curtas e concretas.");
-    await user.type(screen.getByLabelText("Motivo (vai para a auditoria)"), "tirar clichê");
+    await user.type(screen.getByLabelText("Motivo (fica no histórico de versões)"), "tirar clichê");
     await user.click(screen.getByRole("button", { name: "Salvar rascunho" }));
     expect(api.saveSoulSectionAction).toHaveBeenCalledWith("otto", "como_fala", {
       section: "como_fala",
@@ -216,7 +216,7 @@ describe("Agente › Alma", () => {
     const { unmount } = renderAdmin(<SoulPanel agent={otto} unit={unit} soul={{ ...soul, ref: active }} soulDraft={null} versions={[active, old]} />);
     await user.click(screen.getByRole("button", { name: "Voltar para esta versão (Versão 1)" }));
     const dialog = screen.getByRole("dialog", { name: "Voltar para a versão 1 da Alma do Otto?" });
-    await user.type(within(dialog).getByLabelText("Motivo (vai para a auditoria)"), "texto novo piorou");
+    await user.type(within(dialog).getByLabelText("Motivo (fica no histórico de versões)"), "texto novo piorou");
     await user.click(within(dialog).getByRole("button", { name: "Voltar para esta versão" }));
     expect(api.restoreVersionAction).toHaveBeenCalledWith("v1", "texto novo piorou");
     expect(await screen.findByText("Versão 3 ativa, com o conteúdo da versão 1.")).toBeVisible();
