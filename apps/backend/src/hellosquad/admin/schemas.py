@@ -1,6 +1,6 @@
-"""Respostas das rotas /admin/* (Super Admin). Campos em inglês; o formato segue o que as telas do
-protótipo SA0 esperam (design/super-admin-proto/app/data.js). Rótulos ficam no catálogo do web: aqui só
-códigos estáveis. Nenhum segredo: chave de provedor é só "configured" ou "missing"."""
+"""Respostas das rotas /admin/* (Super Admin). Campos em inglês; o formato segue o que as telas
+do protótipo SA0 esperam (design/super-admin-proto/app/data.js). Rótulos ficam no catálogo do web:
+aqui só códigos estáveis. Nenhum segredo: chave de provedor é só "configured" ou "missing"."""
 
 from datetime import date, datetime
 from decimal import Decimal
@@ -18,7 +18,7 @@ class AdminMe(BaseModel):
     email: str | None
     full_name: str | None
     mfa_enforced: bool = Field(
-        description="Verificação em duas etapas exigida. false até a Fase 5: o painel mostra o aviso."
+        description="Verificação em duas etapas exigida. false até a Fase 5: o painel avisa."
     )
 
 

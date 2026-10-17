@@ -1,7 +1,7 @@
-"""Rotas /admin/* de leitura (SA1). Só para quem está em platform_admins: a dependência confere e a
-transação de cada rota assume hellosquad_admin (sem BYPASSRLS) só depois de conferir de novo. Consulta
-por cliente sempre com workspace_id explícito. Ler o detalhe de uma conta grava "acesso do suporte" em
-audit_events. Chaves de provedor nunca saem daqui: só "configured" ou "missing"."""
+"""Rotas /admin/* de leitura (SA1). Só para quem está em platform_admins: a dependência confere e
+a transação de cada rota assume hellosquad_admin (sem BYPASSRLS) só depois de conferir de novo.
+Consulta por cliente sempre com workspace_id explícito. Ler o detalhe de uma conta grava "acesso do
+suporte" em audit_events. Chave de provedor nunca sai daqui: só "configured" ou "missing"."""
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -132,9 +132,9 @@ def key_state(value: SecretStr | None) -> KeyState:
     return "configured" if value is not None and value.get_secret_value() else "missing"
 
 
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Quem está no painel
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 ME = """
 select l.user_id, l.email, l.full_name, pa.mfa_enforced
@@ -154,9 +154,9 @@ async def admin_me(admin: PlatformAdmin, tx: AdminTx) -> AdminMe:
     return AdminMe(**row)
 
 
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Contas
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 ACCOUNTS_BASE = """
 with acc as (
@@ -164,12 +164,14 @@ with acc as (
          case when w.deleted_at is null then 'active' else 'deleted' end as status,
          p.slug as plan_slug, p.name as plan_name, v.provisional as plan_provisional,
          app.credit_balance(w.id, now()) as credits_balance,
-         (select count(*) from public.memberships m where m.workspace_id = w.id)::integer as member_count
+         (select count(*) from public.memberships m where m.workspace_id = w.id)::integer
+           as member_count
   from public.workspaces w
   left join public.credit_accounts a on a.workspace_id = w.id
   left join public.plan_versions v on v.id = a.plan_version_id
   left join public.plans p on p.id = v.plan_id
-  where (%(q)s::text is null or w.name ilike '%%' || %(q)s || '%%' or w.slug ilike '%%' || %(q)s || '%%')
+  where (%(q)s::text is null or w.name ilike '%%' || %(q)s || '%%'
+         or w.slug ilike '%%' || %(q)s || '%%')
     and (%(plan)s::text is null or p.slug = %(plan)s)
     and (%(status)s::text is null
          or (%(status)s = 'active' and w.deleted_at is null)
@@ -184,7 +186,8 @@ select acc.*,
        (select mb.email from app.admin_workspace_members(acc.id) mb where mb.role = 'owner' limit 1)
          as owner_email
 from acc
-where (%(cursor_at)s::timestamptz is null or (acc.created_at, acc.id) < (%(cursor_at)s, %(cursor_id)s))
+where (%(cursor_at)s::timestamptz is null
+       or (acc.created_at, acc.id) < (%(cursor_at)s, %(cursor_id)s))
 order by acc.created_at desc, acc.id desc
 limit %(limit)s
 """
@@ -303,7 +306,8 @@ select coalesce(sum(requests), 0)::integer as requests,
        coalesce(sum(output_tokens), 0)::bigint as output_tokens,
        coalesce(sum(ai_cost_deliveries_usd), 0)::numeric(14, 6) as ai_cost_deliveries_usd,
        coalesce(sum(ai_cost_conversation_usd), 0)::numeric(14, 6) as ai_cost_conversation_usd,
-       coalesce(sum(ai_cost_deliveries_usd + ai_cost_conversation_usd), 0)::numeric(14, 6) as ai_cost_usd
+       coalesce(sum(ai_cost_deliveries_usd + ai_cost_conversation_usd), 0)::numeric(14, 6)
+         as ai_cost_usd
 from public.v_consumo_por_cliente
 where workspace_id = %s and day between %s and %s
 """
@@ -325,7 +329,9 @@ AUDIT_SUPPORT_READ = "select app.admin_audit(%s, %s, 'workspace', %s, %s) as id"
 @router.get(
     "/accounts/{workspace_id}",
     summary="Conta: membros, créditos, extrato, acessos do suporte, uso em 30 dias e assinatura",
-    description="Cada leitura fica em audit_events como acesso do suporte (`support.account_viewed`).",
+    description=(
+        "Cada leitura fica em audit_events como acesso do suporte (`support.account_viewed`)."
+    ),
     responses=error_responses(401, 403, 404, 422, 503),
 )
 async def get_account(workspace_id: UUID, tx: AdminTx) -> AccountDetail:
@@ -369,15 +375,17 @@ async def get_account(workspace_id: UUID, tx: AdminTx) -> AccountDetail:
     )
 
 
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Catálogo, planos e recargas
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 CATALOG = """
 select c.delivery_type, c.agent_id::text as agent_id, c.name, c.result, c.depth::text as depth,
        c.depth_source, c.integrations, c.prerequisites, c.catalog_status, c.homologation_status,
-       c.for_sale, p.credits, p.revision_credits, p.provisional, p.approved_commercially, p.valid_from,
-       (select count(*) from public.delivery_prices x where x.delivery_type = c.delivery_type)::integer
+       c.for_sale, p.credits, p.revision_credits, p.provisional, p.approved_commercially,
+       p.valid_from,
+       (select count(*) from public.delivery_prices x
+        where x.delivery_type = c.delivery_type)::integer
          as versions
 from public.delivery_catalog c
 left join lateral (
@@ -450,7 +458,8 @@ order by v.credits, p.slug
 
 TOPUPS = """
 select distinct on (t.topup_id)
-       t.topup_id as id, t.slug, t.name, t.for_sale, t.version, t.credits, t.validity_days, t.amount,
+       t.topup_id as id, t.slug, t.name, t.for_sale, t.version, t.credits, t.validity_days,
+       t.amount,
        t.currency, t.provisional, t.approved_commercially
 from public.topup_versions t
 where t.valid_from <= now()
@@ -473,9 +482,9 @@ async def get_plans(tx: AdminTx) -> PlansResponse:
     )
 
 
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Pagamentos (S2e)
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 SUBSCRIPTIONS = """
 select s.id, s.workspace_id, w.name as workspace_name, p.name as plan, v.provisional,
@@ -491,7 +500,8 @@ limit 100
 """
 
 PAYMENTS = """
-select x.id, x.workspace_id, w.name as workspace_name, x.kind::text as kind, x.provider::text as provider,
+select x.id, x.workspace_id, w.name as workspace_name, x.kind::text as kind,
+       x.provider::text as provider,
        x.method::text as method, x.status::text as status, x.amount, x.currency, x.credits,
        x.created_at, x.confirmed_at
 from public.payments x
@@ -512,7 +522,7 @@ limit 50
 
 @router.get(
     "/payments",
-    summary="Pagamentos: provedores (chave configurada ou ausente), assinaturas, cobranças e webhooks",
+    summary="Pagamentos: provedores (chave configurada ou ausente), assinaturas, cobranças e eventos",
     responses=error_responses(*ADMIN_ERRORS),
 )
 async def get_payments(tx: AdminTx) -> PaymentsOverview:
@@ -549,9 +559,9 @@ async def get_payments(tx: AdminTx) -> PaymentsOverview:
     )
 
 
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Auditoria
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 AUDIT = """
 with ev as (
@@ -581,9 +591,11 @@ with ev as (
   where (%(workspace_id)s::uuid is null or a.workspace_id = %(workspace_id)s)
     and (%(since)s::date is null or a.created_at >= %(since)s::date::timestamptz)
     and (%(until)s::date is null or a.created_at < (%(until)s::date + 1)::timestamptz)
-    and (%(cursor_at)s::timestamptz is null or (a.created_at, a.id) < (%(cursor_at)s, %(cursor_id)s))
+    and (%(cursor_at)s::timestamptz is null
+         or (a.created_at, a.id) < (%(cursor_at)s, %(cursor_id)s))
 )
-select ev.id, ev.created_at, ev.actor, ev.actor_type::text as actor_type, ev.actor_id, ev.workspace_id,
+select ev.id, ev.created_at, ev.actor, ev.actor_type::text as actor_type, ev.actor_id,
+       ev.workspace_id,
        w.name as workspace_name, ev.category, ev.action, ev.entity_type, ev.entity_id, ev.payload
 from ev
 left join public.workspaces w on w.id = ev.workspace_id
@@ -665,9 +677,9 @@ def is_uuid(value: str | None) -> bool:
     return True
 
 
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Fila de trabalhos
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 QUEUES = "select * from public.v_fila_filas order by queue_name"
 
@@ -682,7 +694,8 @@ from public.v_fila f
 join public.workspaces w on w.id = f.workspace_id
 where (%(status)s::text is null or f.status::text = %(status)s)
   and (%(workspace_id)s::uuid is null or f.workspace_id = %(workspace_id)s)
-  and (%(cursor_at)s::timestamptz is null or (f.created_at, f.run_id) < (%(cursor_at)s, %(cursor_id)s))
+  and (%(cursor_at)s::timestamptz is null
+       or (f.created_at, f.run_id) < (%(cursor_at)s, %(cursor_id)s))
 order by f.created_at desc, f.run_id desc
 limit %(limit)s
 """
@@ -776,13 +789,14 @@ async def get_queue_run(run_id: UUID, tx: AdminTx) -> RunDetail:
     )
 
 
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Modelos e custos, consumo por cliente, qualidade
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 PRICES = """
 select distinct on (m.model)
-       m.model, m.display_name, m.input_usd_per_mtok, m.output_usd_per_mtok, m.cache_read_usd_per_mtok,
+       m.model, m.display_name, m.input_usd_per_mtok, m.output_usd_per_mtok,
+       m.cache_read_usd_per_mtok,
        m.cache_write_usd_per_mtok, m.provisional, m.checked_at, m.source, m.valid_from
 from public.model_pricing m
 where m.valid_from <= now()
@@ -799,7 +813,8 @@ limit 1
 
 RULES = """
 select distinct on (r.agent_id, r.task)
-       r.agent_id::text as agent_id, r.task, r.steps, r.model, r.effort, r.thinking, r.thinking_budget,
+       r.agent_id::text as agent_id, r.task, r.steps, r.model, r.effort, r.thinking,
+       r.thinking_budget,
        r.source, r.valid_from
 from public.task_model_rules r
 where r.valid_from <= now()
@@ -876,7 +891,8 @@ CENTS = Decimal("0.0001")
     "/consumption",
     summary="Consumo por cliente e período: solicitações, créditos cobrados, tokens e custo de IA",
     description=(
-        "Conversa não cobra crédito, mas custa: aparece em `ai_cost_conversation_usd`. Reais pelo câmbio "
+        "Conversa não cobra crédito, mas custa: aparece em `ai_cost_conversation_usd`. Reais pelo "
+        "câmbio "
         "informado em Modelos e custos (provisório). Alertas econômicos ficam para a SA4."
     ),
     responses=error_responses(*ADMIN_ERRORS),
@@ -955,26 +971,29 @@ async def get_quality(
     )
 
 
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Saúde das APIs
-# ---------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 PROVIDERS = "select * from public.provider_health order by sort_order"
 
 LLM_ACTIVITY = """
-select count(*) filter (where s.created_at > now() - interval '24 hours')::integer as calls_24h,
-       count(*) filter (where s.created_at > now() - interval '24 hours' and s.status = 'failed')::integer
-         as failures_24h,
-       coalesce(sum(s.cost_usd) filter (where s.created_at > now() - interval '24 hours'), 0)::numeric(14, 6)
-         as h24,
-       coalesce(sum(s.cost_usd) filter (where s.created_at > now() - interval '7 days'), 0)::numeric(14, 6)
+with s as (
+  select st.created_at, st.status, coalesce(st.cost_usd, 0) as cost,
+         st.created_at > now() - interval '24 hours' as in_24h
+  from public.run_steps st
+  where st.kind = 'llm_call'
+)
+select count(*) filter (where in_24h)::integer as calls_24h,
+       count(*) filter (where in_24h and status = 'failed')::integer as failures_24h,
+       coalesce(sum(cost) filter (where in_24h), 0)::numeric(14, 6) as h24,
+       coalesce(sum(cost) filter (where created_at > now() - interval '7 days'), 0)::numeric(14, 6)
          as d7,
-       coalesce(sum(s.cost_usd) filter (where s.created_at > now() - interval '30 days'), 0)::numeric(14, 6)
+       coalesce(sum(cost) filter (where created_at > now() - interval '30 days'), 0)::numeric(14, 6)
          as d30,
-       coalesce(sum(s.cost_usd), 0)::numeric(14, 6) as total,
-       max(s.created_at) filter (where s.status = 'succeeded') as last_success_at
-from public.run_steps s
-where s.kind = 'llm_call'
+       coalesce(sum(cost), 0)::numeric(14, 6) as total,
+       max(created_at) filter (where status = 'succeeded') as last_success_at
+from s
 """
 
 

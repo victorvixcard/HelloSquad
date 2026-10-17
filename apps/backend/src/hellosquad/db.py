@@ -79,8 +79,8 @@ class Database:
     async def transaction_as_admin(
         self, principal: Principal
     ) -> AsyncIterator[AsyncConnection[DictRow]]:
-        """Transação de uma rota /admin/*: confere platform_admins como authenticated e só então assume
-        hellosquad_admin (sem BYPASSRLS; as políticas dele exigem o JWT de um Super Admin)."""
+        """Transação de uma rota /admin/*: confere platform_admins como authenticated e só então
+        assume hellosquad_admin (sem BYPASSRLS; as políticas exigem o JWT de um Super Admin)."""
         async with self._pool.connection() as conn, conn.transaction():
             await conn.execute(
                 SET_USER_CONTEXT, (json.dumps(principal.claims), str(principal.user_id))
