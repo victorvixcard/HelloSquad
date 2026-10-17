@@ -1,0 +1,24 @@
+== Faixas (proposta) e consumo do seed
+GET /admin/alerts -> 200 [('ai_cost_per_credit_brl', 'max', '0.1500', None, None, 'proposta'), ('gross_margin', 'min', '0.6500', '0.5000', None, 'proposta'), ('cost_per_turn_trend', 'max', '0.1000', None, 7, 'proposta')] contas em alerta: 0 saldos em alerta: 0
+GET /admin/consumption?workspace_id=6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2 -> 200 [('Miolo', 'solicitações', 1, 'créditos', '10.00', 'IA US$', '0.000000', 'turnos', 0, {'ai_cost_per_credit_brl': '0.0000', 'gross_margin': '1.0000', 'cost_per_turn_usd': None, 'cost_per_turn_trend': None, 'alerts': []})]
+== Cruza a faixa: uma chamada fictícia de US$ 0,50 na Miolo hoje (10 créditos cobrados no seed)
+GET /admin/consumption?workspace_id=6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2&granularity=week -> 200 [('Miolo', 'IA R$', '2.7000', 'por crédito', '0.2700', 'margem', '0.4600', 'alertas', [('ai_cost_per_credit_brl', '0.2700', '0.1500'), ('gross_margin', '0.4600', '0.6500')])] semanas: [('2026-10-12', '0.500000')]
+GET /admin/alerts -> 200 [('Miolo', ['ai_cost_per_credit_brl', 'gross_margin'])]
+nada mudou sozinho: saldo da Miolo 36.00, conta ativa
+== Qualidade (seed sem trabalho decidido: vazio honesto) e "como ler"
+GET /admin/quality?locale=es -> 200 por tipo: 0 por versão: 0 como ler: ['Aprobada a la primera', 'Ajustes por entrega', 'No aprobada', 'Costo de IA por aprobada', 'Error del agente', 'Llamada con falla', 'Comparar períodos']
+GET /admin/quality/compare?a_since=2026-09-01&a_until=2026-09-30&b_since=2026-10-01&b_until=2026-10-16 -> 200 a: 0 b: 0 delta: {'approved_first_rate': None, 'adjustments_per_delivery': None, 'not_approved_rate': None, 'ai_cost_per_approved_usd': None, 'agent_errors_per_100': None, 'failed_calls_per_100': None}
+== Saúde das APIs e saldo informado
+GET /admin/providers -> 200 [('anthropic', 'simulated', 'missing', 1, '0.500000', None), ('image_engine', 'not_integrated', 'not_applicable', 0, '0.000000', None), ('asaas', 'account_not_created', 'missing', None, None, None), ('mercadopago', 'account_not_created', 'missing', None, None, None), ('email', 'local_only', 'not_applicable', 1139, None, None)]
+PATCH /admin/providers/anthropic/balance -> 200 ('anthropic', '38.00', 'USD', 'limiar', '50.00', 'alerta', True, 'por', 'vic@hellosquad.example')
+GET /admin/alerts -> 200 saldos em alerta: [('anthropic', '38.00', '50.00')]
+GET /admin/audit?actor=platform_admin&category=configuration -> 200 [('admin.provider_balance_reported', 'vic@hellosquad.example', 'Saldo lido no console da Anthropic (roteiro SA4a)')]
+PATCH /admin/providers/anthropic/balance -> 422 validation_error
+== Marina (owner, sem papel de plataforma)
+GET /admin/consumption -> 403 platform_admin_only
+GET /admin/alerts -> 403 platform_admin_only
+GET /admin/quality -> 403 platform_admin_only
+GET /admin/providers -> 403 platform_admin_only
+PATCH /admin/providers/anthropic/balance -> 403 platform_admin_only
+== Limpeza (volta ao seed)
+GET /admin/alerts -> 200 contas em alerta: 0 saldos em alerta: 0
