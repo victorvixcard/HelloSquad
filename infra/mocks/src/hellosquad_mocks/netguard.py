@@ -83,9 +83,11 @@ def installed() -> bool:
 
 def selftest() -> dict:
     """Tenta resolver um host real; a guarda precisa bloquear antes de qualquer consulta DNS."""
+    before = len(blocked)
     try:
         socket.getaddrinfo("graph.facebook.com", 443)
     except NetworkBlocked as exc:
+        del blocked[before:]  # a tentativa do autoteste não conta como vazamento
         return {"blocked": True, "detail": str(exc)}
     except OSError as exc:  # sem guarda e sem rede: não prova nada
         return {"blocked": False, "detail": f"sem guarda: {exc}"}
