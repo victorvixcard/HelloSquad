@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { AdminPage } from "@/components/admin/AdminPage";
-import { ApiProblem, Card, DataTable, Empty, Metrics, Note, SoonButton, Status, Tag } from "@/components/admin/ui";
-import { adminRead, type AccountDetail } from "@/lib/admin";
+import { AccountStatusDialog, CreditAdjustDialog, EnterSupportDialog, SupportSessionBand } from "@/components/admin/actions/AccountActions";
+import { RecentAudit } from "@/components/admin/actions/RecentAudit";
+import { ApiProblem, Card, DataTable, Empty, Metrics, Note, Status, Tag } from "@/components/admin/ui";
+import { adminRead, loadAdminMe, type AccountDetail } from "@/lib/admin";
 import { adminFormat } from "@/lib/admin-format";
 import { codeLabel } from "@/lib/admin-labels";
 
@@ -19,14 +21,24 @@ type Member = AccountDetail["members"][number];
 type Entry = AccountDetail["ledger"][number];
 type Access = AccountDetail["support_accesses"][number];
 
+/** Ações do Super Admin numa conta (a Auditoria desta conta mostra só estas). */
+const ACCOUNT_ACTIONS = [
+  "support.session_started",
+  "support.session_ended",
+  "credits.adjusted",
+  "workspace.suspended",
+  "workspace.reactivated",
+] as const;
+
 /**
  * Detalhe da conta (SA0 `conta.html` → `GET /admin/accounts/{id}`): plano, saldo, membros, idioma, desde, extrato,
- * acessos do suporte, uso e assinatura. Abrir grava `support.account_viewed` na auditoria (a API faz). As ações do
- * suporte ficam desenhadas e desabilitadas até a SA6; cidade, PF/PJ e "suspensa" não existem no banco e não aparecem.
+ * acessos do suporte, uso e assinatura. Abrir grava `support.account_viewed` na auditoria (a API faz). Ações (SA6b):
+ * entrar no ambiente (sessão de suporte só leitura), ajustar crédito e suspender/reativar, sempre com motivo; cidade e
+ * PF/PJ não existem no banco e não aparecem.
  */
 export default async function AccountPage({ params }: { params: Params }) {
   const { id } = await params;
-  const [t, locale] = await Promise.all([getTranslations("admin"), getLocale()]);
+  const [t, locale, me] = await Promise.all([getTranslations("admin"), getLocale(), loadAdminMe()]);
   const f = adminFormat(locale);
   const dash = t("common.dash");
   const result = await adminRead(
@@ -52,8 +64,12 @@ export default async function AccountPage({ params }: { params: Params }) {
 
   const d = result.data;
   const a = d.account;
-  const soon = t("common.comesIn", { slice: "SA6" });
   const usage = d.usage_30d;
+  const myEmail = me.ok ? me.data.email : null;
+  // A sessão aberta por quem está no painel (uma por Super Admin e conta); vencida não conta, a API já não deixa ler.
+  const session = d.support_accesses.find(
+    (s) => !s.ended_at && new Date(s.expires_at).getTime() > Date.now() && myEmail !== null && s.admin_email === myEmail,
+  );
 
   return (
     <AdminPage
@@ -64,14 +80,28 @@ export default async function AccountPage({ params }: { params: Params }) {
       avatar={<span className="sa-biz is-l" aria-hidden="true">{a.name.charAt(0).toUpperCase()}</span>}
       actions={
         <>
-          <SoonButton label={t("conta.actEnter")} reason={soon} />
-          <SoonButton label={t("conta.actCredit")} reason={soon} />
-          <SoonButton label={t("conta.actSuspend")} reason={soon} />
+          <CreditAdjustDialog workspaceId={a.id} name={a.name} balance={d.credits.balance} available={d.credits.available} />
+          <AccountStatusDialog workspaceId={a.id} name={a.name} status={a.status} />
+          <EnterSupportDialog
+            workspaceId={a.id}
+            name={a.name}
+            disabled={Boolean(session) || a.status === "deleted"}
+            disabledReason={session ? t("acoes.enter.busy") : a.status === "deleted" ? t("acoes.enter.deleted") : undefined}
+          />
         </>
       }
     >
-      <Note kind="draft" label={t("shell.readOnly")}>
-        {t("conta.actionsNote")} {t("conta.audited")}
+      {session ? (
+        <SupportSessionBand workspaceId={a.id} name={a.name} expiresAt={session.expires_at} reason={session.reason} />
+      ) : null}
+      {a.status === "suspended" ? (
+        <Note kind="warn" label={t("conta.suspendedLabel")}>
+          <b>{t("conta.suspendedBand")}</b>{" "}
+          {a.suspension_reason ? t("conta.suspendedReason", { reason: a.suspension_reason }) : null} {t("conta.suspendedEffect")}
+        </Note>
+      ) : null}
+      <Note kind="draft" label={t("conta.writeLabel")}>
+        {t("conta.writeNote")} {t("conta.audited")}
       </Note>
       <div style={{ height: 16 }} />
       <Metrics
@@ -88,7 +118,7 @@ export default async function AccountPage({ params }: { params: Params }) {
           },
           { label: t("conta.metMembers"), value: f.int(a.member_count) },
           { label: t("conta.metLocale"), value: a.locale, detail: codeLabel(t, "locale", a.locale) },
-          { label: t("conta.metStatus"), value: codeLabel(t, "accountStatus", a.status) },
+          { label: t("conta.metStatus"), value: codeLabel(t, "accountStatus", a.status), detail: a.status === "suspended" ? (a.suspension_reason ?? undefined) : undefined },
         ]}
       />
 
@@ -196,6 +226,15 @@ export default async function AccountPage({ params }: { params: Params }) {
           />
         </Card>
       </div>
+
+      <RecentAudit
+        id="conta-auditoria"
+        title={t("conta.recent")}
+        sub={t("conta.recentSub")}
+        empty={t("conta.recentEmpty")}
+        workspaceId={a.id}
+        actions={ACCOUNT_ACTIONS}
+      />
     </AdminPage>
   );
 }

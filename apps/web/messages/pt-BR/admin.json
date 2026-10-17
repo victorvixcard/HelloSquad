@@ -372,7 +372,7 @@
     "notFound": "Conta não encontrada",
     "notFoundBody": "Este endereço não corresponde a nenhuma conta do HelloSquad.",
     "backToList": "Voltar para Contas",
-    "suspendedBand": "Conta suspensa em {date}.",
+    "suspendedBand": "Conta suspensa.",
     "suspendedLabel": "Suspensa",
     "suspendedReason": "Motivo: {reason}",
     "suspendedEffect": "Renovação e rotinas pausadas; nada foi apagado.",

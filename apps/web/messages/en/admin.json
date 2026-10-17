@@ -372,7 +372,7 @@
     "notFound": "Account not found",
     "notFoundBody": "This address does not match any HelloSquad account.",
     "backToList": "Back to Accounts",
-    "suspendedBand": "Account suspended on {date}.",
+    "suspendedBand": "Account suspended.",
     "suspendedLabel": "Suspended",
     "suspendedReason": "Reason: {reason}",
     "suspendedEffect": "Renewal and routines paused; nothing was deleted.",

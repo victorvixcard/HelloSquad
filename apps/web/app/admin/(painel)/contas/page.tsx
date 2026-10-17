@@ -21,7 +21,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
   const q = one(sp.q);
   const plan = one(sp.plan);
   const statusParam = one(sp.status);
-  const status = statusParam === "active" || statusParam === "deleted" ? statusParam : undefined;
+  const status = statusParam === "active" || statusParam === "suspended" || statusParam === "deleted" ? statusParam : undefined;
   const cursor = one(sp.cursor);
   const [t, locale] = await Promise.all([getTranslations("admin"), getLocale()]);
   const f = adminFormat(locale);
@@ -71,7 +71,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
       label: t("contas.colStatus"),
       nowrap: true,
       cell: (a) => (
-        <Status kind={a.status === "active" ? "done" : "block"} small>
+        <Status kind={a.status === "active" ? "done" : a.status === "suspended" ? "pause" : "block"} small title={a.suspension_reason ?? undefined}>
           {codeLabel(t, "accountStatus", a.status)}
         </Status>
       ),
@@ -85,6 +85,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
   const statusOptions = [
     { value: "", label: t("common.all") },
     { value: "active", label: codeLabel(t, "accountStatus", "active") },
+    { value: "suspended", label: codeLabel(t, "accountStatus", "suspended") },
     { value: "deleted", label: codeLabel(t, "accountStatus", "deleted") },
   ];
 
