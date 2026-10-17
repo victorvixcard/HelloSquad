@@ -14,9 +14,9 @@ Aranha (Frontend & Design), 16/10/2026, início 21:50. Área: `apps/web` (rota `
 
 | # | Item | Estado | Commit |
 |---|---|---|---|
-| 1 | Entrada e casca (`/admin`, middleware `GET /admin/me`, 403 honesto, `noindex`, etiqueta, barra lateral, faixa 2FA, menu da pessoa, catálogo) | em andamento | |
-| 2 | Contas + detalhe da conta | pendente | |
-| 3 | Catálogo + Planos e recargas | pendente | |
-| 4 | Pagamentos + Auditoria + Fila de trabalhos | pendente | |
-| 5 | Modelos e custos | pendente | |
-| 6 | Vitest, e2e (worktree `/tmp`), lado a lado, relatório | pendente | |
+| 1 | Entrada e casca (`/admin`, middleware `GET /admin/me`, 403 honesto, `noindex`, etiqueta, barra lateral, faixa 2FA, menu da pessoa, catálogo) | feito | `0a42d16`, `9416b19`, `892fbf0` |
+| 2 | Contas + detalhe da conta | feito | `c9d8d26`, `3d6954b` |
+| 3 | Catálogo + Planos e recargas | feito | `8afeae3` |
+| 4 | Pagamentos + Auditoria + Fila de trabalhos | feito | `97e1746`, `54943a3` |
+| 5 | Modelos e custos | feito | (este commit) |
+| 6 | Vitest, e2e (worktree `/tmp`), lado a lado, relatório | em andamento | |
