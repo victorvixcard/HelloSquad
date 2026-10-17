@@ -666,3 +666,10 @@ begin
      least(v_cycle_start + interval '10 minutes', now()));
 end;
 $seed_cobranca$;
+
+-- SA6a — contas do seed ativas (sem suspensão) e nenhuma sessão de suporte aberta. O registro de acesso
+-- do suporte só cresce: a sessão aberta ganha o fim, nada se apaga.
+update public.workspaces
+set suspended_at = null, suspension_reason = null
+where slug in ('miolo', 'vitta', 'trilha') and suspended_at is not null;
+update public.support_access_log set ended_at = now() where ended_at is null and expires_at > now();

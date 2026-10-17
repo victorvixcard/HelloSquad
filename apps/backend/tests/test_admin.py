@@ -35,6 +35,7 @@ SA_OBJECTS = [
     "provider_health",
     "economic_alert_rules",
     "provider_balance_reports",
+    "payment_reconciliations",
     "v_consumo_por_cliente",
     "v_qualidade_entregas",
     "v_qualidade_itens",
