@@ -156,7 +156,7 @@ Testes ponta a ponta (`make e2e`):
 | `juliana@trilha.example` | `Senha!Teste123` | Trilha Urbana, owner |
 | `pedro@semconta.example` | `Senha!Teste123` | nenhum (testes negativos) |
 
-Fonte: `docs/DADOS_FICTICIOS.md`. Workspace criado por teste manual só com o Pedro como membro é removido pelo próximo `make seed`, para ele voltar a "sem membership".
+Fonte: `docs/DADOS_FICTICIOS.md`. O Pedro e o Vic voltam a "sem membership" a cada `make seed`: negócio criado por teste manual em que só eles são owner (inclusive o que o Vic cria pelo produto) sai com a auditoria dele; nos outros negócios, só a membership deles sai.
 
 ## JWT de teste e chamadas à API
 
@@ -554,6 +554,8 @@ psql "$DATABASE_URL" -c "delete from public.invitations where email = 'nova.pess
 
 O Super Admin é papel de **plataforma** (`platform_admins`), fora de `memberships`, e o painel faz parte da mesma API e do mesmo banco (rotas `/admin/*`). O `make seed` cria o **Vic fictício** como único Super Admin local: `vic@hellosquad.example`, senha `Senha!Teste123` (`docs/DADOS_FICTICIOS.md`), sem conta de cliente e com a verificação em duas etapas desligada (`mfa_enforced = false`; o 2FA é da Fase 5).
 
+`GET /me` devolve `is_platform_admin` (`true` só para o Super Admin, SA7a): é por ele que o web leva o Vic, que não tem negócio, ao `/admin` em vez do onboarding de cliente.
+
 ```bash
 PK=$(sed -n 's/^SUPABASE_PUBLISHABLE_KEY=//p' .env)
 VIC=$(curl -s -X POST 'http://127.0.0.1:56321/auth/v1/token?grant_type=password' \
@@ -680,6 +682,8 @@ curl -s -X POST $API/admin/payments/webhooks/<evento>/reconcile -H "$AUTH" -H 'C
 - **Suspensa:** `workspaces.suspended_at`; a renovação do scheduler pula a conta, run agendado (rotina) recebe 423 `workspace_suspended`, a assinatura e os dados ficam; `GET /me` mostra `workspace_status: suspended` aos membros.
 - **"À venda"** só com homologação `homologated` e preço aprovado comercialmente (e não provisório); versões passadas de preço, plano e recarga não mudam (trigger). **Reprocessar** consulta a cobrança no provedor e aplica o estado como `reprocess:<cobrança>:<estado>` pela `app.billing_apply_event` (idempotente); o simulado não informa estado e responde `provider_unknown`. **Conciliação** fica em `payment_reconciliations` (uma por webhook, só inserção) e aparece em `GET /admin/payments`.
 - Roteiro executado com a saída: `docs/parciais/sa6a/curl_sa6a.sh` (`curl_sa6a.txt` ao lado; no fim tira o run fictício e roda o `make seed`).
+- **O que o `make seed` faz com o que o painel gravou (SA7a).** Apaga e devolve ao seed: negócios em que só o Vic ou o Pedro são owner e as memberships deles; o crédito dos três negócios do seed (a conta recomeça, então ajustes somem); a suspensão deles (com o motivo); o saldo informado na Saúde (`provider_balance_reports` e o último valor em `provider_health`). Encerra, sem apagar, sessão de suporte aberta. **Preserva** (o seed não volta): versões novas de preço, homologação e "à venda" do Catálogo, versões de plano e de recarga, regras de negócio e versões do squad publicadas (o banco vale; `make squad-export` regrava `squad/`), a auditoria e o registro de acesso do suporte (só crescem). Para voltar ao preço do seed: `delete from public.delivery_prices where delivery_type = '04.01' and id <> md5('seed:price:04.01')::uuid` (como o `curl_sa6a.sh`).
+- **Motivos internos só no painel (SA7a).** O motivo da versão de preço fica em `delivery_price_notes` e o da suspensão em `workspace_suspension_reasons`, tabelas sem GRANT para nenhum papel da Data API (só `hellosquad_admin` lê); `delivery_prices` e `workspaces` não têm mais essas colunas. As rotas `/admin/*` devolvem o mesmo de antes.
 
 ## Worker do squad (S1c)
 
