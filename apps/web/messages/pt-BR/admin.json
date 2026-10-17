@@ -132,7 +132,8 @@
       "not_started": "Não iniciada",
       "in_homologation": "Em homologação",
       "awaiting_engine": "Aguarda o motor de imagem",
-      "homologated": "Homologada"
+      "homologated": "Homologada",
+      "awaiting_integration": "Aguarda integração"
     },
     "cycle": {
       "one_time": "Uma vez",
@@ -1215,6 +1216,46 @@
         "confirm": "Reativar conta",
         "done": "{name} reativada. Registrado na Auditoria."
       }
+    },
+    "catalog": {
+      "col": "Editar",
+      "open": "Editar",
+      "title": "{id} · {name}: preço e venda",
+      "desc": "Cada mudança vira registro novo com o motivo; a versão anterior do preço nunca muda. Valores ficam provisórios até o dono definir.",
+      "mode": "O que mudar",
+      "modes": {
+        "price": "Preço",
+        "homologation": "Homologação",
+        "sale": "À venda"
+      },
+      "credits": "Créditos por entrega",
+      "creditsNow": "Hoje: {credits}. Vira versão nova.",
+      "creditsNone": "Ainda sem preço. Vira a primeira versão.",
+      "creditsInvalid": "Informe créditos maiores que zero, com até 2 casas.",
+      "revision": "Créditos por revisão extra",
+      "revisionHint": "Opcional; vazio = sem preço de revisão.",
+      "provisional": "Provisório",
+      "approved": "Preço aprovado comercialmente",
+      "approvedHint": "Preço aprovado não pode ser provisório; com a delivery à venda, só preço aprovado.",
+      "approvedInvalid": "Desmarque \"Provisório\" para marcar o preço como aprovado.",
+      "homologation": "Estado da homologação",
+      "homologationHint": "Reabrir a homologação de uma delivery à venda é recusado: tire de venda antes.",
+      "forSale": "À venda",
+      "forSaleHint": "Só vai à venda com a homologação concluída e o preço vigente aprovado e não provisório; se faltar algo, a API diz o quê.",
+      "confirm": {
+        "price": "Gravar preço novo",
+        "homologation": "Gravar homologação",
+        "sale": "Gravar venda"
+      },
+      "done": {
+        "price": "Preço de {id} gravado como versão nova. Registrado na Auditoria.",
+        "homologation": "Homologação de {id}: {status}. Registrado na Auditoria.",
+        "saleOn": "{id} está à venda. Registrado na Auditoria.",
+        "saleOff": "{id} saiu de venda. Registrado na Auditoria."
+      },
+      "recent": "Auditoria do catálogo",
+      "recentEmpty": "Nenhuma mudança no catálogo pelo painel ainda.",
+      "noteLive": "Preços provisórios ficam marcados. Só vai à venda o que tem homologação concluída e preço aprovado e não provisório."
     }
   }
 }

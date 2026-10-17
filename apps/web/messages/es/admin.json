@@ -132,7 +132,8 @@
       "not_started": "Sin iniciar",
       "in_homologation": "En homologación",
       "awaiting_engine": "Espera el motor de imagen",
-      "homologated": "Homologada"
+      "homologated": "Homologada",
+      "awaiting_integration": "Espera integración"
     },
     "cycle": {
       "one_time": "Una vez",
@@ -1215,6 +1216,46 @@
         "confirm": "Reactivar cuenta",
         "done": "{name} reactivada. Registrado en la auditoría."
       }
+    },
+    "catalog": {
+      "col": "Editar",
+      "open": "Editar",
+      "title": "{id} · {name}: precio y venta",
+      "desc": "Cada cambio se vuelve un registro nuevo con el motivo; la versión anterior del precio nunca cambia. Los valores siguen provisionales hasta que el dueño decida.",
+      "mode": "Qué cambiar",
+      "modes": {
+        "price": "Precio",
+        "homologation": "Homologación",
+        "sale": "En venta"
+      },
+      "credits": "Créditos por entrega",
+      "creditsNow": "Hoy: {credits}. Se vuelve versión nueva.",
+      "creditsNone": "Todavía sin precio. Se vuelve la primera versión.",
+      "creditsInvalid": "Indica créditos mayores que cero, con hasta 2 decimales.",
+      "revision": "Créditos por revisión extra",
+      "revisionHint": "Opcional; vacío = sin precio de revisión.",
+      "provisional": "Provisional",
+      "approved": "Precio aprobado comercialmente",
+      "approvedHint": "Un precio aprobado no puede ser provisional; con la entrega en venta, solo precio aprobado.",
+      "approvedInvalid": "Desmarca \"Provisional\" para marcar el precio como aprobado.",
+      "homologation": "Estado de la homologación",
+      "homologationHint": "Reabrir la homologación de una entrega en venta se rechaza: quítala de la venta antes.",
+      "forSale": "En venta",
+      "forSaleHint": "Solo sale a la venta con la homologación concluida y el precio vigente aprobado y no provisional; si falta algo, la API dice qué.",
+      "confirm": {
+        "price": "Guardar precio nuevo",
+        "homologation": "Guardar homologación",
+        "sale": "Guardar venta"
+      },
+      "done": {
+        "price": "Precio de {id} guardado como versión nueva. Registrado en la auditoría.",
+        "homologation": "Homologación de {id}: {status}. Registrado en la auditoría.",
+        "saleOn": "{id} está en venta. Registrado en la auditoría.",
+        "saleOff": "{id} salió de la venta. Registrado en la auditoría."
+      },
+      "recent": "Auditoría del catálogo",
+      "recentEmpty": "Ningún cambio en el catálogo por el panel todavía.",
+      "noteLive": "Los precios provisionales quedan marcados. Solo sale a la venta lo que tiene homologación concluida y precio aprobado y no provisional."
     }
   }
 }

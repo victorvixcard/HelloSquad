@@ -148,7 +148,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
             ]}
           />
           <Note kind="draft" label={t("common.provisional")}>
-            {t("catalogo.note")}
+            {items.some((d) => d.for_sale || d.price?.approved_commercially) ? t("acoes.catalog.noteLive") : t("catalogo.note")}
           </Note>
           <div className="sa-tool" style={{ margin: "16px 0" }}>
             <FilterSelect name="agente" title={t("catalogo.filterAgent")} options={options} />

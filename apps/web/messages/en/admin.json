@@ -132,7 +132,8 @@
       "not_started": "Not started",
       "in_homologation": "In acceptance testing",
       "awaiting_engine": "Waiting for the image engine",
-      "homologated": "Accepted"
+      "homologated": "Accepted",
+      "awaiting_integration": "Awaiting integration"
     },
     "cycle": {
       "one_time": "One time",
@@ -1215,6 +1216,46 @@
         "confirm": "Reactivate account",
         "done": "{name} reactivated. Recorded in the audit log."
       }
+    },
+    "catalog": {
+      "col": "Edit",
+      "open": "Edit",
+      "title": "{id} · {name}: price and sale",
+      "desc": "Each change becomes a new record with the reason; the previous price version never changes. Values stay provisional until the owner decides.",
+      "mode": "What to change",
+      "modes": {
+        "price": "Price",
+        "homologation": "Approval testing",
+        "sale": "For sale"
+      },
+      "credits": "Credits per delivery",
+      "creditsNow": "Now: {credits}. Becomes a new version.",
+      "creditsNone": "No price yet. Becomes the first version.",
+      "creditsInvalid": "Enter credits above zero, with up to 2 decimals.",
+      "revision": "Credits per extra revision",
+      "revisionHint": "Optional; empty = no revision price.",
+      "provisional": "Provisional",
+      "approved": "Price commercially approved",
+      "approvedHint": "An approved price can't be provisional; while the delivery is for sale, only an approved price.",
+      "approvedInvalid": "Uncheck \"Provisional\" to mark the price as approved.",
+      "homologation": "Approval testing status",
+      "homologationHint": "Reopening testing for a delivery on sale is refused: take it off sale first.",
+      "forSale": "For sale",
+      "forSaleHint": "It only goes on sale with testing done and the current price approved and not provisional; if something is missing, the API says what.",
+      "confirm": {
+        "price": "Save new price",
+        "homologation": "Save testing status",
+        "sale": "Save sale status"
+      },
+      "done": {
+        "price": "Price for {id} saved as a new version. Recorded in the audit log.",
+        "homologation": "Testing for {id}: {status}. Recorded in the audit log.",
+        "saleOn": "{id} is on sale. Recorded in the audit log.",
+        "saleOff": "{id} is off sale. Recorded in the audit log."
+      },
+      "recent": "Catalog audit log",
+      "recentEmpty": "No catalog change through the panel yet.",
+      "noteLive": "Provisional prices stay marked. Only what has testing done and an approved, non-provisional price goes on sale."
     }
   }
 }
