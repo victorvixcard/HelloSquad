@@ -9,7 +9,7 @@ import { PromptPanel } from "@/components/admin/squad/PromptPanel";
 import { RulesPanel } from "@/components/admin/squad/RulesPanel";
 import { SkillsPanel } from "@/components/admin/squad/SkillsPanel";
 import { SoulPanel } from "@/components/admin/squad/SoulPanel";
-import { sideBySide } from "@/components/admin/squad/VersionFlow";
+import { sideBySide, withContext } from "@/components/admin/squad/VersionFlow";
 import type { ConfigVersion, PromptPreview, RuleDocDetail, SoulVersion, VersionRef } from "@/lib/admin";
 import en from "@/messages/en";
 import es from "@/messages/es";
@@ -133,6 +133,12 @@ describe("comparar versões lado a lado", () => {
       { left: null, right: "Sem emoji.", same: false },
       { left: "## Limites", right: "## Limites", same: true },
     ]);
+  });
+
+  it("linhas iguais longe da mudança viram um aviso de quantas são; ficam duas de contexto", () => {
+    const same = (n: number) => Array.from({ length: n }, (_, i) => ({ left: `l${i}`, right: `l${i}`, same: true }));
+    const rows = [...same(6), { left: "a", right: "b", same: false }, ...same(5)];
+    expect(withContext(rows)).toEqual([{ skip: 4 }, ...same(6).slice(4), rows[6], ...same(2), { skip: 3 }]);
   });
 });
 

@@ -682,7 +682,8 @@
     "diffLoading": "Loading the comparison…",
     "diffSide": "Version {v} · {status}",
     "removed": "removed",
-    "added": "added"
+    "added": "added",
+    "sameLines": "{n, plural, one {# unchanged line} other {# unchanged lines}}"
   },
   "skills": {
     "none": "This agent has no delivery in the catalog.",

@@ -53,14 +53,22 @@ type Ask =
  * Confirmações e comparação de uma unidade versionada (Alma, skill, agent.yaml, documento compartilhado). `unit` é o
  * nome já no idioma da tela ("da Alma do Otto").
  */
-export function useVersionFlow(unit: string, onDone: (message: string) => void) {
+export function useVersionFlow(
+  unit: string,
+  onDone: (message: string) => void,
+) {
   const t = useTranslations("admin.versions");
   const router = useRouter();
   const [ask, setAsk] = useState<Ask | null>(null);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [diff, setDiff] = useState<{ from: VersionRef; to: VersionRef; data: VersionDiff | null; error: string | null } | null>(null);
+  const [diff, setDiff] = useState<{
+    from: VersionRef;
+    to: VersionRef;
+    data: VersionDiff | null;
+    error: string | null;
+  } | null>(null);
   const reasonId = useId();
 
   const close = () => {
@@ -76,7 +84,8 @@ export function useVersionFlow(unit: string, onDone: (message: string) => void) 
     setError(null);
     let result: AdminActionResult<VersionRef>;
     if (ask.type === "publish") result = await publishVersionAction(ask.ref.id);
-    else if (ask.type === "discard") result = await discardVersionAction(ask.ref.id);
+    else if (ask.type === "discard")
+      result = await discardVersionAction(ask.ref.id);
     else result = await restoreVersionAction(ask.ref.id, reason);
     setBusy(false);
     if (!result.ok) {
@@ -88,7 +97,10 @@ export function useVersionFlow(unit: string, onDone: (message: string) => void) 
         ? t("done.published", { v: result.data.version })
         : ask.type === "discard"
           ? t("done.discarded", { v: ask.ref.version })
-          : t("done.restored", { v: result.data.version, from: ask.ref.version });
+          : t("done.restored", {
+              v: result.data.version,
+              from: ask.ref.version,
+            });
     setAsk(null);
     setReason("");
     setDiff(null);
@@ -99,7 +111,12 @@ export function useVersionFlow(unit: string, onDone: (message: string) => void) 
   async function compare(from: VersionRef, to: VersionRef) {
     setDiff({ from, to, data: null, error: null });
     const result = await diffVersionsAction(from.id, to.id);
-    setDiff({ from, to, data: result.ok ? result.data : null, error: result.ok ? null : result.message });
+    setDiff({
+      from,
+      to,
+      data: result.ok ? result.data : null,
+      error: result.ok ? null : result.message,
+    });
   }
 
   const title =
@@ -141,7 +158,14 @@ export function useVersionFlow(unit: string, onDone: (message: string) => void) 
             <Button variant="ghost" size="s" onClick={close} disabled={busy}>
               {t("cancel")}
             </Button>
-            <Button variant="primary" size="s" icon={null} onClick={confirm} disabled={busy} data-autofocus={ask?.type !== "restore" || undefined}>
+            <Button
+              variant="primary"
+              size="s"
+              icon={null}
+              onClick={confirm}
+              disabled={busy}
+              data-autofocus={ask?.type !== "restore" || undefined}
+            >
               {busy ? t("working") : confirmLabel}
             </Button>
           </>
@@ -163,7 +187,9 @@ export function useVersionFlow(unit: string, onDone: (message: string) => void) 
             <small className="sa-mut">{t("reasonHint")}</small>
           </div>
         ) : (
-          <p className="sa-mut">{ask?.type === "publish" ? t("publishCheck") : t("discardKeep")}</p>
+          <p className="sa-mut">
+            {ask?.type === "publish" ? t("publishCheck") : t("discardKeep")}
+          </p>
         )}
         {error ? (
           <p className="sq-err" role="alert">
@@ -173,19 +199,32 @@ export function useVersionFlow(unit: string, onDone: (message: string) => void) 
       </Dialog>
       <Dialog
         open={diff !== null}
+        wide
         onClose={() => setDiff(null)}
-        title={diff ? t("diffTitle", { from: diff.from.version, to: diff.to.version }) : ""}
+        title={
+          diff
+            ? t("diffTitle", { from: diff.from.version, to: diff.to.version })
+            : ""
+        }
         desc={t("diffLegend")}
         closeLabel={t("close")}
       >
-        {diff ? <DiffBody diff={diff.data} error={diff.error} from={diff.from} to={diff.to} /> : null}
+        {diff ? (
+          <DiffBody
+            diff={diff.data}
+            error={diff.error}
+            from={diff.from}
+            to={diff.to}
+          />
+        ) : null}
       </Dialog>
     </>
   );
 
   return {
     dialogs,
-    askPublish: (ref: VersionRef, active: VersionRef | null) => setAsk({ type: "publish", ref, active }),
+    askPublish: (ref: VersionRef, active: VersionRef | null) =>
+      setAsk({ type: "publish", ref, active }),
     askDiscard: (ref: VersionRef) => setAsk({ type: "discard", ref }),
     askRestore: (ref: VersionRef) => setAsk({ type: "restore", ref }),
     compare,
@@ -201,7 +240,11 @@ export function sideBySide(lines: VersionDiff["lines"]): Row[] {
   let plus: string[] = [];
   const flush = () => {
     for (let i = 0; i < Math.max(minus.length, plus.length); i++)
-      rows.push({ left: minus[i] ?? null, right: plus[i] ?? null, same: false });
+      rows.push({
+        left: minus[i] ?? null,
+        right: plus[i] ?? null,
+        same: false,
+      });
     minus = [];
     plus = [];
   };
@@ -217,7 +260,44 @@ export function sideBySide(lines: VersionDiff["lines"]): Row[] {
   return rows;
 }
 
-function DiffBody({ diff, error, from, to }: { diff: VersionDiff | null; error: string | null; from: VersionRef; to: VersionRef }) {
+/** Linhas iguais longe de uma mudança viram "N linhas iguais"; ficam duas de contexto de cada lado. */
+export function withContext(rows: Row[], ctx = 2): (Row | { skip: number })[] {
+  const keep = rows.map(() => false);
+  rows.forEach((r, i) => {
+    if (r.same) return;
+    for (
+      let j = Math.max(0, i - ctx);
+      j <= Math.min(rows.length - 1, i + ctx);
+      j++
+    )
+      keep[j] = true;
+  });
+  const out: (Row | { skip: number })[] = [];
+  let skip = 0;
+  rows.forEach((r, i) => {
+    if (!keep[i]) {
+      skip += 1;
+      return;
+    }
+    if (skip) out.push({ skip });
+    skip = 0;
+    out.push(r);
+  });
+  if (skip) out.push({ skip });
+  return out;
+}
+
+function DiffBody({
+  diff,
+  error,
+  from,
+  to,
+}: {
+  diff: VersionDiff | null;
+  error: string | null;
+  from: VersionRef;
+  to: VersionRef;
+}) {
   const t = useTranslations("admin");
   if (error) return <p className="sq-err">{error}</p>;
   if (!diff) return <p className="sa-mut">{t("versions.diffLoading")}</p>;
@@ -231,34 +311,99 @@ function DiffBody({ diff, error, from, to }: { diff: VersionDiff | null; error: 
           <span className="sa-chips">
             {diff.changed_sections.map((s) => (
               <span key={s} className="sa-chip">
-                {t.has(`codes.section.${s}` as never) ? t(`codes.section.${s}` as never) : s}
+                {t.has(`codes.section.${s}` as never)
+                  ? t(`codes.section.${s}` as never)
+                  : s}
               </span>
             ))}
           </span>
         </p>
       ) : null}
       {changed ? (
-        <div className="sq-diff-scroll" tabIndex={0} aria-label={t("versions.diffTitle", { from: from.version, to: to.version })}>
+        <div
+          className="sq-diff-scroll"
+          tabIndex={0}
+          aria-label={t("versions.diffTitle", {
+            from: from.version,
+            to: to.version,
+          })}
+        >
           <table className="sq-diff">
             <thead>
               <tr>
-                <th scope="col">{t("versions.diffSide", { v: from.version, status: t(`codes.versionStatus.${from.status}`) })}</th>
-                <th scope="col">{t("versions.diffSide", { v: to.version, status: t(`codes.versionStatus.${to.status}`) })}</th>
+                <th scope="col">
+                  {t("versions.diffSide", {
+                    v: from.version,
+                    status: t(`codes.versionStatus.${from.status}`),
+                  })}
+                </th>
+                <th scope="col">
+                  {t("versions.diffSide", {
+                    v: to.version,
+                    status: t(`codes.versionStatus.${to.status}`),
+                  })}
+                </th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((r, i) => (
-                <tr key={i} className={r.same ? "is-same" : undefined}>
-                  <td className={r.same ? undefined : r.left === null ? "is-gap" : "is-del"}>
-                    {r.same || r.left === null ? null : <span className="sq-op" aria-label={t("versions.removed")}>−</span>}
-                    {r.left === null ? null : r.same ? r.left : <del>{r.left}</del>}
-                  </td>
-                  <td className={r.same ? undefined : r.right === null ? "is-gap" : "is-add"}>
-                    {r.same || r.right === null ? null : <span className="sq-op" aria-label={t("versions.added")}>+</span>}
-                    {r.right === null ? null : r.same ? r.right : <ins>{r.right}</ins>}
-                  </td>
-                </tr>
-              ))}
+              {withContext(rows).map((r, i) =>
+                "skip" in r ? (
+                  <tr key={i} className="is-skip">
+                    <td colSpan={2}>
+                      {t("versions.sameLines", { n: r.skip })}
+                    </td>
+                  </tr>
+                ) : (
+                  <tr key={i} className={r.same ? "is-same" : undefined}>
+                    <td
+                      className={
+                        r.same
+                          ? undefined
+                          : r.left === null
+                            ? "is-gap"
+                            : "is-del"
+                      }
+                    >
+                      {r.same || r.left === null ? null : (
+                        <span
+                          className="sq-op"
+                          aria-label={t("versions.removed")}
+                        >
+                          −
+                        </span>
+                      )}
+                      {r.left === null ? null : r.same ? (
+                        r.left
+                      ) : (
+                        <del>{r.left}</del>
+                      )}
+                    </td>
+                    <td
+                      className={
+                        r.same
+                          ? undefined
+                          : r.right === null
+                            ? "is-gap"
+                            : "is-add"
+                      }
+                    >
+                      {r.same || r.right === null ? null : (
+                        <span
+                          className="sq-op"
+                          aria-label={t("versions.added")}
+                        >
+                          +
+                        </span>
+                      )}
+                      {r.right === null ? null : r.same ? (
+                        r.right
+                      ) : (
+                        <ins>{r.right}</ins>
+                      )}
+                    </td>
+                  </tr>
+                ),
+              )}
             </tbody>
           </table>
         </div>
@@ -293,7 +438,9 @@ export function DraftCard(props: {
             {t("draftTag")}
           </Status>
           <p className="sq-draft-t">{props.title}</p>
-          {props.check ? <p className="sa-mut sq-draft-c">{props.check}</p> : null}
+          {props.check ? (
+            <p className="sa-mut sq-draft-c">{props.check}</p>
+          ) : null}
         </div>
       </div>
       <dl className="sq-facts">
@@ -305,7 +452,12 @@ export function DraftCard(props: {
         ))}
       </dl>
       <div className="sq-draft-a">
-        <Button variant="primary" size="s" icon={null} onClick={props.onPublish}>
+        <Button
+          variant="primary"
+          size="s"
+          icon={null}
+          onClick={props.onPublish}
+        >
           {props.publishLabel}
         </Button>
         {props.onCompare ? (
@@ -360,7 +512,11 @@ export function VersionsCard(props: {
                     {[
                       props.formatDate(v.published_at ?? v.created_at),
                       v.author,
-                      v.restored_from_version ? t("versions.restoredFrom", { v: v.restored_from_version }) : null,
+                      v.restored_from_version
+                        ? t("versions.restoredFrom", {
+                            v: v.restored_from_version,
+                          })
+                        : null,
                       v.note,
                     ]
                       .filter(Boolean)
@@ -376,7 +532,12 @@ export function VersionsCard(props: {
                         variant="ghost"
                         size="s"
                         aria-label={`${t("versions.compareActive")} (${t("versions.line", { v: v.version })})`}
-                        onClick={() => props.onCompare(v.status === "draft" ? active : v, v.status === "draft" ? v : active)}
+                        onClick={() =>
+                          props.onCompare(
+                            v.status === "draft" ? active : v,
+                            v.status === "draft" ? v : active,
+                          )
+                        }
                       >
                         {t("versions.compareActive")}
                       </Button>
@@ -387,7 +548,11 @@ export function VersionsCard(props: {
                         size="s"
                         onClick={() => props.onRestore(v)}
                         disabled={props.hasDraft}
-                        title={props.hasDraft ? t("versions.restoreBlocked") : undefined}
+                        title={
+                          props.hasDraft
+                            ? t("versions.restoreBlocked")
+                            : undefined
+                        }
                         aria-label={`${t("versions.restore")} (${t("versions.line", { v: v.version })})`}
                       >
                         {t("versions.restore")}
@@ -401,7 +566,9 @@ export function VersionsCard(props: {
         ) : (
           <p className="sa-mut">{t("common.empty")}</p>
         )}
-        {props.hasDraft ? <p className="sa-mut sq-vers-n">{t("versions.restoreBlocked")}</p> : null}
+        {props.hasDraft ? (
+          <p className="sa-mut sq-vers-n">{t("versions.restoreBlocked")}</p>
+        ) : null}
         {props.extra}
       </div>
     </section>

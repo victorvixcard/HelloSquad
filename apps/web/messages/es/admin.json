@@ -682,7 +682,8 @@
     "diffLoading": "Cargando la comparación…",
     "diffSide": "Versión {v} · {status}",
     "removed": "eliminado",
-    "added": "añadido"
+    "added": "añadido",
+    "sameLines": "{n, plural, one {# línea igual} other {# líneas iguales}}"
   },
   "skills": {
     "none": "Este agente no tiene deliveries en el catálogo.",

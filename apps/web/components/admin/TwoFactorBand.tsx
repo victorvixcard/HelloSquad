@@ -65,9 +65,11 @@ export function Dialog(props: {
   desc?: string;
   closeLabel: string;
   footer?: React.ReactNode;
+  /** Diálogo largo do SA0 (`is-w`), para comparar versões lado a lado. */
+  wide?: boolean;
   children: React.ReactNode;
 }) {
-  const { open, onClose, title, desc, closeLabel, footer, children } = props;
+  const { open, onClose, title, desc, closeLabel, footer, wide, children } = props;
   const ref = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -112,7 +114,7 @@ export function Dialog(props: {
   if (!open) return null;
   return createPortal(
     <div className="sa-ovl" onMouseDown={(e) => e.target === e.currentTarget && closeRef.current()}>
-      <div className="sa-dlg" role="dialog" aria-modal="true" aria-labelledby={`${id}-t`} ref={ref}>
+      <div className={`sa-dlg${wide ? " is-w" : ""}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-t`} ref={ref}>
         <div className="sa-dlg-h">
           <div>
             <h2 id={`${id}-t`}>{title}</h2>
