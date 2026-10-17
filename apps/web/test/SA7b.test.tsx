@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
@@ -21,7 +23,9 @@ const state = vi.hoisted(() => ({
   data: {} as Record<string, unknown>,
 }));
 
+const nav = vi.hoisted(() => ({ redirect: vi.fn(), me: null as unknown }));
 vi.mock("next/navigation", () => ({
+  redirect: nav.redirect,
   usePathname: () => "/admin/catalogo",
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
   useSearchParams: () => new URLSearchParams(""),
@@ -56,6 +60,7 @@ vi.mock("@/lib/admin", () => ({
   },
   loadAdminMe: async () => ({ ok: true, data: { user_id: "u-vic", email: "vic@hellosquad.example", full_name: "Vic", mfa_enforced: false } }),
 }));
+vi.mock("@/lib/api", () => ({ loadMe: async () => ({ ok: true, me: nav.me }) }));
 vi.mock("@/components/admin/actions/RecentAudit", () => ({
   RecentAudit: (p: { title: string }) => <div data-testid="recent">{p.title}</div>,
 }));
@@ -378,5 +383,39 @@ describe("H-SA-06: Exportar CSV da Auditoria", () => {
     renderAdmin(await Page({ searchParams: Promise.resolve({}) }));
     await userEvent.click(screen.getByRole("button", { name: "Exportar CSV" }));
     expect(screen.getByRole("status")).toHaveTextContent("Ningún evento en esta página con los filtros actuales; no se exportó nada.");
+  });
+});
+
+describe("H-SA-02 (web): depois do login, o Super Admin sem negócio vai para o painel", () => {
+  const me = (memberships: unknown[], isPlatformAdmin?: boolean) => ({
+    user: { id: "u", email: "x@hellosquad.example", full_name: null, locale: "pt-BR" },
+    memberships,
+    ...(isPlatformAdmin === undefined ? {} : { is_platform_admin: isPlatformAdmin }),
+  });
+  const miolo = { workspace: { id: "w1", slug: "miolo", name: "Miolo" }, role: "owner" };
+
+  it.each([
+    ["Vic sem negócio (is_platform_admin)", me([], true), "/admin"],
+    ["Vic com negócio: o negócio dele, como hoje", me([miolo], true), "/app/miolo"],
+    ["cliente sem negócio: a criação, como hoje", me([], false), "/app/novo-workspace"],
+    ["API antiga, sem o campo: a criação, como hoje", me([]), "/app/novo-workspace"],
+  ])("%s", async (_name, value, target) => {
+    nav.redirect.mockReset();
+    nav.me = value;
+    const { default: AppIndexPage } = await import("@/app/app/page");
+    await AppIndexPage();
+    expect(nav.redirect).toHaveBeenCalledWith(target);
+  });
+});
+
+describe("H-SA-13: botão primário do painel pela classe do DS", () => {
+  it("nenhum arquivo do painel usa hs-btn--primary (o DS tem hs-btn--pri); \"Informar saldo\" usa a do DS", () => {
+    const files = (dir: string): string[] =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(dir, e.name)) : /\.tsx?$/.test(e.name) ? [join(dir, e.name)] : []));
+    const root = join(__dirname, "..");
+    const hits = [...files(join(root, "app/admin")), ...files(join(root, "components/admin"))].filter((f) => readFileSync(f, "utf8").includes("hs-btn--primary"));
+    expect(hits).toEqual([]);
+    expect(readFileSync(join(root, "components/admin/health/BalanceDialog.tsx"), "utf8")).toContain('className="hs-btn hs-btn--pri hs-btn--s"');
+    expect(readFileSync(join(root, "../../packages/ui/src/styles.css"), "utf8")).toMatch(/\.hs-btn--pri \{/);
   });
 });

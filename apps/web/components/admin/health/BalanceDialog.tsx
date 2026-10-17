@@ -102,7 +102,7 @@ export function BalanceDialog(props: { provider: string; providerName: string; c
 
   return (
     <>
-      <button ref={opener} type="button" className="hs-btn hs-btn--primary hs-btn--s" onClick={start}>
+      <button ref={opener} type="button" className="hs-btn hs-btn--pri hs-btn--s" onClick={start}>
         <span className="hs-lbl">{t("open")}</span>
       </button>
       <Dialog
@@ -116,7 +116,7 @@ export function BalanceDialog(props: { provider: string; providerName: string; c
             <button type="button" className="hs-btn hs-btn--ghost hs-btn--s" onClick={close}>
               <span className="hs-lbl">{t("cancel")}</span>
             </button>
-            <button type="button" className="hs-btn hs-btn--primary hs-btn--s" disabled={busy} onClick={() => void submit()}>
+            <button type="button" className="hs-btn hs-btn--pri hs-btn--s" disabled={busy} onClick={() => void submit()}>
               <span className="hs-lbl">{busy ? t("saving") : t("save")}</span>
             </button>
           </>
