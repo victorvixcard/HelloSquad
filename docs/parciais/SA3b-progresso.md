@@ -18,5 +18,9 @@ Aranha (Frontend & Design), 16/10/2026, início 22:26. Área: `apps/web` (rotas 
 | 2 | Agente › Alma (seções, rascunho, publicar, comparar lado a lado, voltar, descartar; confirmação e motivo) | feito | `69565b2` |
 | 3 | Agente › Skills (aba por delivery, vazio honesto, editar com versão) e Ferramentas e limites (fields, YAML só leitura, editar com versão) | feito | `aa817ba` |
 | 4 | Agente › O que ele lê (rota 04.01/conversa/reflexão, ativa × rascunhos, blocos com tokens e cache; hash otto/04.01 `fb290a332565` igual ao SA0) | feito | `22de84c` |
-| 5 | Regras de negócio (documentos marcados por parágrafo, flag entra no prompt/referência interna, editar com versão; regras compartilhadas pela rota `shared/README.md`; `regras.css` do SA0 portado por script) | feito | (este) |
-| 6 | Vitest, e2e (worktree `/tmp`), lado a lado, relatório | pendente | |
+| 5 | Regras de negócio (documentos marcados por parágrafo, flag entra no prompt/referência interna, editar com versão; regras compartilhadas pela rota `shared/README.md`; `regras.css` do SA0 portado por script) | feito | `aa955a5` |
+| 6 | Vitest (17), e2e (2, worktree `/tmp/sa3b-wt`, web na 3200), lado a lado, relatório | feito | `4361266` (autosave), `a2f0b84`, `f801aa5`, `66e7285`, `1666c24`, `6423523`, relatório |
+
+## Fechamento (22:56)
+
+Vitest da fatia 17/17; `make test-web` verde (web 440, ui 50, contracts 9); e2e 5/5 no worktree `/tmp/sa3b-wt` (os 2 da SA3b e os 3 da SA2, web de produção na 3200); banco do dono de volta à versão 1 de tudo; lado a lado em `docs/parciais/sa3b/`. Relatório: `docs/parciais/SA3b-relatorio.md`.
