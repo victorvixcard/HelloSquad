@@ -418,7 +418,10 @@
     "colDetail": "Detalhe",
     "platform": "Plataforma",
     "empty": "Nenhum evento com esses filtros.",
-    "invalidPeriod": "Período inválido: a data final vem depois da inicial, em até 366 dias."
+    "invalidPeriod": "Período inválido: a data final vem depois da inicial, em até 366 dias.",
+    "today": "Hoje",
+    "days7": "7 dias",
+    "days30": "30 dias"
   },
   "fila": {
     "title": "Fila de trabalhos",

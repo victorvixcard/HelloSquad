@@ -418,7 +418,10 @@
     "colDetail": "Detalle",
     "platform": "Plataforma",
     "empty": "Ningún evento con estos filtros.",
-    "invalidPeriod": "Período inválido: la fecha final va después de la inicial, en hasta 366 días."
+    "invalidPeriod": "Período inválido: la fecha final va después de la inicial, en hasta 366 días.",
+    "today": "Hoy",
+    "days7": "7 días",
+    "days30": "30 días"
   },
   "fila": {
     "title": "Cola de trabajos",

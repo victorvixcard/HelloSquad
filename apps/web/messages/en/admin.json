@@ -418,7 +418,10 @@
     "colDetail": "Detail",
     "platform": "Platform",
     "empty": "No event matches these filters.",
-    "invalidPeriod": "Invalid period: the end date comes after the start date, within 366 days."
+    "invalidPeriod": "Invalid period: the end date comes after the start date, within 366 days.",
+    "today": "Today",
+    "days7": "7 days",
+    "days30": "30 days"
   },
   "fila": {
     "title": "Job queue",
