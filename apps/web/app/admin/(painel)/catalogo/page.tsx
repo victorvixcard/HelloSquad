@@ -2,9 +2,11 @@ import { unwrap } from "@hellosquad/contracts";
 import { AGENT_IDS, getAgent, isAgentId, type AgentId } from "@hellosquad/ui";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import { CatalogEditDialog } from "@/components/admin/actions/CatalogActions";
+import { RecentAudit } from "@/components/admin/actions/RecentAudit";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { FilterSelect } from "@/components/admin/Filters";
-import { AgentLabel, ApiProblem, Card, DataTable, LockedCheck, Metrics, Note, SoonButton, Status, Tag, type StatusKind } from "@/components/admin/ui";
+import { AgentLabel, ApiProblem, Card, DataTable, LockedCheck, Metrics, Note, Status, Tag, type StatusKind } from "@/components/admin/ui";
 import { adminRead, type CatalogItem } from "@/lib/admin";
 import { adminFormat } from "@/lib/admin-format";
 import { codeLabel, one } from "@/lib/admin-labels";
@@ -18,14 +20,19 @@ const HOMOLOGATION_KIND: Record<string, StatusKind> = {
   homologated: "done",
   in_homologation: "prog",
   awaiting_engine: "pause",
+  awaiting_integration: "pause",
   not_started: "draft",
 };
+
+/** Ações do Super Admin no catálogo (a auditoria do pé da página mostra só estas). */
+const CATALOG_ACTIONS = ["admin.catalog_price_versioned", "admin.catalog_homologation_changed", "admin.catalog_for_sale_changed"] as const;
 
 type Search = Promise<Record<string, string | string[] | undefined>>;
 
 /**
  * Catálogo (SA0 `catalogo.html` → `GET /admin/catalog`): as 46 deliveries, um cartão por agente. Profundidade inferida
- * marcada, preço provisório marcado, travas "preço aprovado comercialmente" e "à venda" só de leitura.
+ * marcada, preço provisório marcado, travas "preço aprovado comercialmente" e "à venda" na tabela só como leitura; a
+ * edição (SA6b) é por delivery, em "Editar": preço novo, homologação e "à venda", cada um com motivo e auditoria.
  */
 export default async function CatalogPage({ searchParams }: { searchParams: Search }) {
   const sp = await searchParams;
@@ -106,6 +113,14 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
         <LockedCheck checked={d.for_sale} label={t("catalogo.forSaleLabel", { name: d.name })} title={d.price?.approved_commercially ? t("common.readOnlyAction") : locked} />
       ),
     },
+    {
+      key: "edit",
+      label: t("acoes.catalog.col"),
+      nowrap: true,
+      cell: (d: CatalogItem) => (
+        <CatalogEditDialog deliveryType={d.delivery_type} name={d.name} price={d.price} homologation={d.homologation_status} forSale={d.for_sale} />
+      ),
+    },
   ];
 
   const items = result.ok ? result.data.items : [];
@@ -120,7 +135,6 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
       nav="catalogo"
       title={t("catalogo.title")}
       desc={t("catalogo.desc")}
-      actions={<SoonButton label={t("catalogo.edit")} reason={t("common.editLater")} />}
     >
       {result.ok ? (
         <>
@@ -162,6 +176,14 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
               <p className="sa-tbl-empty">{t("catalogo.empty")}</p>
             </Card>
           )}
+          <RecentAudit
+            id="cat-auditoria"
+            title={t("acoes.catalog.recent")}
+            sub={t("conta.recentSub")}
+            empty={t("acoes.catalog.recentEmpty")}
+            category="configuration"
+            actions={CATALOG_ACTIONS}
+          />
         </>
       ) : (
         <ApiProblem label={t("common.apiDown")} message={result.error.message} />
