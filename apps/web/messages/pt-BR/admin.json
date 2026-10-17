@@ -363,7 +363,8 @@
     "edit": "Editar como versão nova",
     "missingFields": "Bônus, rollover e membros por plano ainda não existem no banco; aparecem quando o dono definir os campos do plano.",
     "empty": "Nenhum plano cadastrado.",
-    "topupsEmpty": "Nenhuma recarga cadastrada."
+    "topupsEmpty": "Nenhuma recarga cadastrada.",
+    "offSale": "Fora de venda"
   },
   "pagamentos": {
     "title": "Pagamentos",

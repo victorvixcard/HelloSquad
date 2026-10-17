@@ -363,7 +363,8 @@
     "edit": "Editar como versión nueva",
     "missingFields": "Bono, rollover y miembros por plan todavía no existen en la base; aparecen cuando el dueño defina los campos del plan.",
     "empty": "Ningún plan registrado.",
-    "topupsEmpty": "Ninguna recarga registrada."
+    "topupsEmpty": "Ninguna recarga registrada.",
+    "offSale": "Fuera de venta"
   },
   "pagamentos": {
     "title": "Pagos",

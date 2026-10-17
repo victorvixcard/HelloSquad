@@ -363,7 +363,8 @@
     "edit": "Edit as a new version",
     "missingFields": "Bonus, rollover and members per plan do not exist in the database yet; they show up when the owner defines the plan fields.",
     "empty": "No plan registered.",
-    "topupsEmpty": "No top-up registered."
+    "topupsEmpty": "No top-up registered.",
+    "offSale": "Not for sale"
   },
   "pagamentos": {
     "title": "Payments",
