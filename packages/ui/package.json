@@ -14,16 +14,18 @@
     "./tokens.css": "./src/tokens.css",
     "./fonts/*": "./src/fonts/*",
     "./product-ui.css": "./src/generated/product-ui.css",
-    "./ds-bundle.css": "./src/generated/ds-bundle.css"
+    "./ds-bundle.css": "./src/generated/ds-bundle.css",
+    "./super-admin.css": "./src/generated/super-admin.css"
   },
   "scripts": {
     "build:tokens": "node scripts/build-tokens.ts",
     "extract:ds": "node scripts/extract-ds.ts",
-    "generate": "node scripts/build-tokens.ts && node scripts/extract-ds.ts && node scripts/extract-product-ui-css.ts && node scripts/extract-squad-stage.ts",
+    "generate": "node scripts/build-tokens.ts && node scripts/extract-ds.ts && node scripts/extract-product-ui-css.ts && node scripts/extract-squad-stage.ts && node scripts/extract-super-admin-css.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "extract:css": "node scripts/extract-product-ui-css.ts",
-    "extract:stage": "node scripts/extract-squad-stage.ts"
+    "extract:stage": "node scripts/extract-squad-stage.ts",
+    "extract:admin": "node scripts/extract-super-admin-css.ts"
   },
   "peerDependencies": {
     "react": "^19.1.0",

@@ -67,6 +67,13 @@ describe("CSS da Product UI V4.6", () => {
     expect(readFileSync(OUT_BUNDLE_CSS, "utf8")).not.toMatch(/'(Gabarito|JetBrains Mono)'|fonts\.googleapis/);
   });
 
+  it("src/generated/super-admin.css está em dia com o protótipo SA0 (rode pnpm --filter @hellosquad/ui extract:admin)", async () => {
+    const { ADMIN_SOURCES, buildSuperAdminCss, OUT_ADMIN_CSS } = await import("../scripts/extract-super-admin-css");
+    const css = readFileSync(OUT_ADMIN_CSS, "utf8");
+    expect(css).toBe(buildSuperAdminCss(ADMIN_SOURCES.map((file) => readFileSync(file, "utf8"))));
+    expect(css).not.toMatch(/'(Gabarito|JetBrains Mono)'|fonts\.googleapis/);
+  });
+
   it("usa as fontes locais do DS, nunca o nome da família do Google Fonts", () => {
     const css = readFileSync(path.join(OUT_DIR, "product-ui.css"), "utf8");
     expect(css).not.toMatch(/'(Gabarito|JetBrains Mono)'/);
