@@ -576,7 +576,9 @@ async def detail(
         notice = t(locale, f"autonomy.status.blocked.detail.{connection}")
     return ResponsibilityDetail(
         **base.model_dump(),
-        agreement=row["agreement"],
+        # O combinado guardado está no idioma do negócio (como o dono confirmou); a tela usa o de
+        # quem lê, com as mesmas opções.
+        agreement=agreement(locale, row["template"], options, row["auto_publish"], ws["name"]),
         options=options,
         option_labels={k: option_label(locale, row["template"], k, v) for k, v in options.items()},
         auto_publish=row["auto_publish"],

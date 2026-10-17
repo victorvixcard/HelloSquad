@@ -6,7 +6,7 @@ begin;
 set local client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
-select plan(46);
+select plan(47);
 
 create temporary table fx as
 select
@@ -233,6 +233,16 @@ select is(
 select is(
   (select status::text from public.work_items where id = (select work_item_id from proposal)), 'done',
   'o trabalho 01.04 da delegação fecha'
+);
+
+select throws_ok(
+  $$select app.propose_responsibility(
+      (select vitta from fx), null, null,
+      jsonb_build_object('template', 'seo', 'title', 'x', 'lead_agent_id', 'kiwi', 'cadence', 'weekly',
+        'weekdays', '[1]'::jsonb, 'actions',
+        '[{"action": "execute_investments", "level": "execute", "requirement": "specific_authorization", "granted": true}]'::jsonb),
+      'x', '{"work_title": "x", "message": "x"}')$$,
+  '23514', null, 'nenhuma proposta nasce com investimento autorizado'
 );
 
 -- Ganchos da S3a
