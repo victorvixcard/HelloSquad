@@ -1,12 +1,22 @@
 """Leitura de squad/ e montagem do prompt: versão, prefixo cacheado, idioma e escape do contexto."""
 
 import shutil
+from dataclasses import replace
 from pathlib import Path
 from uuid import uuid4
 
 import pytest
 
-from hellosquad.squad.loader import REPO_SQUAD_DIR, SquadDefinitionError, SquadLoader
+from hellosquad.squad.loader import (
+    OUT_OF_PROMPT,
+    REPO_SQUAD_DIR,
+    SECTION_KEYS,
+    SquadDefinitionError,
+    SquadLoader,
+    parse_soul,
+    render_soul,
+    soul_prompt_text,
+)
 from hellosquad.squad.memory import MemoryFact
 from hellosquad.squad.prompt import (
     HistoryMessage,
@@ -137,3 +147,29 @@ def test_run_context_is_escaped_data_in_the_user_turn() -> None:
 
     [check] = check_messages(context(), {"tema": "pão"}, {"versoes": [{"texto": "<script>"}]})
     assert '<versao>{"versoes": [{"texto": "&lt;script&gt;"}]}</versao>' in check.content
+
+
+def test_soul_sections_round_trip_and_out_of_prompt_marker() -> None:
+    """SA3a: SOUL.md ↔ seis seções byte a byte; seção fora do prompt fica marcada no arquivo e some
+    do texto que o modelo lê; o hash muda com a marca."""
+    text = (REPO_SQUAD_DIR / "otto" / "SOUL.md").read_text(encoding="utf-8")
+    sections = parse_soul(text)
+    assert [s.section for s in sections] == list(SECTION_KEYS)
+    assert render_soul(sections) == text
+    memory = next(s for s in sections if s.section == "memoria")
+    hidden = [replace(s, in_prompt=False) if s is memory else s for s in sections]
+    marked = render_soul(hidden)
+    assert f"## Memória\n\n{OUT_OF_PROMPT}\n\n" in marked
+    assert parse_soul(marked) == hidden
+    assert memory.body not in soul_prompt_text(marked)
+    assert soul_prompt_text(text) == text.strip()
+    files = {"otto/SOUL.md": marked.encode()}
+    files |= {
+        p: (REPO_SQUAD_DIR / p).read_bytes()
+        for p in ("README.md", "otto/agent.yaml", "otto/skills/04.01.md")
+    }
+    from_db = SquadLoader(files=files, sources={"otto/SOUL.md": [{"version": 2}]})
+    prompt = from_db.prompt("otto", "04.01")
+    assert prompt.origin == "database" and prompt.sources == [{"version": 2}]
+    assert memory.body not in prompt.agent.soul
+    assert prompt.content_hash != SquadLoader().prompt("otto", "04.01").content_hash

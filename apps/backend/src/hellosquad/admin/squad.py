@@ -55,6 +55,7 @@ from hellosquad.admin.squad_schemas import (
     VersionRef,
 )
 from hellosquad.api.errors import ApiError, error_responses
+from hellosquad.config import get_settings
 from hellosquad.domain import AgentId
 from hellosquad.squad.loader import (
     FRONT_MATTER,
@@ -863,6 +864,13 @@ def validate_config(agent_id: str, text: str, allowed: set[str]) -> None:
         raise invalid("colabora_com só aceita os sete agentes.")
     if config.get("autonomia_maxima") not in ("analisar", "preparar", "executar"):
         raise invalid("autonomia_maxima: analisar, preparar ou executar.")
+    models = config.get("modelo") or {}
+    prices = get_settings().llm_prices
+    for stage in ("padrao", "triagem"):
+        if (stage == "padrao" or stage in models) and models.get(stage) not in prices:
+            raise invalid(
+                f"modelo.{stage} fora da tabela de preços (LLM_PRICES): {models.get(stage)!r}."
+            )
 
 
 @router.put(
