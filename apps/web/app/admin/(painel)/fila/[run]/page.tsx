@@ -2,6 +2,7 @@ import { unwrap } from "@hellosquad/contracts";
 import { getAgent, isAgentId } from "@hellosquad/ui";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { RUN_KIND } from "@/components/admin/runs";
 import { AgentLabel, ApiProblem, Card, DataTable, Empty, SoonButton, Status } from "@/components/admin/ui";
@@ -40,9 +41,9 @@ export default async function RunPage({ params }: { params: Promise<{ run: strin
             agent="nexo"
             expression="serio"
             actions={
-              <a className="hs-btn hs-btn--soft hs-btn--s" href="/admin/fila">
+              <Link className="hs-btn hs-btn--soft hs-btn--s" href="/admin/fila">
                 <span className="hs-lbl">{t("run.backToQueue")}</span>
-              </a>
+              </Link>
             }
           >
             {t("run.notFoundBody")}

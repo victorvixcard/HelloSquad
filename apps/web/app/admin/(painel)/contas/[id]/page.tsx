@@ -1,6 +1,7 @@
 import { unwrap } from "@hellosquad/contracts";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { ApiProblem, Card, DataTable, Empty, Metrics, Note, SoonButton, Status, Tag } from "@/components/admin/ui";
 import { adminRead, type AccountDetail } from "@/lib/admin";
@@ -39,7 +40,7 @@ export default async function AccountPage({ params }: { params: Params }) {
     return (
       <AdminPage nav="contas" title={missing ? t("conta.notFound") : t("conta.crumb")} crumbs={crumbs}>
         {missing ? (
-          <Empty title={t("conta.notFound")} agent="nexo" expression="serio" actions={<a className="hs-btn hs-btn--soft hs-btn--s" href="/admin/contas"><span className="hs-lbl">{t("conta.backToList")}</span></a>}>
+          <Empty title={t("conta.notFound")} agent="nexo" expression="serio" actions={<Link className="hs-btn hs-btn--soft hs-btn--s" href="/admin/contas"><span className="hs-lbl">{t("conta.backToList")}</span></Link>}>
             {t("conta.notFoundBody")}
           </Empty>
         ) : (

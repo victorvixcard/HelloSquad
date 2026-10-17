@@ -26,7 +26,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(nav.query),
 }));
 
-function renderAdmin(ui: ReactElement, catalog = messages, locale = "pt-BR") {
+function renderAdmin(ui: ReactElement, catalog = messages, locale: "pt-BR" | "en" | "es" = "pt-BR") {
   return render(
     <NextIntlClientProvider locale={locale} timeZone="America/Sao_Paulo" messages={catalog}>
       {ui}

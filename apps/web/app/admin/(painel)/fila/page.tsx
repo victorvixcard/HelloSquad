@@ -2,6 +2,7 @@ import { unwrap } from "@hellosquad/contracts";
 import { getAgent, isAgentId } from "@hellosquad/ui";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { RUN_KIND, RUN_STATES, type RunState } from "@/components/admin/runs";
 import { AgentLabel, ApiProblem, Card, DataTable, Metrics, Pager, SoonButton, Status } from "@/components/admin/ui";
@@ -94,10 +95,10 @@ export default async function QueuePage({ searchParams }: { searchParams: Search
       <Card id="fila-runs" title={t("fila.runs")} flush>
         <div className="sa-tool" style={{ padding: "0 20px 14px" }}>
           <nav className="sa-segl" aria-label={t("fila.filterLabel")}>
-            <a href="/admin/fila" aria-current={!status ? "page" : undefined}>
+            <Link href="/admin/fila" aria-current={!status ? "page" : undefined}>
               {t("fila.all")}
               <span className="sa-nb">{f.int(total)}</span>
-            </a>
+            </Link>
             {RUN_STATES.map((s) => (
               <a key={s} href={hrefWith("/admin/fila", { estado: s })} aria-current={status === s ? "page" : undefined}>
                 {codeLabel(t, "run", s)}

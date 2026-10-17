@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import Link from "next/link";
 import { ADMIN_NAV, adminNavOf } from "./nav";
 import { Icon } from "./ui";
 
@@ -18,9 +19,9 @@ export function AdminSidebar({ person }: { person: AdminPerson }) {
   return (
     <nav className="sa-sb" aria-label={t("navLabel")}>
       <div className="sa-sb-top">
-        <a className="sa-wm" href="/admin/contas" aria-label={t("wordmarkLabel")}>
+        <Link className="sa-wm" href="/admin/contas" aria-label={t("wordmarkLabel")}>
           HelloSquad
-        </a>
+        </Link>
         <span className="sa-wm-tag">{t("tag")}</span>
       </div>
       <div className="sa-sb-scroll">
@@ -116,6 +117,8 @@ function PersonMenu({ person }: { person: AdminPerson }) {
       {open ? (
         <div className="sa-me-pop">
           <div className="hs-menu" role="menu" aria-label={person.email}>
+            {/* Navegação inteira de propósito: o CSS do painel não segue para o produto. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a className="hs-mi" role="menuitem" href="/app" tabIndex={-1}>
               <Icon name="out" />
               {t("product")}
