@@ -1,0 +1,14 @@
+== H-SA-02: GET /me
+VIC: is_platform_admin = True | memberships = 0
+MARINA: is_platform_admin = False | memberships = 1
+PEDRO: is_platform_admin = False | memberships = 0
+== H-SA-01: Data API (o motivo não existe mais nas tabelas do produto; as tabelas do motivo fecham)
+Pedro delivery_prices?select=note: 400 42703
+Pedro delivery_prices?select=credits (o produto lê o preço): 200
+Pedro delivery_price_notes: 403 42501
+Marina workspaces?select=suspension_reason: 400 42703
+Marina workspace_suspension_reasons: 403 42501
+anon delivery_price_notes: 401 42501
+== /admin/accounts com o Vic (a rota lê o motivo pela tabela do painel)
+GET /admin/accounts: 200 | itens com suspension_reason na resposta: 3 de 3
+Marina GET /admin/accounts: 403
