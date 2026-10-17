@@ -243,7 +243,7 @@ async def test_events_reach_mailpit_in_three_languages_for_three_tenants(
         await mailpit.get(f"/api/v1/message/{by_recipient[RAFAEL]['provider_message_id']}")
     ).json()
     assert "Otto needs you in Vitta Estética to review a delivery." in rafael["Text"]
-    assert "http://127.0.0.1:3100/app/vitta" in rafael["Text"]
+    assert f"{get_settings().email_app_url.rstrip('/')}/app/vitta" in rafael["Text"]
     carla = (
         await mailpit.get(f"/api/v1/message/{by_recipient[CARLA]['provider_message_id']}")
     ).json()
