@@ -1,0 +1,13 @@
+catalogo: h1="Catálogo" abas abertas=["Deliveries 46","Todos 46"]
+catalogo-otto: h1="Catálogo" abas abertas=["Deliveries 46","Otto 7"]
+pagamentos: h1="Pagamentos" abas abertas=["Assinaturas"]
+pagamentos-webhooks: h1="Pagamentos" abas abertas=["Webhooks"]
+auditoria: h1="Auditoria" abas abertas=[]
+saude: h1="Saúde das APIs" abas abertas=[]
+erros de console: 0
+lado-a-lado-catalogo.png (1452, 474)
+lado-a-lado-catalogo-otto.png (1452, 474)
+lado-a-lado-pagamentos.png (1452, 474)
+lado-a-lado-pagamentos-webhooks.png (1452, 474)
+lado-a-lado-auditoria.png (1452, 474)
+lado-a-lado-saude.png (1452, 474)
