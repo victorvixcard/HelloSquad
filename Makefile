@@ -23,7 +23,7 @@ env_value = $(shell sed -n 's/^$(1)=//p' .env 2>/dev/null | tail -n 1)
 API_PORT ?= $(or $(call env_value,API_PORT),8100)
 WEB_PORT ?= $(or $(call env_value,WEB_PORT),3100)
 
-.PHONY: help install up down status migrate seed test test-backend test-web test-db test-infra e2e build \
+.PHONY: help install up down status migrate seed squad-seed squad-export test test-backend test-web test-db test-infra e2e build \
 	openapi dev dev-api dev-web worker scheduler
 
 help: ## Lista os alvos disponíveis
@@ -53,8 +53,14 @@ status: ## Estado do Supabase local, da API (:8100) e da web (:3100)
 migrate: ## Aplica migrations pendentes e grava a senha do papel hellosquad_api (API_DATABASE_URL do .env; com trava)
 	$(DB_LOCK) bash -c '$(SUPABASE) migration up --local && cd $(BACKEND_DIR) && uv run hellosquad-local-db roles'
 
-seed: ## Dados fictícios de docs/DADOS_FICTICIOS.md no banco local (idempotente)
-	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run hellosquad-local-db seed ../../supabase/seed.sql'
+seed: ## Dados fictícios de docs/DADOS_FICTICIOS.md no banco local e o squad/ nas unidades que faltam (idempotente)
+	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run hellosquad-local-db seed ../../supabase/seed.sql && uv run hellosquad-squad seed'
+
+squad-seed: ## Squad: squad/ vira versão 1 ativa no banco nas unidades que ainda não existem (o banco vale; com trava)
+	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run hellosquad-squad seed'
+
+squad-export: ## Squad: regrava squad/ a partir das versões ativas do banco (diff limpo quando nada mudou; com trava)
+	$(DB_LOCK) bash -c 'cd $(BACKEND_DIR) && uv run hellosquad-squad export'
 
 test: test-infra test-web ## Roda todos os testes locais (infra, web, backend e banco); backend e banco numa trava só, do pytest ao pgTAP
 	$(DB_LOCK) env HELLOSQUAD_DB_LOCK_HELD=1 $(MAKE) --no-print-directory test-backend test-db

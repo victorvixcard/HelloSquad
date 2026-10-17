@@ -202,7 +202,10 @@ class SquadLoader:
     def _read(self, relative: str, files: dict[str, str]) -> str:
         if not self._exists(relative):
             raise SquadDefinitionError(f"squad/{relative} não existe.")
-        data = self.files[relative] if self.files is not None else (self.squad_dir / relative).read_bytes()
+        if self.files is not None:
+            data = self.files[relative]
+        else:
+            data = (self.squad_dir / relative).read_bytes()
         files[relative] = sha256(data)
         return data.decode("utf-8")
 
