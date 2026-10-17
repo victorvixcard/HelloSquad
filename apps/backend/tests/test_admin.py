@@ -58,12 +58,41 @@ async def admin_paths(admin_db: psycopg.AsyncConnection) -> list[str]:
     run = (
         await one(admin_db, "select id from public.runs where workspace_id = %s limit 1", miolo)
     )["id"]
-    paths = [
-        path.replace("{workspace_id}", str(miolo)).replace("{run_id}", str(run))
-        for path, operations in app.openapi()["paths"].items()
-        if path.startswith("/admin/") and "get" in operations
-    ]
-    assert len(paths) == 13, paths
+    soul = (
+        await one(
+            admin_db,
+            "select id from public.squad_versions"
+            " where kind = 'soul' and agent_id = 'otto' and status = 'active'",
+        )
+    )["id"]
+    doc = (
+        await one(
+            admin_db, "select id from public.business_rule_docs where slug = 'diretrizes-do-dono'"
+        )
+    )["id"]
+    query = {
+        "/admin/squad/versions": "?kind=soul&agent_id=otto",
+        "/admin/squad/diff": f"?from={soul}&to={soul}",
+        "/admin/squad/agents/{agent_id}/prompt": "?route=04.01",
+    }
+    filled = {
+        "{workspace_id}": miolo,
+        "{run_id}": run,
+        "{agent_id}": "otto",
+        "{delivery_type}": "04.01",
+        "{doc}": "README.md",
+        "{version_id}": soul,
+        "{doc_id}": doc,
+    }
+    paths = []
+    for path, operations in app.openapi()["paths"].items():
+        if not path.startswith("/admin/") or "get" not in operations:
+            continue
+        url = path + query.get(path, "")
+        for name, value in filled.items():
+            url = url.replace(name, str(value))
+        paths.append(url)
+    assert len(paths) == 23, paths
     return paths
 
 
