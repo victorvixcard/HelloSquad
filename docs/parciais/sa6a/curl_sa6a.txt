@@ -1,0 +1,32 @@
+== A Marina (owner) não escreve pelo painel
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/support-session -> 403 platform_admin_only Só o Super Admin da plataforma acessa o painel.
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/credit-adjustments -> 403 platform_admin_only Só o Super Admin da plataforma acessa o painel.
+== Sessão de suporte (só leitura, 15 min)
+GET /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/conversations -> 403 support_session_required Abra uma sessão de suporte, com motivo, para ver este negócio.
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/support-session -> 422 motivo curto recusado
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/support-session -> 201 active read_only 2026-10-17T02:26:37.740293Z → 2026-10-17T02:41:37.740293Z
+GET /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/conversations -> 200 conversas lidas: 2
+GET /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/work-items -> 200 trabalhos lidos: 1
+POST /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/conversations -> 403 support_session_read_only A sessão de suporte é só de leitura: nada é gravado neste negócio.
+e-mail ao titular: marina@miolo.example · support_session_started · pt-BR · queued · 15 min
+DELETE /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/support-session -> 200 ended 2026-10-17T02:26:37.901772Z
+GET /workspaces/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/conversations -> 403 support_session_required Abra uma sessão de suporte, com motivo, para ver este negócio.
+== Ajuste de crédito (motivo; nunca negativo)
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/credit-adjustments -> 201 36.00 → 41.00
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/credit-adjustments -> 409 invalid_state O ajuste deixaria o saldo negativo: disponível 41, débito 100000.
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/credit-adjustments -> 201 41.00 → 36.00
+== Suspender e reativar (pausa cobrança e rotinas; não cancela)
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/suspend -> 200 suspended Conferência pedida pela titular no chamado 42
+GET /me -> 200 [('miolo', 'suspended')]
+assinatura da Miolo: active
+POST /admin/accounts/6bcdc5bd-3c9a-4a7a-bb83-22b2ba88edc2/reactivate -> 200 active
+== Catálogo: "à venda" exige homologação e preço aprovado
+PUT /admin/catalog/04.01/for-sale -> 409 invalid_state Só vai à venda com a homologação concluída.
+PUT /admin/catalog/04.01/price -> 200 12.00 provisório sem aprovação
+== Fila: reenfileirar e cancelar com motivo
+POST /admin/queue/runs/baa15c23-2aaf-4313-b239-3165e90f6b57/requeue -> 200 queued tentativas 0
+POST /admin/queue/runs/baa15c23-2aaf-4313-b239-3165e90f6b57/cancel -> 200 cancelled
+POST /admin/payments/webhooks/1367832d-a738-4627-8f04-97103e56030e/reprocess -> 404 webhook_not_found Webhook não encontrado.
+== Auditoria do Super Admin (quem, quando, motivo)
+GET /admin/audit?actor=platform_admin&limit=14 -> 200 [('run.cancelled_by_support', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('run.requeued_by_support', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('admin.catalog_price_versioned', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('workspace.reactivated', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('workspace.suspended', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('credits.adjusted', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('credits.adjusted', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('support.session_ended', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('support.session_started', 'vic@hellosquad.example', 'Conferência pedida pela titular no chamado 42'), ('squad.draft_saved', 'vic@hellosquad.example', None), ('squad.version_published', 'vic@hellosquad.example', None), ('squad.draft_saved', 'vic@hellosquad.example', None), ('squad.version_published', 'vic@hellosquad.example', None), ('rules.version_saved', 'vic@hellosquad.example', None)]
+depois do seed: saldo da Miolo 36.00, preço 04.01 10.00, suspensa false
