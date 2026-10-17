@@ -47,13 +47,16 @@ up: install ## Sobe o Supabase local (projeto hellosquad), aplica migrations e g
 down: ## Para o Supabase local do HelloSquad (os dados ficam no volume Docker)
 	$(SUPABASE) stop
 
-status: ## Estado do Supabase local, da API (:8100) e da web (:3100)
+status: ## Estado do Supabase local, da API (:8100), da web (:3100) e dos mocks (:8300)
 	$(SUPABASE) status -o pretty 2>&1 | $(MASK_KEYS)
 	@curl -fsS --max-time 2 http://127.0.0.1:$(API_PORT)/health && echo \
 		|| echo "API fora do ar em :$(API_PORT) (make dev-api)"
 	@curl -fsS -o /dev/null --max-time 5 http://127.0.0.1:$(WEB_PORT) \
 		&& echo "Web no ar em http://127.0.0.1:$(WEB_PORT)" \
 		|| echo "Web fora do ar em :$(WEB_PORT) (make dev-web)"
+	@curl -fsS -o /dev/null --max-time 2 http://127.0.0.1:$(MOCKS_PORT)/_mock/health \
+		&& echo "Mocks dos provedores no ar em http://127.0.0.1:$(MOCKS_PORT)" \
+		|| echo "Mocks dos provedores fora do ar em :$(MOCKS_PORT) (make mocks)"
 
 migrate: ## Aplica migrations pendentes e grava a senha do papel hellosquad_api (API_DATABASE_URL do .env; com trava)
 	$(DB_LOCK) bash -c '$(SUPABASE) migration up --local && cd $(BACKEND_DIR) && uv run hellosquad-local-db roles'
