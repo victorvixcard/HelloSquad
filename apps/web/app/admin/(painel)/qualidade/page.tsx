@@ -151,9 +151,11 @@ export default async function QualityPage({ searchParams }: { searchParams: Sear
           value: counted === null ? rate(m.key, top.b.rates[m.key]) : f.int(counted),
           unit: m.key === "not_approved_rate" ? t("qualidade.ofN", { n: top.b.totals.deliveries }) : undefined,
           detail:
-            counted === null
-              ? t("qualidade.cardDelta", { delta: deltaText(m, shown), month: prevName, word })
-              : t("qualidade.cardRate", { now: rate(m.key, top.b.rates[m.key]), unit: t(`qualidade.unit.${m.unit}`), before: rate(m.key, top.a.rates[m.key]), month: prevName, word }),
+            top.a.rates[m.key] === null || top.b.rates[m.key] === null
+              ? t("qualidade.cardNone", { month: prevName })
+              : counted === null
+                ? t("qualidade.cardDelta", { delta: deltaText(m, shown), month: prevName, word })
+                : t("qualidade.cardRate", { now: rate(m.key, top.b.rates[m.key]), unit: t(`qualidade.unit.${m.unit}`), before: rate(m.key, top.a.rates[m.key]), month: prevName, word }),
         };
       })
     : [];
@@ -333,13 +335,12 @@ export default async function QualityPage({ searchParams }: { searchParams: Sear
   return (
     <AdminPage nav="qualidade" title={t("qualidade.title")} desc={t("qualidade.desc")}>
       <div className="sa-tool" style={{ marginBottom: 16 }}>
-        <nav className="sa-segl" aria-label={t("qualidade.period")}>
-          {PERIODS.map((p) => (
-            <a key={p} href={p === "90" ? "/admin/qualidade" : `/admin/qualidade?periodo=${p}`} aria-current={period === p ? "page" : undefined}>
-              {t(`qualidade.periods.${p}`)}
-            </a>
-          ))}
-        </nav>
+        <FilterSelect
+          name="periodo"
+          title={t("qualidade.period")}
+          prefix={t("qualidade.period")}
+          options={(["90", "30", "365"] as const).map((p) => ({ value: p === "90" ? "" : p, label: t(`qualidade.periods.${p}`) }))}
+        />
         <span className="sa-mut sa-fx">{t("qualidade.range", { since: f.date(q.since), until: f.date(q.until) })}</span>
       </div>
       <div className="sa-sec-t" style={{ marginTop: 0 }}>

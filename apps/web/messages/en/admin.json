@@ -870,7 +870,7 @@
     "fx": "Exchange rate of {date}: US$ 1 = {brl}, {source}",
     "fxNone": "No exchange rate in Models and costs: values in R$ stay empty.",
     "metRequests": "Requests",
-    "metRequestsSub": "{n, plural, one {jobs asked of the squad in # account} other {jobs asked of the squad in # accounts}}",
+    "metRequestsSub": "{n, plural, =0 {no job asked of the squad} one {jobs asked of the squad in # account} other {jobs asked of the squad in # accounts}}",
     "metCredits": "Credits charged",
     "metCreditsSub": "worth {brl} with the credit at {ref} (example)",
     "metDeliveries": "AI in deliveries",
@@ -901,9 +901,9 @@
       "cost_per_turn_trend": "No account in the filter has two weeks of usage to compare."
     },
     "rule": {
-      "ai_cost_per_credit_brl": "{cmp} {value} per credit charged.",
-      "gross_margin": "{cmp} {value} with the credit at {ref} (example).",
-      "cost_per_turn_trend": "{cmp} {value} of the cost per turn in the last {days} days against the previous {days}."
+      "ai_cost_per_credit_brl": "{cmp} {value} per credit charged; {tail}.",
+      "gross_margin": "{cmp} {value} with the credit at {ref} (example); {tail}.",
+      "cost_per_turn_trend": "{cmp} {value} against the previous {days} days; {tail}."
     },
     "inAttention": "{n, plural, =0 {Accounts needing attention} one {# account needs attention} other {# accounts need attention}}",
     "noneOut": "No account outside the range.",
@@ -911,7 +911,7 @@
     "marginNote": "The margin uses the credit at {ref} (the prototype’s example value) and the exchange rate of {date} (US$ 1 = {brl}). Price and credits come last: both stay provisional until Vic decides.",
     "marginNoteNoFx": "The margin uses the credit at {ref} (the prototype’s example value). Price and credits come last: it stays provisional until Vic decides.",
     "byClient": "By customer",
-    "byClientSub": "{period} · {n, plural, one {# account with usage} other {# accounts with usage}}",
+    "byClientSub": "{period} · {n, plural, =0 {no account with usage} one {# account with usage} other {# accounts with usage}}",
     "byClientCaption": "Usage by customer, {period}",
     "colAccount": "Account",
     "colRequests": "Requests",
@@ -931,7 +931,7 @@
     "colAlert": "Alert",
     "colStart": "Start",
     "total": "Total",
-    "accounts": "{n, plural, one {# account} other {# accounts}}",
+    "accounts": "{n, plural, =0 {no account} one {# account} other {# accounts}}",
     "inAttentionFoot": "{n, plural, =0 {none needs attention} one {# needs attention} other {# need attention}}",
     "rowNoCredit": "no credit charged",
     "rowNoData": "no data to assess",
@@ -949,7 +949,11 @@
     },
     "weekOf": "week of {date}",
     "howTitle": "How to read",
-    "howText": "AI cost from the price table per model (<models>Models and costs</models>), in US$. <b>AI per credit</b> = AI cost in R$, deliveries and conversation, ÷ credits charged. <b>Estimated margin</b> = 1 − AI cost in R$ ÷ (credits × {ref}, example credit value). <b>Trend</b> = change in the cost per turn in the last {days} days against the previous {days}; in the total, average weighted by cost. <b>—</b> = no credit charged or no two weeks of usage to compare."
+    "howText": "AI cost from the price table per model (<models>Models and costs</models>), in US$. <b>AI per credit</b> = AI cost in R$, deliveries and conversation, ÷ credits charged. <b>Estimated margin</b> = 1 − AI cost in R$ ÷ (credits × {ref}, example credit value). <b>Trend</b> = change in the cost per turn in the last {days} days against the previous {days}; in the total, average weighted by cost. <b>—</b> = no credit charged or no two weeks of usage to compare.",
+    "ruleTail": {
+      "max": "above it, attention",
+      "min": "below it, attention"
+    }
   },
   "qualidade": {
     "title": "Delivery quality",
@@ -992,7 +996,7 @@
     "ofN": "of {n}",
     "cardDelta": "{delta} against {month}: {word}.",
     "cardRate": "{now} {unit}, against {before} in {month}: {word}.",
-    "topSub": "{n, plural, one {# delivery} other {# deliveries}} · change against {month}, {beforeN, plural, one {# delivery} other {# deliveries}}",
+    "topSub": "{n, plural, =0 {0 deliveries} one {# delivery} other {# deliveries}} · change against {month}, {beforeN, plural, =0 {0 deliveries} one {# delivery} other {# deliveries}}",
     "howTitle": "How to read",
     "howSub": "what goes into each figure",
     "tabsLabel": "View quality",
@@ -1000,9 +1004,9 @@
     "tabMonth": "By month",
     "tabVersion": "By prompt version",
     "total": "Total",
-    "types": "{n, plural, one {# type} other {# types}}",
+    "types": "{n, plural, =0 {no type} one {# type} other {# types}}",
     "byType": "By delivery type",
-    "byTypeSub": "{period} · {n, plural, one {# type with deliveries} other {# types with deliveries}}",
+    "byTypeSub": "{period} · {n, plural, =0 {no type with deliveries} one {# type with deliveries} other {# types with deliveries}}",
     "byTypeNote": "In the total, rates come from the sums of the rows: approved first time and adjustments over deliveries; cost per approved over approved deliveries.",
     "empty": "No delivery decided in the period.",
     "colType": "Delivery type",
@@ -1045,13 +1049,14 @@
     "colReading": "Reading",
     "cmpNote": "Not approved, errors and failed calls are compared by rate, because the months have different volumes and the current month has not closed yet.",
     "noteLabel": "Nothing changes by itself",
-    "note": "Quality only measures: no prompt version, model or rule changes because of these numbers."
+    "note": "Quality only measures: no prompt version, model or rule changes because of these numbers.",
+    "cardNone": "No decided delivery to compare with {month}."
   },
   "saude": {
     "title": "API health",
     "desc": "By provider: whether it is working, calls and failures, spend and the last refusal for balance. Keys never show here, only whether they are configured. The balance is entered by hand, with an alert below the threshold.",
     "nobody": "none",
-    "calls": "{n, plural, one {# call} other {# calls}}",
+    "calls": "{n, plural, =0 {0 calls} one {# call} other {# calls}}",
     "failures": "{n, plural, one {# failure} other {# failures}} ({pct})",
     "noFailure": "no failure",
     "key": "Key",

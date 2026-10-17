@@ -261,7 +261,7 @@ describe("Consumo por cliente (SA4b)", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Alertas econômicos" })).toBeInTheDocument();
     const perCredit = screen.getByRole("region", { name: "IA por crédito" });
     expect(within(perCredit).getByText("Proposta")).toBeInTheDocument();
-    expect(within(perCredit).getByText("OK até R$ 0,150 por crédito cobrado.")).toBeInTheDocument();
+    expect(within(perCredit).getByText("OK até R$ 0,15 por crédito cobrado; acima, atenção.")).toBeInTheDocument();
     expect(within(perCredit).getByText("1 conta em atenção")).toBeInTheDocument();
     expect(within(perCredit).getByRole("link", { name: "Miolo" })).toHaveAttribute("href", `/admin/contas/${MIOLO}`);
     expect(within(perCredit).getByText("R$ 0,270")).toBeInTheDocument();
@@ -270,7 +270,7 @@ describe("Consumo por cliente (SA4b)", () => {
 
     const margin = screen.getByRole("region", { name: "Margem bruta estimada" });
     expect(within(margin).getByText("Provisória")).toBeInTheDocument();
-    expect(within(margin).getByText("OK a partir de 65% com o crédito a R$ 0,50 (exemplo).")).toBeInTheDocument();
+    expect(within(margin).getByText("OK a partir de 65% com o crédito a R$ 0,50 (exemplo); abaixo, atenção.")).toBeInTheDocument();
     const trend = screen.getByRole("region", { name: "Tendência do custo por turno" });
     expect(within(trend).getByText("Sem dado")).toBeInTheDocument();
     expect(within(trend).getByText("Nenhuma conta do filtro tem duas semanas de uso para comparar.")).toBeInTheDocument();

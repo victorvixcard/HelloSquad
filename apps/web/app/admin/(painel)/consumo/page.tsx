@@ -83,7 +83,8 @@ export default async function ConsumptionPage({ searchParams }: { searchParams: 
   const ruleText = (r: AlertRule) =>
     t(`consumo.rule.${r.metric}`, {
       cmp: t(`codes.comparison.${r.comparison}`),
-      value: fm(r.metric, r.threshold) ?? r.threshold,
+      value: r.metric === "ai_cost_per_credit_brl" ? f.money(r.threshold, "BRL") : (fm(r.metric, r.threshold) ?? r.threshold),
+      tail: t(`consumo.ruleTail.${r.comparison}`),
       ref: r.credit_reference_brl === null ? dash : f.money(r.credit_reference_brl, "BRL"),
       days: r.window_days ?? trendDays,
     });
@@ -235,13 +236,12 @@ export default async function ConsumptionPage({ searchParams }: { searchParams: 
   return (
     <AdminPage nav="consumo" title={t("consumo.title")} desc={desc}>
       <div className="sa-tool" style={{ marginBottom: 16 }}>
-        <nav className="sa-segl" aria-label={t("consumo.period")}>
-          {PERIODS.map((p) => (
-            <a key={p} href={link({ periodo: p === "30" ? undefined : p })} aria-current={period === p ? "page" : undefined}>
-              {t(`consumo.periods.${p}`)}
-            </a>
-          ))}
-        </nav>
+        <FilterSelect
+          name="periodo"
+          title={t("consumo.period")}
+          prefix={t("consumo.period")}
+          options={PERIODS.map((p) => ({ value: p === "30" ? "" : p, label: t(`consumo.periods.${p}`) }))}
+        />
         <FilterSelect name="conta" title={t("consumo.account")} prefix={t("consumo.account")} options={accountOptions} />
         <span className="sa-grow" />
         <span className="sa-mut sa-fx">

@@ -870,7 +870,7 @@
     "fx": "Tipo de cambio del {date}: US$ 1 = {brl}, {source}",
     "fxNone": "Sin tipo de cambio en Modelos y costos: los valores en R$ quedan vacíos.",
     "metRequests": "Solicitudes",
-    "metRequestsSub": "{n, plural, one {trabajos pedidos al squad en # cuenta} other {trabajos pedidos al squad en # cuentas}}",
+    "metRequestsSub": "{n, plural, =0 {ningún trabajo pedido al squad} one {trabajos pedidos al squad en # cuenta} other {trabajos pedidos al squad en # cuentas}}",
     "metCredits": "Créditos cobrados",
     "metCreditsSub": "equivalen a {brl} con el crédito a {ref} (ejemplo)",
     "metDeliveries": "IA en entregas",
@@ -901,9 +901,9 @@
       "cost_per_turn_trend": "Ninguna cuenta del filtro tiene dos semanas de uso para comparar."
     },
     "rule": {
-      "ai_cost_per_credit_brl": "{cmp} {value} por crédito cobrado.",
-      "gross_margin": "{cmp} {value} con el crédito a {ref} (ejemplo).",
-      "cost_per_turn_trend": "{cmp} {value} del costo por turno en los últimos {days} días contra los {days} anteriores."
+      "ai_cost_per_credit_brl": "{cmp} {value} por crédito cobrado; {tail}.",
+      "gross_margin": "{cmp} {value} con el crédito a {ref} (ejemplo); {tail}.",
+      "cost_per_turn_trend": "{cmp} {value} frente a los {days} días anteriores; {tail}."
     },
     "inAttention": "{n, plural, =0 {Cuentas que requieren atención} one {# cuenta requiere atención} other {# cuentas requieren atención}}",
     "noneOut": "Ninguna cuenta fuera del rango.",
@@ -911,7 +911,7 @@
     "marginNote": "El margen usa el crédito a {ref} (valor de ejemplo del prototipo) y el tipo de cambio del {date} (US$ 1 = {brl}). Precio y créditos van al final: los dos siguen provisionales hasta que Vic decida.",
     "marginNoteNoFx": "El margen usa el crédito a {ref} (valor de ejemplo del prototipo). Precio y créditos van al final: sigue provisional hasta que Vic decida.",
     "byClient": "Por cliente",
-    "byClientSub": "{period} · {n, plural, one {# cuenta con uso} other {# cuentas con uso}}",
+    "byClientSub": "{period} · {n, plural, =0 {ninguna cuenta con uso} one {# cuenta con uso} other {# cuentas con uso}}",
     "byClientCaption": "Consumo por cliente, {period}",
     "colAccount": "Cuenta",
     "colRequests": "Solicitudes",
@@ -931,7 +931,7 @@
     "colAlert": "Alerta",
     "colStart": "Inicio",
     "total": "Total",
-    "accounts": "{n, plural, one {# cuenta} other {# cuentas}}",
+    "accounts": "{n, plural, =0 {ninguna cuenta} one {# cuenta} other {# cuentas}}",
     "inAttentionFoot": "{n, plural, =0 {ninguna requiere atención} one {# requiere atención} other {# requieren atención}}",
     "rowNoCredit": "sin crédito cobrado",
     "rowNoData": "sin datos para evaluar",
@@ -949,7 +949,11 @@
     },
     "weekOf": "semana del {date}",
     "howTitle": "Cómo leer",
-    "howText": "Costo de IA según la tabla de precios por modelo (<models>Modelos y costos</models>), en US$. <b>IA por crédito</b> = costo de IA en R$, entregas y conversación, ÷ créditos cobrados. <b>Margen estimado</b> = 1 − costo de IA en R$ ÷ (créditos × {ref}, valor de ejemplo del crédito). <b>Tendencia</b> = variación del costo por turno en los últimos {days} días contra los {days} anteriores; en el total, promedio ponderado por el costo. <b>—</b> = sin crédito cobrado o sin dos semanas de uso para comparar."
+    "howText": "Costo de IA según la tabla de precios por modelo (<models>Modelos y costos</models>), en US$. <b>IA por crédito</b> = costo de IA en R$, entregas y conversación, ÷ créditos cobrados. <b>Margen estimado</b> = 1 − costo de IA en R$ ÷ (créditos × {ref}, valor de ejemplo del crédito). <b>Tendencia</b> = variación del costo por turno en los últimos {days} días contra los {days} anteriores; en el total, promedio ponderado por el costo. <b>—</b> = sin crédito cobrado o sin dos semanas de uso para comparar.",
+    "ruleTail": {
+      "max": "por encima, atención",
+      "min": "por debajo, atención"
+    }
   },
   "qualidade": {
     "title": "Calidad de las entregas",
@@ -992,7 +996,7 @@
     "ofN": "de {n}",
     "cardDelta": "{delta} frente a {month}: {word}.",
     "cardRate": "{now} {unit}, frente a {before} en {month}: {word}.",
-    "topSub": "{n, plural, one {# entrega} other {# entregas}} · variación frente a {month}, {beforeN, plural, one {# entrega} other {# entregas}}",
+    "topSub": "{n, plural, =0 {0 entregas} one {# entrega} other {# entregas}} · variación frente a {month}, {beforeN, plural, =0 {0 entregas} one {# entrega} other {# entregas}}",
     "howTitle": "Cómo leer",
     "howSub": "qué entra en cada cifra",
     "tabsLabel": "Ver la calidad",
@@ -1000,9 +1004,9 @@
     "tabMonth": "Por mes",
     "tabVersion": "Por versión de prompt",
     "total": "Total",
-    "types": "{n, plural, one {# tipo} other {# tipos}}",
+    "types": "{n, plural, =0 {ningún tipo} one {# tipo} other {# tipos}}",
     "byType": "Por tipo de entrega",
-    "byTypeSub": "{period} · {n, plural, one {# tipo con entregas} other {# tipos con entregas}}",
+    "byTypeSub": "{period} · {n, plural, =0 {ningún tipo con entregas} one {# tipo con entregas} other {# tipos con entregas}}",
     "byTypeNote": "En el total, las tasas salen de las sumas de las filas: aprobadas a la primera y ajustes sobre las entregas; el costo por aprobada sobre las aprobadas.",
     "empty": "Ninguna entrega decidida en el período.",
     "colType": "Tipo de entrega",
@@ -1045,13 +1049,14 @@
     "colReading": "Lectura",
     "cmpNote": "No aprobadas, errores y llamadas con falla se comparan por la tasa, porque los meses tienen volúmenes distintos y el mes actual todavía no cerró.",
     "noteLabel": "Nada cambia solo",
-    "note": "La calidad solo mide: ninguna versión de prompt, modelo o regla cambia por estos números."
+    "note": "La calidad solo mide: ninguna versión de prompt, modelo o regla cambia por estos números.",
+    "cardNone": "Sin entregas decididas para comparar con {month}."
   },
   "saude": {
     "title": "Salud de las APIs",
     "desc": "Por proveedor: si funciona, llamadas y fallas, gasto y último rechazo por saldo. Las claves nunca aparecen aquí, solo si están configuradas. El saldo se informa a mano, con alerta por debajo del umbral.",
     "nobody": "ninguno",
-    "calls": "{n, plural, one {# llamada} other {# llamadas}}",
+    "calls": "{n, plural, =0 {0 llamadas} one {# llamada} other {# llamadas}}",
     "failures": "{n, plural, one {# falla} other {# fallas}} ({pct})",
     "noFailure": "ninguna falla",
     "key": "Clave",
