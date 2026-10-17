@@ -585,6 +585,46 @@ curl -s $API/admin/providers -H "$AUTH"                            # saúde das 
 - **Valores provisórios:** catálogo, planos, recargas e preços de modelo vêm marcados `provisional`; "à venda" desmarcado em tudo; profundidade das deliveries `inferred` (pergunta 6 do SA0).
 - Ler o detalhe de uma conta grava `support.account_viewed` em `audit_events` (categoria `support_access`, autor o Super Admin). `make seed` não apaga esses eventos (a auditoria não apaga nada).
 
+### Squad versionado no banco (SA3a)
+
+A definição dos sete agentes mora no banco: `squad_versions` (uma linha por versão de cada unidade: `SOUL.md`, `agent.yaml`, `skills/<delivery>.md` de cada agente e as regras compartilhadas `README.md`, `conversa.md`, `reflexao.md`) e `agent_prompt_sections` (as seis seções da SOUL de cada versão, com "entra no prompt"). A pasta `squad/` vira **seed** e **exportação**:
+
+```bash
+make squad-seed      # squad/ → banco: versão 1 ativa de cada unidade que ainda não existe (o make seed já roda)
+make squad-export    # banco → squad/: regrava os arquivos a partir das versões ativas
+git diff --stat squad/   # vazio quando nada mudou no painel
+```
+
+- **O banco vale.** O seed nunca sobrescreve uma unidade que já existe: se o arquivo difere da versão ativa, ele só lista ("difere da versão ativa no banco"). Para trazer o banco para os arquivos, `make squad-export`; para levar uma mudança feita no arquivo ao banco como versão nova ativa (auditada como sistema), `cd apps/backend && uv run hellosquad-squad seed --import-changes`.
+- **Runtime:** o worker lê as versões ativas a cada run, com cache pela impressão digital das versões ativas (recarrega só quando algo é publicado); um run usa um retrato só. Banco sem versão ativa → lê `squad/` e avisa no log. O hash do prompt não depende da origem: mesmo conteúdo, mesmo hash (`fb290a332565…` otto/04.01). `agent_prompt_versions.origin` diz de onde veio (`database`/`files`) e `sources` quais versões entraram.
+- **Ciclo:** editar grava um **rascunho** (um por unidade, editável, não entra no runtime); publicar torna a versão **ativa** (uma por unidade) e a anterior vira `superseded`; descartar deixa o rascunho no histórico como `discarded`; **voltar versão** cria uma versão nova, já ativa, com o conteúdo antigo (com rascunho pendente, recusa: publique ou descarte antes). Versão publicada não muda nem se apaga.
+- **Seção fora do prompt:** fica no `SOUL.md` com a linha `<!-- fora do prompt -->` logo abaixo do título e some do system prompt.
+
+Rotas do painel (só `platform_admins`; toda escrita vira `audit_events`), com o token do Vic da seção anterior:
+
+```bash
+curl -s $API/admin/squad -H "$AUTH"                                          # os sete: versões, rascunhos, custo médio
+curl -s $API/admin/squad/agents/otto -H "$AUTH"                              # Alma por seção, agent.yaml, skills
+curl -s "$API/admin/squad/agents/otto/prompt?route=04.01" -H "$AUTH"         # o que ele lê (route: delivery, conversa, reflexao; draft=true)
+curl -s $API/admin/squad/agents/otto/skills/04.01 -H "$AUTH"                 # skill: procedimento, formato, critérios
+curl -s $API/admin/squad/shared/README.md -H "$AUTH"                         # regras compartilhadas
+curl -s "$API/admin/squad/versions?kind=soul&agent_id=otto" -H "$AUTH"       # histórico (kind, agent_id, key)
+curl -s "$API/admin/squad/diff?from=<id>&to=<id>" -H "$AUTH"                 # comparar duas versões da mesma unidade
+curl -s -X PUT $API/admin/squad/agents/otto/soul/sections/como_fala -H "$AUTH" \
+  -H 'Content-Type: application/json' -d '{"body": "…", "note": "por quê"}'   # rascunho (heading, body, in_prompt)
+curl -s -X PUT $API/admin/squad/agents/otto/config -H "$AUTH" \
+  -H 'Content-Type: application/json' -d '{"tools": ["memoria.ler", "…"]}'   # ferramentas/autonomia (ou yaml inteiro)
+curl -s -X PUT $API/admin/squad/agents/otto/skills/04.01 -H "$AUTH" -d …    # skill inteira, com front matter
+curl -s -X POST $API/admin/squad/versions/<id>/publish -H "$AUTH"            # publicar (também /discard e /restore)
+curl -s $API/admin/rules -H "$AUTH"                                          # regras de negócio
+curl -s -X POST $API/admin/rules/<doc_id>/versions -H "$AUTH" \
+  -H 'Content-Type: application/json' -d '{"in_prompt": true, "paragraphs": [{"mark": "decided", "text": "…"}]}'
+```
+
+- **Ferramentas:** só nomes que já existem no catálogo de ferramentas do squad (a união dos sete `agent.yaml`); fora disso, 422 `unknown_tool`. O runtime recusa ferramenta fora da lista do agente (`tool_not_allowed`).
+- **Regras de negócio:** cada gravação é uma versão nova (a mais recente vale). Se o documento entra no prompt, os parágrafos `[DECIDIDO]` e `[BASE ATUAL]` viram um **rascunho** das regras compartilhadas (bloco "Regras de negócio" no `README.md`), que só entra no runtime quando publicado; `[PENDENTE]` e `[PROPOSTA]` nunca entram.
+- Roteiro executado com a saída: `docs/parciais/sa3a/curl_squad.sh` (`curl_squad.txt` ao lado; apaga no fim as versões que criou, só no banco local).
+
 ## Worker do squad (S1c)
 
 `make worker` sobe o `hellosquad-worker`: lê a fila `runs_interactive` (pgmq), reivindica cada run e executa o fluxo v0. O Nexo qualifica o pedido (triagem, `claude-haiku-4-5`). Se faltar o essencial da delivery, ele pergunta na conversa e o trabalho vai para "Precisa de você" com uma pendência `respond`. Se o briefing basta, o Nexo delega ao Otto (`squad.delegar`), que escreve a 04.01 (`claude-opus-5-5`), se autoverifica (uma revisão no máximo) e entrega: versão da entrega, mensagem do Otto na conversa, pendência `review` e trabalho em `needs_you`. Cada chamada vira uma linha de `run_steps` (tokens, custo, latência) e o progresso vai para `run_events` (Realtime no canal `workspace:<id>`).
