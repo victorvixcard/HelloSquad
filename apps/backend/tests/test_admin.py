@@ -33,8 +33,11 @@ SA_OBJECTS = [
     "model_pricing",
     "task_model_rules",
     "provider_health",
+    "economic_alert_rules",
+    "provider_balance_reports",
     "v_consumo_por_cliente",
     "v_qualidade_entregas",
+    "v_qualidade_itens",
     "v_fila",
     "v_fila_filas",
 ]
@@ -74,6 +77,9 @@ async def admin_paths(admin_db: psycopg.AsyncConnection) -> list[str]:
         "/admin/squad/versions": "?kind=soul&agent_id=otto",
         "/admin/squad/diff": f"?from={soul}&to={soul}",
         "/admin/squad/agents/{agent_id}/prompt": "?route=04.01",
+        "/admin/quality/compare": (
+            "?a_since=2026-09-01&a_until=2026-09-30&b_since=2026-10-01&b_until=2026-10-16"
+        ),
     }
     filled = {
         "{workspace_id}": miolo,
@@ -92,7 +98,7 @@ async def admin_paths(admin_db: psycopg.AsyncConnection) -> list[str]:
         for name, value in filled.items():
             url = url.replace(name, str(value))
         paths.append(url)
-    assert len(paths) == 23, paths
+    assert len(paths) == 25, paths
     return paths
 
 
